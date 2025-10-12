@@ -1,0 +1,133 @@
+# Grammar for Magic: the gathering.
+# termials are written in min "card".
+# non terminals are written in maj, "OBJECT".
+# rules are given by NON_TERMINAL: \n rule1 \n rule2,
+# with rules being NON_TERM term NONE_TERM_2.
+# terminals are grouped up under a single non term that define them. This help the rust impl.
+# non terminals are also under enums, 
+# terminals may have their actual syntax written in parenthesis.
+# non-terminal 'TEXT' is the entry point.
+
+
+TEXT:
+	end of input ($)
+	ABILITIES
+
+ABILITIES:
+	ABILITY
+	ABILITY new line (\n) ABILITIES
+
+ABILITY:
+	TRIGGERED_ABILITY
+	STATIC_ABILITY
+	ACTIVATED_ABILITY
+	SPELL_ABILITY
+
+TRIGGERED_ABILITY:
+	TRIGGER_CONDITION comma (,) STATEMENT
+
+SPELL_ABILITY:
+	STATEMENT
+
+ACTIVATED_ABILITY:
+	COSTS colons (:) STATEMENT
+
+COSTS:
+	COST
+	COST coma (,) COSTS
+
+COST:
+	MANA_COST
+	IMPERATIVE // can imperatives be costs ? "sacrifice a creature: [....]"
+
+TRIGGER_CONDITION:
+	when OBJECT_REFERENCE ACTION
+
+STATEMENT:
+	IMPERATIVE
+
+IMPERATIVE:
+	put NUMBER COUNTER on OBJECT_REFERENCE dot (.)
+	return OBJECT_REFERENCE from ZONE_REFERENCE to ZONE_REFERENCE dot (.)
+	OBJECT_REFERENCE deals NUMBER damage to OBJECT_REFERENCE dot (.)
+
+OBJECT_REFERENCE:
+	COUNT_SPECIFIER SPECIFIED_OBJECT
+	self reference (~)
+
+SPECIFIED_OBJECT:
+	OBJECT
+	OBJECT OBJECT // little hack to allow objects to be prefix specifiers, like "permanent card"
+	OBJ_PREFIX_SPECIFIER SPECIFIED_OBJECT
+	SPECIFIED_OBJECT OBJ_SUFFIX_SPECIFIER
+
+OBJ_PREFIX_SPECIFIER:
+	COLOR_SPECIFIER
+
+OBJ_SUFFIX_SPECIFIER:
+	CONTROL_SPECIFIER
+
+ZONE_REFERENCE:
+	battlefield (the battlefield)
+	APPARTENANCE_SPECIFIER ZONE
+
+
+COLOR_SPECIFIER:
+	white
+	red
+	green
+	blue
+	black
+	colorless
+
+CONTROL_FLOW:
+	newline (\n)
+	comma (,)
+	dot (.)
+
+CONTROL_SPECIFIER:
+	you control
+	you don't control
+
+COUNTER:
+	+1/+1 counter
+
+COUNT_SPECIFIER:
+	each
+	target
+	up to
+
+IMPERATIVE_KW:
+	put,
+	on
+	return
+	from
+	to
+
+ABILITY_KEYWORD:
+	flying
+	mentor
+	rebound
+
+NUMBER:
+	a
+	number (0..999)
+
+OBJECT:
+	creature
+	card
+	permanent
+
+ACTIONS:
+	dies
+	attacks
+
+TRIGGER_CONDITION_KW:
+	when
+
+ZONE:
+	graveyard
+	the battlefield
+
+APPARTENANCE_SPECIFIER:
+	your

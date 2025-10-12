@@ -1,0 +1,16 @@
+[package]
+name = "odin"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+mtg-data = { workspace = true }
+regex = { workspace = true }
+
+[dev-dependencies]
+krark = { workspace = true }
+
+[[test]]
+name = "lexer"
+path = "tests/lexer.rs"
+harness = false

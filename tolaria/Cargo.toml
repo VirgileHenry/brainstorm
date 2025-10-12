@@ -1,0 +1,10 @@
+[package]
+name = "tolaria"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arrayvec = { workspace = true }
+mtg-data = { workspace = true }
+odin = { workspace = true }
+uuid = "1.18.1"
