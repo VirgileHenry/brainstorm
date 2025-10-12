@@ -1,0 +1,10 @@
+[package]
+name = "tolaria"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+arrayvec = "0.7.6"
+mtg-data = { path = "deps/mtg-data" }
+odin = { path = "deps/odin" }
+uuid = "1.18.1"

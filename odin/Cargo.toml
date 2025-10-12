@@ -1,0 +1,16 @@
+[package]
+name = "odin"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mtg-data = { path = "deps/mtg-data" }
+regex = "1.11.3"
+
+[dev-dependencies]
+krark = { path = "deps/krark" }
+
+[[test]]
+name = "lexer"
+path = "tests/lexer.rs"
+harness = false

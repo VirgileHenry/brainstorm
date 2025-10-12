@@ -1,0 +1,27 @@
+/// All the layouts of Magic: The Gathering for playable cards.
+pub enum Layout {
+    Normal {
+        mana_cost: crate::ManaCost,
+        card_type: crate::CardType,
+        abilities: odin::AbilityTree,
+    },
+    Split {},
+    Flip {},
+    Transform {},
+    ModalDfc {},
+    Meld {},
+    Leveler {},
+    Class {},
+    Case {},
+    Saga {},
+    Adventure {},
+    Mutate {},
+    Prototype {},
+    Battle {},
+    Planar {},
+    Scheme {},
+    Vanguard {},
+    Token {},
+    DoubleFaced {},
+    Emblem {},
+}
