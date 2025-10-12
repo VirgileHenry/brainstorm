@@ -1,14 +1,14 @@
 [package]
 name = "odin"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
-mtg-data = { path = "deps/mtg-data" }
+mtg-data = { workspace = true }
 regex = "1.11.3"
 
 [dev-dependencies]
-krark = { path = "deps/krark" }
+krark = { workspace = true }
 
 [[test]]
 name = "lexer"

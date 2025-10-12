@@ -1,9 +1,9 @@
 [package]
 name = "krark"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
 libtest-mimic = "0.8.1"
-mtg-cardbase = { path = "deps/mtg-cardbase" }
+mtg-cardbase = { workspace = true }
 regex = "1.11.3"

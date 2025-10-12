@@ -16,6 +16,7 @@ pub enum ArtifactType {
     Powerstone,
     Spacecraft,
     Stone,
+    Terminus,
     Treasure,
     Vehicle,
 }
@@ -39,6 +40,7 @@ impl std::str::FromStr for ArtifactType {
             "Powerstone" => Ok(Self::Powerstone),
             "Spacecraft" => Ok(Self::Spacecraft),
             "Stone" => Ok(Self::Stone),
+            "Terminus" => Ok(Self::Terminus),
             "Treasure" => Ok(Self::Treasure),
             "Vehicle" => Ok(Self::Vehicle),
             other => Err(format!("Unknown ArtifactType: {}", other.to_string())),
@@ -64,6 +66,7 @@ impl ArtifactType {
             Self::Powerstone => "Powerstone",
             Self::Spacecraft => "Spacecraft",
             Self::Stone => "Stone",
+            Self::Terminus => "Terminus",
             Self::Treasure => "Treasure",
             Self::Vehicle => "Vehicle",
         }
@@ -93,6 +96,7 @@ impl ArtifactType {
             Self::Powerstone,
             Self::Spacecraft,
             Self::Stone,
+            Self::Terminus,
             Self::Treasure,
             Self::Vehicle,
         ]
