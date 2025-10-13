@@ -9,6 +9,17 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
     let card_name_lowercase = card_name.to_ascii_lowercase();
     let result = oracle_text;
 
+    // replace all raw unicode char points by they values
+    let unicode_regex = regex::Regex::new("\\\\u(\\d{4})")
+        .expect("Failed to compile unicode character point regex");
+    let replacement = |cap: &regex::Captures| -> String {
+        let (_, [point]) = cap.extract();
+        let point = u32::from_str_radix(point, 16).expect("Regex matched a non valid u32!");
+        let ch = char::from_u32(point).expect("Regex matched a non valid unicode point!");
+        ch.to_string()
+    };
+    let result = unicode_regex.replace_all(result, &replacement);
+
     let result = result.to_ascii_lowercase();
     let result = remove_comments(&result);
     let result = result.replace(&card_name_lowercase, "~");
@@ -47,8 +58,9 @@ fn remove_parens<I: Iterator<Item = char>>(chars: &mut I) {
 /// Create a vec of Terminals from a string. Can fail, and will return an error if it does.
 pub fn lex<'src>(input: &'src str) -> Result<Vec<tokens::Token<'src>>, error::LexerError> {
     /* List of non words token we also want to match */
-    const MATCHABLE_NON_WORDS: &[&'static str] =
-        &["\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-"];
+    const MATCHABLE_NON_WORDS: &[&'static str] = &[
+        "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•",
+    ];
 
     let matchable_non_words: String = MATCHABLE_NON_WORDS.iter().cloned().collect();
     let raw_token_pattern = format!("(\\b\\w+\\b)|([{}])", matchable_non_words);

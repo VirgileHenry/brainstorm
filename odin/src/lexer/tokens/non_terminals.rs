@@ -4,6 +4,8 @@ pub enum ControlFlowToken {
     Comma,
     Dot,
     Colons,
+    LongDash,
+    Bullet,
 }
 
 impl ControlFlowToken {
@@ -13,6 +15,8 @@ impl ControlFlowToken {
             "," => Some(ControlFlowToken::Comma),
             "." => Some(ControlFlowToken::Dot),
             ":" => Some(ControlFlowToken::Colons),
+            "—" => Some(ControlFlowToken::LongDash),
+            "•" => Some(ControlFlowToken::Bullet),
             _ => None,
         }
     }
@@ -102,6 +106,7 @@ pub enum EnglishKeywords {
     There,
     To,
     Top,
+    Unless,
     Until,
     Was,
     Where,
@@ -161,6 +166,7 @@ impl EnglishKeywords {
             "there" => Some(EnglishKeywords::There),
             "to" => Some(EnglishKeywords::To),
             "top" => Some(EnglishKeywords::Top),
+            "unless" => Some(EnglishKeywords::Unless),
             "until" => Some(EnglishKeywords::Until),
             "was" => Some(EnglishKeywords::Was),
             "where" => Some(EnglishKeywords::Where),
