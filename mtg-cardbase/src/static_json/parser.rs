@@ -160,7 +160,7 @@ impl Parser {
                 continue;
             }
             if ch == b'"' {
-                result = &self.source[start..self.index];
+                result = &self.source[start..self.index - 1];
                 break;
             }
             if ch == b'\\' {
