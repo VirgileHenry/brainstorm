@@ -5,6 +5,8 @@ edition.workspace = true
 
 [dependencies]
 arrayvec = { workspace = true }
+mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }
 odin = { workspace = true }
+regex = { workspace = true }
 uuid = "1.18.1"

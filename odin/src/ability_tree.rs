@@ -37,6 +37,34 @@ impl AbilityTree {
 
         Ok(())
     }
+
+    pub fn example() -> AbilityTree {
+        AbilityTree {
+            abilities: vec![ability::Ability::Triggered(
+                ability::triggered::TriggeredAbility {
+                    condition:
+                        ability::triggered::trigger_cond::TriggerCondition::ObjectDoesAction {
+                            object: object::ObjectReference::SelfReferencing,
+                            action: terminals::CardActions::Dies,
+                        },
+                    effect: statement::Statement::Imperative(imperative::Imperative::Put {
+                        amount: terminals::Number::Number(1),
+                        of: terminals::Counter::PlusOnePlusOne,
+                        on: object::ObjectReference::SpecifiedObj {
+                            amount: terminals::CountSpecifier::All,
+                            object: object::Object::Creature,
+                            specifiers: vec![
+                                object::ObjectSpecifier::Control(
+                                    terminals::ControlSpecifier::YouControl,
+                                ),
+                                object::ObjectSpecifier::Color(mtg_data::Color::White),
+                            ],
+                        },
+                    }),
+                },
+            )],
+        }
+    }
 }
 
 pub trait AbilityTreeImpl {
@@ -44,31 +72,4 @@ pub trait AbilityTreeImpl {
         &self,
         out: &mut crate::utils::TreeFormatter<'_, W>,
     ) -> std::io::Result<()>;
-}
-
-pub fn example() -> AbilityTree {
-    AbilityTree {
-        abilities: vec![ability::Ability::Triggered(
-            ability::triggered::TriggeredAbility {
-                condition: ability::triggered::trigger_cond::TriggerCondition::ObjectDoesAction {
-                    object: object::ObjectReference::SelfReferencing,
-                    action: terminals::CardActions::Dies,
-                },
-                effect: statement::Statement::Imperative(imperative::Imperative::Put {
-                    amount: terminals::Number::Number(1),
-                    of: terminals::Counter::PlusOnePlusOne,
-                    on: object::ObjectReference::SpecifiedObj {
-                        amount: terminals::CountSpecifier::All,
-                        object: object::Object::Creature,
-                        specifiers: vec![
-                            object::ObjectSpecifier::Control(
-                                terminals::ControlSpecifier::YouControl,
-                            ),
-                            object::ObjectSpecifier::Color(mtg_data::Color::White),
-                        ],
-                    },
-                }),
-            },
-        )],
-    }
 }

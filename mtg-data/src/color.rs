@@ -12,12 +12,12 @@ impl std::str::FromStr for Color {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "black" => Ok(Self::Black),
-            "blue" => Ok(Self::Blue),
-            "colorless" => Ok(Self::Colorless),
-            "green" => Ok(Self::Green),
-            "red" => Ok(Self::Red),
-            "white" => Ok(Self::White),
+            "b" | "B" | "black" => Ok(Self::Black),
+            "u" | "U" | "blue" => Ok(Self::Blue),
+            "c" | "C" | "colorless" => Ok(Self::Colorless),
+            "g" | "G" | "green" => Ok(Self::Green),
+            "r" | "R" | "red" => Ok(Self::Red),
+            "w" | "W" | "white" => Ok(Self::White),
             other => Err(format!("Unknown Color: {}", other.to_string())),
         }
     }

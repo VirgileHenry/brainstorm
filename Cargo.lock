@@ -300,8 +300,10 @@ name = "tolaria"
 version = "0.0.1"
 dependencies = [
  "arrayvec",
+ "mtg-cardbase",
  "mtg-data",
  "odin",
+ "regex",
  "uuid",
 ]
 
