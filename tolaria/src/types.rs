@@ -5,6 +5,9 @@ pub type ManaCost = arrayvec::ArrayVec<mtg_data::Mana, 16>;
 pub struct CardType {
     supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
     types: arrayvec::ArrayVec<TypeAndSubtypes, 4>,
+    d: mtg_data::CardType,
 }
 
-enum TypeAndSubtypes {}
+enum TypeAndSubtypes {
+
+}

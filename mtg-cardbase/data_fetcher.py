@@ -1,7 +1,7 @@
 import json
 import requests
 
-TARGET_DIR = "data"
+TARGET_FILE = "data/cards.json"
 URL = "https://data.scryfall.io/oracle-cards/oracle-cards-20250914090316.json"
 
 def to_snake_case(name):
@@ -13,9 +13,6 @@ def to_snake_case(name):
 print(f"Fetching {URL}")
 cards = requests.get(URL).json()
 
-print(f"Writing to \"{TARGET_DIR}\"")
-for card in cards:
-    card_name = card['name']
-    filename = to_snake_case(card_name)
-    with open(f"{TARGET_DIR}/{filename}.json", "w") as output:
-        json.dump(card, output)
+print(f"Writing to \"{TARGET_FILE}\"")
+with open(TARGET_FILE, "w") as output:
+    json.dump(cards, output, indent=2)

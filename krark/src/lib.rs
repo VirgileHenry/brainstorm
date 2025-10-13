@@ -34,11 +34,12 @@ impl KrarkHarness {
         &mut self,
         test_func: R,
     ) {
-        let mut recap = KrarkRecap::new(mtg_cardbase::ALL_CARDS.len());
+        let cards = mtg_cardbase::AllCardsIter::new();
+        let mut recap = KrarkRecap::new(cards.len());
 
-        for card in mtg_cardbase::ALL_CARDS.iter() {
+        for card in cards {
             let result =
-                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
+                match std::panic::catch_unwind(|| test_func(&card, KrarkResult::new(card.name))) {
                     Ok(result) => result,
                     Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
                 };
@@ -59,14 +60,15 @@ impl KrarkHarness {
         filter: F,
         test_func: R,
     ) {
-        let mut recap = KrarkRecap::new(mtg_cardbase::ALL_CARDS.len());
+        let cards = mtg_cardbase::AllCardsIter::new();
+        let mut recap = KrarkRecap::new(cards.len());
 
-        for card in mtg_cardbase::ALL_CARDS.iter() {
-            if !filter(card) {
+        for card in cards {
+            if !filter(&card) {
                 continue;
             }
             let result =
-                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
+                match std::panic::catch_unwind(|| test_func(&card, KrarkResult::new(card.name))) {
                     Ok(result) => result,
                     Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
                 };
@@ -86,12 +88,13 @@ impl KrarkHarness {
         sample_size: usize,
         test_func: R,
     ) {
-        let mut recap = KrarkRecap::new(sample_size);
+        let cards = mtg_cardbase::AllCardsIter::new();
+        let mut recap = KrarkRecap::new(cards.len());
 
-        let jump_size = (mtg_cardbase::ALL_CARDS.len() / sample_size).saturating_sub(1);
-        for card in mtg_cardbase::ALL_CARDS.iter().step_by(jump_size) {
+        let jump_size = (cards.len() / sample_size).saturating_sub(1);
+        for card in cards.step_by(jump_size) {
             let result =
-                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
+                match std::panic::catch_unwind(|| test_func(&card, KrarkResult::new(card.name))) {
                     Ok(result) => result,
                     Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
                 };

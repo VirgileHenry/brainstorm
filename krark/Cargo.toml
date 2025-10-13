@@ -6,4 +6,4 @@ edition.workspace = true
 [dependencies]
 libtest-mimic = "0.8.1"
 mtg-cardbase = { workspace = true }
-regex = "1.11.3"
+regex = { workspace = true }

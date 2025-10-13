@@ -4,8 +4,7 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+arrayvec = { workspace = true }
+json = "0.12.4"
 
 [build-dependencies]
-unicode-normalization = "0.1.24"
-serde = { workspace = true }
-serde_json = { workspace = true }
