@@ -138,7 +138,7 @@ impl std::str::FromStr for AbilityWord {
     }
 }
 impl AbilityWord {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Adamant => "adamant",
             Self::Addendum => "addendum",

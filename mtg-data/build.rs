@@ -83,11 +83,6 @@ const TO_GENERATE_ENUMS: &[ToGenerateEnum<'static>] = &[
         destination_file: "src/land_type.rs",
     },
     ToGenerateEnum {
-        name: "Legality",
-        source_file: "data/legality.txt",
-        destination_file: "src/legality.rs",
-    },
-    ToGenerateEnum {
         name: "PlaneswalkerType",
         source_file: "data/planeswalker_type.txt",
         destination_file: "src/planeswalker_type.rs",
@@ -155,7 +150,7 @@ impl<'a> ToGenerateEnum<'a> {
 
         // Write out the display funcs
         writeln!(destination, "impl {} {{", self.name)?;
-        writeln!(destination, "fn as_str(&self) -> &'static str {{")?;
+        writeln!(destination, "pub fn as_str(&self) -> &'static str {{")?;
         writeln!(destination, "match self {{")?;
         for (line, variant) in variants.iter() {
             writeln!(destination, "Self::{} =>\"{}\",", variant, line)?;

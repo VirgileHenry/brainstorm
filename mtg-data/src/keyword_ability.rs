@@ -434,7 +434,7 @@ impl std::str::FromStr for KeywordAbility {
     }
 }
 impl KeywordAbility {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Absorb => "absorb",
             Self::Affinity => "affinity",

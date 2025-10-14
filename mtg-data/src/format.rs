@@ -50,7 +50,7 @@ impl std::str::FromStr for Format {
     }
 }
 impl Format {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Alchemy => "alchemy",
             Self::Brawl => "brawl",

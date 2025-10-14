@@ -192,7 +192,7 @@ impl std::str::FromStr for PlaneswalkerType {
     }
 }
 impl PlaneswalkerType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Abian => "abian",
             Self::Ajani => "ajani",
