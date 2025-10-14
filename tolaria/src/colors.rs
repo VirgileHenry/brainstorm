@@ -1,15 +1,32 @@
-pub struct Colors(arrayvec::ArrayVec<mtg_data::Color, 5>);
+use std::fmt::Write;
 
-impl std::ops::Deref for Colors {
-    type Target = [mtg_data::Color];
-    fn deref(&self) -> &Self::Target {
-        self.0.as_slice()
+#[derive(Debug, Clone)]
+pub struct Colors {
+    white: bool,
+    blue: bool,
+    black: bool,
+    red: bool,
+    green: bool,
+}
+
+impl Colors {
+    pub fn empty() -> Colors {
+        Colors {
+            white: false,
+            blue: false,
+            black: false,
+            red: false,
+            green: false,
+        }
     }
 }
 
-impl std::ops::DerefMut for Colors {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        self.0.as_mut_slice()
+impl std::fmt::Display for Colors {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for color in self.0.iter() {
+            f.write_char(color.as_char())?;
+        }
+        Ok(())
     }
 }
 

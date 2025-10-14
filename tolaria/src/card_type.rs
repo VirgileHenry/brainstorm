@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+#[derive(Debug, Clone)]
 pub struct CardType {
     pub supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
     pub types: arrayvec::ArrayVec<TypeAndSubtypes, 4>,
@@ -68,6 +69,7 @@ impl CardType {
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum TypeAndSubtypes {
     Artifact {
         subtypes: arrayvec::ArrayVec<mtg_data::ArtifactType, 4>,

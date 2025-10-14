@@ -1,4 +1,5 @@
 /// For each format in [mtg_data::Format], the associated [mtg_data::Legality].
+#[derive(Debug, Clone)]
 pub struct Legalities {
     pub alchemy: mtg_data::Legality,
     pub brawl: mtg_data::Legality,

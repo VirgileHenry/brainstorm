@@ -18,6 +18,13 @@ fn main() {
         parsed.len() + failed.len()
     );
 
+    if parsed.len() > 0 {
+        println!("First few successes are:");
+        for card in parsed.iter().take(5) {
+            println!("{card:#?}");
+        }
+    }
+
     if failed.len() > 0 {
         println!("First few errors are:");
         for err in failed.iter().take(5) {

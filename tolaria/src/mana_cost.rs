@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct ManaCost(arrayvec::ArrayVec<mtg_data::Mana, 16>);
 
 impl std::ops::Deref for ManaCost {
