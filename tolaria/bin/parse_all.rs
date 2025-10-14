@@ -5,8 +5,17 @@ fn main() {
     let mut parsed = Vec::new();
     let mut failed = Vec::new();
 
-    for card in mtg_cardbase::AllCardsIter::new() {
-        match tolaria::Card::try_from(&card) {
+    let cards = mtg_cardbase::AllCardsIter::new();
+
+    use rayon::iter::IntoParallelRefIterator;
+    use rayon::iter::ParallelIterator;
+    let results: Vec<_> = cards
+        .par_iter()
+        .map(|card| tolaria::Card::try_from(card))
+        .collect();
+
+    for result in results {
+        match result {
             Ok(card) => parsed.push(card),
             Err(err) => failed.push(err),
         }
@@ -21,7 +30,7 @@ fn main() {
     if parsed.len() > 0 {
         println!("First few successes are:");
         for card in parsed.iter().take(5) {
-            println!("{card:#?}");
+            println!("{card}");
         }
     }
 

@@ -23,6 +23,34 @@ pub struct Legalities {
     pub vintage: mtg_data::Legality,
 }
 
+impl Legalities {
+    pub fn iter(&self) -> impl Iterator<Item = (mtg_data::Format, mtg_data::Legality)> {
+        [
+            (mtg_data::Format::Alchemy, self.alchemy),
+            (mtg_data::Format::Brawl, self.brawl),
+            (mtg_data::Format::Commander, self.commander),
+            (mtg_data::Format::Duel, self.duel),
+            (mtg_data::Format::Explorer, self.explorer),
+            (mtg_data::Format::Future, self.future),
+            (mtg_data::Format::Gladiator, self.gladiator),
+            (mtg_data::Format::Historic, self.historic),
+            (mtg_data::Format::Historicbrawl, self.historicbrawl),
+            (mtg_data::Format::Legacy, self.legacy),
+            (mtg_data::Format::Modern, self.modern),
+            (mtg_data::Format::Oathbreaker, self.oathbreaker),
+            (mtg_data::Format::Pauper, self.pauper),
+            (mtg_data::Format::Paupercommander, self.pauper_commander),
+            (mtg_data::Format::Penny, self.penny),
+            (mtg_data::Format::Pionner, self.pionner),
+            (mtg_data::Format::Predh, self.predh),
+            (mtg_data::Format::Premodern, self.premodern),
+            (mtg_data::Format::Standard, self.standard),
+            (mtg_data::Format::Vintage, self.vintage),
+        ]
+        .into_iter()
+    }
+}
+
 impl TryFrom<&mtg_cardbase::Legalities> for Legalities {
     type Error = String; // Fixme!
     fn try_from(value: &mtg_cardbase::Legalities) -> Result<Self, Self::Error> {
@@ -66,5 +94,25 @@ impl TryFrom<&mtg_cardbase::Legalities> for Legalities {
             vintage: mtg_data::Legality::from_str(value.vintage)
                 .map_err(|e| format!("Failed to parse format vintage: {e}"))?,
         })
+    }
+}
+
+impl std::fmt::Display for Legalities {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for legality in mtg_data::Legality::all() {
+            let legals_in: arrayvec::ArrayVec<_, 20> = self
+                .iter()
+                .filter(|(_, l)| *l == legality)
+                .map(|(f, _)| f)
+                .collect();
+            if !legals_in.is_empty() {
+                write!(f, "{legality} in: ")?;
+                for format in legals_in.iter().take(legals_in.len() - 1) {
+                    write!(f, "{format}, ")?;
+                }
+                writeln!(f, "{}", legals_in[legals_in.len() - 1])?;
+            }
+        }
+        Ok(())
     }
 }
