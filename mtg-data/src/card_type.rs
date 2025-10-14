@@ -44,7 +44,7 @@ impl std::str::FromStr for CardType {
     }
 }
 impl CardType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Artifact => "artifact",
             Self::Battle => "battle",

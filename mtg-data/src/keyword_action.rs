@@ -142,7 +142,7 @@ impl std::str::FromStr for KeywordAction {
     }
 }
 impl KeywordAction {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Abandon => "abandon",
             Self::Activate => "activate",

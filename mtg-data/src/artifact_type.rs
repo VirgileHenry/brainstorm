@@ -48,7 +48,7 @@ impl std::str::FromStr for ArtifactType {
     }
 }
 impl ArtifactType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Attraction => "attraction",
             Self::Blood => "blood",

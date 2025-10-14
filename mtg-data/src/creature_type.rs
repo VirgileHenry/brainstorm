@@ -662,7 +662,7 @@ impl std::str::FromStr for CreatureType {
     }
 }
 impl CreatureType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Advisor => "advisor",
             Self::Aetherborn => "aetherborn",

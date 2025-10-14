@@ -46,7 +46,7 @@ impl std::str::FromStr for LandType {
     }
 }
 impl LandType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Cave => "cave",
             Self::Cloud => "cloud",

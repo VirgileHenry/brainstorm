@@ -12,7 +12,7 @@ impl std::str::FromStr for BattleType {
     }
 }
 impl BattleType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Siege => "siege",
         }

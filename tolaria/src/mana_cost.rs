@@ -20,11 +20,11 @@ impl std::str::FromStr for ManaCost {
 
         /* Yeah, yeah, it's not that hard and may not need a regex. Whatever for now. */
         let mana_cost_regex = regex::Regex::new(r"(\{[^{}]+\})")
-            .expect("Failed to compile the mana cost iterator regex!");
+            .map_err(|e| format!("Failed to compile the mana cost iterator regex: {e}"))?;
 
         for capture in mana_cost_regex.captures_iter(raw_mana_cost) {
             let mana = mtg_data::Mana::from_str(capture.get_match().as_str())
-                .map_err(|e| format!("Failed to parse acptured mana cost: {e}"))?;
+                .map_err(|e| format!("Failed to parse captured mana cost: {e}"))?;
             result.push(mana);
         }
 

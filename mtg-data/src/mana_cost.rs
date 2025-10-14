@@ -17,31 +17,28 @@ impl std::str::FromStr for Mana {
             let symbols = from[1..from.len() - 1]
                 .split('/')
                 .map(ManaSymbol::parse_symbol)
-                .collect::<Vec<_>>();
+                .collect::<Result<Vec<_>, _>>()?;
             match symbols.as_slice() {
-                [Some(ManaSymbol::X)] => Ok(Mana::X),
-                [Some(ManaSymbol::Any(num))] => Ok(Mana::Any(*num)),
-                [Some(ManaSymbol::Colored(color))] => Ok(Mana::Colored(*color)),
-                [Some(ManaSymbol::Colored(c1)), Some(ManaSymbol::Colored(c2))] => {
-                    Ok(Mana::Hybrid(*c1, *c2))
-                }
-                [Some(ManaSymbol::Any(num)), Some(ManaSymbol::Colored(color))] => {
+                [ManaSymbol::X] => Ok(Mana::X),
+                [ManaSymbol::Any(num)] => Ok(Mana::Any(*num)),
+                [ManaSymbol::Colored(color)] => Ok(Mana::Colored(*color)),
+                [ManaSymbol::Colored(c1), ManaSymbol::Colored(c2)] => Ok(Mana::Hybrid(*c1, *c2)),
+                [ManaSymbol::Any(num), ManaSymbol::Colored(color)] => {
                     Ok(Mana::MonocoloredHybrid(*num, *color))
                 }
+                [ManaSymbol::Colored(color), ManaSymbol::Phyrexian] => Ok(Mana::Phyrexian(*color)),
                 [
-                    Some(ManaSymbol::Colored(color)),
-                    Some(ManaSymbol::Phyrexian),
-                ] => Ok(Mana::Phyrexian(*color)),
-                [
-                    Some(ManaSymbol::Colored(c1)),
-                    Some(ManaSymbol::Colored(c2)),
-                    Some(ManaSymbol::Phyrexian),
+                    ManaSymbol::Colored(c1),
+                    ManaSymbol::Colored(c2),
+                    ManaSymbol::Phyrexian,
                 ] => Ok(Mana::HybridPhyrexian(*c1, *c2)),
-                [Some(ManaSymbol::Snow)] => Ok(Mana::Snow),
+                [ManaSymbol::Snow] => Ok(Mana::Snow),
                 _ => Err(format!("Invalid symbol combination: {symbols:?}")),
             }
         } else {
-            Err(format!("Mana cost shall be between curly braces"))
+            Err(format!(
+                "Mana cost shall be between curly braces, got {from}"
+            ))
         }
     }
 }
@@ -83,18 +80,21 @@ impl std::fmt::Debug for ManaSymbol {
 }
 
 impl ManaSymbol {
-    fn parse_symbol(input: &str) -> Option<ManaSymbol> {
+    fn parse_symbol(input: &str) -> Result<ManaSymbol, String> {
         return match input {
-            "w" => Some(ManaSymbol::Colored(crate::Color::White)),
-            "b" => Some(ManaSymbol::Colored(crate::Color::Black)),
-            "r" => Some(ManaSymbol::Colored(crate::Color::Red)),
-            "u" => Some(ManaSymbol::Colored(crate::Color::Blue)),
-            "g" => Some(ManaSymbol::Colored(crate::Color::Green)),
-            "c" => Some(ManaSymbol::Colored(crate::Color::Colorless)),
-            "x" => Some(ManaSymbol::X),
-            "s" => Some(ManaSymbol::Snow),
-            "p" => Some(ManaSymbol::Phyrexian),
-            other => Some(ManaSymbol::Any(other.parse().ok()?)),
+            "w" | "W" => Ok(ManaSymbol::Colored(crate::Color::White)),
+            "b" | "B" => Ok(ManaSymbol::Colored(crate::Color::Black)),
+            "r" | "R" => Ok(ManaSymbol::Colored(crate::Color::Red)),
+            "u" | "U" => Ok(ManaSymbol::Colored(crate::Color::Blue)),
+            "g" | "G" => Ok(ManaSymbol::Colored(crate::Color::Green)),
+            "c" | "C" => Ok(ManaSymbol::Colored(crate::Color::Colorless)),
+            "x" | "X" => Ok(ManaSymbol::X),
+            "s" | "S" => Ok(ManaSymbol::Snow),
+            "p" | "P" => Ok(ManaSymbol::Phyrexian),
+            other => match other.parse() {
+                Ok(num) => Ok(ManaSymbol::Any(num)),
+                Err(_) => Err(format!("Unknown mana symbol: {other}")),
+            },
         };
     }
 }

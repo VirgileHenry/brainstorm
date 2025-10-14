@@ -22,7 +22,7 @@ impl std::str::FromStr for SpellType {
     }
 }
 impl SpellType {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         match self {
             Self::Adventure => "adventure",
             Self::Arcane => "arcane",
