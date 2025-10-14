@@ -1,4 +1,5 @@
 /// All the layouts of Magic: The Gathering for playable cards.
+#[derive(Debug, Clone)]
 pub enum Layout {
     Normal {
         mana_cost: crate::mana_cost::ManaCost,
@@ -41,7 +42,7 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                     .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                 card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                abilities: odin::AbilityTree::example(),
+                abilities: odin::AbilityTree::empty(),
             }),
             other => Err(format!("Invalid layout in card: {other}")),
         }

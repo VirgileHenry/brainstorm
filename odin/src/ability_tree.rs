@@ -38,6 +38,12 @@ impl AbilityTree {
         Ok(())
     }
 
+    pub fn empty() -> AbilityTree {
+        AbilityTree {
+            abilities: Vec::with_capacity(0),
+        }
+    }
+
     pub fn example() -> AbilityTree {
         AbilityTree {
             abilities: vec![ability::Ability::Triggered(
