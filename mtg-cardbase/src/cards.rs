@@ -1,8 +1,10 @@
+use std::ops::{Deref, DerefMut};
+
 /// If this throws an error, you might be missing the card database.
 /// Run the python script "data_fetcher.py" to get it.
 const CARDS_JSON: &'static str = include_str!("../data/cards.json");
 
-pub struct AllCardsIter(std::collections::VecDeque<crate::Card>);
+pub struct AllCardsIter(Vec<crate::Card>);
 
 impl AllCardsIter {
     pub fn new() -> Self {
@@ -29,9 +31,15 @@ impl AllCardsIter {
     }
 }
 
-impl Iterator for AllCardsIter {
-    type Item = crate::Card;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.pop_front()
+impl Deref for AllCardsIter {
+    type Target = [crate::Card];
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for AllCardsIter {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }

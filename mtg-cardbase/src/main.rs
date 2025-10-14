@@ -10,7 +10,7 @@ pub use cards::AllCardsIter;
 
 fn main() {
     let cards = AllCardsIter::new();
-    let count = cards.count();
+    let count = cards.len();
 
     println!("Parsed {count} cards!");
 }

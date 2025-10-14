@@ -32,3 +32,14 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
         })
     }
 }
+
+impl std::fmt::Display for Card {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "==== {} ====", self.name)?;
+        writeln!(f, "scryfall id: {}", self.scryfall_id)?;
+        write!(f, "Legalities:\n{}", self.legalities)?; // Fixme: I don't like the missing newline here
+        writeln!(f, "color_identity: {}", self.color_identity)?;
+        write!(f, "Layout:{}", self.layout)?;
+        Ok(())
+    }
+}

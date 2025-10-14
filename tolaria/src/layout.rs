@@ -48,3 +48,22 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
         }
     }
 }
+
+impl std::fmt::Display for Layout {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Layout::Normal {
+                mana_cost,
+                card_type,
+                abilities,
+            } => {
+                writeln!(f, "Normal:")?;
+                writeln!(f, "Mana Cost: {mana_cost}")?;
+                writeln!(f, "Type Line: {card_type}")?;
+                write!(f, "Abilities: TODO")?; // fixme
+                Ok(())
+            }
+            _ => write!(f, "Unimplemented!"),
+        }
+    }
+}

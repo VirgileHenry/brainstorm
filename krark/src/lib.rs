@@ -29,7 +29,7 @@ impl KrarkHarness {
     }
 
     pub fn run<
-        R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe,
+        R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe + Sync,
     >(
         &mut self,
         test_func: R,
@@ -37,12 +37,19 @@ impl KrarkHarness {
         let cards = mtg_cardbase::AllCardsIter::new();
         let mut recap = KrarkRecap::new(cards.len());
 
-        for card in cards {
-            let result =
-                match std::panic::catch_unwind(|| test_func(&card, KrarkResult::new(card.name))) {
+        use rayon::iter::IntoParallelRefIterator;
+        use rayon::iter::ParallelIterator;
+        let results: Vec<_> = cards
+            .par_iter()
+            .map(|card| {
+                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
                     Ok(result) => result,
                     Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
-                };
+                }
+            })
+            .collect();
+
+        for result in results.into_iter() {
             recap.add_result(result);
         }
 
@@ -53,8 +60,8 @@ impl KrarkHarness {
     }
 
     pub fn run_filter<
-        F: Fn(&mtg_cardbase::Card) -> bool,
-        R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe,
+        F: Fn(&mtg_cardbase::Card) -> bool + Sync + Send,
+        R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe + Sync,
     >(
         &mut self,
         filter: F,
@@ -63,41 +70,20 @@ impl KrarkHarness {
         let cards = mtg_cardbase::AllCardsIter::new();
         let mut recap = KrarkRecap::new(cards.len());
 
-        for card in cards {
-            if !filter(&card) {
-                continue;
-            }
-            let result =
-                match std::panic::catch_unwind(|| test_func(&card, KrarkResult::new(card.name))) {
+        use rayon::iter::IntoParallelRefIterator;
+        use rayon::iter::ParallelIterator;
+        let results: Vec<_> = cards
+            .par_iter()
+            .filter(|card| filter(card))
+            .map(|card| {
+                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
                     Ok(result) => result,
                     Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
-                };
-            recap.add_result(result);
-        }
+                }
+            })
+            .collect();
 
-        match recap_display::output_recap(&self, recap) {
-            Ok(_) => { /* all good */ }
-            Err(e) => println!("Failed to output recap: {e}"),
-        }
-    }
-
-    pub fn run_on_sample<
-        R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe,
-    >(
-        &mut self,
-        sample_size: usize,
-        test_func: R,
-    ) {
-        let cards = mtg_cardbase::AllCardsIter::new();
-        let mut recap = KrarkRecap::new(cards.len());
-
-        let jump_size = (cards.len() / sample_size).saturating_sub(1);
-        for card in cards.step_by(jump_size) {
-            let result =
-                match std::panic::catch_unwind(|| test_func(&card, KrarkResult::new(card.name))) {
-                    Ok(result) => result,
-                    Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
-                };
+        for result in results.into_iter() {
             recap.add_result(result);
         }
 
