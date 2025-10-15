@@ -45,7 +45,7 @@ impl CardType {
     }
     pub fn parse(
         type_line: &str,
-        _raw_card: &mtg_cardbase::Card,
+        raw_card: &mtg_cardbase::Card,
     ) -> Result<Self, String /* Fixme */> {
         use std::str::FromStr;
 
@@ -79,59 +79,152 @@ impl CardType {
             match mtg_data::CardType::from_str(token) {
                 Ok(card_type) => {
                     match card_type {
-                        mtg_data::CardType::Artifact => {
-                            result.artifact = Some(ArtifactSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Battle => {
-                            result.battle = Some(BattleSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Conspiracy => {
-                            result.conspiracy = Some(ConspiracySubtype)
-                        }
-                        mtg_data::CardType::Creature => {
-                            result.creature = Some(CreatureSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Dungeon => result.dungeon = Some(DungeonSubtype),
-                        mtg_data::CardType::Emblem => result.emblem = Some(EmblemSubtype),
-                        mtg_data::CardType::Enchantment => {
-                            result.enchantment = Some(EnchantmentSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Hero => result.hero = Some(HeroSubtype),
-                        mtg_data::CardType::Instant => {
-                            result.instant = Some(InstantSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Kindred => result.kindred = Some(KindredSubtype),
-                        mtg_data::CardType::Land => {
-                            result.land = Some(LandSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Phenomenon => {
-                            result.phenomenon = Some(PhenomenonSubtype)
-                        }
-                        mtg_data::CardType::Plane => result.plane = Some(PlaneSubtype),
-                        mtg_data::CardType::Planeswalker => {
-                            result.planeswalker = Some(PlaneswalkerSubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Scheme => result.scheme = Some(SchemeSubtype),
-                        mtg_data::CardType::Sorcery => {
-                            result.sorcery = Some(SorcerySubtype {
-                                subtypes: arrayvec::ArrayVec::new(),
-                            })
-                        }
-                        mtg_data::CardType::Vanguard => result.vanguard = Some(VanguardSubtype),
+                        mtg_data::CardType::Artifact => match result.artifact {
+                            None => {
+                                result.artifact = Some(ArtifactSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!("Artifact type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Battle => match result.battle {
+                            None => {
+                                result.battle = Some(BattleSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!("Battle type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Conspiracy => match result.conspiracy {
+                            None => result.conspiracy = Some(ConspiracySubtype),
+                            Some(_) => {
+                                return Err(format!(
+                                    "Consiparacy type present twice in card type!"
+                                ));
+                            }
+                        },
+                        mtg_data::CardType::Creature => match result.creature {
+                            None => {
+                                result.creature = Some(CreatureSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!("Creature type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Dungeon => match result.dungeon {
+                            None => result.dungeon = Some(DungeonSubtype),
+                            Some(_) => {
+                                return Err(format!("Dungeon type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Emblem => match result.emblem {
+                            None => result.emblem = Some(EmblemSubtype),
+                            Some(_) => {
+                                return Err(format!("Emblem type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Enchantment => match result.enchantment {
+                            None => {
+                                result.enchantment = Some(EnchantmentSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!(
+                                    "Enchantment type present twice in card type!"
+                                ));
+                            }
+                        },
+                        mtg_data::CardType::Hero => match result.hero {
+                            None => result.hero = Some(HeroSubtype),
+                            Some(_) => {
+                                return Err(format!("Hero type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Instant => match result.instant {
+                            None => {
+                                result.instant = Some(InstantSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!("Instant type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Kindred => match result.kindred {
+                            None => result.kindred = Some(KindredSubtype),
+                            Some(_) => {
+                                return Err(format!("Kindred type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Land => match result.land {
+                            None => {
+                                result.land = Some(LandSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!("Land type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Phenomenon => match result.phenomenon {
+                            None => result.phenomenon = Some(PhenomenonSubtype),
+                            Some(_) => {
+                                return Err(format!("Phenomenon type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Plane => match result.plane {
+                            None => result.plane = Some(PlaneSubtype),
+                            Some(_) => {
+                                return Err(format!("Plane type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Planeswalker => match result.planeswalker {
+                            None => {
+                                let loyalty = raw_card.loyalty.ok_or_else(|| {
+                                    format!("No loyalty field on card with planeswalker type!")
+                                })?;
+                                result.planeswalker = Some(PlaneswalkerSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                    loyalty: loyalty.parse().map_err(|e| {
+                                        format!("Failed to parse loyalty \"{loyalty}\": {e}")
+                                    })?,
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!(
+                                    "Planeswalker type present twice in card type!"
+                                ));
+                            }
+                        },
+                        mtg_data::CardType::Scheme => match result.scheme {
+                            None => result.scheme = Some(SchemeSubtype),
+                            Some(_) => {
+                                return Err(format!("Scheme type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Sorcery => match result.sorcery {
+                            None => {
+                                result.sorcery = Some(SorcerySubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
+                            Some(_) => {
+                                return Err(format!("Sorcery type present twice in card type!"));
+                            }
+                        },
+                        mtg_data::CardType::Vanguard => match result.vanguard {
+                            None => result.vanguard = Some(VanguardSubtype),
+                            Some(_) => {
+                                return Err(format!("Vanguard type present twice in card type!"));
+                            }
+                        },
                     }
                     let _ = tokens.next();
                 }
@@ -139,7 +232,90 @@ impl CardType {
             }
         }
 
-        // Todo: parse subtypes also
+        while let Some(token) = tokens.next() {
+            if let Some(subtype) = &mut result.artifact {
+                if let Ok(new_subtype) = mtg_data::ArtifactType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.battle {
+                if let Ok(new_subtype) = mtg_data::BattleType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.creature {
+                if let Ok(new_subtype) = mtg_data::CreatureType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.enchantment {
+                if let Ok(new_subtype) = mtg_data::EnchantmentType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.instant {
+                if let Ok(new_subtype) = mtg_data::SpellType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.land {
+                if let Ok(new_subtype) = mtg_data::LandType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.planeswalker {
+                if let Ok(new_subtype) = mtg_data::PlaneswalkerType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.sorcery {
+                if let Ok(new_subtype) = mtg_data::SpellType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            /* If we arrive here, no type managed to validated the given subtype, that's an error! */
+            return Err(format!("subtype {token} does not fit any card types!"));
+        }
 
         Ok(result)
     }
@@ -147,7 +323,106 @@ impl CardType {
 
 impl std::fmt::Display for CardType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Todo")
+        for supertype in self.supertypes.iter() {
+            write!(f, "{supertype} ")?;
+        }
+
+        if self.artifact.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Artifact)?;
+        }
+        if self.battle.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Battle)?;
+        }
+        if self.conspiracy.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Conspiracy)?;
+        }
+        if self.creature.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Creature)?;
+        }
+        if self.dungeon.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Dungeon)?;
+        }
+        if self.emblem.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Emblem)?;
+        }
+        if self.enchantment.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Enchantment)?;
+        }
+        if self.hero.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Hero)?;
+        }
+        if self.instant.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Instant)?;
+        }
+        if self.kindred.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Kindred)?;
+        }
+        if self.land.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Land)?;
+        }
+        if self.phenomenon.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Phenomenon)?;
+        }
+        if self.plane.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Plane)?;
+        }
+        if self.planeswalker.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Planeswalker)?;
+        }
+        if self.scheme.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Scheme)?;
+        }
+        if self.sorcery.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Sorcery)?;
+        }
+        if self.vanguard.is_some() {
+            write!(f, "{} ", mtg_data::CardType::Vanguard)?;
+        }
+
+        write!(f, "— ")?;
+
+        if let Some(subtype) = &self.artifact {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.battle {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.creature {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.enchantment {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.instant {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.land {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.planeswalker {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+        if let Some(subtype) = &self.sorcery {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -205,6 +480,7 @@ pub struct PlaneSubtype;
 #[derive(Debug, Clone)]
 pub struct PlaneswalkerSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::PlaneswalkerType, 4>,
+    loyalty: u64,
 }
 
 #[derive(Debug, Clone)]

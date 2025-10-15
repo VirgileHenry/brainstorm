@@ -27,6 +27,7 @@ pub struct Card {
     pub color_identity: arrayvec::ArrayVec<&'static str, 5>,
     pub keywords: arrayvec::ArrayVec<&'static str, 16>,
     pub produced_mana: Option<arrayvec::ArrayVec<&'static str, 8>>,
+    pub loyalty: Option<&'static str>,
     pub legalities: Legalities,
     pub games: arrayvec::ArrayVec<&'static str, 8>,
     pub reserved: bool,
@@ -124,6 +125,8 @@ impl crate::static_json::FromJsonValue for Card {
                 .map_err(|e| format!("For key produced_mana: {e}"))?,
             legalities: <_>::from_json_value(&json["legalities"])
                 .map_err(|e| format!("For key legalities: {e}"))?,
+            loyalty: <_>::from_json_value(&json["loyalty"])
+                .map_err(|e| format!("For key loyalty: {e}"))?,
             games: <_>::from_json_value(&json["games"])
                 .map_err(|e| format!("For key games: {e}"))?,
             reserved: <_>::from_json_value(&json["reserved"])

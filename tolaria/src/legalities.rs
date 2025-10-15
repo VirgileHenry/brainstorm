@@ -24,6 +24,33 @@ pub struct Legalities {
 }
 
 impl Legalities {
+    pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
+        let lines: arrayvec::ArrayVec<_, 4> = mtg_data::Legality::all()
+            .map(|legality| {
+                let legals_in: arrayvec::ArrayVec<_, 20> = self
+                    .iter()
+                    .filter(|(_, l)| *l == legality)
+                    .map(|(f, _)| f)
+                    .collect();
+                match legals_in.is_empty() {
+                    false => Some((legality, legals_in)),
+                    true => None,
+                }
+            })
+            .filter(Option::is_some)
+            .map(Option::unwrap)
+            .collect();
+        for (i, (legality, formats)) in lines.iter().enumerate() {
+            let tree_node = if i + 1 == lines.len() { '╰' } else { '├' };
+            write!(output, "│ {tree_node}─ {legality} in: ")?;
+            for (j, format) in formats.iter().enumerate() {
+                let end_str = if j + 1 == formats.len() { "\n" } else { ", " };
+                write!(output, "{format}{end_str}")?;
+            }
+        }
+        Ok(())
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = (mtg_data::Format, mtg_data::Legality)> {
         [
             (mtg_data::Format::Alchemy, self.alchemy),
@@ -94,25 +121,5 @@ impl TryFrom<&mtg_cardbase::Legalities> for Legalities {
             vintage: mtg_data::Legality::from_str(value.vintage)
                 .map_err(|e| format!("Failed to parse format vintage: {e}"))?,
         })
-    }
-}
-
-impl std::fmt::Display for Legalities {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for legality in mtg_data::Legality::all() {
-            let legals_in: arrayvec::ArrayVec<_, 20> = self
-                .iter()
-                .filter(|(_, l)| *l == legality)
-                .map(|(f, _)| f)
-                .collect();
-            if !legals_in.is_empty() {
-                write!(f, "{legality} in: ")?;
-                for format in legals_in.iter().take(legals_in.len() - 1) {
-                    write!(f, "{format}, ")?;
-                }
-                writeln!(f, "{}", legals_in[legals_in.len() - 1])?;
-            }
-        }
-        Ok(())
     }
 }
