@@ -27,6 +27,25 @@ pub enum Layout {
     Emblem {},
 }
 
+impl Layout {
+    pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
+        match self {
+            Layout::Normal {
+                mana_cost,
+                card_type,
+                ..
+            } => {
+                writeln!(output, "│ ╰─ Normal:")?;
+                writeln!(output, "│    ├─ Mana Cost: {mana_cost}")?;
+                writeln!(output, "│    ├─ Type Line: {card_type}")?;
+                writeln!(output, "│    ╰─ Abilities: TODO")?; // Todo
+                Ok(())
+            }
+            _ => writeln!(output, "Unimplemented!"),
+        }
+    }
+}
+
 impl TryFrom<&mtg_cardbase::Card> for Layout {
     type Error = String; // Fixme!
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
@@ -45,25 +64,6 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                 abilities: odin::AbilityTree::empty(),
             }),
             other => Err(format!("Invalid layout in card: {other}")),
-        }
-    }
-}
-
-impl std::fmt::Display for Layout {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Layout::Normal {
-                mana_cost,
-                card_type,
-                abilities,
-            } => {
-                writeln!(f, "Normal:")?;
-                writeln!(f, "Mana Cost: {mana_cost}")?;
-                writeln!(f, "Type Line: {card_type}")?;
-                write!(f, "Abilities: TODO")?; // fixme
-                Ok(())
-            }
-            _ => write!(f, "Unimplemented!"),
         }
     }
 }

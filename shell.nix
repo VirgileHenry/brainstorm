@@ -3,9 +3,9 @@
 pkgs.mkShell {
   buildInputs = [
     pkgs.cargo
+    pkgs.cargo-flamegraph
     pkgs.rustc
     pkgs.rustfmt
-    pkgs.mold
     pkgs.python313
     pkgs.python313Packages.requests
   ];

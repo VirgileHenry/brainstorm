@@ -15,3 +15,8 @@ target
 
 # envrc is specific to whoever uses it
 .envrc
+
+# flamegraph data
+perf.data
+perf.data.old
+flamegraph.svg

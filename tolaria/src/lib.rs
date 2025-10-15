@@ -14,6 +14,20 @@ pub struct Card {
     pub layout: layout::Layout,
 }
 
+impl Card {
+    pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
+        writeln!(output, "╭──── {} ────", self.name)?;
+        writeln!(output, "│ scryfall id: {}", self.scryfall_id)?;
+        writeln!(output, "│ legalities:")?;
+        self.legalities.display(output)?;
+        writeln!(output, "│ color identity: {}", self.color_identity)?;
+        writeln!(output, "│ layout: ")?;
+        self.layout.display(output)?;
+        writeln!(output, "╰────")?;
+        Ok(())
+    }
+}
+
 impl TryFrom<&mtg_cardbase::Card> for Card {
     type Error = String; // Fixme: proper error handling accross everything
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
@@ -35,11 +49,9 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
 
 impl std::fmt::Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "==== {} ====", self.name)?;
-        writeln!(f, "scryfall id: {}", self.scryfall_id)?;
-        write!(f, "Legalities:\n{}", self.legalities)?; // Fixme: I don't like the missing newline here
-        writeln!(f, "color_identity: {}", self.color_identity)?;
-        write!(f, "Layout:{}", self.layout)?;
-        Ok(())
+        let mut buffer = Vec::new();
+        self.display(&mut buffer).map_err(|_| std::fmt::Error)?;
+        let s = std::str::from_utf8(&buffer).map_err(|_| std::fmt::Error)?;
+        write!(f, "{}", s)
     }
 }
