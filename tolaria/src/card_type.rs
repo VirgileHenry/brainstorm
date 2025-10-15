@@ -1,6 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct CardType {
-    pub supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
+    supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
     artifact: Option<ArtifactSubtype>,
     battle: Option<BattleSubtype>,
     conspiracy: Option<ConspiracySubtype>,
@@ -77,57 +77,64 @@ impl CardType {
         /* Parse all types then */
         while let Some(token) = tokens.peek() {
             match mtg_data::CardType::from_str(token) {
-                Ok(card_type) => match card_type {
-                    mtg_data::CardType::Artifact => {
-                        result.artifact = Some(ArtifactSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
+                Ok(card_type) => {
+                    match card_type {
+                        mtg_data::CardType::Artifact => {
+                            result.artifact = Some(ArtifactSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Battle => {
+                            result.battle = Some(BattleSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Conspiracy => {
+                            result.conspiracy = Some(ConspiracySubtype)
+                        }
+                        mtg_data::CardType::Creature => {
+                            result.creature = Some(CreatureSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Dungeon => result.dungeon = Some(DungeonSubtype),
+                        mtg_data::CardType::Emblem => result.emblem = Some(EmblemSubtype),
+                        mtg_data::CardType::Enchantment => {
+                            result.enchantment = Some(EnchantmentSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Hero => result.hero = Some(HeroSubtype),
+                        mtg_data::CardType::Instant => {
+                            result.instant = Some(InstantSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Kindred => result.kindred = Some(KindredSubtype),
+                        mtg_data::CardType::Land => {
+                            result.land = Some(LandSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Phenomenon => {
+                            result.phenomenon = Some(PhenomenonSubtype)
+                        }
+                        mtg_data::CardType::Plane => result.plane = Some(PlaneSubtype),
+                        mtg_data::CardType::Planeswalker => {
+                            result.planeswalker = Some(PlaneswalkerSubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Scheme => result.scheme = Some(SchemeSubtype),
+                        mtg_data::CardType::Sorcery => {
+                            result.sorcery = Some(SorcerySubtype {
+                                subtypes: arrayvec::ArrayVec::new(),
+                            })
+                        }
+                        mtg_data::CardType::Vanguard => result.vanguard = Some(VanguardSubtype),
                     }
-                    mtg_data::CardType::Battle => {
-                        result.battle = Some(BattleSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Conspiracy => result.conspiracy = Some(ConspiracySubtype),
-                    mtg_data::CardType::Creature => {
-                        result.creature = Some(CreatureSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Dungeon => result.dungeon = Some(DungeonSubtype),
-                    mtg_data::CardType::Emblem => result.emblem = Some(EmblemSubtype),
-                    mtg_data::CardType::Enchantment => {
-                        result.enchantment = Some(EnchantmentSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Hero => result.hero = Some(HeroSubtype),
-                    mtg_data::CardType::Instant => {
-                        result.instant = Some(InstantSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Kindred => result.kindred = Some(KindredSubtype),
-                    mtg_data::CardType::Land => {
-                        result.land = Some(LandSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Phenomenon => result.phenomenon = Some(PhenomenonSubtype),
-                    mtg_data::CardType::Plane => result.plane = Some(PlaneSubtype),
-                    mtg_data::CardType::Planeswalker => {
-                        result.planeswalker = Some(PlaneswalkerSubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Scheme => result.scheme = Some(SchemeSubtype),
-                    mtg_data::CardType::Sorcery => {
-                        result.sorcery = Some(SorcerySubtype {
-                            subtypes: arrayvec::ArrayVec::new(),
-                        })
-                    }
-                    mtg_data::CardType::Vanguard => result.vanguard = Some(VanguardSubtype),
-                },
+                    let _ = tokens.next();
+                }
                 Err(_) => break,
             }
         }
