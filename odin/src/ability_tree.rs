@@ -14,6 +14,15 @@ pub struct AbilityTree {
 }
 
 impl AbilityTree {
+    pub fn from_oracle_text(
+        oracle_text: &str,
+        card_name: &str,
+    ) -> Result<AbilityTree, crate::error::OdinError> {
+        let preprocessed = crate::lexer::preprocess(card_name, oracle_text);
+        let tokens = crate::lexer::lex(&preprocessed)?;
+        let result = crate::parser::parse(&tokens)?;
+        Ok(result)
+    }
     pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
         use std::io::Write;
         let mut tree_formatter = crate::utils::TreeFormatter::new(output, 64);
@@ -58,13 +67,17 @@ impl AbilityTree {
                         of: terminals::Counter::PlusOnePlusOne,
                         on: object::ObjectReference::SpecifiedObj {
                             amount: terminals::CountSpecifier::All,
-                            object: object::Object::Creature,
-                            specifiers: vec![
-                                object::ObjectSpecifier::Control(
-                                    terminals::ControlSpecifier::YouControl,
-                                ),
-                                object::ObjectSpecifier::Color(mtg_data::Color::White),
-                            ],
+                            specifier: object::ObjectSpecifier::And(
+                                Box::new(object::ObjectSpecifier::And(
+                                    Box::new(object::ObjectSpecifier::Control(
+                                        terminals::ControlSpecifier::YouControl,
+                                    )),
+                                    Box::new(object::ObjectSpecifier::Kind(
+                                        object::ObjectKind::Type(mtg_data::CardType::Creature),
+                                    )),
+                                )),
+                                Box::new(object::ObjectSpecifier::Color(mtg_data::Color::White)),
+                            ),
                         },
                     }),
                 },

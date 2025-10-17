@@ -5,10 +5,10 @@ pub mod parser;
 pub mod utils;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let krenko_name = "Krenko, Mob Boss";
-    let krenko_text = "{T}: Create X 1/1 red Goblin creature tokens, where X is the number of Goblins you control.";
+    let name = "hero's downfall";
+    let oracle_text = "destroy target creature or planeswalker.";
 
-    let preprocessed = lexer::preprocess(krenko_name, krenko_text);
+    let preprocessed = lexer::preprocess(name, oracle_text);
     println!("Preprocessed oracle text: {preprocessed}");
 
     let tokens = lexer::lex(&preprocessed)?;
@@ -17,6 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("]");
 
     let parsed = parser::parse(&tokens);
+    println!("{parsed:#?}");
 
     Ok(())
 }

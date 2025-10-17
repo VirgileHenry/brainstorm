@@ -59,7 +59,7 @@ impl<'a> TryFrom<&[&'a str]> for Colors {
                 }
                 mtg_data::Color::White => &mut result.white,
                 mtg_data::Color::Blue => &mut result.blue,
-                mtg_data::Color::Black => &mut result.blue,
+                mtg_data::Color::Black => &mut result.black,
                 mtg_data::Color::Red => &mut result.red,
                 mtg_data::Color::Green => &mut result.green,
             };

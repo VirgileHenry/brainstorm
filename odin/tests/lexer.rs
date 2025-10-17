@@ -2,7 +2,7 @@ use krark::*;
 use odin::*;
 
 fn main() -> Result<(), String> {
-    let mut krark_harness = KrarkHarness::new("Lexer test: all cards".to_string());
+    let mut krark_harness = KrarkHarness::new("Lexer test: FDN cards".to_string());
     krark_harness.run_filter(
         |card| card.set == "fdn",
         |card, mut results| {
@@ -12,7 +12,7 @@ fn main() -> Result<(), String> {
                     let lexed = lexer::lex(&oracle_text);
                     results.assert_ok(lexed, format!("Check the oracle text has been parsed"));
                 }
-                None => { /* Pass */ }
+                None => results.skip(),
             }
             results
         },

@@ -1,8 +1,6 @@
-mod error;
+pub mod error;
 pub mod span;
 pub mod tokens;
-
-pub use error::LexerError;
 
 /// Preprocess a card oracle text to properly lex it.
 pub fn preprocess(card_name: &str, oracle_text: &str) -> String {

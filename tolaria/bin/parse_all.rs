@@ -11,6 +11,7 @@ fn main() {
     use rayon::iter::ParallelIterator;
     let results: Vec<_> = cards
         .par_iter()
+        .filter(|card| filter_cards(card))
         .map(|card| tolaria::Card::try_from(card))
         .collect();
 
@@ -36,8 +37,39 @@ fn main() {
 
     if failed.len() > 0 {
         println!("First few errors are:");
-        for err in failed.iter().take(5) {
+        for err in failed.iter().take(20) {
             println!("{err}");
         }
     }
+}
+
+fn filter_cards(card: &mtg_cardbase::Card) -> bool {
+    const LAYOUTS: &[&'static str] = &[
+        "normal",
+        "split",
+        "flip",
+        "transform",
+        "modalDfc",
+        "meld",
+        "leveler",
+        "class",
+        "case",
+        "saga",
+        "adventure",
+        "mutate",
+        "prototype",
+        "battle",
+        "planar",
+        "scheme",
+        "vanguard",
+        "token",
+        "doublefaced",
+        "emblem",
+    ];
+
+    if !LAYOUTS.contains(&card.layout) {
+        return false;
+    }
+
+    true
 }

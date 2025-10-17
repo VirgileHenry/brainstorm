@@ -1,6 +1,6 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpellAbility {
-    effect: crate::ability_tree::statement::Statement,
+    pub effect: crate::ability_tree::statement::Statement,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for SpellAbility {
