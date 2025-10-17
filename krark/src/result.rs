@@ -56,6 +56,7 @@ impl KrarkResult {
                 check_name: name,
                 failure: format!("expected {:?}, obtained {:?}", expected, obtained),
             }),
+            (KrarkResultStatus::Skipped, _) => {}
         };
     }
 
@@ -78,7 +79,12 @@ impl KrarkResult {
                 check_name: name,
                 failure: format!("expected Ok(_), obtained Err: {:?}", err),
             }),
+            (KrarkResultStatus::Skipped, _) => {}
         };
+    }
+
+    pub fn skip(&mut self) {
+        self.status = KrarkResultStatus::Skipped;
     }
 }
 
@@ -86,6 +92,7 @@ pub enum KrarkResultStatus {
     Passed(PassedResult),
     Failed(FailedResult),
     Panicked(PanickedResult),
+    Skipped,
 }
 
 pub struct PassedResult {

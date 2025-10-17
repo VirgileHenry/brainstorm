@@ -1,38 +1,36 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum Object {
+pub enum ObjectKind {
+    ArtifactSubtype(mtg_data::ArtifactType),
+    BattleSubtype(mtg_data::BattleType),
     Card,
-    Creature,
-    Land,
+    CreatureSubtype(mtg_data::CreatureType),
+    EnchantmentSubtype(mtg_data::EnchantmentType),
+    InstantSubtype(mtg_data::SpellType),
+    LandSubtype(mtg_data::LandType),
     Permanent,
+    PlaneswalkerSubtype(mtg_data::PlaneswalkerType),
     Spell,
+    Supertype(mtg_data::Supertype),
+    Type(mtg_data::CardType),
+    SorcerySubtype(mtg_data::SpellType),
 }
 
-impl std::fmt::Display for Object {
+impl std::fmt::Display for ObjectKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Object::Card => write!(f, "card"),
-            Object::Creature => write!(f, "creature"),
-            Object::Land => write!(f, "land"),
-            Object::Permanent => write!(f, "permanent"),
-            Object::Spell => write!(f, "spell"),
-        }
-    }
-}
-
-impl crate::ability_tree::terminals::Terminal for Object {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "card" => Some(Object::Card),
-            "cards" => Some(Object::Card),
-            "creature" => Some(Object::Creature),
-            "creatures" => Some(Object::Creature),
-            "land" => Some(Object::Land),
-            "lands" => Some(Object::Land),
-            "permanent" => Some(Object::Permanent),
-            "permanents" => Some(Object::Permanent),
-            "spell" => Some(Object::Spell),
-            "spells" => Some(Object::Spell),
-            _ => None,
+            ObjectKind::ArtifactSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::BattleSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::Card => write!(f, "card"),
+            ObjectKind::CreatureSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::EnchantmentSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::InstantSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::LandSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::Permanent => write!(f, "permanent"),
+            ObjectKind::PlaneswalkerSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::Spell => write!(f, "spell"),
+            ObjectKind::Supertype(supertype) => supertype.fmt(f),
+            ObjectKind::Type(r#type) => r#type.fmt(f),
+            ObjectKind::SorcerySubtype(subtype) => subtype.fmt(f),
         }
     }
 }
@@ -42,8 +40,7 @@ pub enum ObjectReference {
     SelfReferencing,
     SpecifiedObj {
         amount: crate::ability_tree::terminals::CountSpecifier,
-        object: Object,
-        specifiers: Vec<ObjectSpecifier>,
+        specifier: ObjectSpecifier,
     },
 }
 
@@ -57,8 +54,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
             ObjectReference::SelfReferencing => write!(out, "Self Referencing (~)"),
             ObjectReference::SpecifiedObj {
                 amount,
-                object,
-                specifiers,
+                specifier: specifiers,
             } => {
                 write!(out, "Specified Object:")?;
                 out.push_inter_branch()?;
@@ -66,23 +62,11 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
                 out.push_final_branch()?;
                 write!(out, "{amount}")?;
                 out.pop_branch();
-                out.next_inter_branch()?;
-                write!(out, "Object(s):")?;
-                out.push_final_branch()?;
-                write!(out, "{object}")?;
-                out.pop_branch();
                 out.next_final_branch()?;
                 write!(out, "Specifier(s):")?;
-                for specifier in specifiers.iter().take(specifiers.len().saturating_sub(1)) {
-                    out.push_inter_branch()?;
-                    specifier.display(out)?;
-                    out.pop_branch();
-                }
-                if let Some(specifier) = specifiers.last() {
-                    out.push_final_branch()?;
-                    specifier.display(out)?;
-                    out.pop_branch();
-                }
+                out.push_final_branch()?;
+                specifiers.display(out)?;
+                out.pop_branch();
                 out.pop_branch();
                 Ok(())
             }
@@ -90,11 +74,13 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectSpecifier {
+    And(Box<ObjectSpecifier>, Box<ObjectSpecifier>),
     Color(mtg_data::Color),
-    Object(Object),
     Control(crate::ability_tree::terminals::ControlSpecifier),
+    Kind(ObjectKind),
+    Or(Box<ObjectSpecifier>, Box<ObjectSpecifier>),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
@@ -104,9 +90,21 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
     ) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            ObjectSpecifier::Color(color) => write!(out, "Color Specifier: {color}"),
-            ObjectSpecifier::Object(object) => write!(out, "Object Specifier: {object}"),
-            ObjectSpecifier::Control(control) => write!(out, "Control Specifier: {control}"),
+            ObjectSpecifier::And(spec1, spec2) => {
+                spec1.display(out)?;
+                write!(out, " and ")?;
+                spec2.display(out)?;
+                Ok(())
+            }
+            ObjectSpecifier::Color(color) => write!(out, "color specifier: {color}"),
+            ObjectSpecifier::Kind(object) => write!(out, "kind specifier: {object}"),
+            ObjectSpecifier::Control(control) => write!(out, "control specifier: {control}"),
+            ObjectSpecifier::Or(spec1, spec2) => {
+                spec1.display(out)?;
+                write!(out, " or ")?;
+                spec2.display(out)?;
+                Ok(())
+            }
         }
     }
 }

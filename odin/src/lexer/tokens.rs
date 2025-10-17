@@ -1,7 +1,8 @@
-mod non_terminals;
+pub mod non_terminals;
 
+use crate::ability_tree::terminals;
 use crate::ability_tree::terminals::Terminal;
-use crate::ability_tree::{object, terminals, zone};
+use crate::ability_tree::zone;
 use crate::lexer::span::Span;
 
 fn gen_parse_func<T, F>(func: F) -> impl for<'src> Fn(Span<'src>) -> Option<Token<'src>>
@@ -18,8 +19,8 @@ where
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Token<'src> {
-    kind: TokenKind,
-    span: crate::lexer::span::Span<'src>,
+    pub kind: TokenKind,
+    pub span: crate::lexer::span::Span<'src>,
 }
 
 impl<'src> Token<'src> {
@@ -42,7 +43,6 @@ impl<'src> Token<'src> {
             &gen_parse_func(terminals::PowerToughness::try_from_str),
             &gen_parse_func(terminals::PowerToughnessModifier::try_from_str),
             &gen_parse_func(terminals::PlaneswalkerAbilityCost::try_from_str),
-            &gen_parse_func(object::Object::try_from_str),
             &gen_parse_func(zone::Zone::try_from_str),
             &gen_parse_func(mtg_data::Color::try_from_str),
             &gen_parse_func(mtg_data::KeywordAbility::try_from_str),
@@ -56,7 +56,7 @@ impl<'src> Token<'src> {
             &gen_parse_func(mtg_data::ArtifactType::try_from_str),
             &gen_parse_func(mtg_data::SpellType::try_from_str),
             &gen_parse_func(mtg_data::Supertype::try_from_str),
-            &gen_parse_func(non_terminals::ControlFlowToken::try_from_str),
+            &gen_parse_func(non_terminals::ControlFlow::try_from_str),
             &gen_parse_func(non_terminals::TriggerAbilityMarker::try_from_str),
             &gen_parse_func(non_terminals::TapUntapCost::try_from_str),
             &gen_parse_func(non_terminals::EnglishKeywords::try_from_str),
@@ -97,7 +97,6 @@ pub enum TokenKind {
     PowerToughness(terminals::PowerToughness),
     PowerToughnessModifier(terminals::PowerToughnessModifier),
     PlaneswalkerAbilityCost(terminals::PlaneswalkerAbilityCost),
-    Object(object::Object),
     Zone(zone::Zone),
     Color(mtg_data::Color),
     KeywordAbility(mtg_data::KeywordAbility),
@@ -111,7 +110,7 @@ pub enum TokenKind {
     ArtifactType(mtg_data::ArtifactType),
     SpellType(mtg_data::SpellType),
     Supertype(mtg_data::Supertype),
-    ControlFlowToken(non_terminals::ControlFlowToken),
+    ControlFlow(non_terminals::ControlFlow),
     TriggerAbilityMarker(non_terminals::TriggerAbilityMarker),
     TapUntapCost(non_terminals::TapUntapCost),
     EnglishKeywords(non_terminals::EnglishKeywords),
@@ -151,7 +150,6 @@ impl_into_token_kind!(terminals::Step, Step);
 impl_into_token_kind!(terminals::PowerToughness, PowerToughness);
 impl_into_token_kind!(terminals::PowerToughnessModifier, PowerToughnessModifier);
 impl_into_token_kind!(terminals::PlaneswalkerAbilityCost, PlaneswalkerAbilityCost);
-impl_into_token_kind!(object::Object, Object);
 impl_into_token_kind!(zone::Zone, Zone);
 impl_into_token_kind!(mtg_data::Color, Color);
 impl_into_token_kind!(mtg_data::KeywordAbility, KeywordAbility);
@@ -165,7 +163,7 @@ impl_into_token_kind!(mtg_data::BattleType, BattleType);
 impl_into_token_kind!(mtg_data::ArtifactType, ArtifactType);
 impl_into_token_kind!(mtg_data::SpellType, SpellType);
 impl_into_token_kind!(mtg_data::Supertype, Supertype);
-impl_into_token_kind!(non_terminals::ControlFlowToken, ControlFlowToken);
+impl_into_token_kind!(non_terminals::ControlFlow, ControlFlow);
 impl_into_token_kind!(non_terminals::TriggerAbilityMarker, TriggerAbilityMarker);
 impl_into_token_kind!(non_terminals::TapUntapCost, TapUntapCost);
 impl_into_token_kind!(non_terminals::EnglishKeywords, EnglishKeywords);

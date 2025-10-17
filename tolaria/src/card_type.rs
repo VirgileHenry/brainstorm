@@ -158,7 +158,11 @@ impl CardType {
                             }
                         },
                         mtg_data::CardType::Kindred => match result.kindred {
-                            None => result.kindred = Some(KindredSubtype),
+                            None => {
+                                result.kindred = Some(KindredSubtype {
+                                    subtypes: arrayvec::ArrayVec::new(),
+                                })
+                            }
                             Some(_) => {
                                 return Err(format!("Kindred type present twice in card type!"));
                             }
@@ -275,6 +279,16 @@ impl CardType {
             }
             if let Some(subtype) = &mut result.instant {
                 if let Ok(new_subtype) = mtg_data::SpellType::from_str(token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.kindred {
+                if let Ok(new_subtype) = mtg_data::CreatureType::from_str(token) {
                     if subtype.subtypes.contains(&new_subtype) {
                         return Err(format!("Subtype {new_subtype} present twice in card type!"));
                     } else {
@@ -406,6 +420,11 @@ impl std::fmt::Display for CardType {
                 write!(f, "{subtype} ")?;
             }
         }
+        if let Some(subtype) = &self.kindred {
+            for subtype in subtype.subtypes.iter() {
+                write!(f, "{subtype} ")?;
+            }
+        }
         if let Some(subtype) = &self.land {
             for subtype in subtype.subtypes.iter() {
                 write!(f, "{subtype} ")?;
@@ -464,7 +483,9 @@ pub struct InstantSubtype {
 }
 
 #[derive(Debug, Clone)]
-pub struct KindredSubtype;
+pub struct KindredSubtype {
+    subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
+}
 
 #[derive(Debug, Clone)]
 pub struct LandSubtype {

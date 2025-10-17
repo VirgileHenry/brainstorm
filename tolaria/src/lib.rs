@@ -34,15 +34,20 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
         use std::str::FromStr;
         Ok(Card {
             name: types::CardName::from(raw_card.name)
-                .map_err(|e| format!("Failed to parse card name: {e}"))?,
-            scryfall_id: uuid::Uuid::from_str(raw_card.id)
-                .map_err(|e| format!("Failed to parse scryfall id to uuid: {e}"))?,
+                .map_err(|e| format!("in {}, failed to parse card name: {e}", raw_card.name))?,
+            scryfall_id: uuid::Uuid::from_str(raw_card.id).map_err(|e| {
+                format!(
+                    "in {}, failed to parse scryfall id to uuid: {e}",
+                    raw_card.name
+                )
+            })?,
             legalities: legalities::Legalities::try_from(&raw_card.legalities)
-                .map_err(|e| format!("Failed to parse legalities: {e}"))?,
-            color_identity: colors::Colors::try_from(raw_card.color_identity.as_slice())
-                .map_err(|e| format!("Failed to parse color identity: {e}"))?,
+                .map_err(|e| format!("in {}, failed to parse legalities: {e}", raw_card.name))?,
+            color_identity: colors::Colors::try_from(raw_card.color_identity.as_slice()).map_err(
+                |e| format!("in {}, failed to parse color identity: {e}", raw_card.name),
+            )?,
             layout: layout::Layout::try_from(raw_card)
-                .map_err(|e| format!("Failed to parse layout: {e}"))?,
+                .map_err(|e| format!("in {}, failed to parse layout: {e}", raw_card.name))?,
         })
     }
 }

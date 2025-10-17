@@ -113,6 +113,7 @@ impl KrarkRecap {
             KrarkResultStatus::Passed(passed) => self.passed.push(passed),
             KrarkResultStatus::Failed(failed) => self.failed.push(failed),
             KrarkResultStatus::Panicked(panicked) => self.panicked.push(panicked),
+            KrarkResultStatus::Skipped => {}
         }
     }
 }

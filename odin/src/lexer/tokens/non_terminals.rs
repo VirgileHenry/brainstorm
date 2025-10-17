@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ControlFlowToken {
+pub enum ControlFlow {
     NewLine,
     Comma,
     Dot,
@@ -8,15 +8,15 @@ pub enum ControlFlowToken {
     Bullet,
 }
 
-impl ControlFlowToken {
+impl ControlFlow {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "\n" => Some(ControlFlowToken::NewLine),
-            "," => Some(ControlFlowToken::Comma),
-            "." => Some(ControlFlowToken::Dot),
-            ":" => Some(ControlFlowToken::Colons),
-            "—" => Some(ControlFlowToken::LongDash),
-            "•" => Some(ControlFlowToken::Bullet),
+            "\n" => Some(ControlFlow::NewLine),
+            "," => Some(ControlFlow::Comma),
+            "." => Some(ControlFlow::Dot),
+            ":" => Some(ControlFlow::Colons),
+            "—" => Some(ControlFlow::LongDash),
+            "•" => Some(ControlFlow::Bullet),
             _ => None,
         }
     }
