@@ -1,6 +1,6 @@
 use std::fmt::Write;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Colors {
     white: bool,
     blue: bool,

@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+lazy_static = { workspace = true }
 libtest-mimic = "0.8.1"
 mtg-cardbase = { workspace = true }
 rayon = { workspace = true }

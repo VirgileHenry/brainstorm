@@ -184,7 +184,9 @@ impl<'out, W: std::io::Write, const N: usize> TableDisplay<'out, W, N> {
 }
 
 fn terminal_str_len(input: &str) -> usize {
-    let ansi_regex = regex::Regex::new(r"\x1b\[[0-9;]*m").unwrap();
+    lazy_static::lazy_static!(
+        static ref ansi_regex: regex::Regex = regex::Regex::new(r"\x1b\[[0-9;]*m").unwrap();
+    );
     let stripped = ansi_regex.replace_all(input, "");
     stripped.chars().count()
 }

@@ -1,6 +1,6 @@
 mod cost;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct ActivatedAbility {
     costs: Vec<cost::Cost>,
     effect: crate::ability_tree::statement::Statement,

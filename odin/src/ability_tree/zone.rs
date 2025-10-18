@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Zone {
     Battlefield,
     Exile,
@@ -32,7 +34,7 @@ impl crate::ability_tree::terminals::Terminal for Zone {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ZoneReference {
     TheBattlefield,
     OwnedZone(Zone, crate::ability_tree::terminals::Appartenance),

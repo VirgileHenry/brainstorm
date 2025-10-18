@@ -8,7 +8,7 @@ pub mod zone;
 /// One or more abilities.
 /// This is the root of the Magic: the Gathering texts,
 /// and can represent on its own the full text box of a card.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct AbilityTree {
     pub abilities: Vec<ability::Ability>,
 }
@@ -20,14 +20,15 @@ impl AbilityTree {
     ) -> Result<AbilityTree, crate::error::OdinError> {
         let preprocessed = crate::lexer::preprocess(card_name, oracle_text);
         let tokens = crate::lexer::lex(&preprocessed)?;
-        let result = crate::parser::parse(&tokens)?;
+        let result = crate::parser::parse(&tokens).0?;
         Ok(result)
     }
-    pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
-        use std::io::Write;
-        let mut tree_formatter = crate::utils::TreeFormatter::new(output, 64);
 
-        write!(tree_formatter, "Abilities:")?;
+    pub fn display<W: std::io::Write>(&self, output: &mut W, prefix: &str) -> std::io::Result<()> {
+        use std::io::Write;
+        let mut tree_formatter = crate::utils::TreeFormatter::new(output, 64, prefix);
+
+        write!(tree_formatter, "Ability Tree:")?;
         for ability in self
             .abilities
             .iter()

@@ -7,7 +7,9 @@ pub trait Terminal: std::fmt::Display + Sized {
     fn try_from_str(source: &str) -> Option<Self>;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Number {
     Number(u32),
     X,
@@ -42,7 +44,9 @@ impl Terminal for Number {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum CountSpecifier {
     All,
     Target,
@@ -82,7 +86,9 @@ impl Terminal for CountSpecifier {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum ControlSpecifier {
     YouControl,
     YouDontControl,
@@ -109,7 +115,9 @@ impl Terminal for ControlSpecifier {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum OwnerSpecifier {
     YouOwn,
     YouDontOwn,
@@ -137,7 +145,9 @@ impl Terminal for OwnerSpecifier {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Order {
     RandomOrder,
     ChosenOrder,
@@ -162,7 +172,9 @@ impl Terminal for Order {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Appartenance {
     Your,
     AnOpponent,
@@ -188,7 +200,9 @@ impl Terminal for Appartenance {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum CardActions {
     Attacks,
     Blocks,
@@ -222,7 +236,9 @@ impl Terminal for CardActions {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum PlayerSpecifier {
     AnOpponent,
     Any,
@@ -256,7 +272,9 @@ impl Terminal for PlayerSpecifier {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum PermanentProperty {
     Power,
     Tougness,
@@ -284,7 +302,9 @@ impl Terminal for PermanentProperty {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum PermanentState {
     Attacking,
     Blocking,
@@ -321,7 +341,9 @@ impl Terminal for PermanentState {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum SpellProperty {
     Countered,
     Kicked,
@@ -346,7 +368,9 @@ impl Terminal for SpellProperty {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Phase {
     Beginning,
     PrecombatMain,
@@ -381,7 +405,9 @@ impl Terminal for Phase {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Step {
     Untap,
     Upkeep,
@@ -436,7 +462,9 @@ impl Terminal for Step {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct PowerToughness {
     power: u32,
     toughness: u32,
@@ -468,7 +496,9 @@ impl Terminal for PowerToughness {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum PowerToughnessModifier {
     Constant { power: i32, toughness: i32 },
     PlusXPlusX,
@@ -522,7 +552,9 @@ impl Terminal for PowerToughnessModifier {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct PlaneswalkerAbilityCost(i32);
 
 impl std::fmt::Display for PlaneswalkerAbilityCost {
@@ -540,5 +572,30 @@ impl Terminal for PlaneswalkerAbilityCost {
             return None;
         }
         Some(PlaneswalkerAbilityCost(source.parse().ok()?))
+    }
+}
+
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
+pub struct SagaChapterNumber(u32);
+
+impl std::fmt::Display for SagaChapterNumber {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:+}", self.0)
+    }
+}
+
+impl Terminal for SagaChapterNumber {
+    fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            "i" => Some(SagaChapterNumber(1)),
+            "ii" => Some(SagaChapterNumber(2)),
+            "iii" => Some(SagaChapterNumber(3)),
+            "iv" => Some(SagaChapterNumber(4)),
+            "v" => Some(SagaChapterNumber(5)),
+            "vi" => Some(SagaChapterNumber(6)),
+            _ => None,
+        }
     }
 }

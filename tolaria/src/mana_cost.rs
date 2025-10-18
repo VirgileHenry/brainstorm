@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ManaCost(arrayvec::ArrayVec<mtg_data::Mana, 16>);
 
 impl std::ops::Deref for ManaCost {
@@ -20,8 +20,10 @@ impl std::str::FromStr for ManaCost {
         let mut result = arrayvec::ArrayVec::new();
 
         /* Yeah, yeah, it's not that hard and may not need a regex. Whatever for now. */
-        let mana_cost_regex = regex::Regex::new(r"(\{[^{}]+\})")
-            .map_err(|e| format!("Failed to compile the mana cost iterator regex: {e}"))?;
+        lazy_static::lazy_static!(
+            static ref mana_cost_regex: regex::Regex = regex::Regex::new(r"(\{[^{}]+\})")
+                .expect("Failed to compile the mana cost iterator regex: {e}");
+        );
 
         for capture in mana_cost_regex.captures_iter(raw_mana_cost) {
             let mana = mtg_data::Mana::from_str(capture.get_match().as_str())

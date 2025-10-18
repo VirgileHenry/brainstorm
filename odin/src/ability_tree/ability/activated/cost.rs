@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum Cost {
     ManaCost(Vec<mtg_data::Mana>),
     Imperative(crate::ability_tree::imperative::Imperative),

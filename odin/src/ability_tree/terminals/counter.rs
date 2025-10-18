@@ -2,7 +2,9 @@
 // Source: MTG Wiki — Counter (marker) / Full List
 // Note: keep `super::Terminal` in scope where you include this file.
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Counter {
     PlusOnePlusOne,
     MinusOneMinusOne,

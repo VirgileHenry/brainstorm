@@ -4,11 +4,21 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+arrayvec = { workspace = true }
+lazy_static = { workspace = true }
+mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }
 regex = { workspace = true }
+rayon = { workspace = true }
+serde = { workspace = true }
 
 [dev-dependencies]
 krark = { workspace = true }
+
+[[bin]]
+name = "parser_perf"
+path = "bin/parser_perf.rs"
+harness = false
 
 [[test]]
 name = "lexer"

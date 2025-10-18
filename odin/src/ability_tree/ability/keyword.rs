@@ -1,6 +1,6 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct KeywordAbility {
-    keyword: mtg_data::KeywordAbility,
+    pub keyword: mtg_data::KeywordAbility,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for KeywordAbility {

@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum ObjectKind {
     ArtifactSubtype(mtg_data::ArtifactType),
     BattleSubtype(mtg_data::BattleType),
@@ -29,13 +31,13 @@ impl std::fmt::Display for ObjectKind {
             ObjectKind::PlaneswalkerSubtype(subtype) => subtype.fmt(f),
             ObjectKind::Spell => write!(f, "spell"),
             ObjectKind::Supertype(supertype) => supertype.fmt(f),
-            ObjectKind::Type(r#type) => r#type.fmt(f),
+            ObjectKind::Type(ty) => ty.fmt(f),
             ObjectKind::SorcerySubtype(subtype) => subtype.fmt(f),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ObjectReference {
     SelfReferencing,
     SpecifiedObj {
@@ -74,7 +76,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ObjectSpecifier {
     And(Box<ObjectSpecifier>, Box<ObjectSpecifier>),
     Color(mtg_data::Color),

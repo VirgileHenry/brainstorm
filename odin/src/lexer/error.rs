@@ -1,5 +1,5 @@
 /// Errors that can be thrown by the lexer.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum LexerError {
     NoTokenMatch(String),
 }

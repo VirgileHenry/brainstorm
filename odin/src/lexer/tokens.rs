@@ -43,6 +43,7 @@ impl<'src> Token<'src> {
             &gen_parse_func(terminals::PowerToughness::try_from_str),
             &gen_parse_func(terminals::PowerToughnessModifier::try_from_str),
             &gen_parse_func(terminals::PlaneswalkerAbilityCost::try_from_str),
+            &gen_parse_func(terminals::SagaChapterNumber::try_from_str),
             &gen_parse_func(zone::Zone::try_from_str),
             &gen_parse_func(mtg_data::Color::try_from_str),
             &gen_parse_func(mtg_data::KeywordAbility::try_from_str),
@@ -57,7 +58,6 @@ impl<'src> Token<'src> {
             &gen_parse_func(mtg_data::SpellType::try_from_str),
             &gen_parse_func(mtg_data::Supertype::try_from_str),
             &gen_parse_func(non_terminals::ControlFlow::try_from_str),
-            &gen_parse_func(non_terminals::TriggerAbilityMarker::try_from_str),
             &gen_parse_func(non_terminals::TapUntapCost::try_from_str),
             &gen_parse_func(non_terminals::EnglishKeywords::try_from_str),
             &gen_parse_func(non_terminals::SelfReferencing::try_from_str),
@@ -78,7 +78,7 @@ impl<'src> Token<'src> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TokenKind {
     Number(terminals::Number),
     Counter(terminals::Counter),
@@ -97,6 +97,7 @@ pub enum TokenKind {
     PowerToughness(terminals::PowerToughness),
     PowerToughnessModifier(terminals::PowerToughnessModifier),
     PlaneswalkerAbilityCost(terminals::PlaneswalkerAbilityCost),
+    SagaChapterNumber(terminals::SagaChapterNumber),
     Zone(zone::Zone),
     Color(mtg_data::Color),
     KeywordAbility(mtg_data::KeywordAbility),
@@ -111,7 +112,6 @@ pub enum TokenKind {
     SpellType(mtg_data::SpellType),
     Supertype(mtg_data::Supertype),
     ControlFlow(non_terminals::ControlFlow),
-    TriggerAbilityMarker(non_terminals::TriggerAbilityMarker),
     TapUntapCost(non_terminals::TapUntapCost),
     EnglishKeywords(non_terminals::EnglishKeywords),
     SelfReferencing(non_terminals::SelfReferencing),
@@ -150,6 +150,7 @@ impl_into_token_kind!(terminals::Step, Step);
 impl_into_token_kind!(terminals::PowerToughness, PowerToughness);
 impl_into_token_kind!(terminals::PowerToughnessModifier, PowerToughnessModifier);
 impl_into_token_kind!(terminals::PlaneswalkerAbilityCost, PlaneswalkerAbilityCost);
+impl_into_token_kind!(terminals::SagaChapterNumber, SagaChapterNumber);
 impl_into_token_kind!(zone::Zone, Zone);
 impl_into_token_kind!(mtg_data::Color, Color);
 impl_into_token_kind!(mtg_data::KeywordAbility, KeywordAbility);
@@ -164,7 +165,6 @@ impl_into_token_kind!(mtg_data::ArtifactType, ArtifactType);
 impl_into_token_kind!(mtg_data::SpellType, SpellType);
 impl_into_token_kind!(mtg_data::Supertype, Supertype);
 impl_into_token_kind!(non_terminals::ControlFlow, ControlFlow);
-impl_into_token_kind!(non_terminals::TriggerAbilityMarker, TriggerAbilityMarker);
 impl_into_token_kind!(non_terminals::TapUntapCost, TapUntapCost);
 impl_into_token_kind!(non_terminals::EnglishKeywords, EnglishKeywords);
 impl_into_token_kind!(non_terminals::SelfReferencing, SelfReferencing);

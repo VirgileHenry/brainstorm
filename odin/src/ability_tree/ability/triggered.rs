@@ -1,6 +1,6 @@
 pub mod trigger_cond;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct TriggeredAbility {
     pub condition: trigger_cond::TriggerCondition,
     pub effect: crate::ability_tree::statement::Statement,

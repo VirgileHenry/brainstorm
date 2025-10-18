@@ -5,7 +5,7 @@ mod legalities;
 mod mana_cost;
 mod types;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Card {
     pub name: types::CardName,
     pub scryfall_id: uuid::Uuid,

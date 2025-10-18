@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct CardType {
     supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
     artifact: Option<ArtifactSubtype>,
@@ -51,8 +51,10 @@ impl CardType {
 
         let mut result = Self::empty();
 
-        let tokens_regex = regex::Regex::new(r"\b\w+\b")
-            .map_err(|e| format!("Failed to compile the tokens regex: {e}"))?;
+        lazy_static::lazy_static!(
+            static ref tokens_regex: regex::Regex = regex::Regex::new(r"\b\w+\b")
+                .expect("Failed to compile the tokens regex");
+        );
 
         let mut tokens = tokens_regex
             .find_iter(type_line)
@@ -445,72 +447,72 @@ impl std::fmt::Display for CardType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ArtifactSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::ArtifactType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BattleSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::BattleType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ConspiracySubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct CreatureSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct DungeonSubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct EmblemSubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct EnchantmentSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::EnchantmentType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct HeroSubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct InstantSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct KindredSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LandSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::LandType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PhenomenonSubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PlaneSubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PlaneswalkerSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::PlaneswalkerType, 4>,
     loyalty: u64,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SchemeSubtype;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SorcerySubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct VanguardSubtype;

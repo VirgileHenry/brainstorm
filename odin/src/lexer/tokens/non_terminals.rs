@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ControlFlow {
     NewLine,
     Comma,
@@ -22,25 +22,7 @@ impl ControlFlow {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TriggerAbilityMarker {
-    Whenever,
-    When,
-    At,
-}
-
-impl TriggerAbilityMarker {
-    pub fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "whenever" => Some(TriggerAbilityMarker::Whenever),
-            "when" => Some(TriggerAbilityMarker::When),
-            "at" => Some(TriggerAbilityMarker::At),
-            _ => None,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TapUntapCost {
     Tap,
     Untap,
@@ -56,7 +38,7 @@ impl TapUntapCost {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EnglishKeywords {
     Already,
     Additional,
@@ -66,6 +48,7 @@ pub enum EnglishKeywords {
     Another,
     Are,
     As,
+    At,
     Be,
     Beginning,
     By,
@@ -109,6 +92,8 @@ pub enum EnglishKeywords {
     Unless,
     Until,
     Was,
+    When,
+    Whenever,
     Where,
     With,
     Without,
@@ -125,6 +110,7 @@ impl EnglishKeywords {
             "and/or" => Some(EnglishKeywords::AndOr),
             "another" => Some(EnglishKeywords::Another),
             "as" => Some(EnglishKeywords::As),
+            "at" => Some(EnglishKeywords::At),
             "are" => Some(EnglishKeywords::Are),
             "be" => Some(EnglishKeywords::Be),
             "beginning" => Some(EnglishKeywords::Beginning),
@@ -139,7 +125,7 @@ impl EnglishKeywords {
             "from" => Some(EnglishKeywords::From),
             "for" => Some(EnglishKeywords::For),
             "has" => Some(EnglishKeywords::Has),
-            "have" => Some(EnglishKeywords::Have),
+            "have" | "'ve" => Some(EnglishKeywords::Have),
             "into" => Some(EnglishKeywords::Into),
             "if" => Some(EnglishKeywords::If),
             "in" => Some(EnglishKeywords::In),
@@ -169,6 +155,8 @@ impl EnglishKeywords {
             "unless" => Some(EnglishKeywords::Unless),
             "until" => Some(EnglishKeywords::Until),
             "was" => Some(EnglishKeywords::Was),
+            "when" => Some(EnglishKeywords::When),
+            "whenever" => Some(EnglishKeywords::Whenever),
             "where" => Some(EnglishKeywords::Where),
             "with" => Some(EnglishKeywords::With),
             "without" => Some(EnglishKeywords::Without),
@@ -178,20 +166,21 @@ impl EnglishKeywords {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SelfReferencing;
 
 impl SelfReferencing {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "this" => Some(SelfReferencing),
+            "this creature" => Some(SelfReferencing),
+            "this spell" => Some(SelfReferencing),
             "~" => Some(SelfReferencing),
             _ => None,
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct NumberReference;
 
 impl NumberReference {
@@ -203,7 +192,7 @@ impl NumberReference {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct NotOfAKind;
 
 impl NotOfAKind {
@@ -215,7 +204,7 @@ impl NotOfAKind {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ActionKeywords {
     Deals,
     Gain,
@@ -237,7 +226,7 @@ impl ActionKeywords {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DamageKind {
     Damage,
     CombatDamage,
@@ -269,6 +258,7 @@ pub enum PlayerActions {
     Double,
     Draw,
     Exile,
+    Gain,
     LookAt,
     Lose,
     Pay,
@@ -299,6 +289,7 @@ impl PlayerActions {
             "double" | "doubles" => Some(PlayerActions::Double),
             "draw" | "draws" => Some(PlayerActions::Draw),
             "exile" | "exiles" => Some(PlayerActions::Exile),
+            "gain" | "gains" | "gained" => Some(PlayerActions::Gain),
             "look at" | "looks at" => Some(PlayerActions::LookAt),
             "lose" | "loses" => Some(PlayerActions::LookAt),
             "pay" | "pays" => Some(PlayerActions::Pay),
@@ -317,7 +308,7 @@ impl PlayerActions {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum VhyToSortLater {
     Life,
     HandSize,

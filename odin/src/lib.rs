@@ -15,4 +15,3 @@ pub mod utils;
 pub use ability_tree::AbilityTree;
 pub use lexer::lex;
 pub use lexer::preprocess;
-pub use parser::parse;

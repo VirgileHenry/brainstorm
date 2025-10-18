@@ -1,5 +1,5 @@
 /// All the layouts of Magic: The Gathering for playable cards.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Layout {
     Normal {
         mana_cost: Option<crate::mana_cost::ManaCost>,
@@ -12,17 +12,12 @@ pub enum Layout {
     ModalDfc {},
     Meld {},
     Leveler {},
-    Class {
-        mana_cost: Option<crate::mana_cost::ManaCost>,
-        card_type: crate::card_type::CardType,
-        abilities: odin::AbilityTree,
-        levels: arrayvec::ArrayVec<odin::ability_tree::imperative::Imperative, 8>,
-    },
+    Class {},
     Case {},
     Saga {
         mana_cost: Option<crate::mana_cost::ManaCost>,
         card_type: crate::card_type::CardType,
-        chapters: arrayvec::ArrayVec<odin::AbilityTree, 4>,
+        chapters: arrayvec::ArrayVec<odin::ability_tree::ability::saga_chapter::SagaChapter, 4>,
     },
     Adventure {},
     Mutate {},
@@ -45,14 +40,15 @@ impl Layout {
             Layout::Normal {
                 mana_cost,
                 card_type,
-                ..
+                abilities,
             } => {
                 writeln!(output, "│ ╰─ Normal:")?;
                 if let Some(mana_cost) = mana_cost {
                     writeln!(output, "│    ├─ Mana Cost: {mana_cost}")?;
                 }
                 writeln!(output, "│    ├─ Type Line: {card_type}")?;
-                writeln!(output, "│    ╰─ Abilities: TODO")?; // Todo
+                write!(output, "│    ╰─ Abilities: ")?;
+                abilities.display(output, "│       ")?;
                 Ok(())
             }
             _ => writeln!(output, "Unimplemented!"),
@@ -88,12 +84,37 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
             "token" => Ok(Layout::Token {
                 card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                abilities: odin::AbilityTree::empty(),
+                abilities: match raw_card.oracle_text {
+                    Some(oracle_text) => {
+                        odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name).map_err(
+                            |e| format!("Failed to parse oracle text to ability tree: {e}"),
+                        )?
+                    }
+                    None => odin::AbilityTree::empty(),
+                },
             }),
             "saga" => {
-                let _ability_tree = odin::AbilityTree::empty();
-                // Todo: attempt to get out the chapters from the ability tree
-                // On failure, it means the saga is badly formatted
+                let ability_tree = match raw_card.oracle_text {
+                    Some(oracle_text) => {
+                        odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name).map_err(
+                            |e| format!("Failed to parse oracle text to ability tree: {e}"),
+                        )?
+                    }
+                    None => odin::AbilityTree::empty(),
+                };
+                let mut chapters = arrayvec::ArrayVec::new();
+                for ability in ability_tree.abilities.into_iter() {
+                    match ability {
+                        odin::ability_tree::ability::Ability::SagaChapter(chapter) => {
+                            chapters.push(chapter)
+                        }
+                        other => {
+                            return Err(format!(
+                                "Invalid ability for Saga: expected Chapter, found {other:?}"
+                            ));
+                        }
+                    }
+                }
                 Ok(Layout::Saga {
                     mana_cost: match raw_card.mana_cost {
                         Some(mana_cost) => Some(
@@ -104,25 +125,7 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                     },
                     card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
                         .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                    chapters: arrayvec::ArrayVec::new(),
-                })
-            }
-            "class" => {
-                let _ability_tree = odin::AbilityTree::empty();
-                // Todo: attempt to get out the static ability and levels from the ability tree
-                // On failure, it means the class is badly formatted
-                Ok(Layout::Class {
-                    mana_cost: match raw_card.mana_cost {
-                        Some(mana_cost) => Some(
-                            crate::mana_cost::ManaCost::from_str(mana_cost)
-                                .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
-                        ),
-                        None => None,
-                    },
-                    card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
-                        .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                    abilities: odin::AbilityTree::empty(),
-                    levels: arrayvec::ArrayVec::new(),
+                    chapters,
                 })
             }
             other => Err(format!("Invalid layout in card: {other}")),

@@ -124,6 +124,10 @@ impl<'a> ToGenerateEnum<'a> {
             destination,
             "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]"
         )?;
+        writeln!(
+            destination,
+            "#[derive(serde::Serialize, serde::Deserialize)]"
+        )?;
         writeln!(destination, "pub enum {} {{", self.name)?;
         for (_, variant) in variants.iter() {
             writeln!(destination, "{},", variant)?;
