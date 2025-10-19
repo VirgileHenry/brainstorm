@@ -1,6 +1,6 @@
 # https://doc.rust-lang.org/cargo/reference/workspaces.html
 [workspace]
-members = ["krark", "mtg-cardbase", "mtg-data", "odin", "tolaria"]
+members = ["krark", "mtg-cardbase", "mtg-data", "odin", "tolaria", "urza"]
 resolver = "3"
 
 [workspace.package]
@@ -17,6 +17,7 @@ mtg-data = { path = "mtg-data" }
 mtg-cardbase = { path = "mtg-cardbase" }
 odin = { path = "odin" }
 tolaria = { path = "tolaria" }
+urza = { path = "urza" }
 # Additional dependencies
 arrayvec = { version = "0.7.6", features = ["serde"] }
 lazy_static = "1.5.0"
