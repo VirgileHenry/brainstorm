@@ -49,6 +49,12 @@ impl AbilityTree {
     }
 }
 
+impl Default for AbilityTree {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
 pub trait AbilityTreeImpl {
     fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()>;
 }

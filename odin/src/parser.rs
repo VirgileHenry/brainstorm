@@ -59,7 +59,7 @@ fn reduce_nodes(
                 match next_nodes.as_slice() {
                     /* Exit condition, we have a single node and it's the root */
                     [node::ParserNode::AbilityTree(ability_tree)] => {
-                        return Ok(ability_tree.clone());
+                        return Ok(*ability_tree.clone());
                     }
                     /* otherwise, try to keep reducing this branch */
                     nodes => match reduce_nodes(nodes, explored, iters) {

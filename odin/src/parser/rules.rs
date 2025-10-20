@@ -113,15 +113,15 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
 
         /* Parse into abilities */
         /* Keyword abilities are the simplest */
-        [ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] => Some(ParserNode::Ability(
+        [ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] => Some(ParserNode::Ability(Box::new(
             ability_tree::ability::Ability::Keyword(ability_tree::ability::keyword::KeywordAbility { keyword: *keyword }),
-        )),
+        ))),
         /* A statement alone can be a spell ability */
-        [ParserNode::Statement(statement)] => Some(ParserNode::Ability(ability_tree::ability::Ability::Spell(
+        [ParserNode::Statement(statement)] => Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Spell(
             ability_tree::ability::spell::SpellAbility {
                 effect: statement.clone(),
             },
-        ))),
+        )))),
         /* Triggered abilities need a "when", a trigger, a comma and a statement. */
         [
             ParserNode::LexerToken(TokenKind::EnglishKeywords(
@@ -132,32 +132,32 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
             ParserNode::TriggerCondition(condition),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
             ParserNode::Statement(statement),
-        ] => Some(ParserNode::Ability(ability_tree::ability::Ability::Triggered(
+        ] => Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Triggered(
             ability_tree::ability::triggered::TriggeredAbility {
                 condition: condition.clone(),
                 effect: statement.clone(),
             },
-        ))),
+        )))),
 
         /* Abilities can be ability trees, and can be fused in ability trees */
-        [ParserNode::Ability(ability)] => Some(ParserNode::AbilityTree(ability_tree::AbilityTree {
+        [ParserNode::Ability(ability)] => Some(ParserNode::AbilityTree(Box::new(ability_tree::AbilityTree {
             abilities: {
                 let mut abilities = arrayvec::ArrayVec::new();
-                abilities.push(ability.clone());
+                abilities.push(*ability.clone());
                 abilities
             },
-        })),
+        }))),
         [
             ParserNode::AbilityTree(tree),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
             ParserNode::Ability(ability),
-        ] => Some(ParserNode::AbilityTree(ability_tree::AbilityTree {
+        ] => Some(ParserNode::AbilityTree(Box::new(ability_tree::AbilityTree {
             abilities: {
                 let mut abilities = tree.abilities.clone();
-                abilities.push(ability.clone());
+                abilities.push(*ability.clone());
                 abilities
             },
-        })),
+        }))),
 
         /* Finally, no rules matched */
         _ => None,

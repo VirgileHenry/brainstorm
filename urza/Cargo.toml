@@ -7,8 +7,10 @@ documentation.workspace = true
 edition.workspace = true
 
 [dependencies]
-tolaria = { workspace = true }
+burn =  { version = "0.18.0", features = ["wgpu"] }
+chrono = "0.4.42"
 mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }
+odin = { workspace = true }
 rayon = { workspace = true }
-chrono = "0.4.42"
+tolaria = { workspace = true }

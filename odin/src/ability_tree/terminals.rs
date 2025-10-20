@@ -7,18 +7,8 @@ pub trait Terminal: std::fmt::Display + Sized {
     fn try_from_str(source: &str) -> Option<Self>;
 }
 
-#[derive(
-    serde::Serialize,
-    serde::Deserialize,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    PartialOrd,
-    Ord
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Number {
     Number(u32),
     X,

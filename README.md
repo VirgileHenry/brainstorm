@@ -12,3 +12,4 @@ At the time of me writing this, the project contains the following crates:
 - mtg-cardbase: The entire database of MTG cards, as raw, unparsed data fetched from the scryfall API. Currently holds 35k+ cards.
 - odin: The MTG parser, able to convert an oracle text into an ability tree built only from MTG data Enums.
 - tolaria: The library of all MTG cards, parsed, and ready for usage. This is the finality of the project.
+- urza: actual AI computation. Uses burn for it
