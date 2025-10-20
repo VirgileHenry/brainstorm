@@ -1,5 +1,14 @@
 #[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    serde::Serialize,
+    serde::Deserialize
 )]
 pub enum Zone {
     Battlefield,
@@ -34,17 +43,15 @@ impl crate::ability_tree::terminals::Terminal for Zone {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ZoneReference {
     TheBattlefield,
     OwnedZone(Zone, crate::ability_tree::terminals::Appartenance),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ZoneReference {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
             ZoneReference::TheBattlefield => write!(out, "The Battlefield"),

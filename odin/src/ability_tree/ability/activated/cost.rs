@@ -1,14 +1,12 @@
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Cost {
     ManaCost(Vec<mtg_data::Mana>),
     Imperative(crate::ability_tree::imperative::Imperative),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for Cost {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
             Cost::ManaCost(mana_cost) => {

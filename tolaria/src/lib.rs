@@ -2,7 +2,6 @@ mod card_type;
 mod colors;
 mod layout;
 mod legalities;
-mod mana_cost;
 mod types;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

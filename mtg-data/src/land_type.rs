@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum LandType {
     Cave,
     Cloud,
@@ -21,6 +20,7 @@ pub enum LandType {
     Town,
     Urzas,
 }
+
 impl std::str::FromStr for LandType {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -47,6 +47,7 @@ impl std::str::FromStr for LandType {
         }
     }
 }
+
 impl LandType {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -71,11 +72,13 @@ impl LandType {
         }
     }
 }
+
 impl std::fmt::Display for LandType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl LandType {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -97,7 +100,6 @@ impl LandType {
             Self::Tower,
             Self::Town,
             Self::Urzas,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

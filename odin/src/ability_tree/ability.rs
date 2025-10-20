@@ -5,7 +5,8 @@ pub mod spell;
 pub mod statik;
 pub mod triggered;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Ability {
     Activated(activated::ActivatedAbility),
     Keyword(keyword::KeywordAbility),
@@ -16,10 +17,7 @@ pub enum Ability {
 }
 
 impl crate::ability_tree::AbilityTreeImpl for Ability {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         match self {
             Ability::Activated(activated) => activated.display(out)?,
             Ability::Keyword(keyword) => keyword.display(out)?,

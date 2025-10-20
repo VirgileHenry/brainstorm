@@ -1,16 +1,14 @@
 mod cost;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ActivatedAbility {
     costs: Vec<cost::Cost>,
     effect: crate::ability_tree::statement::Statement,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ActivatedAbility {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "Activated:")?;
         out.push_inter_branch()?;

@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlaneswalkerType {
     Abian,
     Ajani,
@@ -94,6 +93,7 @@ pub enum PlaneswalkerType {
     Yanling,
     Zariel,
 }
+
 impl std::str::FromStr for PlaneswalkerType {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -193,6 +193,7 @@ impl std::str::FromStr for PlaneswalkerType {
         }
     }
 }
+
 impl PlaneswalkerType {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -290,11 +291,13 @@ impl PlaneswalkerType {
         }
     }
 }
+
 impl std::fmt::Display for PlaneswalkerType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl PlaneswalkerType {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -389,7 +392,6 @@ impl PlaneswalkerType {
             Self::Yanggu,
             Self::Yanling,
             Self::Zariel,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

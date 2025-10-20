@@ -1,5 +1,5 @@
 mod counter;
-mod mtg_data;
+mod mtg_data_as_terminals;
 
 pub use counter::Counter;
 
@@ -8,7 +8,16 @@ pub trait Terminal: std::fmt::Display + Sized {
 }
 
 #[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+    serde::Serialize,
+    serde::Deserialize,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord
 )]
 pub enum Number {
     Number(u32),
@@ -44,9 +53,8 @@ impl Terminal for Number {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CountSpecifier {
     All,
     Target,
@@ -86,9 +94,8 @@ impl Terminal for CountSpecifier {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ControlSpecifier {
     YouControl,
     YouDontControl,
@@ -107,17 +114,14 @@ impl Terminal for ControlSpecifier {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "you control" | "you already control" => Some(ControlSpecifier::YouControl),
-            "you don't control" | "your opponents control" | "an opponent controls" => {
-                Some(ControlSpecifier::YouDontControl)
-            }
+            "you don't control" | "your opponents control" | "an opponent controls" => Some(ControlSpecifier::YouDontControl),
             _ => None,
         }
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnerSpecifier {
     YouOwn,
     YouDontOwn,
@@ -145,9 +149,8 @@ impl Terminal for OwnerSpecifier {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Order {
     RandomOrder,
     ChosenOrder,
@@ -172,9 +175,8 @@ impl Terminal for Order {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Appartenance {
     Your,
     AnOpponent,
@@ -200,9 +202,8 @@ impl Terminal for Appartenance {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardActions {
     Attacks,
     Blocks,
@@ -236,9 +237,8 @@ impl Terminal for CardActions {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerSpecifier {
     AnOpponent,
     Any,
@@ -272,9 +272,8 @@ impl Terminal for PlayerSpecifier {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentProperty {
     Power,
     Tougness,
@@ -302,9 +301,8 @@ impl Terminal for PermanentProperty {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentState {
     Attacking,
     Blocking,
@@ -341,9 +339,8 @@ impl Terminal for PermanentState {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SpellProperty {
     Countered,
     Kicked,
@@ -368,9 +365,8 @@ impl Terminal for SpellProperty {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Phase {
     Beginning,
     PrecombatMain,
@@ -405,9 +401,8 @@ impl Terminal for Phase {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Step {
     Untap,
     Upkeep,
@@ -462,9 +457,8 @@ impl Terminal for Step {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PowerToughness {
     power: u32,
     toughness: u32,
@@ -496,9 +490,8 @@ impl Terminal for PowerToughness {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PowerToughnessModifier {
     Constant { power: i32, toughness: i32 },
     PlusXPlusX,
@@ -552,9 +545,8 @@ impl Terminal for PowerToughnessModifier {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PlaneswalkerAbilityCost(i32);
 
 impl std::fmt::Display for PlaneswalkerAbilityCost {
@@ -575,14 +567,13 @@ impl Terminal for PlaneswalkerAbilityCost {
     }
 }
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SagaChapterNumber(u32);
 
 impl std::fmt::Display for SagaChapterNumber {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:+}", self.0)
+        write!(f, "saga chapter {}", self.0)
     }
 }
 
@@ -597,5 +588,52 @@ impl Terminal for SagaChapterNumber {
             "vi" => Some(SagaChapterNumber(6)),
             _ => None,
         }
+    }
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ManaCost(arrayvec::ArrayVec<mtg_data::Mana, 16>);
+
+impl std::ops::Deref for ManaCost {
+    type Target = [mtg_data::Mana];
+    fn deref(&self) -> &Self::Target {
+        self.0.as_slice()
+    }
+}
+
+impl std::ops::DerefMut for ManaCost {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.0.as_mut_slice()
+    }
+}
+
+impl std::str::FromStr for ManaCost {
+    type Err = String; // Fixme!
+    fn from_str(raw_mana_cost: &str) -> Result<Self, Self::Err> {
+        let mut result = arrayvec::ArrayVec::new();
+
+        /* Yeah, yeah, it's not that hard and may not need a regex. Whatever for now. */
+        lazy_static::lazy_static!(
+            static ref mana_cost_regex: regex::Regex = regex::Regex::new(r"(\{[^{}]+\})")
+                .expect("Failed to compile the mana cost iterator regex: {e}");
+        );
+
+        for capture in mana_cost_regex.captures_iter(raw_mana_cost) {
+            let mana = mtg_data::Mana::from_str(capture.get_match().as_str())
+                .map_err(|e| format!("Failed to parse captured mana cost: {e}"))?;
+            result.push(mana);
+        }
+
+        Ok(ManaCost(result))
+    }
+}
+
+impl std::fmt::Display for ManaCost {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for mana in self.iter() {
+            write!(f, "{}", mana)?;
+        }
+        Ok(())
     }
 }

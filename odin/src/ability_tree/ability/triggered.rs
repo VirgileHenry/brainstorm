@@ -1,16 +1,14 @@
 pub mod trigger_cond;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct TriggeredAbility {
     pub condition: trigger_cond::TriggerCondition,
     pub effect: crate::ability_tree::statement::Statement,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for TriggeredAbility {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "Triggered Ability:")?;
         out.push_inter_branch()?;

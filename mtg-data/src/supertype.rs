@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Supertype {
     Basic,
     Elite,
@@ -10,6 +9,7 @@ pub enum Supertype {
     Token,
     World,
 }
+
 impl std::str::FromStr for Supertype {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -25,6 +25,7 @@ impl std::str::FromStr for Supertype {
         }
     }
 }
+
 impl Supertype {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -38,11 +39,13 @@ impl Supertype {
         }
     }
 }
+
 impl std::fmt::Display for Supertype {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl Supertype {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -53,7 +56,6 @@ impl Supertype {
             Self::Snow,
             Self::Token,
             Self::World,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

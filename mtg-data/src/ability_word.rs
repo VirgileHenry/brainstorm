@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum AbilityWord {
     Adamant,
     Addendum,
@@ -67,6 +66,7 @@ pub enum AbilityWord {
     WillOfThePlaneswalkers,
     WillOfTheCouncil,
 }
+
 impl std::str::FromStr for AbilityWord {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -139,6 +139,7 @@ impl std::str::FromStr for AbilityWord {
         }
     }
 }
+
 impl AbilityWord {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -209,11 +210,13 @@ impl AbilityWord {
         }
     }
 }
+
 impl std::fmt::Display for AbilityWord {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl AbilityWord {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -281,7 +284,6 @@ impl AbilityWord {
             Self::Void,
             Self::WillOfThePlaneswalkers,
             Self::WillOfTheCouncil,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

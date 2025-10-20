@@ -1,5 +1,14 @@
 #[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    serde::Serialize,
+    serde::Deserialize
 )]
 pub enum ObjectKind {
     ArtifactSubtype(mtg_data::ArtifactType),
@@ -37,7 +46,8 @@ impl std::fmt::Display for ObjectKind {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ObjectReference {
     SelfReferencing,
     SpecifiedObj {
@@ -47,10 +57,7 @@ pub enum ObjectReference {
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
             ObjectReference::SelfReferencing => write!(out, "Self Referencing (~)"),
@@ -76,7 +83,8 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ObjectSpecifier {
     And(Box<ObjectSpecifier>, Box<ObjectSpecifier>),
     Color(mtg_data::Color),
@@ -86,10 +94,7 @@ pub enum ObjectSpecifier {
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
             ObjectSpecifier::And(spec1, spec2) => {

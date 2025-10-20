@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardType {
     Artifact,
     Battle,
@@ -20,6 +19,7 @@ pub enum CardType {
     Sorcery,
     Vanguard,
 }
+
 impl std::str::FromStr for CardType {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -45,6 +45,7 @@ impl std::str::FromStr for CardType {
         }
     }
 }
+
 impl CardType {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -68,11 +69,13 @@ impl CardType {
         }
     }
 }
+
 impl std::fmt::Display for CardType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl CardType {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -93,7 +96,6 @@ impl CardType {
             Self::Scheme,
             Self::Sorcery,
             Self::Vanguard,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

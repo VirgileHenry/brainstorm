@@ -103,6 +103,10 @@ impl<'a> ToGenerateEnum<'a> {
     fn generate(&self) -> Result<(), std::io::Error> {
         use std::io::Write;
 
+        const S4: &'static str = "    ";
+        const S8: &'static str = "        ";
+        const S12: &'static str = "            ";
+
         let source = std::fs::read_to_string(self.source_file)?;
         let mut destination = std::fs::OpenOptions::new()
             .write(true)
@@ -110,7 +114,7 @@ impl<'a> ToGenerateEnum<'a> {
             .truncate(true)
             .open(self.destination_file)?;
 
-        // sanitize all lines in input file as enum ready tokens
+        /* sanitize all lines in input file as enum ready tokens */
         let variants = source
             .split('\n')
             .map(|line| line.trim())
@@ -119,69 +123,79 @@ impl<'a> ToGenerateEnum<'a> {
             .collect::<Result<Vec<_>, _>>()
             .map_err(|e| std::io::Error::other(format!("Failed to sanitize input line: {e}")))?;
 
-        // Write out the enum
-        writeln!(
-            destination,
-            "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]"
-        )?;
+        /* Write out the enum */
         writeln!(
             destination,
             "#[derive(serde::Serialize, serde::Deserialize)]"
         )?;
+        writeln!(
+            destination,
+            "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+        )?;
         writeln!(destination, "pub enum {} {{", self.name)?;
         for (_, variant) in variants.iter() {
-            writeln!(destination, "{},", variant)?;
+            writeln!(destination, "{S4}{},", variant)?;
         }
         writeln!(destination, "}}")?;
 
-        // write out the parse func
+        /* write out the parse func */
+        writeln!(destination, "")?;
         writeln!(destination, "impl std::str::FromStr for {} {{", self.name)?;
-        writeln!(destination, "type Err = String;")?;
+        writeln!(destination, "{S4}type Err = String;")?;
         writeln!(
             destination,
-            "fn from_str(s: &str) -> Result<Self, Self::Err> {{"
+            "{S4}fn from_str(s: &str) -> Result<Self, Self::Err> {{"
         )?;
-        writeln!(destination, "match s {{")?;
+        writeln!(destination, "{S8}match s {{")?;
         for (line, variant) in variants.iter() {
-            writeln!(destination, "\"{}\" => Ok(Self::{}),", line, variant)?;
+            writeln!(destination, "{S12}\"{}\" => Ok(Self::{}),", line, variant)?;
         }
         writeln!(
             destination,
-            "other => Err(format!(\"Unknown {}: {{}}\", other.to_string())),",
+            "{S12}other => Err(format!(\"Unknown {}: {{}}\", other.to_string())),",
             self.name
         )?;
-        writeln!(destination, "}} }} }}")?;
+        writeln!(destination, "{S8}}}")?;
+        writeln!(destination, "{S4}}}")?;
+        writeln!(destination, "}}")?;
 
-        // Write out the display funcs
+        /* Write out the display funcs */
+        writeln!(destination, "")?;
         writeln!(destination, "impl {} {{", self.name)?;
-        writeln!(destination, "pub fn as_str(&self) -> &'static str {{")?;
-        writeln!(destination, "match self {{")?;
+        writeln!(destination, "{S4}pub fn as_str(&self) -> &'static str {{")?;
+        writeln!(destination, "{S8}match self {{")?;
         for (line, variant) in variants.iter() {
-            writeln!(destination, "Self::{} =>\"{}\",", variant, line)?;
+            writeln!(destination, "{S12}Self::{} => \"{}\",", variant, line)?;
         }
-        writeln!(destination, "}} }} }}")?;
+        writeln!(destination, "{S8}}}")?;
+        writeln!(destination, "{S4}}}")?;
+        writeln!(destination, "}}")?;
 
+        /* Display impl */
+        writeln!(destination, "")?;
         writeln!(destination, "impl std::fmt::Display for {} {{", self.name)?;
         writeln!(
             destination,
-            "fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{"
+            "{S4}fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {{"
         )?;
-        writeln!(destination, "write!(f, \"{{}}\", self.as_str())")?;
-        writeln!(destination, "}} }}")?;
+        writeln!(destination, "{S8}write!(f, \"{{}}\", self.as_str())")?;
+        writeln!(destination, "{S4}}}")?;
+        writeln!(destination, "}}")?;
 
-        // write the iter func
+        /* Write the iter func */
+        writeln!(destination, "")?;
         writeln!(destination, "impl {} {{", self.name)?;
-        writeln!(destination, "pub fn all() -> impl Iterator<Item = Self> {{")?;
-        writeln!(destination, "[")?;
+        writeln!(
+            destination,
+            "{S4}pub fn all() -> impl Iterator<Item = Self> {{"
+        )?;
+        writeln!(destination, "{S8}[")?;
         for (_, variant) in variants.iter() {
-            writeln!(destination, "Self::{},", variant)?;
+            writeln!(destination, "{S12}Self::{},", variant)?;
         }
-        writeln!(destination, "].into_iter()")?;
-        writeln!(destination, "}} }} ")?;
-
-        std::process::Command::new("rustfmt")
-            .arg(&self.destination_file)
-            .output()?;
+        writeln!(destination, "{S8}].into_iter()")?;
+        writeln!(destination, "{S4}}}")?;
+        writeln!(destination, "}}")?;
 
         Ok(())
     }

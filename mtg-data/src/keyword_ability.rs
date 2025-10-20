@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum KeywordAbility {
     Absorb,
     Affinity,
@@ -215,6 +214,7 @@ pub enum KeywordAbility {
     Wither,
     Wizardcycling,
 }
+
 impl std::str::FromStr for KeywordAbility {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -435,6 +435,7 @@ impl std::str::FromStr for KeywordAbility {
         }
     }
 }
+
 impl KeywordAbility {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -653,11 +654,13 @@ impl KeywordAbility {
         }
     }
 }
+
 impl std::fmt::Display for KeywordAbility {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl KeywordAbility {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -873,7 +876,6 @@ impl KeywordAbility {
             Self::WebSlinging,
             Self::Wither,
             Self::Wizardcycling,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

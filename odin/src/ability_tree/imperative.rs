@@ -1,4 +1,5 @@
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Imperative {
     DealsDamage {
         dealer: crate::ability_tree::object::ObjectReference,
@@ -24,10 +25,7 @@ pub enum Imperative {
 }
 
 impl crate::ability_tree::AbilityTreeImpl for Imperative {
-    fn display<W: std::io::Write>(
-        &self,
-        out: &mut crate::utils::TreeFormatter<'_, W>,
-    ) -> std::io::Result<()> {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
             Imperative::DealsDamage { dealer, amount, to } => {

@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SpellType {
     Adventure,
     Arcane,
@@ -9,6 +8,7 @@ pub enum SpellType {
     Omen,
     Trap,
 }
+
 impl std::str::FromStr for SpellType {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -23,6 +23,7 @@ impl std::str::FromStr for SpellType {
         }
     }
 }
+
 impl SpellType {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -35,11 +36,13 @@ impl SpellType {
         }
     }
 }
+
 impl std::fmt::Display for SpellType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl SpellType {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -49,7 +52,6 @@ impl SpellType {
             Self::Lesson,
             Self::Omen,
             Self::Trap,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

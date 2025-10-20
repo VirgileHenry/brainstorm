@@ -2,7 +2,7 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Layout {
     Normal {
-        mana_cost: Option<crate::mana_cost::ManaCost>,
+        mana_cost: Option<odin::ability_tree::terminals::ManaCost>,
         card_type: crate::card_type::CardType,
         abilities: odin::AbilityTree,
     },
@@ -15,7 +15,7 @@ pub enum Layout {
     Class {},
     Case {},
     Saga {
-        mana_cost: Option<crate::mana_cost::ManaCost>,
+        mana_cost: Option<odin::ability_tree::terminals::ManaCost>,
         card_type: crate::card_type::CardType,
         chapters: arrayvec::ArrayVec<odin::ability_tree::ability::saga_chapter::SagaChapter, 4>,
     },
@@ -65,7 +65,7 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
             "normal" => Ok(Layout::Normal {
                 mana_cost: match raw_card.mana_cost {
                     Some(mana_cost) => Some(
-                        crate::mana_cost::ManaCost::from_str(mana_cost)
+                        odin::ability_tree::terminals::ManaCost::from_str(mana_cost)
                             .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                     ),
                     None => None,
@@ -73,11 +73,8 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                 card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
                 abilities: match raw_card.oracle_text {
-                    Some(oracle_text) => {
-                        odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name).map_err(
-                            |e| format!("Failed to parse oracle text to ability tree: {e}"),
-                        )?
-                    }
+                    Some(oracle_text) => odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                        .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                     None => odin::AbilityTree::empty(),
                 },
             }),
@@ -85,40 +82,30 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                 card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
                 abilities: match raw_card.oracle_text {
-                    Some(oracle_text) => {
-                        odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name).map_err(
-                            |e| format!("Failed to parse oracle text to ability tree: {e}"),
-                        )?
-                    }
+                    Some(oracle_text) => odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                        .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                     None => odin::AbilityTree::empty(),
                 },
             }),
             "saga" => {
                 let ability_tree = match raw_card.oracle_text {
-                    Some(oracle_text) => {
-                        odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name).map_err(
-                            |e| format!("Failed to parse oracle text to ability tree: {e}"),
-                        )?
-                    }
+                    Some(oracle_text) => odin::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                        .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                     None => odin::AbilityTree::empty(),
                 };
                 let mut chapters = arrayvec::ArrayVec::new();
                 for ability in ability_tree.abilities.into_iter() {
                     match ability {
-                        odin::ability_tree::ability::Ability::SagaChapter(chapter) => {
-                            chapters.push(chapter)
-                        }
+                        odin::ability_tree::ability::Ability::SagaChapter(chapter) => chapters.push(chapter),
                         other => {
-                            return Err(format!(
-                                "Invalid ability for Saga: expected Chapter, found {other:?}"
-                            ));
+                            return Err(format!("Invalid ability for Saga: expected Chapter, found {other:?}"));
                         }
                     }
                 }
                 Ok(Layout::Saga {
                     mana_cost: match raw_card.mana_cost {
                         Some(mana_cost) => Some(
-                            crate::mana_cost::ManaCost::from_str(mana_cost)
+                            odin::ability_tree::terminals::ManaCost::from_str(mana_cost)
                                 .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                         ),
                         None => None,

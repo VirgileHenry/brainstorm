@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ArtifactType {
     Attraction,
     Blood,
@@ -22,6 +21,7 @@ pub enum ArtifactType {
     Treasure,
     Vehicle,
 }
+
 impl std::str::FromStr for ArtifactType {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -49,6 +49,7 @@ impl std::str::FromStr for ArtifactType {
         }
     }
 }
+
 impl ArtifactType {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -74,11 +75,13 @@ impl ArtifactType {
         }
     }
 }
+
 impl std::fmt::Display for ArtifactType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
+
 impl ArtifactType {
     pub fn all() -> impl Iterator<Item = Self> {
         [
@@ -101,7 +104,6 @@ impl ArtifactType {
             Self::Terminus,
             Self::Treasure,
             Self::Vehicle,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }
