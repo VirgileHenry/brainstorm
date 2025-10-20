@@ -11,7 +11,7 @@ pub mod zone;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct AbilityTree {
-    pub abilities: Vec<ability::Ability>,
+    pub abilities: arrayvec::ArrayVec<ability::Ability, 8>,
 }
 
 impl AbilityTree {
@@ -44,34 +44,7 @@ impl AbilityTree {
 
     pub fn empty() -> AbilityTree {
         AbilityTree {
-            abilities: Vec::with_capacity(0),
-        }
-    }
-
-    pub fn example() -> AbilityTree {
-        AbilityTree {
-            abilities: vec![ability::Ability::Triggered(ability::triggered::TriggeredAbility {
-                condition: ability::triggered::trigger_cond::TriggerCondition::ObjectDoesAction {
-                    object: object::ObjectReference::SelfReferencing,
-                    action: terminals::CardActions::Dies,
-                },
-                effect: statement::Statement::Imperative(imperative::Imperative::Put {
-                    amount: terminals::Number::Number(1),
-                    of: terminals::Counter::PlusOnePlusOne,
-                    on: object::ObjectReference::SpecifiedObj {
-                        amount: terminals::CountSpecifier::All,
-                        specifier: object::ObjectSpecifier::And(
-                            Box::new(object::ObjectSpecifier::And(
-                                Box::new(object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl)),
-                                Box::new(object::ObjectSpecifier::Kind(object::ObjectKind::Type(
-                                    mtg_data::CardType::Creature,
-                                ))),
-                            )),
-                            Box::new(object::ObjectSpecifier::Color(mtg_data::Color::White)),
-                        ),
-                    },
-                }),
-            })],
+            abilities: arrayvec::ArrayVec::new(),
         }
     }
 }

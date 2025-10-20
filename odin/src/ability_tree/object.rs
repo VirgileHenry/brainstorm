@@ -52,7 +52,7 @@ pub enum ObjectReference {
     SelfReferencing,
     SpecifiedObj {
         amount: crate::ability_tree::terminals::CountSpecifier,
-        specifier: ObjectSpecifier,
+        specifier: ObjectSpecifiers,
     },
 }
 
@@ -85,33 +85,56 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum ObjectSpecifiers {
+    Single(ObjectSpecifier),
+    And(arrayvec::ArrayVec<ObjectSpecifier, 8>),
+    Or(arrayvec::ArrayVec<ObjectSpecifier, 8>),
+}
+
+impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifiers {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+        use std::io::Write;
+        match self {
+            ObjectSpecifiers::Single(specifier) => specifier.display(out),
+            ObjectSpecifiers::And(specifiers) => {
+                for specifier in specifiers.iter().take(specifiers.len().saturating_sub(1)) {
+                    specifier.display(out)?;
+                    write!(out, " and ")?;
+                }
+                if let Some(specifier) = specifiers.last() {
+                    specifier.display(out)?;
+                }
+                Ok(())
+            }
+            ObjectSpecifiers::Or(specifiers) => {
+                for specifier in specifiers.iter().take(specifiers.len().saturating_sub(1)) {
+                    specifier.display(out)?;
+                    write!(out, " or ")?;
+                }
+                if let Some(specifier) = specifiers.last() {
+                    specifier.display(out)?;
+                }
+                Ok(())
+            }
+        }
+    }
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ObjectSpecifier {
-    And(Box<ObjectSpecifier>, Box<ObjectSpecifier>),
     Color(mtg_data::Color),
     Control(crate::ability_tree::terminals::ControlSpecifier),
     Kind(ObjectKind),
-    Or(Box<ObjectSpecifier>, Box<ObjectSpecifier>),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
     fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            ObjectSpecifier::And(spec1, spec2) => {
-                spec1.display(out)?;
-                write!(out, " and ")?;
-                spec2.display(out)?;
-                Ok(())
-            }
             ObjectSpecifier::Color(color) => write!(out, "color specifier: {color}"),
             ObjectSpecifier::Kind(object) => write!(out, "kind specifier: {object}"),
             ObjectSpecifier::Control(control) => write!(out, "control specifier: {control}"),
-            ObjectSpecifier::Or(spec1, spec2) => {
-                spec1.display(out)?;
-                write!(out, " or ")?;
-                spec2.display(out)?;
-                Ok(())
-            }
         }
     }
 }

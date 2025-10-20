@@ -13,44 +13,67 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
     /* Or perhaps use a cheap custom allocater, like an arena */
     match tokens {
         /* Some generic conversions from pure tokens to mor helpeful nodes */
-        [ParserNode::LexerToken(TokenKind::CardType(ty))] => Some(ParserNode::ObjectKind(
-            ability_tree::object::ObjectKind::Type(*ty),
-        )),
+        [ParserNode::LexerToken(TokenKind::CardType(ty))] => {
+            Some(ParserNode::ObjectKind(ability_tree::object::ObjectKind::Type(*ty)))
+        }
 
         /* In some cases, object kinds can be kind specifiers */
-        [ParserNode::ObjectKind(kind)] => Some(ParserNode::ObjectSpecifier(
-            ability_tree::object::ObjectSpecifier::Kind(*kind),
-        )),
+        [ParserNode::ObjectKind(kind)] => Some(ParserNode::ObjectSpecifier(ability_tree::object::ObjectSpecifier::Kind(
+            *kind,
+        ))),
         /* Object specifiers can be regrouped */
+        [ParserNode::ObjectSpecifier(specifier)] => Some(ParserNode::ObjectSpecifiers(
+            ability_tree::object::ObjectSpecifiers::Single(specifier.clone()),
+        )),
         [
             ParserNode::ObjectSpecifier(spec1),
             ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Or)),
             ParserNode::ObjectSpecifier(spec2),
-        ] => Some(ParserNode::ObjectSpecifier(
-            ability_tree::object::ObjectSpecifier::Or(
-                Box::new(spec1.clone()),
-                Box::new(spec2.clone()),
-            ),
-        )),
+        ] => Some(ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::Or({
+            let mut specifiers = arrayvec::ArrayVec::new();
+            specifiers.push(spec1.clone());
+            specifiers.push(spec2.clone());
+            specifiers
+        }))),
+        /* Or lists can be longer with: A, B, C or D. In that case, the separator is a comma */
+        [
+            ParserNode::ObjectSpecifier(specifier),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+            ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::Or(specifiers)),
+        ] => Some(ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::Or({
+            let mut new_specifiers = specifiers.clone();
+            new_specifiers.push(specifier.clone());
+            new_specifiers
+        }))),
         [
             ParserNode::ObjectSpecifier(spec1),
             ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::And)),
             ParserNode::ObjectSpecifier(spec2),
-        ] => Some(ParserNode::ObjectSpecifier(
-            ability_tree::object::ObjectSpecifier::And(
-                Box::new(spec1.clone()),
-                Box::new(spec2.clone()),
-            ),
-        )),
+        ] => Some(ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::And({
+            let mut specifiers = arrayvec::ArrayVec::new();
+            specifiers.push(spec1.clone());
+            specifiers.push(spec2.clone());
+            specifiers
+        }))),
+        /* And lists can be longer with: A, B, C and D. In that case, the separator is a comma */
+        [
+            ParserNode::ObjectSpecifier(specifier),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+            ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::And(specifiers)),
+        ] => Some(ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::And({
+            let mut new_specifiers = specifiers.clone();
+            new_specifiers.push(specifier.clone());
+            new_specifiers
+        }))),
 
         /* A count specifier as well as specifiers can be merged into an object reference */
         [
             ParserNode::LexerToken(TokenKind::CountSpecifier(amount)),
-            ParserNode::ObjectSpecifier(specifier),
+            ParserNode::ObjectSpecifiers(specifiers),
         ] => Some(ParserNode::ObjectReference(
             ability_tree::object::ObjectReference::SpecifiedObj {
                 amount: amount.clone(),
-                specifier: specifier.clone(),
+                specifier: specifiers.clone(),
             },
         )),
 
@@ -59,11 +82,9 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
             ParserNode::LexerToken(TokenKind::PlayerActions(non_terminals::PlayerActions::Destroy)),
             ParserNode::ObjectReference(object),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-        ] => Some(ParserNode::Imperative(
-            ability_tree::imperative::Imperative::Destroy {
-                object: object.clone(),
-            },
-        )),
+        ] => Some(ParserNode::Imperative(ability_tree::imperative::Imperative::Destroy {
+            object: object.clone(),
+        })),
 
         /* Trigger conditions are made from things doing stuff? */
         [
@@ -77,34 +98,30 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
         )),
 
         /* Create the satements */
-        [ParserNode::Imperative(imperative)] => Some(ParserNode::Statement(
-            ability_tree::statement::Statement::Imperative(imperative.clone()),
-        )),
+        [ParserNode::Imperative(imperative)] => Some(ParserNode::Statement(ability_tree::statement::Statement::Imperative(
+            imperative.clone(),
+        ))),
         /* "May" keyword with a player specifier is a may ability */
         [
             ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)),
             ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::May)),
             ParserNode::Imperative(imperative),
-        ] => Some(ParserNode::Statement(
-            ability_tree::statement::Statement::May {
-                player: player.clone(),
-                action: imperative.clone(),
-            },
-        )),
+        ] => Some(ParserNode::Statement(ability_tree::statement::Statement::May {
+            player: player.clone(),
+            action: imperative.clone(),
+        })),
 
         /* Parse into abilities */
         /* Keyword abilities are the simplest */
         [ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] => Some(ParserNode::Ability(
-            ability_tree::ability::Ability::Keyword(
-                ability_tree::ability::keyword::KeywordAbility { keyword: *keyword },
-            ),
+            ability_tree::ability::Ability::Keyword(ability_tree::ability::keyword::KeywordAbility { keyword: *keyword }),
         )),
         /* A statement alone can be a spell ability */
-        [ParserNode::Statement(statement)] => Some(ParserNode::Ability(
-            ability_tree::ability::Ability::Spell(ability_tree::ability::spell::SpellAbility {
+        [ParserNode::Statement(statement)] => Some(ParserNode::Ability(ability_tree::ability::Ability::Spell(
+            ability_tree::ability::spell::SpellAbility {
                 effect: statement.clone(),
-            }),
-        )),
+            },
+        ))),
         /* Triggered abilities need a "when", a trigger, a comma and a statement. */
         [
             ParserNode::LexerToken(TokenKind::EnglishKeywords(
@@ -115,31 +132,28 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
             ParserNode::TriggerCondition(condition),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
             ParserNode::Statement(statement),
-        ] => Some(ParserNode::Ability(
-            ability_tree::ability::Ability::Triggered(
-                ability_tree::ability::triggered::TriggeredAbility {
-                    condition: condition.clone(),
-                    effect: statement.clone(),
-                },
-            ),
-        )),
+        ] => Some(ParserNode::Ability(ability_tree::ability::Ability::Triggered(
+            ability_tree::ability::triggered::TriggeredAbility {
+                condition: condition.clone(),
+                effect: statement.clone(),
+            },
+        ))),
 
         /* Abilities can be ability trees, and can be fused in ability trees */
-        [ParserNode::Ability(ability)] => {
-            Some(ParserNode::AbilityTree(ability_tree::AbilityTree {
-                abilities: vec![ability.clone()],
-            }))
-        }
+        [ParserNode::Ability(ability)] => Some(ParserNode::AbilityTree(ability_tree::AbilityTree {
+            abilities: {
+                let mut abilities = arrayvec::ArrayVec::new();
+                abilities.push(ability.clone());
+                abilities
+            },
+        })),
         [
             ParserNode::AbilityTree(tree),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
             ParserNode::Ability(ability),
         ] => Some(ParserNode::AbilityTree(ability_tree::AbilityTree {
             abilities: {
-                let mut abilities = Vec::with_capacity(tree.abilities.len() + 1);
-                tree.abilities
-                    .iter()
-                    .for_each(|ab| abilities.push(ab.clone()));
+                let mut abilities = tree.abilities.clone();
                 abilities.push(ability.clone());
                 abilities
             },

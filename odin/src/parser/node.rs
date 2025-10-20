@@ -7,6 +7,7 @@ pub enum ParserNode {
     ObjectKind(crate::ability_tree::object::ObjectKind),
     ObjectReference(crate::ability_tree::object::ObjectReference),
     ObjectSpecifier(crate::ability_tree::object::ObjectSpecifier),
+    ObjectSpecifiers(crate::ability_tree::object::ObjectSpecifiers),
     Statement(crate::ability_tree::statement::Statement),
     TriggerCondition(crate::ability_tree::ability::triggered::trigger_cond::TriggerCondition),
 }
