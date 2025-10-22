@@ -15,9 +15,17 @@ impl std::str::FromStr for BattleType {
 }
 
 impl BattleType {
+    pub const VARIANT_COUNT: usize = 1;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Siege => "siege",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Siege => 0,
         }
     }
 }

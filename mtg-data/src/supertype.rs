@@ -27,6 +27,8 @@ impl std::str::FromStr for Supertype {
 }
 
 impl Supertype {
+    pub const VARIANT_COUNT: usize = 7;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Basic => "basic",
@@ -36,6 +38,18 @@ impl Supertype {
             Self::Snow => "snow",
             Self::Token => "token",
             Self::World => "world",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Basic => 0,
+            Self::Elite => 1,
+            Self::Legendary => 2,
+            Self::Ongoing => 3,
+            Self::Snow => 4,
+            Self::Token => 5,
+            Self::World => 6,
         }
     }
 }

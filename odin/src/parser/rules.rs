@@ -113,9 +113,19 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
 
         /* Parse into abilities */
         /* Keyword abilities are the simplest */
-        [ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] => Some(ParserNode::Ability(Box::new(
-            ability_tree::ability::Ability::Keyword(ability_tree::ability::keyword::KeywordAbility { keyword: *keyword }),
-        ))),
+        [ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] if *keyword != mtg_data::KeywordAbility::Ward => {
+            Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Keyword(
+                ability_tree::ability::keyword::KeywordAbility::SingleKeyword(*keyword),
+            ))))
+        }
+        /* special case for some keyword abilities that require additional info */
+        [
+            ParserNode::LexerToken(TokenKind::KeywordAbility(mtg_data::KeywordAbility::Ward)),
+            ParserNode::Cost(cost),
+        ] => Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Keyword(
+            ability_tree::ability::keyword::KeywordAbility::Ward(cost.clone()),
+        )))),
+
         /* A statement alone can be a spell ability */
         [ParserNode::Statement(statement)] => Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Spell(
             ability_tree::ability::spell::SpellAbility {

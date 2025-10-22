@@ -25,6 +25,8 @@ impl std::str::FromStr for SpellType {
 }
 
 impl SpellType {
+    pub const VARIANT_COUNT: usize = 6;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Adventure => "adventure",
@@ -33,6 +35,17 @@ impl SpellType {
             Self::Lesson => "lesson",
             Self::Omen => "omen",
             Self::Trap => "trap",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Adventure => 0,
+            Self::Arcane => 1,
+            Self::Chorus => 2,
+            Self::Lesson => 3,
+            Self::Omen => 4,
+            Self::Trap => 5,
         }
     }
 }

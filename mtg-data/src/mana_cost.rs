@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Mana {
     X,
     Any(usize),
@@ -25,22 +24,31 @@ impl std::str::FromStr for Mana {
                 [ManaSymbol::Any(num)] => Ok(Mana::Any(*num)),
                 [ManaSymbol::Colored(color)] => Ok(Mana::Colored(*color)),
                 [ManaSymbol::Colored(c1), ManaSymbol::Colored(c2)] => Ok(Mana::Hybrid(*c1, *c2)),
-                [ManaSymbol::Any(num), ManaSymbol::Colored(color)] => {
-                    Ok(Mana::MonocoloredHybrid(*num, *color))
-                }
+                [ManaSymbol::Any(num), ManaSymbol::Colored(color)] => Ok(Mana::MonocoloredHybrid(*num, *color)),
                 [ManaSymbol::Colored(color), ManaSymbol::Phyrexian] => Ok(Mana::Phyrexian(*color)),
-                [
-                    ManaSymbol::Colored(c1),
-                    ManaSymbol::Colored(c2),
-                    ManaSymbol::Phyrexian,
-                ] => Ok(Mana::HybridPhyrexian(*c1, *c2)),
+                [ManaSymbol::Colored(c1), ManaSymbol::Colored(c2), ManaSymbol::Phyrexian] => Ok(Mana::HybridPhyrexian(*c1, *c2)),
                 [ManaSymbol::Snow] => Ok(Mana::Snow),
                 _ => Err(format!("Invalid symbol combination: {symbols:?}")),
             }
         } else {
-            Err(format!(
-                "Mana cost shall be between curly braces, got {from}"
-            ))
+            Err(format!("Mana cost shall be between curly braces, got {from}"))
+        }
+    }
+}
+
+impl Mana {
+    pub const VARIANT_COUNT: usize = 8;
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Mana::X => 0,
+            Mana::Snow => 1,
+            Mana::Any(_) => 2,
+            Mana::Colored(_) => 3,
+            Mana::Hybrid(_, _) => 4,
+            Mana::MonocoloredHybrid(_, _) => 5,
+            Mana::Phyrexian(_) => 6,
+            Mana::HybridPhyrexian(_, _) => 7,
         }
     }
 }
@@ -115,18 +123,9 @@ mod test {
         assert_eq!(Mana::from_str("{x}"), Ok(Mana::X));
         assert_eq!(Mana::from_str("{12}"), Ok(Mana::Any(12)));
         assert_eq!(Mana::from_str("{s}"), Ok(Mana::Snow));
-        assert_eq!(
-            Mana::from_str("{r/g}"),
-            Ok(Mana::Hybrid(Color::Red, Color::Green))
-        );
+        assert_eq!(Mana::from_str("{r/g}"), Ok(Mana::Hybrid(Color::Red, Color::Green)));
         assert_eq!(Mana::from_str("{r/p}"), Ok(Mana::Phyrexian(Color::Red)));
-        assert_eq!(
-            Mana::from_str("{3/r}"),
-            Ok(Mana::MonocoloredHybrid(3, Color::Red))
-        );
-        assert_eq!(
-            Mana::from_str("{r/g/p}"),
-            Ok(Mana::HybridPhyrexian(Color::Red, Color::Green))
-        );
+        assert_eq!(Mana::from_str("{3/r}"), Ok(Mana::MonocoloredHybrid(3, Color::Red)));
+        assert_eq!(Mana::from_str("{r/g/p}"), Ok(Mana::HybridPhyrexian(Color::Red, Color::Green)));
     }
 }

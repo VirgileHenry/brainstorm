@@ -37,6 +37,8 @@ impl std::str::FromStr for EnchantmentType {
 }
 
 impl EnchantmentType {
+    pub const VARIANT_COUNT: usize = 12;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Aura => "aura",
@@ -51,6 +53,23 @@ impl EnchantmentType {
             Self::Saga => "saga",
             Self::Shard => "shard",
             Self::Shrine => "shrine",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Aura => 0,
+            Self::Background => 1,
+            Self::Cartouche => 2,
+            Self::Case => 3,
+            Self::Class => 4,
+            Self::Curse => 5,
+            Self::Role => 6,
+            Self::Room => 7,
+            Self::Rune => 8,
+            Self::Saga => 9,
+            Self::Shard => 10,
+            Self::Shrine => 11,
         }
     }
 }

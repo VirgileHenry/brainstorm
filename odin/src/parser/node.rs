@@ -5,6 +5,7 @@
 pub enum ParserNode {
     Ability(Box<crate::ability_tree::ability::Ability>),
     AbilityTree(Box<crate::ability_tree::AbilityTree>),
+    Cost(crate::ability_tree::cost::Cost),
     Imperative(crate::ability_tree::imperative::Imperative),
     LexerToken(crate::lexer::tokens::TokenKind),
     ObjectKind(crate::ability_tree::object::ObjectKind),

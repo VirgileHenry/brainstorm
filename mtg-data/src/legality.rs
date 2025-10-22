@@ -1,6 +1,5 @@
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Legality {
     Legal,
     Notlegal,
@@ -22,12 +21,23 @@ impl std::str::FromStr for Legality {
 }
 
 impl Legality {
+    pub const VARIANT_COUNT: usize = 4;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Legal => "legal",
             Self::Notlegal => "not_legal",
             Self::Restricted => "restricted",
             Self::Banned => "banned",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Legal => 0,
+            Self::Notlegal => 1,
+            Self::Restricted => 2,
+            Self::Banned => 3,
         }
     }
 }

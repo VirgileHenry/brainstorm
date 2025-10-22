@@ -141,6 +141,8 @@ impl std::str::FromStr for AbilityWord {
 }
 
 impl AbilityWord {
+    pub const VARIANT_COUNT: usize = 64;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Adamant => "adamant",
@@ -207,6 +209,75 @@ impl AbilityWord {
             Self::Void => "void",
             Self::WillOfThePlaneswalkers => "will of the planeswalkers",
             Self::WillOfTheCouncil => "will of the council",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Adamant => 0,
+            Self::Addendum => 1,
+            Self::Alliance => 2,
+            Self::Battalion => 3,
+            Self::Bloodrush => 4,
+            Self::Celebration => 5,
+            Self::Channel => 6,
+            Self::Chroma => 7,
+            Self::Cohort => 8,
+            Self::Constellation => 9,
+            Self::Converge => 10,
+            Self::Corrupted => 11,
+            Self::CouncilsDilemma => 12,
+            Self::Coven => 13,
+            Self::Delirium => 14,
+            Self::Descend => 15,
+            Self::Domain => 16,
+            Self::Eerie => 17,
+            Self::Eminence => 18,
+            Self::Enrage => 19,
+            Self::FatefulHour => 20,
+            Self::FathomlessDescent => 21,
+            Self::Ferocious => 22,
+            Self::Flurry => 23,
+            Self::Formidable => 24,
+            Self::Grandeur => 25,
+            Self::Hellbent => 26,
+            Self::HerosReward => 27,
+            Self::Heroic => 28,
+            Self::Imprint => 29,
+            Self::Inspired => 30,
+            Self::JoinForces => 31,
+            Self::Kinfall => 32,
+            Self::Kinship => 33,
+            Self::Landfall => 34,
+            Self::Landship => 35,
+            Self::Legacy => 36,
+            Self::Lieutenant => 37,
+            Self::Magecraft => 38,
+            Self::Metalcraft => 39,
+            Self::Morbid => 40,
+            Self::PackTactics => 41,
+            Self::Paradox => 42,
+            Self::Parley => 43,
+            Self::Radiance => 44,
+            Self::Raid => 45,
+            Self::Rally => 46,
+            Self::Renew => 47,
+            Self::Revolt => 48,
+            Self::SecretCouncil => 49,
+            Self::SpellMastery => 50,
+            Self::StartYourEngines => 51,
+            Self::Strive => 52,
+            Self::Survival => 53,
+            Self::Sweep => 54,
+            Self::Teamwork => 55,
+            Self::TemptingOffer => 56,
+            Self::Threshold => 57,
+            Self::Underdog => 58,
+            Self::Undergrowth => 59,
+            Self::Valiant => 60,
+            Self::Void => 61,
+            Self::WillOfThePlaneswalkers => 62,
+            Self::WillOfTheCouncil => 63,
         }
     }
 }

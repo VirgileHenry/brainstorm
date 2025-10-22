@@ -1,9 +1,7 @@
-mod cost;
-
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ActivatedAbility {
-    costs: arrayvec::ArrayVec<cost::Cost, 8>,
+    costs: arrayvec::ArrayVec<crate::ability_tree::cost::Cost, 8>,
     effect: crate::ability_tree::statement::Statement,
 }
 
@@ -14,10 +12,15 @@ impl crate::ability_tree::AbilityTreeImpl for ActivatedAbility {
         out.push_inter_branch()?;
         write!(out, "Costs:")?;
         out.push_final_branch()?;
-        for cost in self.costs.iter() {
-            // fixme: also in a tree for a cost
+        for cost in self.costs.iter().take(self.costs.len().saturating_sub(1)) {
+            out.push_inter_branch()?;
             cost.display(out)?;
-            write!(out, ", ")?;
+            out.pop_branch();
+        }
+        if let Some(cost) = self.costs.last() {
+            out.push_inter_branch()?;
+            cost.display(out)?;
+            out.pop_branch();
         }
         out.pop_branch();
         out.next_final_branch()?;

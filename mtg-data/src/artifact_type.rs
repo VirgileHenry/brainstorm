@@ -51,6 +51,8 @@ impl std::str::FromStr for ArtifactType {
 }
 
 impl ArtifactType {
+    pub const VARIANT_COUNT: usize = 19;
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Attraction => "attraction",
@@ -72,6 +74,30 @@ impl ArtifactType {
             Self::Terminus => "terminus",
             Self::Treasure => "treasure",
             Self::Vehicle => "vehicle",
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        match self {
+            Self::Attraction => 0,
+            Self::Blood => 1,
+            Self::Bobblehead => 2,
+            Self::Clue => 3,
+            Self::Contraption => 4,
+            Self::Equipment => 5,
+            Self::Food => 6,
+            Self::Fortification => 7,
+            Self::Gold => 8,
+            Self::Incubator => 9,
+            Self::Infinity => 10,
+            Self::Junk => 11,
+            Self::Map => 12,
+            Self::Powerstone => 13,
+            Self::Spacecraft => 14,
+            Self::Stone => 15,
+            Self::Terminus => 16,
+            Self::Treasure => 17,
+            Self::Vehicle => 18,
         }
     }
 }

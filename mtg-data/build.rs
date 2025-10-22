@@ -15,9 +15,7 @@ fn sanitize(s: &str) -> Result<String, String> {
             '\'' | '.' | '!' => {}
             ' ' | '-' => start_of_word = true,
             other => {
-                return Err(format!(
-                    "Unhandled character in sanitizing process: '{other}'"
-                ));
+                return Err(format!("Unhandled character in sanitizing process: '{other}'"));
             }
         }
     }
@@ -124,10 +122,7 @@ impl<'a> ToGenerateEnum<'a> {
             .map_err(|e| std::io::Error::other(format!("Failed to sanitize input line: {e}")))?;
 
         /* Write out the enum */
-        writeln!(
-            destination,
-            "#[derive(serde::Serialize, serde::Deserialize)]"
-        )?;
+        writeln!(destination, "#[derive(serde::Serialize, serde::Deserialize)]")?;
         writeln!(
             destination,
             "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]"
@@ -142,10 +137,7 @@ impl<'a> ToGenerateEnum<'a> {
         writeln!(destination, "")?;
         writeln!(destination, "impl std::str::FromStr for {} {{", self.name)?;
         writeln!(destination, "{S4}type Err = String;")?;
-        writeln!(
-            destination,
-            "{S4}fn from_str(s: &str) -> Result<Self, Self::Err> {{"
-        )?;
+        writeln!(destination, "{S4}fn from_str(s: &str) -> Result<Self, Self::Err> {{")?;
         writeln!(destination, "{S8}match s {{")?;
         for (line, variant) in variants.iter() {
             writeln!(destination, "{S12}\"{}\" => Ok(Self::{}),", line, variant)?;
@@ -159,13 +151,26 @@ impl<'a> ToGenerateEnum<'a> {
         writeln!(destination, "{S4}}}")?;
         writeln!(destination, "}}")?;
 
-        /* Write out the display funcs */
+        /* Impl for the type */
         writeln!(destination, "")?;
         writeln!(destination, "impl {} {{", self.name)?;
+        /* get total enum variant count */
+        writeln!(destination, "{S4}pub const VARIANT_COUNT: usize = {};", variants.len())?;
+        /* Write out the display funcs */
+        writeln!(destination, "")?;
         writeln!(destination, "{S4}pub fn as_str(&self) -> &'static str {{")?;
         writeln!(destination, "{S8}match self {{")?;
         for (line, variant) in variants.iter() {
             writeln!(destination, "{S12}Self::{} => \"{}\",", variant, line)?;
+        }
+        writeln!(destination, "{S8}}}")?;
+        writeln!(destination, "{S4}}}")?;
+        /* func to retrieve the node id */
+        writeln!(destination, "")?;
+        writeln!(destination, "{S4}pub fn id(&self) -> u32 {{")?;
+        writeln!(destination, "{S8}match self {{")?;
+        for (i, (_, variant)) in variants.iter().enumerate() {
+            writeln!(destination, "{S12}Self::{} => {},", variant, i)?;
         }
         writeln!(destination, "{S8}}}")?;
         writeln!(destination, "{S4}}}")?;
@@ -185,10 +190,7 @@ impl<'a> ToGenerateEnum<'a> {
         /* Write the iter func */
         writeln!(destination, "")?;
         writeln!(destination, "impl {} {{", self.name)?;
-        writeln!(
-            destination,
-            "{S4}pub fn all() -> impl Iterator<Item = Self> {{"
-        )?;
+        writeln!(destination, "{S4}pub fn all() -> impl Iterator<Item = Self> {{")?;
         writeln!(destination, "{S8}[")?;
         for (_, variant) in variants.iter() {
             writeln!(destination, "{S12}Self::{},", variant)?;
