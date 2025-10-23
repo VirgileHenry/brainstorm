@@ -1,4 +1,5 @@
 pub mod ability;
+pub mod continuous_effect;
 pub mod cost;
 pub mod imperative;
 pub mod object;

@@ -627,3 +627,35 @@ impl std::fmt::Display for ManaCost {
         Ok(())
     }
 }
+
+/// Duration for a continuous effect.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum ContinuousEffectDuration {
+    /// The duration last for ever, as long as the object creating it exists.
+    ObjectStaticAbility,
+    /// Effect last until end of turn.
+    UntilEndOfTurn,
+    /// Effect last until end of player's next turn
+    UntilEndOfNextTurn,
+}
+
+impl std::fmt::Display for ContinuousEffectDuration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ContinuousEffectDuration::ObjectStaticAbility => write!(f, "while the generator exists"),
+            ContinuousEffectDuration::UntilEndOfTurn => write!(f, "until end of turn"),
+            ContinuousEffectDuration::UntilEndOfNextTurn => write!(f, "until the end of your next turn"),
+        }
+    }
+}
+
+impl Terminal for ContinuousEffectDuration {
+    fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            "until end of turn" => Some(ContinuousEffectDuration::UntilEndOfTurn),
+            "until the end of your next turn" => Some(ContinuousEffectDuration::UntilEndOfNextTurn),
+            _ => None,
+        }
+    }
+}

@@ -6,6 +6,7 @@ pub enum Statement {
         player: crate::ability_tree::terminals::PlayerSpecifier,
         action: crate::ability_tree::imperative::Imperative,
     },
+    CreateContinuousEffect(crate::ability_tree::continuous_effect::ContinuousEffect),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for Statement {
@@ -27,6 +28,12 @@ impl crate::ability_tree::AbilityTreeImpl for Statement {
                 out.push_final_branch()?;
                 action.display(out)?;
                 out.pop_branch();
+                out.pop_branch();
+            }
+            Statement::CreateContinuousEffect(continuous_effect) => {
+                write!(out, "Create Continuous Effect:")?;
+                out.push_final_branch()?;
+                continuous_effect.display(out)?;
                 out.pop_branch();
             }
         }

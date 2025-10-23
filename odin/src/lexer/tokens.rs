@@ -44,6 +44,7 @@ impl<'src> Token<'src> {
             &gen_parse_func(terminals::PowerToughnessModifier::try_from_str),
             &gen_parse_func(terminals::PlaneswalkerAbilityCost::try_from_str),
             &gen_parse_func(terminals::SagaChapterNumber::try_from_str),
+            &gen_parse_func(terminals::ContinuousEffectDuration::try_from_str),
             &gen_parse_func(zone::Zone::try_from_str),
             &gen_parse_func(mtg_data::Color::try_from_str),
             &gen_parse_func(mtg_data::KeywordAbility::try_from_str),
@@ -98,6 +99,7 @@ pub enum TokenKind {
     PowerToughnessModifier(terminals::PowerToughnessModifier),
     PlaneswalkerAbilityCost(terminals::PlaneswalkerAbilityCost),
     SagaChapterNumber(terminals::SagaChapterNumber),
+    ContinuousEffectDuration(terminals::ContinuousEffectDuration),
     Zone(zone::Zone),
     Color(mtg_data::Color),
     KeywordAbility(mtg_data::KeywordAbility),
@@ -151,6 +153,7 @@ impl_into_token_kind!(terminals::PowerToughness, PowerToughness);
 impl_into_token_kind!(terminals::PowerToughnessModifier, PowerToughnessModifier);
 impl_into_token_kind!(terminals::PlaneswalkerAbilityCost, PlaneswalkerAbilityCost);
 impl_into_token_kind!(terminals::SagaChapterNumber, SagaChapterNumber);
+impl_into_token_kind!(terminals::ContinuousEffectDuration, ContinuousEffectDuration);
 impl_into_token_kind!(zone::Zone, Zone);
 impl_into_token_kind!(mtg_data::Color, Color);
 impl_into_token_kind!(mtg_data::KeywordAbility, KeywordAbility);

@@ -66,6 +66,10 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
             new_specifiers
         }))),
 
+        /* Object references */
+        [ParserNode::LexerToken(TokenKind::SelfReferencing(_))] => Some(ParserNode::ObjectReference(
+            ability_tree::object::ObjectReference::SelfReferencing,
+        )),
         /* A count specifier as well as specifiers can be merged into an object reference */
         [
             ParserNode::LexerToken(TokenKind::CountSpecifier(amount)),
