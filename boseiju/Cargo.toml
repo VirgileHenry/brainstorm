@@ -1,5 +1,5 @@
 [package]
-name = "odin"
+name = "boseiju"
 version.workspace = true
 edition.workspace = true
 

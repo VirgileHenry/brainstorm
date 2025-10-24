@@ -1,5 +1,5 @@
+use boseiju::*;
 use krark::*;
-use odin::*;
 
 fn main() -> Result<(), String> {
     let mut krark_harness = KrarkHarness::new("Lexer test: FDN cards".to_string());

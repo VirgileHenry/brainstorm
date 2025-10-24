@@ -172,7 +172,7 @@ name = "mtg-data"
 version = "0.1.0"
 
 [[package]]
-name = "odin"
+name = "boseiju"
 version = "0.1.0"
 dependencies = [
  "krark",

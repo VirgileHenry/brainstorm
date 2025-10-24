@@ -8,7 +8,7 @@
 //! ==== Removed the terminals in the nodes, use the lexer directly, same algo:
 //! Full brute force, with memoization: 0 / 702 / 45_169 / 5_747_436 : halfed the iter number
 
-use odin::*;
+use boseiju::*;
 
 fn main() -> Result<(), String> {
     let cards = mtg_cardbase::AllCardsIter::new();
@@ -57,10 +57,7 @@ fn main() -> Result<(), String> {
     println!("Best case:    {:>16} ({best})", num_fmt(results[0]));
     println!("Median:       {:>16}", num_fmt(median));
     println!("Average:      {:>16}", num_fmt(average));
-    println!(
-        "Worst case:   {:>16} ({worst})",
-        num_fmt(results[results.len() - 1])
-    );
+    println!("Worst case:   {:>16} ({worst})", num_fmt(results[results.len() - 1]));
 
     Ok(())
 }

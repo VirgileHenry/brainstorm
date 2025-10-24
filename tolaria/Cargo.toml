@@ -16,7 +16,7 @@ arrayvec = { workspace = true }
 mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }
 lazy_static = { workspace = true }
-odin = { workspace = true }
+boseiju = { workspace = true }
 rayon = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
