@@ -22,15 +22,11 @@ fn main() {
         }
     }
 
-    println!(
-        "Parsed {}/{} cards!",
-        parsed.len(),
-        parsed.len() + failed.len()
-    );
+    println!("Parsed {}/{} cards!", parsed.len(), parsed.len() + failed.len());
 
     if parsed.len() > 0 {
         println!("First few successes are:");
-        for card in parsed.iter().take(20) {
+        for card in parsed.iter().take(50) {
             println!("{card}");
         }
     }
@@ -41,6 +37,8 @@ fn main() {
             println!("{err:?}");
         }
     }
+
+    println!("Parsed {}/{} cards!", parsed.len(), parsed.len() + failed.len());
 }
 
 fn filter_cards(card: &mtg_cardbase::Card) -> bool {

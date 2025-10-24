@@ -48,7 +48,8 @@ impl Layout {
                 }
                 writeln!(output, "│    ├─ Type Line: {card_type}")?;
                 write!(output, "│    ╰─ Abilities: ")?;
-                abilities.display(output, "│       ")?;
+                abilities.display_from_root(output, "│       ")?;
+                writeln!(output, "")?;
                 Ok(())
             }
             _ => writeln!(output, "Unimplemented!"),

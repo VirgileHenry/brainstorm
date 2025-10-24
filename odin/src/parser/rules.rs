@@ -12,10 +12,16 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
     /* Maybe in the future we can be smarter about this (no need to back track and clone?) */
     /* Or perhaps use a cheap custom allocater, like an arena */
     match tokens {
-        /* Some generic conversions from pure tokens to mor helpeful nodes */
+        /* Some generic conversions from pure tokens to more helpeful nodes */
         [ParserNode::LexerToken(TokenKind::CardType(ty))] => {
             Some(ParserNode::ObjectKind(ability_tree::object::ObjectKind::Type(*ty)))
         }
+        [ParserNode::LexerToken(TokenKind::ControlSpecifier(specifier))] => Some(ParserNode::ObjectSpecifier(
+            ability_tree::object::ObjectSpecifier::Control(*specifier),
+        )),
+        [ParserNode::LexerToken(TokenKind::PowerToughnessModifier(modifier))] => Some(ParserNode::CharacteristicDefiningAbility(
+            ability_tree::charasteristic_defining_ability::CharasteristicDefiningAbility::PowerToughnessModifier(*modifier),
+        )),
 
         /* In some cases, object kinds can be kind specifiers */
         [ParserNode::ObjectKind(kind)] => Some(ParserNode::ObjectSpecifier(ability_tree::object::ObjectSpecifier::Kind(
@@ -65,6 +71,30 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
             new_specifiers.push(specifier.clone());
             new_specifiers
         }))),
+        /* when there is no clear separator, it's an "and". for example, "black creatures you control" are all 3 specifiers. */
+        [ParserNode::ObjectSpecifier(spec1), ParserNode::ObjectSpecifier(spec2)] => {
+            Some(ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::And({
+                let mut specifiers = arrayvec::ArrayVec::new();
+                specifiers.push(spec1.clone());
+                specifiers.push(spec2.clone());
+                specifiers
+            })))
+        }
+        [
+            ParserNode::ObjectSpecifier(specifier),
+            ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::And(specifiers)),
+        ] => Some(ParserNode::ObjectSpecifiers(ability_tree::object::ObjectSpecifiers::And({
+            let mut new_specifiers = specifiers.clone();
+            new_specifiers.push(specifier.clone());
+            new_specifiers
+        }))),
+        /* Some cases, there will be no count specifier, there is an implicit "all". */
+        [ParserNode::ObjectSpecifiers(specifiers)] => Some(ParserNode::ObjectReference(
+            ability_tree::object::ObjectReference::SpecifiedObj {
+                amount: ability_tree::terminals::CountSpecifier::All,
+                specifiers: specifiers.clone(),
+            },
+        )),
 
         /* Object references */
         [ParserNode::LexerToken(TokenKind::SelfReferencing(_))] => Some(ParserNode::ObjectReference(
@@ -77,7 +107,7 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
         ] => Some(ParserNode::ObjectReference(
             ability_tree::object::ObjectReference::SpecifiedObj {
                 amount: amount.clone(),
-                specifier: specifiers.clone(),
+                specifiers: specifiers.clone(),
             },
         )),
 
@@ -114,6 +144,72 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
             player: player.clone(),
             action: imperative.clone(),
         })),
+
+        /* Continuous effects kinds */
+        [
+            ParserNode::ObjectReference(object),
+            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Have))
+            | ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
+            ParserNode::AbilityTree(tree),
+        ] => Some(ParserNode::ContinuousEffectKind(
+            ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                object: object.clone(),
+                abilities: tree.clone(),
+            },
+        )),
+        /* "Creatures gain A and gain B" Fixme: what about "Creatures gain A, B, C, D and E" ? */
+        [
+            ParserNode::ObjectReference(object),
+            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
+            ParserNode::AbilityTree(tree1),
+            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::And)),
+            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
+            ParserNode::AbilityTree(tree2),
+        ] => Some(ParserNode::ContinuousEffectKind(
+            ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                object: object.clone(),
+                abilities: {
+                    let mut tree = tree1.clone();
+                    tree.abilities.extend(tree2.abilities.iter().cloned());
+                    tree
+                },
+            },
+        )),
+
+        /* Continuous effects */
+        /* On it's own, a continuous affect without specified duration last as long as the generator */
+        [
+            ParserNode::ContinuousEffectKind(effect),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+        ] => Some(ParserNode::ContinuousEffect(
+            ability_tree::continuous_effect::ContinuousEffect {
+                duration: ability_tree::terminals::ContinuousEffectDuration::ObjectStaticAbility,
+                effect: effect.clone(),
+            },
+        )),
+        /* Alternatively, we can have continuous effect with durations: "Creatures gain haste until end of turn." */
+        [
+            ParserNode::ContinuousEffectKind(effect),
+            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+        ] => Some(ParserNode::ContinuousEffect(
+            ability_tree::continuous_effect::ContinuousEffect {
+                duration: *duration,
+                effect: effect.clone(),
+            },
+        )),
+        /* Or the other way around, with a comma: "Until end of turn, creatures gain haste." */
+        [
+            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+            ParserNode::ContinuousEffectKind(effect),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+        ] => Some(ParserNode::ContinuousEffect(
+            ability_tree::continuous_effect::ContinuousEffect {
+                duration: *duration,
+                effect: effect.clone(),
+            },
+        )),
 
         /* Parse into abilities */
         /* Keyword abilities are the simplest */
@@ -152,6 +248,18 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
                 effect: statement.clone(),
             },
         )))),
+
+        /* Continuous effects are static abilities */
+        [ParserNode::ContinuousEffect(effect)] => Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Static(
+            ability_tree::ability::statik::StaticAbility::ContinuousEffect(effect.clone()),
+        )))),
+
+        /* Characteristic defining abilities */
+        [ParserNode::CharacteristicDefiningAbility(ability)] => {
+            Some(ParserNode::Ability(Box::new(ability_tree::ability::Ability::Static(
+                ability_tree::ability::statik::StaticAbility::CharasteristicDefiningAbility(ability.clone()),
+            ))))
+        }
 
         /* Abilities can be ability trees, and can be fused in ability trees */
         [ParserNode::Ability(ability)] => Some(ParserNode::AbilityTree(Box::new(ability_tree::AbilityTree {

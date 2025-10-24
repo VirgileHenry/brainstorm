@@ -6,14 +6,22 @@
 ///
 /// See the MTG wiki: https://mtg.fandom.com/wiki/Static_ability
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum StaticAbility {
     ContinuousEffect(crate::ability_tree::continuous_effect::ContinuousEffect),
+    CharasteristicDefiningAbility(crate::ability_tree::charasteristic_defining_ability::CharasteristicDefiningAbility),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for StaticAbility {
     fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "Todo!")
+        write!(out, "Static Ability:")?;
+        out.push_final_branch()?;
+        match self {
+            StaticAbility::ContinuousEffect(effect) => effect.display(out)?,
+            StaticAbility::CharasteristicDefiningAbility(ability) => ability.display(out)?,
+        }
+        out.pop_branch();
+        Ok(())
     }
 }

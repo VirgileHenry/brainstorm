@@ -42,7 +42,7 @@ pub enum ObjectReference {
     SelfReferencing,
     SpecifiedObj {
         amount: crate::ability_tree::terminals::CountSpecifier,
-        specifier: ObjectSpecifiers,
+        specifiers: ObjectSpecifiers,
     },
 }
 
@@ -51,10 +51,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
         use std::io::Write;
         match self {
             ObjectReference::SelfReferencing => write!(out, "Self Referencing (~)"),
-            ObjectReference::SpecifiedObj {
-                amount,
-                specifier: specifiers,
-            } => {
+            ObjectReference::SpecifiedObj { amount, specifiers } => {
                 write!(out, "Specified Object:")?;
                 out.push_inter_branch()?;
                 write!(out, "Amount:")?;

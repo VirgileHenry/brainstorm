@@ -79,7 +79,6 @@ pub enum EnglishKeywords {
     Only,
     Onto,
     Or,
-    Other,
     RatherThan,
     Than,
     That,
@@ -142,7 +141,6 @@ impl EnglishKeywords {
             "only" => Some(EnglishKeywords::Only),
             "onto" => Some(EnglishKeywords::Onto),
             "or" => Some(EnglishKeywords::Or),
-            "other" => Some(EnglishKeywords::Other),
             "rather than" => Some(EnglishKeywords::RatherThan),
             "than" => Some(EnglishKeywords::Than),
             "that" => Some(EnglishKeywords::That),
@@ -218,9 +216,9 @@ impl ActionKeywords {
         match source {
             "deal" | "deals" => Some(ActionKeywords::Deals),
             "gain" | "gains" => Some(ActionKeywords::Gain),
-            "get" | "gets" => Some(ActionKeywords::Gain),
-            "put" | "puts" => Some(ActionKeywords::Gain),
-            "reveal" | "reveals" => Some(ActionKeywords::Gain),
+            "get" | "gets" => Some(ActionKeywords::Get),
+            "put" | "puts" => Some(ActionKeywords::Put),
+            "reveal" | "reveals" => Some(ActionKeywords::Reveal),
             _ => None,
         }
     }

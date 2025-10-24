@@ -50,6 +50,7 @@ pub enum CountSpecifier {
     Target,
     UpTo(u32),
     AnyNumberOfTargets,
+    Others,
 }
 
 impl std::fmt::Display for CountSpecifier {
@@ -59,6 +60,7 @@ impl std::fmt::Display for CountSpecifier {
             CountSpecifier::Target => write!(f, "target"),
             CountSpecifier::UpTo(amount) => write!(f, "up to {amount}"),
             CountSpecifier::AnyNumberOfTargets => write!(f, "any number of target"),
+            CountSpecifier::Others => write!(f, "others"),
         }
     }
 }
@@ -71,6 +73,7 @@ impl Terminal for CountSpecifier {
             "target" => Some(CountSpecifier::Target),
             "any target" => Some(CountSpecifier::Target),
             "any number of target" => Some(CountSpecifier::AnyNumberOfTargets),
+            "other" | "others" => Some(CountSpecifier::Others),
             other => {
                 let prefix = "up to ";
                 if other.starts_with(prefix) {

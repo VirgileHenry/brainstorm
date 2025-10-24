@@ -1,4 +1,5 @@
 pub mod ability;
+pub mod charasteristic_defining_ability;
 pub mod continuous_effect;
 pub mod cost;
 pub mod imperative;
@@ -6,6 +7,11 @@ pub mod object;
 pub mod statement;
 pub mod terminals;
 pub mod zone;
+
+/// Trait to implement common method on all nodes of an ability tree.
+pub trait AbilityTreeImpl {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()>;
+}
 
 /// One or more abilities.
 /// This is the root of the Magic: the Gathering texts,
@@ -24,24 +30,9 @@ impl AbilityTree {
         Ok(result)
     }
 
-    pub fn display<W: std::io::Write>(&self, output: &mut W, prefix: &str) -> std::io::Result<()> {
-        use std::io::Write;
+    pub fn display_from_root<W: std::io::Write>(&self, output: &mut W, prefix: &str) -> std::io::Result<()> {
         let mut tree_formatter = crate::utils::TreeFormatter::new(output, 64, prefix);
-
-        write!(tree_formatter, "Ability Tree:")?;
-        for ability in self.abilities.iter().take(self.abilities.len().saturating_sub(1)) {
-            tree_formatter.push_inter_branch()?;
-            ability.display(&mut tree_formatter)?;
-            tree_formatter.pop_branch();
-        }
-        if let Some(ability) = self.abilities.last() {
-            tree_formatter.push_final_branch()?;
-            ability.display(&mut tree_formatter)?;
-            tree_formatter.pop_branch();
-        }
-        writeln!(tree_formatter, "")?; /* newline */
-
-        Ok(())
+        self.display(&mut tree_formatter)
     }
 
     pub fn empty() -> AbilityTree {
@@ -57,6 +48,20 @@ impl Default for AbilityTree {
     }
 }
 
-pub trait AbilityTreeImpl {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()>;
+impl crate::ability_tree::AbilityTreeImpl for AbilityTree {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "Ability Tree:")?;
+        for ability in self.abilities.iter().take(self.abilities.len().saturating_sub(1)) {
+            out.push_inter_branch()?;
+            ability.display(out)?;
+            out.pop_branch();
+        }
+        if let Some(ability) = self.abilities.last() {
+            out.push_final_branch()?;
+            ability.display(out)?;
+            out.pop_branch();
+        }
+        Ok(())
+    }
 }

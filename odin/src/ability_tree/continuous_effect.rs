@@ -1,4 +1,4 @@
-mod continuous_effect_kind;
+pub mod continuous_effect_kind;
 
 /// A continuous effect, from the comprehensive rules:
 ///
@@ -8,20 +8,23 @@ mod continuous_effect_kind;
 ///
 /// See https://mtg.fandom.com/wiki/Continuous_effect.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ContinuousEffect {
-    duration: crate::ability_tree::terminals::ContinuousEffectDuration,
-    effect: continuous_effect_kind::ContinuousEffectKind,
+    pub duration: crate::ability_tree::terminals::ContinuousEffectDuration,
+    pub effect: continuous_effect_kind::ContinuousEffectKind,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ContinuousEffect {
     fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
-        writeln!(out, "Continuous Effect:")?;
+        write!(out, "Continuous Effect:")?;
         out.push_inter_branch()?;
         write!(out, "Duration: {}", self.duration)?;
         out.next_final_branch()?;
         write!(out, "Effect:")?;
+        out.push_final_branch()?;
+        self.effect.display(out)?;
+        out.pop_branch();
         out.pop_branch();
         Ok(())
     }
