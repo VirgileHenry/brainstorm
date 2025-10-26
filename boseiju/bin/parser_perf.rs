@@ -7,6 +7,10 @@
 //! Full brute force, with memoization: 0 / 1485 / 97_421 / 10_117_062 : very bad worst time
 //! ==== Removed the terminals in the nodes, use the lexer directly, same algo:
 //! Full brute force, with memoization: 0 / 702 / 45_169 / 5_747_436 : halfed the iter number
+//! ==== Adding more rules, same algo:
+//! Full brute force, with memoization: 0 / 3_302 / 197_197 / 16_207_344 : halfed the iter number
+//! Iterative graph search: 0 / 840 / 5_756 / 273_248 : waaayyy better, but lost some parsing, needs fixing
+//! Iterative graph search + memoization: 0 / 182 / 245 / 1_458 : insane, but lost everything sooo
 
 use boseiju::*;
 

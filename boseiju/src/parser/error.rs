@@ -1,8 +1,8 @@
 /// Errors that can be thrown by the parser.
 #[derive(Debug, Clone)]
 pub struct ParserError {
-    pub nodes: Vec<super::node::ParserNode>,
-    pub best_attempt: Vec<super::node::ParserNode>,
+    pub nodes: arrayvec::ArrayVec<super::node::ParserNode, 128>,
+    pub best_attempt: arrayvec::ArrayVec<super::node::ParserNode, 128>,
 }
 
 impl std::fmt::Display for ParserError {
