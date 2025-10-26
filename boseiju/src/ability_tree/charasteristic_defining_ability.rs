@@ -8,6 +8,8 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CharasteristicDefiningAbility {
+    // Fixme: that's wrong, CDA works in all zones, like devoid.
+    // Here, it only works on the battle field, it's some kind of static ability ?
     PowerToughnessModifier(crate::ability_tree::terminals::PowerToughnessModifier),
 }
 

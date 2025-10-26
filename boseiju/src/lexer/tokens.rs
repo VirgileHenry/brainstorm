@@ -79,7 +79,7 @@ impl<'src> Token<'src> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
     Number(terminals::Number),
     Counter(terminals::Counter),

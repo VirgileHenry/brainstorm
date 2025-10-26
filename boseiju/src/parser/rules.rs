@@ -146,68 +146,86 @@ pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
         })),
 
         /* Continuous effects kinds */
+        /* When it's power / toughness modifiers, creatures "get" it */
         [
             ParserNode::ObjectReference(object),
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Have))
-            | ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
+            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Get)),
+            ParserNode::LexerToken(TokenKind::PowerToughnessModifier(modifier)),
+        ] => Some(ParserNode::ContinuousEffectKind(
+            ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                object: object.clone(),
+                abilities: Box::new(ability_tree::AbilityTree {
+                    abilities: {
+                        let mut abilities = arrayvec::ArrayVec::new();
+                        abilities.push(ability_tree::ability::Ability::Static(ability_tree::ability::statik::StaticAbility::CharasteristicDefiningAbility(
+                            ability_tree::charasteristic_defining_ability::CharasteristicDefiningAbility::PowerToughnessModifier(*modifier)
+                        )));
+                        abilities
+                    },
+                }),
+            },
+        )),
+        /* for continuous effect kinds, we can have more: "x get A and gain B until end of turn" */
+        [
+            ParserNode::ContinuousEffectKind(
+                ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                    object,
+                    abilities,
+                },
+            ),
+            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::And)),
+            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
             ParserNode::AbilityTree(tree),
         ] => Some(ParserNode::ContinuousEffectKind(
             ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
                 object: object.clone(),
-                abilities: tree.clone(),
-            },
-        )),
-        /* "Creatures gain A and gain B" Fixme: what about "Creatures gain A, B, C, D and E" ? */
-        [
-            ParserNode::ObjectReference(object),
-            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
-            ParserNode::AbilityTree(tree1),
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::And)),
-            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
-            ParserNode::AbilityTree(tree2),
-        ] => Some(ParserNode::ContinuousEffectKind(
-            ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
-                object: object.clone(),
                 abilities: {
-                    let mut tree = tree1.clone();
-                    tree.abilities.extend(tree2.abilities.iter().cloned());
-                    tree
+                    let mut new_abilities = abilities.clone();
+                    new_abilities.abilities.extend(tree.abilities.iter().cloned());
+                    new_abilities
                 },
             },
         )),
-
-        /* Continuous effects */
-        /* On it's own, a continuous affect without specified duration last as long as the generator */
+        /* Continuous effect kind need a time specifier to be complete continuous effects */
         [
             ParserNode::ContinuousEffectKind(effect),
+            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+        ] => Some(ParserNode::ContinuousEffect(
+            ability_tree::continuous_effect::ContinuousEffect {
+                duration: *duration,
+                effect: effect.clone(),
+            },
+        )),
+        /* For entire abiiliy trees, objects can "gain" them, when it's temporary (until end of turn for example) */
+        [
+            ParserNode::ObjectReference(object),
+            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
+            ParserNode::AbilityTree(tree),
+            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+        ] => Some(ParserNode::ContinuousEffect(
+            ability_tree::continuous_effect::ContinuousEffect {
+                duration: *duration,
+                effect: ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                    object: object.clone(),
+                    abilities: tree.clone(),
+                },
+            },
+        )),
+        /* Without duration, objects "have" them: "creature have haste" */
+        [
+            ParserNode::ObjectReference(object),
+            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Have)),
+            ParserNode::AbilityTree(tree),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
         ] => Some(ParserNode::ContinuousEffect(
             ability_tree::continuous_effect::ContinuousEffect {
                 duration: ability_tree::terminals::ContinuousEffectDuration::ObjectStaticAbility,
-                effect: effect.clone(),
-            },
-        )),
-        /* Alternatively, we can have continuous effect with durations: "Creatures gain haste until end of turn." */
-        [
-            ParserNode::ContinuousEffectKind(effect),
-            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-        ] => Some(ParserNode::ContinuousEffect(
-            ability_tree::continuous_effect::ContinuousEffect {
-                duration: *duration,
-                effect: effect.clone(),
-            },
-        )),
-        /* Or the other way around, with a comma: "Until end of turn, creatures gain haste." */
-        [
-            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
-            ParserNode::ContinuousEffectKind(effect),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-        ] => Some(ParserNode::ContinuousEffect(
-            ability_tree::continuous_effect::ContinuousEffect {
-                duration: *duration,
-                effect: effect.clone(),
+                effect: ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                    object: object.clone(),
+                    abilities: tree.clone(),
+                },
             },
         )),
 

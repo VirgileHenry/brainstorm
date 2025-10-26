@@ -5,7 +5,7 @@
 pub enum ContinuousEffectKind {
     ObjectGainsAbilies {
         object: crate::ability_tree::object::ObjectReference,
-        abilities: Box<crate::ability_tree::AbilityTree>,
+        abilities: Box<crate::AbilityTree>,
     },
 }
 

@@ -3,7 +3,7 @@ use crate::ability_tree;
 /// Since this can carry entire ability trees, we need to box the biggest variants.
 /// Otherwise, this can easily blow up the stack when attempting to store multiple of them.
 /// Current size is 112 bytes, let's try to keep it around here ?
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ParserNode {
     Ability(Box<ability_tree::ability::Ability>),
     AbilityTree(Box<ability_tree::AbilityTree>),
