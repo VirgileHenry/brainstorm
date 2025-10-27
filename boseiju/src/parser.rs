@@ -10,7 +10,7 @@ mod rules;
 /// The goal is to explore this graph, and find the final node as quickly as possible.
 /// Or if there is no path to a terminal node, fail as fast as possible.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-struct ParserState {
+pub struct ParserState {
     nodes: arrayvec::ArrayVec<node::ParserNode, 128>,
 }
 
@@ -30,6 +30,21 @@ impl std::cmp::PartialOrd for ParserState {
 impl std::cmp::Ord for ParserState {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.nodes.len().cmp(&other.nodes.len())
+    }
+}
+
+/// Display implementation thats is use for the petgraph debugging, no real prod use case.
+impl std::fmt::Display for ParserState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "[")?;
+        for node in self.nodes.iter().take(self.nodes.len().saturating_sub(1)) {
+            writeln!(f, "{node:?}")?;
+        }
+        if let Some(node) = self.nodes.last() {
+            writeln!(f, "{node:?}")?;
+        }
+        write!(f, "]")?;
+        Ok(())
     }
 }
 
@@ -107,4 +122,88 @@ pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> (Result<crate::AbilityTr
     }
 
     (Err(best_error), iters)
+}
+
+pub struct Edge;
+
+impl std::fmt::Display for Edge {
+    fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        Ok(())
+    }
+}
+
+/// Attemtps to parse a card, but also generates the pentgraph of explored nodes for debbugging.
+/// This is not meant for production, only for debug purpuses!
+pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> petgraph::Graph<ParserState, Edge> {
+    /* Initialize the nodes from the tokens */
+    let nodes: arrayvec::ArrayVec<node::ParserNode, 128> = tokens.iter().cloned().map(node::ParserNode::from).collect();
+
+    let mut best_error = error::ParserError {
+        nodes: nodes.clone(),
+        best_attempt: nodes.clone(),
+    };
+
+    let mut graph = petgraph::Graph::new();
+    graph.add_node(ParserState { nodes: nodes.clone() });
+
+    /* The state to explore starts with the list of provided tokens */
+    let mut states_to_explore = std::collections::BTreeSet::new();
+    states_to_explore.insert(ParserState { nodes });
+    /* And the list of explored states starts empty */
+    let mut states_explored = std::collections::BTreeSet::new();
+
+    /* Keep looping until we have nodes that need to be explored */
+    while let Some(to_explore) = states_to_explore.pop_first() {
+        /* Flag to keep track of whetever the node is a sink or not */
+        let mut explorable = false;
+        /* Get all next possible states */
+        for token_count in (1..=to_explore.nodes.len()).rev() {
+            for (offset, window) in to_explore.nodes.windows(token_count).enumerate() {
+                if let Some(fused) = rules::fuse(window) {
+                    /* We managed to fuse the window into a new token! */
+                    explorable = true;
+
+                    /* Create the concatenated node array */
+                    let mut nodes = arrayvec::ArrayVec::<_, 128>::new();
+                    nodes.extend(to_explore.nodes.iter().take(offset).cloned());
+                    nodes.push(fused);
+                    nodes.extend(to_explore.nodes.iter().skip(offset + token_count).cloned());
+                    let next_node = ParserState { nodes };
+
+                    let from_index = graph.node_indices().find(|&i| graph[i] == to_explore).unwrap();
+                    let to_index = match graph.node_indices().find(|&i| graph[i] == next_node) {
+                        Some(index) => index,
+                        None => graph.add_node(next_node.clone()),
+                    };
+                    graph.add_edge(from_index, to_index, Edge);
+
+                    /* Skip if we already explored the node */
+                    if states_explored.contains(&next_node) {
+                        // continue;
+                        // Fixme: this breaks everything, where it shouldn't ?
+                    }
+
+                    /* If the resulting node is a single ability tree, we found the result, return */
+                    match next_node.nodes.as_slice() {
+                        [node::ParserNode::AbilityTree(_)] => return graph,
+                        _ => {
+                            states_to_explore.insert(next_node);
+                        }
+                    }
+                }
+            }
+        }
+
+        /* If the node could not be explored at all, it's a potential error */
+        if !explorable {
+            if to_explore.nodes.len() <= best_error.best_attempt.len() {
+                best_error.best_attempt = to_explore.nodes.clone();
+            }
+        }
+
+        /* Anyway, mark the node as explored */
+        states_explored.insert(to_explore);
+    }
+
+    graph
 }

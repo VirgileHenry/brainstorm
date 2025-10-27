@@ -11,6 +11,7 @@ mtg-data = { workspace = true }
 regex = { workspace = true }
 rayon = { workspace = true }
 serde = { workspace = true }
+petgraph = "0.8.3"
 
 [dev-dependencies]
 krark = { workspace = true }
@@ -18,7 +19,10 @@ krark = { workspace = true }
 [[bin]]
 name = "parser_perf"
 path = "bin/parser_perf.rs"
-harness = false
+
+[[bin]]
+name = "debug_graph"
+path = "bin/debug_graph.rs"
 
 [[test]]
 name = "lexer"
