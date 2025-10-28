@@ -11,6 +11,7 @@
 //! Full brute force, with memoization: 0 / 3_302 / 197_197 / 16_207_344 : halfed the iter number
 //! Iterative graph search: 0 / 840 / 5_756 / 273_248 : waaayyy better, but lost some parsing, needs fixing
 //! Iterative graph search + memoization: 0 / 182 / 245 / 1_458 : insane, but lost everything sooo
+//! Here, we started counting the successeful fuse and not the total fuse count. This is worst ?
 
 use boseiju::*;
 
@@ -30,7 +31,7 @@ fn main() -> Result<(), String> {
                     /* Don't take into account cards we couldn't lex */
                     Err(_) => None,
                     Ok(tokens) => {
-                        let (_, iters) = parser::parse(&tokens);
+                        let (_, iters) = parser::parse_and_count_iters(&tokens);
                         Some((iters, card.name))
                     }
                 }

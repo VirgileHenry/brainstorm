@@ -14,7 +14,7 @@ fn main() -> Result<(), String> {
                         /* Don't take into account cards we couldn't lex */
                         Err(_) => results.skip(),
                         Ok(tokens) => {
-                            let tree = parser::parse(&tokens).0;
+                            let tree = parser::parse(&tokens);
                             results.assert_ok(tree, format!("Check the tokens has been parsed"));
                         }
                     }
