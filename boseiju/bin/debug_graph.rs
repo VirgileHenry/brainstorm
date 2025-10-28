@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "trample (this creature can deal excess combat damage to the player or planeswalker it's attacking.)\nother creatures you control have trample.";
+    let oracle_text = "kicker {2}{w} (you may pay an additional {2}{w} as you cast this spell.)\ntarget creature you control gains indestructible until end of turn. if this spell was kicked, instead any number of target creatures you control gain indestructible until end of turn. (damage and effects that say \"destroy\" don't destroy them.)";
     let card_name = "aggressive mammoth";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

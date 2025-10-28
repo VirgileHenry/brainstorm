@@ -14,25 +14,6 @@ pub struct ParserState {
     nodes: arrayvec::ArrayVec<node::ParserNode, 128>,
 }
 
-/// The implementation of an ordering on our node graphs is a heuristic,
-/// allowing to tell how "close" we are from our terminal graph.
-/// Being a comparaison, it actually tells which nodes is closer to the end, or *might* be the closer.
-///
-/// For now, we compare the number of tokens, but we might want to be smarter and actually
-/// look the node kinds and rank them here ?
-impl std::cmp::PartialOrd for ParserState {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.nodes.len().partial_cmp(&other.nodes.len())
-    }
-}
-
-/// Same as the PartialOrd implementation.
-impl std::cmp::Ord for ParserState {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.nodes.len().cmp(&other.nodes.len())
-    }
-}
-
 /// Display implementation thats is use for the petgraph debugging, no real prod use case.
 impl std::fmt::Display for ParserState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -45,6 +26,39 @@ impl std::fmt::Display for ParserState {
         }
         write!(f, "]")?;
         Ok(())
+    }
+}
+
+struct StateBag(std::collections::BTreeMap<usize, Vec<ParserState>>);
+
+impl StateBag {
+    fn new() -> Self {
+        StateBag(std::collections::BTreeMap::new())
+    }
+
+    fn insert(&mut self, state: ParserState) {
+        match self.0.get_mut(&state.nodes.len()) {
+            Some(bucket) => bucket.push(state),
+            None => {
+                self.0.insert(state.nodes.len(), vec![state]);
+            }
+        }
+    }
+
+    fn contains(&self, state: &ParserState) -> bool {
+        match self.0.get(&state.nodes.len()) {
+            Some(bucket) => bucket.contains(state),
+            None => false,
+        }
+    }
+
+    fn pop_first(&mut self) -> Option<ParserState> {
+        let mut entry = self.0.first_entry()?;
+        let result = entry.get_mut().pop()?;
+        if entry.get().is_empty() {
+            entry.remove();
+        }
+        Some(result)
     }
 }
 
@@ -69,13 +83,13 @@ pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> (Result<crate::AbilityTr
     let mut iters = 0;
 
     /* The state to explore starts with the list of provided tokens */
-    let mut states_to_explore = std::collections::BTreeSet::new();
-    states_to_explore.insert(ParserState { nodes });
+    let mut states_to_explore = Vec::new();
+    states_to_explore.push(ParserState { nodes });
     /* And the list of explored states starts empty */
-    let mut states_explored = std::collections::BTreeSet::new();
+    let mut states_explored = std::collections::HashSet::new();
 
     /* Keep looping until we have nodes that need to be explored */
-    while let Some(to_explore) = states_to_explore.pop_first() {
+    while let Some(to_explore) = states_to_explore.pop() {
         /* Flag to keep track of whetever the node is a sink or not */
         let mut explorable = false;
         /* Get all next possible states */
@@ -95,15 +109,14 @@ pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> (Result<crate::AbilityTr
 
                     /* Skip if we already explored the node */
                     if states_explored.contains(&next_node) {
-                        // continue;
-                        // Fixme: this breaks everything, where it shouldn't ?
+                        continue;
                     }
 
                     /* If the resulting node is a single ability tree, we found the result, return */
                     match next_node.nodes.as_slice() {
                         [node::ParserNode::AbilityTree(tree)] => return (Ok(*tree.clone()), iters),
                         _ => {
-                            states_to_explore.insert(next_node);
+                            states_to_explore.push(next_node);
                         }
                     }
                 }
@@ -147,13 +160,13 @@ pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> p
     graph.add_node(ParserState { nodes: nodes.clone() });
 
     /* The state to explore starts with the list of provided tokens */
-    let mut states_to_explore = std::collections::BTreeSet::new();
-    states_to_explore.insert(ParserState { nodes });
+    let mut states_to_explore = Vec::new();
+    states_to_explore.push(ParserState { nodes });
     /* And the list of explored states starts empty */
-    let mut states_explored = std::collections::BTreeSet::new();
+    let mut states_explored = std::collections::HashSet::new();
 
     /* Keep looping until we have nodes that need to be explored */
-    while let Some(to_explore) = states_to_explore.pop_first() {
+    while let Some(to_explore) = states_to_explore.pop() {
         /* Flag to keep track of whetever the node is a sink or not */
         let mut explorable = false;
         /* Get all next possible states */
@@ -179,15 +192,14 @@ pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> p
 
                     /* Skip if we already explored the node */
                     if states_explored.contains(&next_node) {
-                        // continue;
-                        // Fixme: this breaks everything, where it shouldn't ?
+                        continue;
                     }
 
                     /* If the resulting node is a single ability tree, we found the result, return */
                     match next_node.nodes.as_slice() {
                         [node::ParserNode::AbilityTree(_)] => return graph,
                         _ => {
-                            states_to_explore.insert(next_node);
+                            states_to_explore.push(next_node);
                         }
                     }
                 }
