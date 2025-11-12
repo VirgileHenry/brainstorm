@@ -5,6 +5,7 @@ pub mod tokens;
 /// Preprocess a card oracle text to properly lex it.
 pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
     let card_name_lowercase = card_name.to_ascii_lowercase();
+    let card_name_without_nickname = card_name_lowercase.split(',').next();
     let result = oracle_text;
 
     /* replace all raw unicode char points by they values */
@@ -24,6 +25,10 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
     let result = result.to_ascii_lowercase();
     let result = remove_comments(&result);
     let result = result.replace(&card_name_lowercase, "~");
+    let result = match card_name_without_nickname {
+        Some(card_name) => result.replace(card_name, "~"),
+        None => result,
+    };
     let result = result.replace("\\n", "\n");
 
     result

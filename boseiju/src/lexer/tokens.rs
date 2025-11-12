@@ -67,6 +67,7 @@ impl<'src> Token<'src> {
             &gen_parse_func(non_terminals::ActionKeywords::try_from_str),
             &gen_parse_func(non_terminals::DamageKind::try_from_str),
             &gen_parse_func(non_terminals::PlayerActions::try_from_str),
+            &gen_parse_func(non_terminals::Target::try_from_str),
             &gen_parse_func(non_terminals::VhyToSortLater::try_from_str),
         ];
 
@@ -122,6 +123,7 @@ pub enum TokenKind {
     ActionKeywords(non_terminals::ActionKeywords),
     DamageKind(non_terminals::DamageKind),
     PlayerActions(non_terminals::PlayerActions),
+    Target(non_terminals::Target),
     VhyToSortLater(non_terminals::VhyToSortLater),
 }
 
@@ -176,4 +178,5 @@ impl_into_token_kind!(non_terminals::NotOfAKind, NotOfAKind);
 impl_into_token_kind!(non_terminals::ActionKeywords, ActionKeywords);
 impl_into_token_kind!(non_terminals::DamageKind, DamageKind);
 impl_into_token_kind!(non_terminals::PlayerActions, PlayerActions);
+impl_into_token_kind!(non_terminals::Target, Target);
 impl_into_token_kind!(non_terminals::VhyToSortLater, VhyToSortLater);

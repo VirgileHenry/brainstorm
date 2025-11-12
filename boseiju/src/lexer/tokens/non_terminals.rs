@@ -307,6 +307,24 @@ impl PlayerActions {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Target {
+    Card,
+    Spell,
+    Player,
+}
+
+impl Target {
+    pub fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            "card" | "cards" => Some(Target::Card),
+            "spell" | "spells" => Some(Target::Spell),
+            "player" | "players" => Some(Target::Player),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
     Life,
     HandSize,

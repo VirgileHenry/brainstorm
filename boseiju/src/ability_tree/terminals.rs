@@ -70,7 +70,7 @@ impl Terminal for CountSpecifier {
         match source {
             "all" => Some(CountSpecifier::All),
             "each" => Some(CountSpecifier::All),
-            "target" => Some(CountSpecifier::Target),
+            "target" | "targets" => Some(CountSpecifier::Target),
             "any target" => Some(CountSpecifier::Target),
             "any number of target" => Some(CountSpecifier::AnyNumberOfTargets),
             "other" | "others" => Some(CountSpecifier::Others),
@@ -361,6 +361,7 @@ impl Terminal for SpellProperty {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Phase {
+    CurrentTurn,
     Beginning,
     PrecombatMain,
     Combat,
@@ -371,6 +372,7 @@ pub enum Phase {
 impl std::fmt::Display for Phase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Phase::CurrentTurn => write!(f, "this turn"),
             Phase::Beginning => write!(f, "beginning phase"),
             Phase::PrecombatMain => write!(f, "precombat main phase"),
             Phase::Combat => write!(f, "combat phase"),
@@ -383,6 +385,7 @@ impl std::fmt::Display for Phase {
 impl Terminal for Phase {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
+            "this turn" => Some(Phase::CurrentTurn),
             "beginning phase" => Some(Phase::Beginning),
             "precombat main phase" => Some(Phase::PrecombatMain),
             "combat phase" => Some(Phase::Combat),
