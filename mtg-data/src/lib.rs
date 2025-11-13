@@ -1,5 +1,6 @@
 // this lib gives access to different magic: the gathering data, in a rust-like format.
 
+mod ability_word;
 mod artifact_type;
 mod battle_type;
 mod card_type;
@@ -16,6 +17,7 @@ mod planeswalker_type;
 mod spell_type;
 mod supertype;
 
+pub use ability_word::AbilityWord;
 pub use artifact_type::ArtifactType;
 pub use battle_type::BattleType;
 pub use card_type::CardType;

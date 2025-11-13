@@ -59,7 +59,7 @@ impl std::fmt::Display for CountSpecifier {
             CountSpecifier::All => write!(f, "all"),
             CountSpecifier::Target => write!(f, "target"),
             CountSpecifier::UpTo(amount) => write!(f, "up to {amount}"),
-            CountSpecifier::AnyNumberOfTargets => write!(f, "any number of target"),
+            CountSpecifier::AnyNumberOfTargets => write!(f, "any number of"),
             CountSpecifier::Others => write!(f, "others"),
         }
     }
@@ -72,7 +72,7 @@ impl Terminal for CountSpecifier {
             "each" => Some(CountSpecifier::All),
             "target" | "targets" => Some(CountSpecifier::Target),
             "any target" => Some(CountSpecifier::Target),
-            "any number of target" => Some(CountSpecifier::AnyNumberOfTargets),
+            "any number of" => Some(CountSpecifier::AnyNumberOfTargets),
             "other" | "others" => Some(CountSpecifier::Others),
             other => {
                 let prefix = "up to ";
@@ -136,7 +136,7 @@ impl Terminal for OwnerSpecifier {
         match source {
             "you own" => Some(OwnerSpecifier::YouOwn),
             "you don't own" => Some(OwnerSpecifier::YouDontOwn),
-            "it's owner" => Some(OwnerSpecifier::ObjectOwner),
+            "it's owner" | "its owner's" | "owner" => Some(OwnerSpecifier::ObjectOwner),
             _ => None,
         }
     }
@@ -269,7 +269,7 @@ impl Terminal for PlayerSpecifier {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentProperty {
     Power,
-    Tougness,
+    Toughness,
     ConvertedManaCost,
 }
 
@@ -277,7 +277,7 @@ impl std::fmt::Display for PermanentProperty {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PermanentProperty::Power => write!(f, "power"),
-            PermanentProperty::Tougness => write!(f, "touhness"),
+            PermanentProperty::Toughness => write!(f, "toughness"),
             PermanentProperty::ConvertedManaCost => write!(f, "converted mana cost"),
         }
     }
@@ -287,7 +287,7 @@ impl Terminal for PermanentProperty {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "power" => Some(PermanentProperty::Power),
-            "toughness" => Some(PermanentProperty::Tougness),
+            "toughness" => Some(PermanentProperty::Toughness),
             "mana cost" | "mana value" => Some(PermanentProperty::ConvertedManaCost),
             _ => None,
         }
@@ -300,6 +300,7 @@ pub enum PermanentState {
     Attacking,
     Blocking,
     Blocked,
+    Enchanted,
     Equipped,
     Tapped,
     Untapped,
@@ -311,9 +312,10 @@ impl std::fmt::Display for PermanentState {
             PermanentState::Attacking => write!(f, "attacking"),
             PermanentState::Blocking => write!(f, "blocking"),
             PermanentState::Blocked => write!(f, "blocked"),
+            PermanentState::Enchanted => write!(f, "enchanted"),
+            PermanentState::Equipped => write!(f, "equipped"),
             PermanentState::Tapped => write!(f, "tapped"),
             PermanentState::Untapped => write!(f, "untapped"),
-            PermanentState::Equipped => write!(f, "equipped"),
         }
     }
 }
@@ -324,9 +326,10 @@ impl Terminal for PermanentState {
             "attacking" => Some(PermanentState::Attacking),
             "blocking" => Some(PermanentState::Blocking),
             "blocked" => Some(PermanentState::Blocked),
+            "enchanted" => Some(PermanentState::Enchanted),
+            "equipped" => Some(PermanentState::Equipped),
             "tapped" => Some(PermanentState::Tapped),
             "untapped" => Some(PermanentState::Untapped),
-            "equipped" => Some(PermanentState::Equipped),
             _ => None,
         }
     }
@@ -361,7 +364,7 @@ impl Terminal for SpellProperty {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Phase {
-    CurrentTurn,
+    Turn,
     Beginning,
     PrecombatMain,
     Combat,
@@ -372,7 +375,7 @@ pub enum Phase {
 impl std::fmt::Display for Phase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Phase::CurrentTurn => write!(f, "this turn"),
+            Phase::Turn => write!(f, "turn"),
             Phase::Beginning => write!(f, "beginning phase"),
             Phase::PrecombatMain => write!(f, "precombat main phase"),
             Phase::Combat => write!(f, "combat phase"),
@@ -382,16 +385,18 @@ impl std::fmt::Display for Phase {
     }
 }
 
+/* GRT Removed the notion of time to keep the phase as simple as possible 
+ * timing as Current, Next ... can be deduced by previous token
+ * */
 impl Terminal for Phase {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "this turn" => Some(Phase::CurrentTurn),
+            "turn" => Some(Phase::Turn),
             "beginning phase" => Some(Phase::Beginning),
             "precombat main phase" => Some(Phase::PrecombatMain),
             "combat phase" => Some(Phase::Combat),
             "postcombat main phase" => Some(Phase::PostcombatMain),
-            "end phase" => Some(Phase::End),
-            "end of turn" => Some(Phase::End),
+            "end phase" | "end of turn" => Some(Phase::End),
             _ => None,
         }
     }

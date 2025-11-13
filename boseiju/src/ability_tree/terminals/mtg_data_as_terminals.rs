@@ -11,6 +11,12 @@ fn from_str_singular_or_plural<T: std::str::FromStr>(source: &str) -> Option<T> 
     None
 }
 
+impl Terminal for mtg_data::AbilityWord {
+    fn try_from_str(source: &str) -> Option<Self> {
+        from_str_singular_or_plural::<Self>(source)
+    }
+}
+
 impl Terminal for mtg_data::KeywordAbility {
     fn try_from_str(source: &str) -> Option<Self> {
         from_str_singular_or_plural::<Self>(source)

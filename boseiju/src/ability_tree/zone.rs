@@ -1,6 +1,7 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Zone {
+    Anywhere,
     Battlefield,
     Exile,
     Graveyard,
@@ -11,6 +12,7 @@ pub enum Zone {
 impl std::fmt::Display for Zone {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Zone::Anywhere => write!(f, "anywhere"),
             Zone::Battlefield => write!(f, "battlefield"),
             Zone::Exile => write!(f, "exile"),
             Zone::Graveyard => write!(f, "graveyard"),
@@ -23,6 +25,7 @@ impl std::fmt::Display for Zone {
 impl crate::ability_tree::terminals::Terminal for Zone {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
+            "anywhere" => Some(Zone::Anywhere),
             "battlefield" => Some(Zone::Battlefield),
             "exile" => Some(Zone::Exile),
             "graveyard" => Some(Zone::Graveyard),

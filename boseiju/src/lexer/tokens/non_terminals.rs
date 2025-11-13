@@ -40,8 +40,10 @@ impl TapUntapCost {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EnglishKeywords {
+    A,
     Already,
     Additional,
+    After,
     Among,
     And,
     AndOr,
@@ -73,6 +75,7 @@ pub enum EnglishKeywords {
     Less,
     May,
     More,
+    Next,
     No,
     Of,
     On,
@@ -86,8 +89,12 @@ pub enum EnglishKeywords {
     Them,
     Then,
     There,
+    These,
+    This,
+    Those,
     To,
     Top,
+    Under,
     Unless,
     Until,
     Was,
@@ -102,8 +109,10 @@ pub enum EnglishKeywords {
 impl EnglishKeywords {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
+            "a" => Some(EnglishKeywords::A),
             "already" => Some(EnglishKeywords::Already),
             "additional" => Some(EnglishKeywords::Additional),
+            "after" => Some(EnglishKeywords::After),
             "among" => Some(EnglishKeywords::Among),
             "and" => Some(EnglishKeywords::And),
             "and/or" => Some(EnglishKeywords::AndOr),
@@ -135,6 +144,7 @@ impl EnglishKeywords {
             "less" => Some(EnglishKeywords::Less),
             "may" => Some(EnglishKeywords::May),
             "more" => Some(EnglishKeywords::More),
+            "next" => Some(EnglishKeywords::Next),
             "no" => Some(EnglishKeywords::No),
             "of" => Some(EnglishKeywords::Of),
             "on" => Some(EnglishKeywords::On),
@@ -148,8 +158,12 @@ impl EnglishKeywords {
             "them" => Some(EnglishKeywords::Them),
             "then" => Some(EnglishKeywords::Then),
             "there" => Some(EnglishKeywords::There),
+            "these" => Some(EnglishKeywords::These),
+            "this" => Some(EnglishKeywords::This),
+            "those" => Some(EnglishKeywords::Those),
             "to" => Some(EnglishKeywords::To),
             "top" => Some(EnglishKeywords::Top),
+            "under" => Some(EnglishKeywords::Unless),
             "unless" => Some(EnglishKeywords::Unless),
             "until" => Some(EnglishKeywords::Until),
             "was" => Some(EnglishKeywords::Was),
@@ -170,8 +184,6 @@ pub struct SelfReferencing;
 impl SelfReferencing {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "this creature" => Some(SelfReferencing),
-            "this spell" => Some(SelfReferencing),
             "~" => Some(SelfReferencing),
             _ => None,
         }
@@ -197,6 +209,8 @@ impl NotOfAKind {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "non-" => Some(NotOfAKind),
+            "wasn't" => Some(NotOfAKind),
+            "isn't" => Some(NotOfAKind),
             _ => None,
         }
     }
@@ -250,6 +264,7 @@ pub enum PlayerActions {
     Cast,
     Change,
     Choose,
+    Control,
     Create,
     Destroy,
     Discard,
@@ -281,6 +296,7 @@ impl PlayerActions {
             "cast" | "casts" => Some(PlayerActions::Cast),
             "change" | "changes" => Some(PlayerActions::Change),
             "choose" | "chooses" | "choice" => Some(PlayerActions::Choose),
+            "control" => Some(PlayerActions::Control),
             "create" | "creates" => Some(PlayerActions::Create),
             "destroy" | "destroys" => Some(PlayerActions::Destroy),
             "discard" | "discards" => Some(PlayerActions::Discard),
@@ -306,19 +322,30 @@ impl PlayerActions {
     }
 }
 
+/* GRT - I'm not fan of this group as it might carry duplicates of others groups, for now it helps lexing */
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Target {
     Card,
-    Spell,
+    Creature,
+    NonCreature,
+    NonLand,
+    NonToken,
+    Permanent,
     Player,
+    Spell,
 }
 
 impl Target {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "card" | "cards" => Some(Target::Card),
-            "spell" | "spells" => Some(Target::Spell),
+            "creature" | "creatures" => Some(Target::Creature),
+            "noncreature" | "noncreatures" => Some(Target::NonCreature),
+            "nonland" | "nonlands" => Some(Target::NonLand),
+            "nontoken" | "nontokens" => Some(Target::NonToken),
+            "permanent" | "permanents" => Some(Target::Permanent),
             "player" | "players" => Some(Target::Player),
+            "spell" | "spells" => Some(Target::Spell),
             _ => None,
         }
     }
@@ -332,25 +359,29 @@ pub enum VhyToSortLater {
     Source,
     Cost,
     Player,
-    Turn,
+    Total,
     Mana,
     OpeningHand,
     Ability,
+    Attacked,
+    FirstTime,
 }
 
 impl VhyToSortLater {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "ability" => Some(VhyToSortLater::Ability),
+            "attacked" => Some(VhyToSortLater::Attacked),
             "life" => Some(VhyToSortLater::Life),
+            "total" => Some(VhyToSortLater::Total),
             "mana" => Some(VhyToSortLater::Life),
             "player" => Some(VhyToSortLater::Player),
             "hand size" => Some(VhyToSortLater::HandSize),
             "maximum hand size" => Some(VhyToSortLater::HandSize),
             "opening hand" => Some(VhyToSortLater::OpeningHand),
             "source" => Some(VhyToSortLater::Source),
+            "first time" => Some(VhyToSortLater::FirstTime),
             "cost" | "costs" => Some(VhyToSortLater::Cost),
-            "turn" | "turns" => Some(VhyToSortLater::Turn),
             _ => None,
         }
     }
