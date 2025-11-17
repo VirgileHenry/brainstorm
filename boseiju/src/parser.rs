@@ -39,9 +39,10 @@ impl std::fmt::Display for ParserState {
 ///
 /// Furthermore, we can keep track of explored nodes to avoid exploring them again.
 /// It's unlikely the algorithm will loop, but multiple paths can lead to the same nodes.
-fn parse_impl<F: FnMut(&ParserState, &ParserState)>(
+fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode])>(
     tokens: &[crate::lexer::tokens::Token],
     mut on_node_explored: F,
+    mut on_fuse_attempt: G,
 ) -> Result<crate::AbilityTree, error::ParserError> {
     /* Initialize the nodes from the tokens */
     let nodes: arrayvec::ArrayVec<node::ParserNode, 128> = tokens.iter().cloned().map(node::ParserNode::from).collect();
@@ -59,36 +60,48 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState)>(
 
     /* Keep looping until we have nodes that need to be explored */
     while let Some(to_explore) = states_to_explore.pop() {
-        /* Flag to keep track of whetever the node is a sink or not */
-        let mut explorable = false;
         /* Get all next possible states */
-        let mut next_states = arrayvec::ArrayVec::<_, 32>::new();
+        let mut next_states = Vec::new();
         for token_count in (1..=to_explore.nodes.len()).rev() {
             for (offset, window) in to_explore.nodes.windows(token_count).enumerate() {
+                on_fuse_attempt(window);
                 if let Some(fused) = rules::fuse(window) {
-                    /* We managed to fuse the window into a new token! */
-                    explorable = true;
-
                     /* Create the concatenated node array */
                     let mut nodes = arrayvec::ArrayVec::<_, 128>::new();
                     nodes.extend(to_explore.nodes.iter().take(offset).cloned());
                     nodes.push(fused);
                     nodes.extend(to_explore.nodes.iter().skip(offset + token_count).cloned());
+
+                    /* Exit condition: there is only a single token, the full tree */
+                    match nodes.as_slice() {
+                        [node::ParserNode::AbilityTree(tree)] => return Ok(*tree.clone()),
+                        _ => {}
+                    }
+
                     let next_node = ParserState { nodes };
 
-                    next_states.push(next_node);
+                    if !states_explored.contains(&next_node) {
+                        /* Call user function when a new node have been discovered */
+                        on_node_explored(&to_explore, &next_node);
+
+                        next_states.push(next_node);
+                    }
                 }
             }
         }
 
-        /* sort the nodes based on their length, so we pop shortest nodes first ? */
-
-        /* If the node could not be explored at all, it's a potential error */
-        if !explorable {
+        if next_states.is_empty() {
+            /* If the node could not be explored at all, it's a potential error */
             if to_explore.nodes.len() <= best_error.best_attempt.len() {
                 best_error.best_attempt = to_explore.nodes.clone();
             }
+        } else {
+            /* Otherwise, all new nodes have to be explored themselves */
+            states_to_explore.append(&mut next_states);
         }
+
+        /* sort the nodes to explore ? We would need a nice heuristic for this */
+        states_to_explore.sort_by(|a, b| b.nodes.len().cmp(&a.nodes.len()));
 
         /* Anyway, mark the node as explored */
         states_explored.insert(to_explore);
@@ -100,7 +113,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState)>(
 /// Parser function without artifacts, to get the result straight out.
 /// See [parse_impl] for a detailed explanation of the algorithm.
 pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTree, error::ParserError> {
-    parse_impl(tokens, |_, _| {})
+    parse_impl(tokens, |_, _| {}, |_| {})
 }
 
 pub struct Edge(usize);
@@ -122,15 +135,19 @@ pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> p
     let mut exploration_counter = 0;
 
     /* Call the parser, with a function that will update the graph as it runs */
-    let _ = parse_impl(tokens, |from_node, to_node| {
-        let from_index = graph.node_indices().find(|&i| graph[i].eq(from_node)).unwrap();
-        let to_index = match graph.node_indices().find(|&i| graph[i].eq(to_node)) {
-            Some(index) => index,
-            None => graph.add_node(to_node.clone()),
-        };
-        exploration_counter += 1;
-        graph.add_edge(from_index, to_index, Edge(exploration_counter));
-    });
+    let _ = parse_impl(
+        tokens,
+        |from_node, to_node| {
+            let from_index = graph.node_indices().find(|&i| graph[i].eq(from_node)).unwrap();
+            let to_index = match graph.node_indices().find(|&i| graph[i].eq(to_node)) {
+                Some(index) => index,
+                None => graph.add_node(to_node.clone()),
+            };
+            exploration_counter += 1;
+            graph.add_edge(from_index, to_index, Edge(exploration_counter));
+        },
+        |_| {},
+    );
 
     graph
 }
@@ -139,8 +156,6 @@ pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> p
 /// This gives an indicator on how "good" our parsing is: the lesser the better.
 pub fn parse_and_count_iters(tokens: &[crate::lexer::tokens::Token]) -> (Result<crate::AbilityTree, error::ParserError>, usize) {
     let mut fuse_count = 0;
-    let result = parse_impl(tokens, |_, _| {
-        fuse_count += 1;
-    });
+    let result = parse_impl(tokens, |_, _| {}, |_| fuse_count += 1);
     (result, fuse_count)
 }
