@@ -72,3 +72,9 @@ impl VhyToSortLater {
         }
     }
 }
+
+impl std::fmt::Display for VhyToSortLater {
+    fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        Ok(())
+    }
+}
