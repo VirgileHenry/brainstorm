@@ -42,7 +42,7 @@ jobs:
       - name: Build Boseiju Wasm
         run: |
           cargo build --release -p boseiju_wasm --target wasm32-unknown-unknown
-          cp target/wasm32-unknown-unknown/boseiju_wasm.wasm boseiju_webdemo/boseiju.wasm
+          cp ./target/wasm32-unknown-unknown/release/boseiju_wasm.wasm ./boseiju_webdemo/boseiju.wasm
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
