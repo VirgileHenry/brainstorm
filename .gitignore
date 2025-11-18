@@ -20,3 +20,7 @@ target
 perf.data
 perf.data.old
 flamegraph.svg
+
+# Debug files, visualization, etc
+*.dot
+*.svg
