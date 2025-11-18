@@ -13,7 +13,14 @@ pub enum ParserError {
 
 impl std::fmt::Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "todo")
+        write!(f, "Failed to parse tokens: [")?;
+        for token in self.nodes.iter().take(self.nodes.len().saturating_sub(1)) {
+            write!(f, "{token} | ")?;
+        }
+        if let Some(token) = self.nodes.last() {
+            write!(f, "{token}")?;
+        }
+        write!(f, "]")
     }
 }
 

@@ -78,6 +78,65 @@ macro_rules! create_token_kind {
     };
 }
 
+impl std::fmt::Display for TokenKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Number(num) => write!(f, "number: {num}"),
+            Self::Counter(counter) => write!(f, "counter: {counter}"),
+            Self::CountSpecifier(count) => write!(f, "count specifier: {count}"),
+            Self::ControlSpecifier(control) => write!(f, "control specifier: {control}"),
+            Self::OwnerSpecifier(owner) => write!(f, "owner specifier: {owner}"),
+            Self::Order(order) => write!(f, "order: {order}"),
+            Self::Appartenance(appartenance) => write!(f, "appartenance: {appartenance}"),
+            Self::CardActions(action) => write!(f, "card action: {action}"),
+            Self::PlayerSpecifier(player) => write!(f, "player specifier: {player}"),
+            Self::PermanentState(state) => write!(f, "permanent state: {state}"),
+            Self::PermanentProperty(property) => write!(f, "permanent property: {property}"),
+            Self::Phase(phase) => write!(f, "phase: {phase}"),
+            Self::Step(step) => write!(f, "step: {step}"),
+            Self::SpellProperty(prop) => write!(f, "spell property: {prop}"),
+            Self::PowerToughness(pt) => write!(f, "power toughness: {pt}"),
+            Self::PowerToughnessModifier(modifier) => write!(f, "power toughness modifier: {modifier}"),
+            Self::PlaneswalkerAbilityCost(cost) => write!(f, "planeswalker ability cost: {cost}"),
+            Self::SagaChapterNumber(chapter) => write!(f, "saga chapter number: {chapter}"),
+            Self::ContinuousEffectDuration(duration) => write!(f, "continuous effect duration: {duration}"),
+            Self::Zone(zone) => write!(f, "zone: {zone}"),
+            Self::Color(color) => write!(f, "color: {color}"),
+            Self::KeywordAbility(ability) => write!(f, "keyword ability: {ability}"),
+            Self::Mana(mana) => write!(f, "mana: {mana}"),
+            Self::CardType(card_type) => write!(f, "card type: {card_type}"),
+            Self::CreatureType(creature_type) => write!(f, "creature type: {creature_type}"),
+            Self::EnchantmentType(enchantment_type) => write!(f, "enchantment type: {enchantment_type}"),
+            Self::LandType(land_type) => write!(f, "land type: {land_type}"),
+            Self::PlaneswalkerType(planeswalker_type) => write!(f, "planeswalker type: {planeswalker_type}"),
+            Self::BattleType(battle_type) => write!(f, "battle type: {battle_type}"),
+            Self::ArtifactType(artifact_type) => write!(f, "artifact type: {artifact_type}"),
+            Self::SpellType(spell_type) => write!(f, "spell type: {spell_type}"),
+            Self::Supertype(supertype) => write!(f, "supertype: {supertype}"),
+            Self::ControlFlow(flow) => write!(f, "control flow: {flow}"),
+            Self::TapUntapCost(cost) => write!(f, "tap/untap cost: {cost}"),
+            Self::EnglishKeywords(keywords) => write!(f, "english keywords: {keywords}"),
+            Self::SelfReferencing(ref_self) => write!(f, "self referencing: {ref_self}"),
+            Self::NumberReference(num_ref) => write!(f, "number reference: {num_ref}"),
+            Self::NotOfAKind(not_kind) => write!(f, "not of a kind: {not_kind}"),
+            Self::ActionKeywords(action_keywords) => write!(f, "action keywords: {action_keywords}"),
+            Self::DamageKind(damage) => write!(f, "damage kind: {damage}"),
+            Self::PlayerActions(player_actions) => write!(f, "player actions: {player_actions}"),
+            Self::VhyToSortLater(_) => write!(f, "todo"),
+        }
+    }
+}
+
+macro_rules! impl_into_token_kind {
+    ($ty:path, $variant:tt) => {
+        impl Into<TokenKind> for $ty {
+            fn into(self) -> TokenKind {
+                TokenKind::$variant(self)
+            }
+        }
+    };
+}
+
 create_token_kind!(
     Number, terminals::Number;
     Counter, terminals::Counter;

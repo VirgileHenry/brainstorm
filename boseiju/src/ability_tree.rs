@@ -23,7 +23,7 @@ pub struct AbilityTree {
 }
 
 impl AbilityTree {
-    pub fn from_oracle_text(oracle_text: &str, card_name: &str) -> Result<AbilityTree, crate::error::BoseijuError> {
+    pub fn from_oracle_text(card_name: &str, oracle_text: &str) -> Result<AbilityTree, crate::error::BoseijuError> {
         let preprocessed = crate::lexer::preprocess(card_name, oracle_text);
         let tokens = crate::lexer::lex(&preprocessed)?;
         let result = crate::parser::parse(&tokens)?;

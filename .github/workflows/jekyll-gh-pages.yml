@@ -28,15 +28,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Add WASM target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Build Boseiju Wasm
+        run: |
+          cargo build --release -p boseiju_wasm --target wasm32-unknown-unknown
+          cp target/wasm32-unknown-unknown/boseiju_wasm.wasm boseiju_webdemo/boseiju.wasm
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./boseiju-webdemo
-          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./boseiju_webdemo
 
   # Deployment job
   deploy:

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>WASM Test</title>
+</head>
+<body>
+    <h3>Boseiju - A Magic: The Gathering Oracle text Parser</h3>
+
+    <h4>Card name</h4>
+    <input id="card_name_input" type="text" placeholder="Card name..." />
+    <h4>Oracle Text</h4>
+    <input id="oracle_text_input" type="text" placeholder="Oracle text..." />
+
+    <p>Output:</p>
+    <pre id="ability_tree_output"></pre>
+
+    <script src="wasm.js"></script>
+    <script>
+        /* Wait for WASM to finish loading */
+        loadWasm().then(wasm_module => {
+            const card_name_input = document.getElementById("card_name_input");
+            const oracle_text_input = document.getElementById("oracle_text_input");
+            const ability_tree_output = document.getElementById("ability_tree_output");
+
+            card_name_input.addEventListener("input", () => {
+                const result = wasm_module.parse_oracle_text(card_name_input.value, oracle_text_input.value);
+                ability_tree_output.textContent = result;
+            });
+            oracle_text_input.addEventListener("input", () => {
+                const result = wasm_module.parse_oracle_text(card_name_input.value, oracle_text_input.value);
+                ability_tree_output.textContent = result;
+            });
+        });
+    </script>
+</body>
+</html>

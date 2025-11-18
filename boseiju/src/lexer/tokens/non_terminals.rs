@@ -24,6 +24,19 @@ impl ControlFlow {
 }
 
 #[derive(idris::Idris)]
+impl std::fmt::Display for ControlFlow {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::NewLine => write!(f, "\n"),
+            Self::Comma => write!(f, ","),
+            Self::Dot => write!(f, "."),
+            Self::Colons => write!(f, ":"),
+            Self::LongDash => write!(f, "—"),
+            Self::Bullet => write!(f, "•"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TapUntapCost {
     Tap,
@@ -41,6 +54,15 @@ impl TapUntapCost {
 }
 
 #[derive(idris::Idris)]
+impl std::fmt::Display for TapUntapCost {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Tap => write!(f, "tap"),
+            Self::Untap => write!(f, "untap"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EnglishKeywords {
     Already,
@@ -167,6 +189,70 @@ impl EnglishKeywords {
     }
 }
 
+impl std::fmt::Display for EnglishKeywords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            EnglishKeywords::Already => write!(f, "already"),
+            EnglishKeywords::Additional => write!(f, "additional"),
+            EnglishKeywords::Among => write!(f, "among"),
+            EnglishKeywords::And => write!(f, "and"),
+            EnglishKeywords::AndOr => write!(f, "and/or"),
+            EnglishKeywords::Another => write!(f, "another"),
+            EnglishKeywords::As => write!(f, "as"),
+            EnglishKeywords::At => write!(f, "at"),
+            EnglishKeywords::Are => write!(f, "are"),
+            EnglishKeywords::Be => write!(f, "be"),
+            EnglishKeywords::Beginning => write!(f, "beginning"),
+            EnglishKeywords::By => write!(f, "by"),
+            EnglishKeywords::Cant => write!(f, "can't"),
+            EnglishKeywords::Copy => write!(f, "copy"),
+            EnglishKeywords::Divided => write!(f, "divided"),
+            EnglishKeywords::During => write!(f, "during"),
+            EnglishKeywords::Do => write!(f, "do"),
+            EnglishKeywords::Equal => write!(f, "equal"),
+            EnglishKeywords::Except => write!(f, "except"),
+            EnglishKeywords::From => write!(f, "from"),
+            EnglishKeywords::For => write!(f, "for"),
+            EnglishKeywords::Has => write!(f, "has"),
+            EnglishKeywords::Have => write!(f, "have"),
+            EnglishKeywords::Into => write!(f, "into"),
+            EnglishKeywords::If => write!(f, "if"),
+            EnglishKeywords::In => write!(f, "in"),
+            EnglishKeywords::Instead => write!(f, "instead"),
+            EnglishKeywords::Is => write!(f, "is"),
+            EnglishKeywords::It => write!(f, "it"),
+            EnglishKeywords::Kind => write!(f, "kind"),
+            EnglishKeywords::Less => write!(f, "less"),
+            EnglishKeywords::May => write!(f, "may"),
+            EnglishKeywords::More => write!(f, "more"),
+            EnglishKeywords::No => write!(f, "no"),
+            EnglishKeywords::Of => write!(f, "of"),
+            EnglishKeywords::On => write!(f, "on"),
+            EnglishKeywords::Only => write!(f, "only"),
+            EnglishKeywords::Onto => write!(f, "onto"),
+            EnglishKeywords::Or => write!(f, "or"),
+            EnglishKeywords::RatherThan => write!(f, "rather than"),
+            EnglishKeywords::Than => write!(f, "than"),
+            EnglishKeywords::That => write!(f, "that"),
+            EnglishKeywords::The => write!(f, "the"),
+            EnglishKeywords::Them => write!(f, "them"),
+            EnglishKeywords::Then => write!(f, "then"),
+            EnglishKeywords::There => write!(f, "there"),
+            EnglishKeywords::To => write!(f, "to"),
+            EnglishKeywords::Top => write!(f, "top"),
+            EnglishKeywords::Unless => write!(f, "unless"),
+            EnglishKeywords::Until => write!(f, "until"),
+            EnglishKeywords::Was => write!(f, "was"),
+            EnglishKeywords::When => write!(f, "when"),
+            EnglishKeywords::Whenever => write!(f, "whenever"),
+            EnglishKeywords::Where => write!(f, "where"),
+            EnglishKeywords::With => write!(f, "with"),
+            EnglishKeywords::Without => write!(f, "without"),
+            EnglishKeywords::Would => write!(f, "would"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SelfReferencing;
 
@@ -186,6 +272,12 @@ impl SelfReferencing {
     }
 }
 
+impl std::fmt::Display for SelfReferencing {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "~")
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct NumberReference;
 
@@ -200,6 +292,12 @@ impl NumberReference {
             "that many" | "number of" | "amount of" => Some(NumberReference),
             _ => None,
         }
+    }
+}
+
+impl std::fmt::Display for NumberReference {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "reference previous number definition")
     }
 }
 
@@ -221,6 +319,12 @@ impl NotOfAKind {
 }
 
 #[derive(idris::Idris)]
+impl std::fmt::Display for NotOfAKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "non-")
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ActionKeywords {
     Deals,
@@ -244,6 +348,18 @@ impl ActionKeywords {
 }
 
 #[derive(idris::Idris)]
+impl std::fmt::Display for ActionKeywords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Deals => write!(f, "deals"),
+            Self::Gain => write!(f, "gain"),
+            Self::Get => write!(f, "get"),
+            Self::Put => write!(f, "put"),
+            Self::Reveal => write!(f, "reveal"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DamageKind {
     Damage,
@@ -263,6 +379,16 @@ impl DamageKind {
 }
 
 #[derive(idris::Idris)]
+impl std::fmt::Display for DamageKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Damage => write!(f, "any damage"),
+            Self::CombatDamage => write!(f, "combat damage"),
+            Self::NoncombatDamage => write!(f, "noncombat damage"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerActions {
     Add,
@@ -310,10 +436,10 @@ impl PlayerActions {
             "exile" | "exiles" => Some(PlayerActions::Exile),
             "gain" | "gains" | "gained" => Some(PlayerActions::Gain),
             "look at" | "looks at" => Some(PlayerActions::LookAt),
-            "lose" | "loses" => Some(PlayerActions::LookAt),
+            "lose" | "loses" => Some(PlayerActions::Lose),
             "pay" | "pays" => Some(PlayerActions::Pay),
             "play" | "plays" => Some(PlayerActions::Play),
-            "put" | "puts" => Some(PlayerActions::Play),
+            "put" | "puts" => Some(PlayerActions::Put),
             "return" | "returns" => Some(PlayerActions::Return),
             "sacrifice" | "sacrifices" => Some(PlayerActions::Sacrifice),
             "scry" | "scrys" => Some(PlayerActions::Scry),
@@ -328,6 +454,39 @@ impl PlayerActions {
 }
 
 #[derive(idris::Idris)]
+impl std::fmt::Display for PlayerActions {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PlayerActions::Add => write!(f, "add"),
+            PlayerActions::Attach => write!(f, "attach"),
+            PlayerActions::Attack => write!(f, "attack"),
+            PlayerActions::Cast => write!(f, "cast"),
+            PlayerActions::Change => write!(f, "change"),
+            PlayerActions::Choose => write!(f, "choose"),
+            PlayerActions::Create => write!(f, "create"),
+            PlayerActions::Destroy => write!(f, "destroy"),
+            PlayerActions::Discard => write!(f, "discard"),
+            PlayerActions::Double => write!(f, "double"),
+            PlayerActions::Draw => write!(f, "draw"),
+            PlayerActions::Exile => write!(f, "exile"),
+            PlayerActions::Gain => write!(f, "gain"),
+            PlayerActions::LookAt => write!(f, "look at"),
+            PlayerActions::Lose => write!(f, "lose"),
+            PlayerActions::Pay => write!(f, "pay"),
+            PlayerActions::Play => write!(f, "play"),
+            PlayerActions::Put => write!(f, "put"),
+            PlayerActions::Return => write!(f, "return"),
+            PlayerActions::Sacrifice => write!(f, "sacrifice"),
+            PlayerActions::Scry => write!(f, "scry"),
+            PlayerActions::Search => write!(f, "search"),
+            PlayerActions::Shuffle => write!(f, "shuffle"),
+            PlayerActions::Spend => write!(f, "spend"),
+            PlayerActions::Tap => write!(f, "tap"),
+            PlayerActions::Untap => write!(f, "untap"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
     Life,
@@ -357,5 +516,11 @@ impl VhyToSortLater {
             "turn" | "turns" => Some(VhyToSortLater::Turn),
             _ => None,
         }
+    }
+}
+
+impl std::fmt::Display for VhyToSortLater {
+    fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        Ok(())
     }
 }
