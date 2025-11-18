@@ -28,6 +28,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Fetch Cardbase
+        run: |
+          cd mtg-cardbase
+          python3 data_fetcher.py
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
