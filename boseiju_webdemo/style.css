@@ -1,0 +1,119 @@
+/* General body styling */
+body {
+    font-family: "Inter", "Helvetica", "Arial", sans-serif;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fafafa;
+}
+
+/* Headings */
+h3,
+h4 {
+    color: #222;
+    font-weight: 600;
+}
+
+/* Inputs and textarea */
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    resize: none;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+/* Tree output */
+#ability_tree_output {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    font-family: monospace;
+    white-space: pre-wrap; /* preserves newlines */
+}
+
+/* Error styling */
+.error {
+    color: #fff;
+    background-color: #e74c3c;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Tree styling */
+.tree {
+    --line: #999;
+    --thick: 2px;
+    --indent: 1.2rem;
+
+    font-family: monospace;
+}
+
+.tree details {
+    padding-left: var(--indent);
+    position: relative;
+}
+
+/* vertical line */
+.tree details::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: -0.5rem;
+    left: calc(var(--indent) / 2 - var(--thick) / 2);
+    width: var(--thick);
+    background: var(--line);
+    border-radius: 9999px; /* fully rounded */
+}
+
+/* horizontal connector */
+.tree summary {
+    position: relative;
+    padding-left: 0.4rem;
+    cursor: pointer;
+}
+
+.tree summary::before {
+    content: "";
+    position: absolute;
+    height: var(--thick);
+    width: calc(var(--indent) / 2 - 0.4rem);
+    background: var(--line);
+    top: 0.7em; /* aligns with baseline dynamically */
+    left: calc(-1 * (var(--indent) / 2));
+}
+
+/* remove connector for root */
+.tree > details::before,
+.tree > details > summary::before {
+    display: none;
+}
+
+/* nice optional styles */
+.tree summary:hover {
+    color: #2a66c0;
+}
+
+.tree details:last-child::before {
+    bottom: auto;
+    height: 0.7em; /* just enough to reach the elbow */
+}
