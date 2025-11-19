@@ -1,7 +1,6 @@
 #[unsafe(no_mangle)]
 pub extern "C" fn alloc(len: usize) -> *const u8 {
-    let mut block: Vec<u8> = Vec::with_capacity(len);
-    block.fill(0);
+    let block: Vec<u8> = vec![0u8; len];
     let ptr = block.as_ptr();
     /* Prevent Rust auto dealloc */
     std::mem::forget(block);
@@ -25,29 +24,30 @@ pub extern "C" fn parse_oracle_text(
     let card_name_slice = unsafe { std::slice::from_raw_parts(card_name_ptr, card_name_len) };
     let card_name = match std::str::from_utf8(card_name_slice) {
         Ok(card_name) => card_name,
-        Err(err) => return rust_string_to_ptr(format!("{{ \"err\": {{ \"utf8_err\": \"{err}\" }} ")),
+        Err(err) => return rust_string_to_ptr(format!("Invalid UTF-8 for card name: {err}")),
     };
 
     let oracle_text_slice = unsafe { std::slice::from_raw_parts(oracle_text_ptr, oracle_text_len) };
     let oracle_text = match std::str::from_utf8(oracle_text_slice) {
         Ok(oracle_text) => oracle_text,
-        Err(err) => return rust_string_to_ptr(format!("{{ \"err\": {{ \"utf8_err\": \"{err}\" }} }}")),
+        Err(err) => return rust_string_to_ptr(format!("Invalid UTF-8 for card name: {err}")),
     };
 
     match boseiju::AbilityTree::from_oracle_text(card_name, oracle_text) {
         Ok(tree) => match serde_json::to_string(&tree) {
             Ok(res) => rust_string_to_ptr(res),
-            Err(json_err) => rust_string_to_ptr(format!("{{ \"err\": {{ \"json_err\": \"{json_err}\" }} }}")),
+            Err(json_err) => rust_string_to_ptr(format!("Failed to convert ability tree to JSON: {json_err}")),
         },
-        Err(err) => rust_string_to_ptr(format!("{{ \"err\": \"{err}\"}}")),
+        Err(err) => rust_string_to_ptr(format!("Invalid oracle text: {err}")),
     }
 }
 
-fn rust_string_to_ptr(error: String) -> *mut u8 {
-    let mut error = error;
-    error.push('\0');
-    let ptr = error.as_mut_ptr();
+fn rust_string_to_ptr(s: String) -> *mut u8 {
+    let mut buf = Vec::with_capacity(s.len() + 1); // +1 for null byte
+    buf.extend_from_slice(s.as_bytes());
+    buf.push(0);
+    let ptr = buf.as_mut_ptr();
     /* Prevent Rust from deallocating the string */
-    std::mem::forget(error);
+    std::mem::forget(buf);
     ptr
 }
