@@ -12,7 +12,7 @@ fn main() {
     let results: Vec<_> = cards
         .par_iter()
         .filter(|card| filter_cards(card))
-        .map(|card| tolaria::Card::try_from(card))
+        .map(|card| boseiju::Card::try_from(card))
         .collect();
 
     for result in results {

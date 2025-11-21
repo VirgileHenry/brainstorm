@@ -12,6 +12,7 @@ regex = { workspace = true }
 rayon = { workspace = true }
 serde = { workspace = true }
 petgraph = "0.8.3"
+uuid = { version = "1.18.1", features = ["serde"] }
 
 [dev-dependencies]
 krark = { workspace = true }
@@ -23,6 +24,10 @@ path = "bin/parser_perf.rs"
 [[bin]]
 name = "debug_graph"
 path = "bin/debug_graph.rs"
+
+[[bin]]
+name = "parse_all_cards"
+path = "bin/parse_all_cards.rs"
 
 [[test]]
 name = "lexer"

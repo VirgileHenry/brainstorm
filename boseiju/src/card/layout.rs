@@ -2,9 +2,9 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Layout {
     Normal {
-        mana_cost: Option<boseiju::ability_tree::terminals::ManaCost>,
-        card_type: crate::card_type::CardType,
-        abilities: boseiju::AbilityTree,
+        mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
+        card_type: crate::card::card_type::CardType,
+        abilities: crate::AbilityTree,
     },
     Split {},
     Flip {},
@@ -15,9 +15,9 @@ pub enum Layout {
     Class {},
     Case {},
     Saga {
-        mana_cost: Option<boseiju::ability_tree::terminals::ManaCost>,
-        card_type: crate::card_type::CardType,
-        chapters: arrayvec::ArrayVec<boseiju::ability_tree::ability::saga_chapter::SagaChapter, 4>,
+        mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
+        card_type: crate::card::card_type::CardType,
+        chapters: arrayvec::ArrayVec<crate::ability_tree::ability::saga_chapter::SagaChapter, 4>,
     },
     Adventure {},
     Mutate {},
@@ -27,8 +27,8 @@ pub enum Layout {
     Scheme {},
     Vanguard {},
     Token {
-        card_type: crate::card_type::CardType,
-        abilities: boseiju::AbilityTree,
+        card_type: crate::card::card_type::CardType,
+        abilities: crate::AbilityTree,
     },
     DoubleFaced {},
     Emblem {},
@@ -66,38 +66,38 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
             "normal" => Ok(Layout::Normal {
                 mana_cost: match raw_card.mana_cost {
                     Some(mana_cost) => Some(
-                        boseiju::ability_tree::terminals::ManaCost::from_str(mana_cost)
+                        crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
                             .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                     ),
                     None => None,
                 },
-                card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
+                card_type: crate::card::card_type::CardType::parse(raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
                 abilities: match raw_card.oracle_text {
-                    Some(oracle_text) => boseiju::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
                         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-                    None => boseiju::AbilityTree::empty(),
+                    None => crate::AbilityTree::empty(),
                 },
             }),
             "token" => Ok(Layout::Token {
-                card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
+                card_type: crate::card::card_type::CardType::parse(raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
                 abilities: match raw_card.oracle_text {
-                    Some(oracle_text) => boseiju::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
                         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-                    None => boseiju::AbilityTree::empty(),
+                    None => crate::AbilityTree::empty(),
                 },
             }),
             "saga" => {
                 let ability_tree = match raw_card.oracle_text {
-                    Some(oracle_text) => boseiju::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
                         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-                    None => boseiju::AbilityTree::empty(),
+                    None => crate::AbilityTree::empty(),
                 };
                 let mut chapters = arrayvec::ArrayVec::new();
                 for ability in ability_tree.abilities.into_iter() {
                     match ability {
-                        boseiju::ability_tree::ability::Ability::SagaChapter(chapter) => chapters.push(chapter),
+                        crate::ability_tree::ability::Ability::SagaChapter(chapter) => chapters.push(chapter),
                         other => {
                             return Err(format!("Invalid ability for Saga: expected Chapter, found {other:?}"));
                         }
@@ -106,12 +106,12 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                 Ok(Layout::Saga {
                     mana_cost: match raw_card.mana_cost {
                         Some(mana_cost) => Some(
-                            boseiju::ability_tree::terminals::ManaCost::from_str(mana_cost)
+                            crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
                                 .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                         ),
                         None => None,
                     },
-                    card_type: crate::card_type::CardType::parse(raw_card.type_line, raw_card)
+                    card_type: crate::card::card_type::CardType::parse(raw_card.type_line, raw_card)
                         .map_err(|e| format!("Failed to parse card type: {e}"))?,
                     chapters,
                 })
