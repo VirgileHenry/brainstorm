@@ -8,10 +8,11 @@
 //! ==== Removed the terminals in the nodes, use the lexer directly, same algo:
 //! Full brute force, with memoization: 0 / 702 / 45_169 / 5_747_436 : halfed the iter number
 //! ==== Adding more rules, same algo:
-//! Full brute force, with memoization: 0 / 3_302 / 197_197 / 16_207_344 : halfed the iter number
+//! Full brute force, with memoization: 0 / 3_302 / 197_197 / 16_207_344
 //! Iterative graph search: 0 / 840 / 5_756 / 273_248 : waaayyy better, but lost some parsing, needs fixing
 //! Iterative graph search + memoization: 0 / 182 / 245 / 1_458 : insane, but lost everything sooo
-//! Here, we started counting the successeful fuse and not the total fuse count. This is worst ?
+//! ==== Back with a proper new clean algo, that works and is iterative
+//! Full brute force, with memoization: 0 / 3_302 / 197_211 / 16_207_344
 
 use boseiju::*;
 

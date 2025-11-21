@@ -1,0 +1,18 @@
+# TODO: this would be nice, but is not done yet.
+# Maybe someone smarter than me can implement this ?
+
+# The rules files describes how the tokens can be merged to make abilities.
+# It's parsed by the build script, to emit the rules as well as a table
+# that allows to checks whether tokens can preceed other tokens.
+# The table is for faster failure, to parsing and not explore millions of nodes.
+
+# Also this format allows comments (lines starting with "#")
+# and empty lines are ignored.
+
+# Antyhing else shall follow the semantic:
+# A, B, C -> D
+# this means that nodes A, B, and C can be merged into the node D.
+
+# All tokens that are find here will be present in a enum for all possible nodes in the tree.
+# Tokens will carry data that is the same name of the token.
+# Most of the data structs are included by the build script, this is where it shall be updated.

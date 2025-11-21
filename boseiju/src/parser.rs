@@ -141,6 +141,27 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
     })
 }
 
+/// Tells if a given state is doomed to fail or not.
+///
+/// This is done by checking linearly over all nodes if the node next
+/// to it is a valid next node.
+///
+/// It's done in linearly over the nodes, so it's way faster than exploring the entire thing.
+///
+/// In the future, this function shall also return the fail fast error ?
+fn fail_fast(state: &ParserState) -> bool {
+    for window in state.nodes.windows(2) {
+        let (current, next) = match window {
+            [current, next] => (current, next),
+            _ => unreachable!(),
+        };
+        if rules::check_next_node(current, next) == false {
+            return true; /* No valid next, Failed fast */
+        }
+    }
+    return false; /* All valid next nodes */
+}
+
 /// Parser function without artifacts, to get the result straight out.
 /// See [parse_impl] for a detailed explanation of the algorithm.
 pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTree, error::ParserError> {
