@@ -17,3 +17,4 @@ pub use ability_tree::AbilityTree;
 pub use card::Card;
 pub use lexer::lex;
 pub use lexer::preprocess;
+pub use parser::parse;

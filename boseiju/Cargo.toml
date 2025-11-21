@@ -29,6 +29,10 @@ path = "bin/debug_graph.rs"
 name = "parse_all_cards"
 path = "bin/parse_all_cards.rs"
 
+[[bin]]
+name = "card_coverage"
+path = "bin/card_coverage.rs"
+
 [[test]]
 name = "lexer"
 path = "tests/lexer.rs"
