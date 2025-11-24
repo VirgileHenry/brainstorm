@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Format {
@@ -77,31 +78,6 @@ impl Format {
             Self::Premodern => "premodern",
             Self::Standard => "standard",
             Self::Vintage => "vintage",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Alchemy => 0,
-            Self::Brawl => 1,
-            Self::Commander => 2,
-            Self::Duel => 3,
-            Self::Explorer => 4,
-            Self::Future => 5,
-            Self::Gladiator => 6,
-            Self::Historic => 7,
-            Self::Historicbrawl => 8,
-            Self::Legacy => 9,
-            Self::Modern => 10,
-            Self::Oathbreaker => 11,
-            Self::Pauper => 12,
-            Self::Paupercommander => 13,
-            Self::Penny => 14,
-            Self::Pionner => 15,
-            Self::Predh => 16,
-            Self::Premodern => 17,
-            Self::Standard => 18,
-            Self::Vintage => 19,
         }
     }
 }

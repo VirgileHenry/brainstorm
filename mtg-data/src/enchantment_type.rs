@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum EnchantmentType {
@@ -53,23 +54,6 @@ impl EnchantmentType {
             Self::Saga => "saga",
             Self::Shard => "shard",
             Self::Shrine => "shrine",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Aura => 0,
-            Self::Background => 1,
-            Self::Cartouche => 2,
-            Self::Case => 3,
-            Self::Class => 4,
-            Self::Curse => 5,
-            Self::Role => 6,
-            Self::Room => 7,
-            Self::Rune => 8,
-            Self::Saga => 9,
-            Self::Shard => 10,
-            Self::Shrine => 11,
         }
     }
 }

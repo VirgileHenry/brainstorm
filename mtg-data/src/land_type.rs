@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum LandType {
@@ -71,29 +72,6 @@ impl LandType {
             Self::Tower => "tower",
             Self::Town => "town",
             Self::Urzas => "urza's",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Cave => 0,
-            Self::Cloud => 1,
-            Self::Desert => 2,
-            Self::Forest => 3,
-            Self::Gate => 4,
-            Self::Island => 5,
-            Self::Lair => 6,
-            Self::Locus => 7,
-            Self::Mine => 8,
-            Self::Mountain => 9,
-            Self::Plains => 10,
-            Self::Planet => 11,
-            Self::PowerPlant => 12,
-            Self::Sphere => 13,
-            Self::Swamp => 14,
-            Self::Tower => 15,
-            Self::Town => 16,
-            Self::Urzas => 17,
         }
     }
 }

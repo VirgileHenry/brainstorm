@@ -122,6 +122,7 @@ impl<'a> ToGenerateEnum<'a> {
             .map_err(|e| std::io::Error::other(format!("Failed to sanitize input line: {e}")))?;
 
         /* Write out the enum */
+        writeln!(destination, "#[derive(idris::Idris)]")?;
         writeln!(destination, "#[derive(serde::Serialize, serde::Deserialize)]")?;
         writeln!(
             destination,
@@ -162,15 +163,6 @@ impl<'a> ToGenerateEnum<'a> {
         writeln!(destination, "{S8}match self {{")?;
         for (line, variant) in variants.iter() {
             writeln!(destination, "{S12}Self::{} => \"{}\",", variant, line)?;
-        }
-        writeln!(destination, "{S8}}}")?;
-        writeln!(destination, "{S4}}}")?;
-        /* func to retrieve the node id */
-        writeln!(destination, "")?;
-        writeln!(destination, "{S4}pub fn id(&self) -> u32 {{")?;
-        writeln!(destination, "{S8}match self {{")?;
-        for (i, (_, variant)) in variants.iter().enumerate() {
-            writeln!(destination, "{S12}Self::{} => {},", variant, i)?;
         }
         writeln!(destination, "{S8}}}")?;
         writeln!(destination, "{S4}}}")?;

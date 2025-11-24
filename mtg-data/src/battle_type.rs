@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BattleType {
@@ -20,12 +21,6 @@ impl BattleType {
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Siege => "siege",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Siege => 0,
         }
     }
 }

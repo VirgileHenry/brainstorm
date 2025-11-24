@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Color {
@@ -25,8 +26,6 @@ impl std::str::FromStr for Color {
 }
 
 impl Color {
-    pub const VARIANT_COUNT: usize = 6;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Black => "black",
@@ -35,17 +34,6 @@ impl Color {
             Self::Green => "green",
             Self::Red => "red",
             Self::White => "white",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Black => 0,
-            Self::Blue => 1,
-            Self::Colorless => 2,
-            Self::Green => 3,
-            Self::Red => 4,
-            Self::White => 5,
         }
     }
 

@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardType {
@@ -68,28 +69,6 @@ impl CardType {
             Self::Scheme => "scheme",
             Self::Sorcery => "sorcery",
             Self::Vanguard => "vanguard",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Artifact => 0,
-            Self::Battle => 1,
-            Self::Conspiracy => 2,
-            Self::Creature => 3,
-            Self::Dungeon => 4,
-            Self::Emblem => 5,
-            Self::Enchantment => 6,
-            Self::Hero => 7,
-            Self::Instant => 8,
-            Self::Kindred => 9,
-            Self::Land => 10,
-            Self::Phenomenon => 11,
-            Self::Plane => 12,
-            Self::Planeswalker => 13,
-            Self::Scheme => 14,
-            Self::Sorcery => 15,
-            Self::Vanguard => 16,
         }
     }
 }
