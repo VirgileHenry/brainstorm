@@ -75,6 +75,7 @@ name = "boseiju"
 version = "0.0.1"
 dependencies = [
  "arrayvec",
+ "idris",
  "krark",
  "lazy_static",
  "mtg-cardbase",

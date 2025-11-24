@@ -26,3 +26,29 @@ impl<'src> From<crate::lexer::tokens::Token<'src>> for ParserNode {
         ParserNode::LexerToken(token.kind)
     }
 }
+
+impl ParserNode {
+    pub const COUNT: usize = crate::lexer::tokens::TokenKind::COUNT + 13;
+    pub const fn id(&self) -> usize {
+        const LEXER_TOKEN_COUNT: usize = crate::lexer::tokens::TokenKind::COUNT;
+        match self {
+            /* Special case for the lexer token: use the lexer token id */
+            Self::LexerToken(token) => token.id(),
+
+            /* For all others, they count as a single token */
+            Self::Ability(_) => LEXER_TOKEN_COUNT + 0,
+            Self::AbilityTree(_) => LEXER_TOKEN_COUNT + 1,
+            Self::CharacteristicDefiningAbility(_) => LEXER_TOKEN_COUNT + 2,
+            Self::ContinuousEffect(_) => LEXER_TOKEN_COUNT + 3,
+            Self::ContinuousEffectKind(_) => LEXER_TOKEN_COUNT + 4,
+            Self::Cost(_) => LEXER_TOKEN_COUNT + 5,
+            Self::Imperative(_) => LEXER_TOKEN_COUNT + 6,
+            Self::ObjectKind(_) => LEXER_TOKEN_COUNT + 7,
+            Self::ObjectReference(_) => LEXER_TOKEN_COUNT + 8,
+            Self::ObjectSpecifier(_) => LEXER_TOKEN_COUNT + 9,
+            Self::ObjectSpecifiers(_) => LEXER_TOKEN_COUNT + 10,
+            Self::Statement(_) => LEXER_TOKEN_COUNT + 11,
+            Self::TriggerCondition(_) => LEXER_TOKEN_COUNT + 12,
+        }
+    }
+}

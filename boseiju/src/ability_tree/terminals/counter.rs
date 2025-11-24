@@ -2,9 +2,9 @@
 // Source: MTG Wiki — Counter (marker) / Full List
 // Note: keep `super::Terminal` in scope where you include this file.
 
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
-)]
+#[derive(idris::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Counter {
     PlusOnePlusOne,
     MinusOneMinusOne,
@@ -748,9 +748,7 @@ impl super::Terminal for Counter {
             "sleight counter" | "sleight counters" => Some(Counter::Sleight),
             "slumber counter" | "slumber counters" => Some(Counter::Slumber),
             "soot counter" | "soot counters" => Some(Counter::Soot),
-            "third-degree-burn counter" | "third-degree-burn counters" => {
-                Some(Counter::ThirdDegreeBurn)
-            }
+            "third-degree-burn counter" | "third-degree-burn counters" => Some(Counter::ThirdDegreeBurn),
             "vitality counter" | "vitality counters" => Some(Counter::Vitality),
             "vortex counter" | "vortex counters" => Some(Counter::Vortex),
             "void counter" | "void counters" => Some(Counter::Void),

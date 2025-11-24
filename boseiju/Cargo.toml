@@ -5,6 +5,7 @@ edition.workspace = true
 
 [dependencies]
 arrayvec = { workspace = true }
+idris = { workspace = true }
 lazy_static = { workspace = true }
 mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }

@@ -7,6 +7,7 @@ pub trait Terminal: std::fmt::Display + Sized {
     fn try_from_str(source: &str) -> Option<Self>;
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Number {
@@ -43,6 +44,7 @@ impl Terminal for Number {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CountSpecifier {
@@ -87,6 +89,7 @@ impl Terminal for CountSpecifier {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ControlSpecifier {
@@ -113,6 +116,7 @@ impl Terminal for ControlSpecifier {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnerSpecifier {
@@ -142,6 +146,7 @@ impl Terminal for OwnerSpecifier {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Order {
@@ -168,6 +173,7 @@ impl Terminal for Order {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Appartenance {
@@ -195,6 +201,7 @@ impl Terminal for Appartenance {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardActions {
@@ -230,6 +237,7 @@ impl Terminal for CardActions {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerSpecifier {
@@ -265,6 +273,7 @@ impl Terminal for PlayerSpecifier {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentProperty {
@@ -294,6 +303,7 @@ impl Terminal for PermanentProperty {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentState {
@@ -332,6 +342,7 @@ impl Terminal for PermanentState {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SpellProperty {
@@ -358,6 +369,7 @@ impl Terminal for SpellProperty {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Phase {
@@ -394,6 +406,7 @@ impl Terminal for Phase {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Step {
@@ -457,6 +470,13 @@ pub struct PowerToughness {
     toughness: u32,
 }
 
+impl PowerToughness {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+}
+
 impl std::fmt::Display for PowerToughness {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}/{}", self.power, self.toughness)
@@ -483,6 +503,7 @@ impl Terminal for PowerToughness {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PowerToughnessModifier {
@@ -542,6 +563,13 @@ impl Terminal for PowerToughnessModifier {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PlaneswalkerAbilityCost(i32);
 
+impl PlaneswalkerAbilityCost {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+}
+
 impl std::fmt::Display for PlaneswalkerAbilityCost {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:+}", self.0)
@@ -563,6 +591,13 @@ impl Terminal for PlaneswalkerAbilityCost {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SagaChapterNumber(u32);
+
+impl SagaChapterNumber {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+}
 
 impl std::fmt::Display for SagaChapterNumber {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -587,6 +622,13 @@ impl Terminal for SagaChapterNumber {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ManaCost(arrayvec::ArrayVec<mtg_data::Mana, 16>);
+
+impl ManaCost {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+}
 
 impl std::ops::Deref for ManaCost {
     type Target = [mtg_data::Mana];
@@ -632,6 +674,7 @@ impl std::fmt::Display for ManaCost {
 }
 
 /// Duration for a continuous effect.
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ContinuousEffectDuration {

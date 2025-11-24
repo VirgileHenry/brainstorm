@@ -26,7 +26,7 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
     quote::quote! {
         impl #enum_name {
             pub const COUNT: usize = #variant_count;
-            pub fn id(&self) -> usize {
+            pub const fn id(&self) -> usize {
                 match self {
                     #( Self::#variant_names => #variant_ids, )*
                 }
