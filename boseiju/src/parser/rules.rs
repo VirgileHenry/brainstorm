@@ -2,11 +2,11 @@ mod ability_tree_rules;
 
 use crate::parser::node::ParserNode;
 
+const ALL_RULES: &[&[ParserRule]] = &[ability_tree_rules::ABILITY_TREE_RULES];
+
 pub fn fuse(tokens: &[ParserNode]) -> Option<ParserNode> {
     lazy_static::lazy_static!(
-        static ref rule_map: RuleMap = RuleMap::create(&[
-
-        ]);
+        static ref rule_map: RuleMap = RuleMap::create(ALL_RULES);
     );
 
     let state_id = StateId::new(tokens);
@@ -36,8 +36,27 @@ impl StateId {
 
 #[macro_export]
 macro_rules! state_id {
-    ( [ $($($elem:tt)+),* ] ) => {
-        crate::parser::rules::StateId::new(&[])
+    /* Entry point, init the recursive call */
+    ( [ $($tokens:tt)+ ] ) => {
+        crate::state_id!(out = [], rest = [ $($tokens)+ ])
+    };
+    /* Terminating condition, the entire input is parsed */
+    ( out = [ $($out:tt)* ], rest = [ ] ) => {
+        {
+            const TOKENS: &[ParserNode] = &[ $($out)* ];
+            crate::parser::rules::StateId::new(TOKENS)
+        }
+    };
+    /* Special case for lexer token, we need to instanciate it */
+    ( out = [ $($out:tt)* ], rest = [ ParserNode::LexerToken( $($lt:tt)* ) $(, $($rest:tt)+ )? ] ) => {
+        crate::state_id!(out = [ $($out)* ParserNode::LexerToken( $($lt)* ), ], rest = [ $( $($rest)+ )? ])
+    };
+    /* Otherwise, instanciate the token with uninit */
+    ( out = [ $($out:tt)* ], rest = [ ParserNode:: $node:ident ( $($lt:tt)* ) $(, $($rest:tt)+ )? ] ) => {
+        crate::state_id!(
+            out = [ $($out)* ParserNode:: $node ( unsafe { ::std::mem::MaybeUninit::uninit().assume_init() } ), ],
+            rest = [ $( $($rest)+ )? ]
+        )
     };
 }
 
@@ -55,6 +74,11 @@ impl ParserRule {
             conversion_func,
         }
     }
+}
+
+#[macro_export]
+macro_rules! make_parser_rule {
+    () => {};
 }
 
 /// A given map of rules to merge tokens.
