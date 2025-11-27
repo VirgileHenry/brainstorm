@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "creatures you control get +10/+10 and gain vigilance until end of turn.";
+    let oracle_text = "Flying";
     let card_name = "aggressive mammoth";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

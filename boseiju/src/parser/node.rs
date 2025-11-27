@@ -52,3 +52,66 @@ impl ParserNode {
         }
     }
 }
+
+pub enum ParserNodeKind {
+    Ability,
+    AbilityTree,
+    CharacteristicDefiningAbility,
+    ContinuousEffect,
+    ContinuousEffectKind,
+    Cost,
+    Imperative,
+    LexerToken(crate::lexer::tokens::TokenKind),
+    ObjectKind,
+    ObjectReference,
+    ObjectSpecifier,
+    ObjectSpecifiers,
+    Statement,
+    TriggerCondition,
+}
+
+impl ParserNodeKind {
+    pub const fn id(&self) -> usize {
+        const LEXER_TOKEN_COUNT: usize = crate::lexer::tokens::TokenKind::COUNT;
+        match self {
+            /* Special case for the lexer token: use the lexer token id */
+            Self::LexerToken(token) => token.id(),
+
+            /* For all others, they count as a single token */
+            Self::Ability => LEXER_TOKEN_COUNT + 0,
+            Self::AbilityTree => LEXER_TOKEN_COUNT + 1,
+            Self::CharacteristicDefiningAbility => LEXER_TOKEN_COUNT + 2,
+            Self::ContinuousEffect => LEXER_TOKEN_COUNT + 3,
+            Self::ContinuousEffectKind => LEXER_TOKEN_COUNT + 4,
+            Self::Cost => LEXER_TOKEN_COUNT + 5,
+            Self::Imperative => LEXER_TOKEN_COUNT + 6,
+            Self::ObjectKind => LEXER_TOKEN_COUNT + 7,
+            Self::ObjectReference => LEXER_TOKEN_COUNT + 8,
+            Self::ObjectSpecifier => LEXER_TOKEN_COUNT + 9,
+            Self::ObjectSpecifiers => LEXER_TOKEN_COUNT + 10,
+            Self::Statement => LEXER_TOKEN_COUNT + 11,
+            Self::TriggerCondition => LEXER_TOKEN_COUNT + 12,
+        }
+    }
+}
+
+impl From<ParserNode> for ParserNodeKind {
+    fn from(value: ParserNode) -> Self {
+        match value {
+            ParserNode::Ability(_) => Self::Ability,
+            ParserNode::AbilityTree(_) => Self::AbilityTree,
+            ParserNode::CharacteristicDefiningAbility(_) => Self::CharacteristicDefiningAbility,
+            ParserNode::ContinuousEffect(_) => Self::ContinuousEffect,
+            ParserNode::ContinuousEffectKind(_) => Self::ContinuousEffectKind,
+            ParserNode::Cost(_) => Self::Cost,
+            ParserNode::Imperative(_) => Self::Imperative,
+            ParserNode::LexerToken(token) => Self::LexerToken(token),
+            ParserNode::ObjectKind(_) => Self::ObjectKind,
+            ParserNode::ObjectReference(_) => Self::ObjectReference,
+            ParserNode::ObjectSpecifier(_) => Self::ObjectSpecifier,
+            ParserNode::ObjectSpecifiers(_) => Self::ObjectSpecifiers,
+            ParserNode::Statement(_) => Self::Statement,
+            ParserNode::TriggerCondition(_) => Self::TriggerCondition,
+        }
+    }
+}
