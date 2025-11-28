@@ -1,20 +1,24 @@
 mod ability_tree;
+mod continuous_effects;
 mod imperative;
 mod keyword_to_ability;
 mod object_references;
 mod object_specifiers;
 mod statement;
+mod trigger_condition;
 
 use crate::parser::node::ParserNode;
 use crate::parser::node::ParserNodeKind;
 
 const ALL_RULES: &[&[ParserRule]] = &[
     ability_tree::ABILITY_TREE_RULES,
+    continuous_effects::CONTINUOUS_EFFECTS_RULES,
     imperative::IMPERATIVE_RULES,
     keyword_to_ability::KEYWORD_TO_ABILITY_RULES,
     object_references::OBJECT_REFERENCES_RULES,
     object_specifiers::OBJECT_SPECIFIER_RULES,
     statement::STATEMENT_RULES,
+    trigger_condition::TRIGGER_CONDITION_RULES,
 ];
 
 /// The State Id is a unique identifier for a given subslice of ParserNode.

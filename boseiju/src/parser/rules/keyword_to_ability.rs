@@ -17,9 +17,6 @@ macro_rules! keyword_to_ability {
     };
 }
 
-/// Rules that converts keyword abilities to abilities in the tree.
-/// Some keyword abilities are not present, since they require other tokens,
-/// such as additional costs (ward) or even more specific text (protection.)
 #[rustfmt::skip]
 pub const KEYWORD_TO_ABILITY_RULES: &[super::ParserRule] = &keyword_to_ability!(
     mtg_data::KeywordAbility::Absorb,

@@ -14,12 +14,6 @@ macro_rules! card_type_to_object_kind {
     };
 }
 
-/// Rules that allow creating ability trees, and combining them.
-///
-/// Most of the time, these rules are the last one applied before combining the abilities to
-/// the final tree and creating the last token.
-///
-/// Ability creation can be done from multiple tokens, and they are also listed here.
 #[rustfmt::skip]
 pub const OBJECT_SPECIFIER_RULES: &[super::ParserRule] = &[
 
