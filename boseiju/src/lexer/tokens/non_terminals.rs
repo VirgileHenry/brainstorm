@@ -23,7 +23,6 @@ impl ControlFlow {
     }
 }
 
-#[derive(idris::Idris)]
 impl std::fmt::Display for ControlFlow {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -37,6 +36,7 @@ impl std::fmt::Display for ControlFlow {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TapUntapCost {
     Tap,
@@ -53,7 +53,6 @@ impl TapUntapCost {
     }
 }
 
-#[derive(idris::Idris)]
 impl std::fmt::Display for TapUntapCost {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -63,6 +62,7 @@ impl std::fmt::Display for TapUntapCost {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EnglishKeywords {
     Already,
@@ -318,13 +318,13 @@ impl NotOfAKind {
     }
 }
 
-#[derive(idris::Idris)]
 impl std::fmt::Display for NotOfAKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "non-")
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ActionKeywords {
     Deals,
@@ -347,7 +347,6 @@ impl ActionKeywords {
     }
 }
 
-#[derive(idris::Idris)]
 impl std::fmt::Display for ActionKeywords {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -360,6 +359,7 @@ impl std::fmt::Display for ActionKeywords {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DamageKind {
     Damage,
@@ -378,7 +378,6 @@ impl DamageKind {
     }
 }
 
-#[derive(idris::Idris)]
 impl std::fmt::Display for DamageKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -389,6 +388,7 @@ impl std::fmt::Display for DamageKind {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerActions {
     Add,
@@ -453,7 +453,6 @@ impl PlayerActions {
     }
 }
 
-#[derive(idris::Idris)]
 impl std::fmt::Display for PlayerActions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -487,6 +486,7 @@ impl std::fmt::Display for PlayerActions {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
     Life,

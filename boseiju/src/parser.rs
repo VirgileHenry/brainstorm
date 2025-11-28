@@ -99,14 +99,24 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                         };
                         if !rule_map.can_succeed(current, next) {
                             /* Update best error */
-                            if let Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) = best_error {
-                                if state_size > next_node.nodes.len() {
+                            match best_error {
+                                Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) => {
+                                    if state_size > next_node.nodes.len() {
+                                        best_error = Some(error::ParserError::UnexpectedFollowingToken {
+                                            state_size: next_node.nodes.len(),
+                                            current: current.clone(),
+                                            next: next.clone(),
+                                        })
+                                    }
+                                }
+                                None => {
                                     best_error = Some(error::ParserError::UnexpectedFollowingToken {
                                         state_size: next_node.nodes.len(),
                                         current: current.clone(),
                                         next: next.clone(),
                                     })
                                 }
+                                _ => {}
                             }
                             /* No rules will ever allow to merge current and next tokens, we can stop */
                             allowed = false;
@@ -139,27 +149,6 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
             nodes: tokens.iter().map(|t| t.kind.clone()).collect(),
         },
     })
-}
-
-/// Tells if a given state is doomed to fail or not.
-///
-/// This is done by checking linearly over all nodes if the node next
-/// to it is a valid next node.
-///
-/// It's done in linearly over the nodes, so it's way faster than exploring the entire thing.
-///
-/// In the future, this function shall also return the fail fast error ?
-fn fail_fast(state: &ParserState) -> bool {
-    for window in state.nodes.windows(2) {
-        let (current, next) = match window {
-            [current, next] => (current, next),
-            _ => unreachable!(),
-        };
-        if rules::check_next_node(current, next) == false {
-            return true; /* No valid next, Failed fast */
-        }
-    }
-    return false; /* All valid next nodes */
 }
 
 /// Parser function without artifacts, to get the result straight out.

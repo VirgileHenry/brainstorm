@@ -127,16 +127,6 @@ impl std::fmt::Display for TokenKind {
     }
 }
 
-macro_rules! impl_into_token_kind {
-    ($ty:path, $variant:tt) => {
-        impl Into<TokenKind> for $ty {
-            fn into(self) -> TokenKind {
-                TokenKind::$variant(self)
-            }
-        }
-    };
-}
-
 create_token_kind!(
     Number, terminals::Number;
     Counter, terminals::Counter;

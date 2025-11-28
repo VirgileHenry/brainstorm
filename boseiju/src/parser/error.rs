@@ -13,14 +13,15 @@ pub enum ParserError {
 
 impl std::fmt::Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Failed to parse tokens: [")?;
-        for token in self.nodes.iter().take(self.nodes.len().saturating_sub(1)) {
-            write!(f, "{token} | ")?;
+        match self {
+            ParserError::UnexpectedFollowingToken { current, next, .. } => {
+                write!(f, "Node {current:?} can't be followed by {next:?}")?;
+            }
+            ParserError::UnparsableInput { nodes } => {
+                write!(f, "Unparsable nodes: {nodes:?}")?;
+            }
         }
-        if let Some(token) = self.nodes.last() {
-            write!(f, "{token}")?;
-        }
-        write!(f, "]")
+        Ok(())
     }
 }
 
