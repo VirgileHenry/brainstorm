@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Mana {
@@ -32,23 +33,6 @@ impl std::str::FromStr for Mana {
             }
         } else {
             Err(format!("Mana cost shall be between curly braces, got {from}"))
-        }
-    }
-}
-
-impl Mana {
-    pub const VARIANT_COUNT: usize = 8;
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Mana::X => 0,
-            Mana::Snow => 1,
-            Mana::Any(_) => 2,
-            Mana::Colored(_) => 3,
-            Mana::Hybrid(_, _) => 4,
-            Mana::MonocoloredHybrid(_, _) => 5,
-            Mana::Phyrexian(_) => 6,
-            Mana::HybridPhyrexian(_, _) => 7,
         }
     }
 }

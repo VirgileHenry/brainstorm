@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Supertype {
@@ -38,18 +39,6 @@ impl Supertype {
             Self::Snow => "snow",
             Self::Token => "token",
             Self::World => "world",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Basic => 0,
-            Self::Elite => 1,
-            Self::Legendary => 2,
-            Self::Ongoing => 3,
-            Self::Snow => 4,
-            Self::Token => 5,
-            Self::World => 6,
         }
     }
 }

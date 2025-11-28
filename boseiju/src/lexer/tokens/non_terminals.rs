@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ControlFlow {
     NewLine,
@@ -22,6 +23,7 @@ impl ControlFlow {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TapUntapCost {
     Tap,
@@ -38,6 +40,7 @@ impl TapUntapCost {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EnglishKeywords {
     Already,
@@ -168,6 +171,11 @@ impl EnglishKeywords {
 pub struct SelfReferencing;
 
 impl SelfReferencing {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "this creature" => Some(SelfReferencing),
@@ -182,6 +190,11 @@ impl SelfReferencing {
 pub struct NumberReference;
 
 impl NumberReference {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "that many" | "number of" | "amount of" => Some(NumberReference),
@@ -194,6 +207,11 @@ impl NumberReference {
 pub struct NotOfAKind;
 
 impl NotOfAKind {
+    pub const COUNT: usize = 1;
+    pub const fn id(&self) -> usize {
+        0
+    }
+
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "non-" => Some(NotOfAKind),
@@ -202,6 +220,7 @@ impl NotOfAKind {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ActionKeywords {
     Deals,
@@ -224,6 +243,7 @@ impl ActionKeywords {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DamageKind {
     Damage,
@@ -242,6 +262,7 @@ impl DamageKind {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerActions {
     Add,
@@ -306,6 +327,7 @@ impl PlayerActions {
     }
 }
 
+#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
     Life,

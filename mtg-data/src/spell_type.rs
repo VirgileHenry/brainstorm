@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SpellType {
@@ -35,17 +36,6 @@ impl SpellType {
             Self::Lesson => "lesson",
             Self::Omen => "omen",
             Self::Trap => "trap",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Adventure => 0,
-            Self::Arcane => 1,
-            Self::Chorus => 2,
-            Self::Lesson => 3,
-            Self::Omen => 4,
-            Self::Trap => 5,
         }
     }
 }

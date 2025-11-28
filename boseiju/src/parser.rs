@@ -44,13 +44,15 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
     mut on_node_explored: F,
     mut on_fuse_attempt: G,
 ) -> Result<crate::AbilityTree, error::ParserError> {
+    /* Rule map, all our parsing rules in a single struct */
+    lazy_static::lazy_static!(
+        static ref rule_map: rules::RuleMap = rules::RuleMap::default().expect("Default Rule Map shall be OK");
+    );
+
     /* Initialize the nodes from the tokens */
     let nodes: arrayvec::ArrayVec<node::ParserNode, 128> = tokens.iter().cloned().map(node::ParserNode::from).collect();
 
-    let mut best_error = error::ParserError {
-        nodes: nodes.clone(),
-        best_attempt: nodes.clone(),
-    };
+    let mut best_error: Option<error::ParserError> = None;
 
     /* The state to explore starts with the list of provided tokens */
     let mut states_to_explore = Vec::new();
@@ -62,10 +64,14 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
     while let Some(to_explore) = states_to_explore.pop() {
         /* Get all next possible states */
         let mut next_states = Vec::new();
-        for token_count in (1..=to_explore.nodes.len()).rev() {
+
+        /* At most, we iterate over the biggest number of tokens in any rule */
+        let max_tokens_per_rule = to_explore.nodes.len().min(rule_map.max_rule_size);
+
+        for token_count in (1..=max_tokens_per_rule).rev() {
             for (offset, window) in to_explore.nodes.windows(token_count).enumerate() {
                 on_fuse_attempt(window);
-                if let Some(fused) = rules::fuse(window) {
+                if let Some(fused) = rule_map.fuse(window) {
                     /* Create the concatenated node array */
                     let mut nodes = arrayvec::ArrayVec::<_, 128>::new();
                     nodes.extend(to_explore.nodes.iter().take(offset).cloned());
@@ -80,25 +86,45 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 
                     let next_node = ParserState { nodes };
 
-                    if !states_explored.contains(&next_node) {
-                        /* Call user function when a new node have been discovered */
-                        on_node_explored(&to_explore, &next_node);
-
-                        next_states.push(next_node);
+                    if states_explored.contains(&next_node) {
+                        continue;
                     }
+
+                    /* If anywhere in the new node, two consecutive tokens are not allowed, stop */
+                    let mut allowed = true;
+                    for window in next_node.nodes.windows(2) {
+                        let (current, next) = match window {
+                            [c, n] => (c, n),
+                            _ => unreachable!(),
+                        };
+                        if !rule_map.can_succeed(current, next) {
+                            /* Update best error */
+                            if let Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) = best_error {
+                                if state_size > next_node.nodes.len() {
+                                    best_error = Some(error::ParserError::UnexpectedFollowingToken {
+                                        state_size: next_node.nodes.len(),
+                                        current: current.clone(),
+                                        next: next.clone(),
+                                    })
+                                }
+                            }
+                            /* No rules will ever allow to merge current and next tokens, we can stop */
+                            allowed = false;
+                            break;
+                        }
+                    }
+                    if !allowed {
+                        continue;
+                    }
+
+                    /* Call user function when a new node have been discovered */
+                    on_node_explored(&to_explore, &next_node);
+                    next_states.push(next_node);
                 }
             }
         }
 
-        if next_states.is_empty() {
-            /* If the node could not be explored at all, it's a potential error */
-            if to_explore.nodes.len() <= best_error.best_attempt.len() {
-                best_error.best_attempt = to_explore.nodes.clone();
-            }
-        } else {
-            /* Otherwise, all new nodes have to be explored themselves */
-            states_to_explore.append(&mut next_states);
-        }
+        states_to_explore.append(&mut next_states);
 
         /* sort the nodes to explore ? We would need a nice heuristic for this */
         states_to_explore.sort_by(|a, b| b.nodes.len().cmp(&a.nodes.len()));
@@ -107,7 +133,12 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
         states_explored.insert(to_explore);
     }
 
-    Err(best_error)
+    Err(match best_error {
+        Some(error) => error,
+        None => error::ParserError::UnparsableInput {
+            nodes: tokens.iter().map(|t| t.kind.clone()).collect(),
+        },
+    })
 }
 
 /// Parser function without artifacts, to get the result straight out.

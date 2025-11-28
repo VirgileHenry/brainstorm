@@ -1,8 +1,14 @@
 /// Errors that can be thrown by the parser.
 #[derive(Debug, Clone)]
-pub struct ParserError {
-    pub nodes: arrayvec::ArrayVec<super::node::ParserNode, 128>,
-    pub best_attempt: arrayvec::ArrayVec<super::node::ParserNode, 128>,
+pub enum ParserError {
+    UnexpectedFollowingToken {
+        state_size: usize,
+        current: super::node::ParserNode,
+        next: super::node::ParserNode,
+    },
+    UnparsableInput {
+        nodes: Vec<crate::lexer::tokens::TokenKind>,
+    },
 }
 
 impl std::fmt::Display for ParserError {

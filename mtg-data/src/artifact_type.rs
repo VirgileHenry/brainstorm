@@ -1,3 +1,4 @@
+#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ArtifactType {
@@ -74,30 +75,6 @@ impl ArtifactType {
             Self::Terminus => "terminus",
             Self::Treasure => "treasure",
             Self::Vehicle => "vehicle",
-        }
-    }
-
-    pub fn id(&self) -> u32 {
-        match self {
-            Self::Attraction => 0,
-            Self::Blood => 1,
-            Self::Bobblehead => 2,
-            Self::Clue => 3,
-            Self::Contraption => 4,
-            Self::Equipment => 5,
-            Self::Food => 6,
-            Self::Fortification => 7,
-            Self::Gold => 8,
-            Self::Incubator => 9,
-            Self::Infinity => 10,
-            Self::Junk => 11,
-            Self::Map => 12,
-            Self::Powerstone => 13,
-            Self::Spacecraft => 14,
-            Self::Stone => 15,
-            Self::Terminus => 16,
-            Self::Treasure => 17,
-            Self::Vehicle => 18,
         }
     }
 }
