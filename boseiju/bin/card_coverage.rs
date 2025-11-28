@@ -32,8 +32,15 @@ impl CoverageTestResults {
         match result {
             TestResult::Failed => { /* :( */ }
             TestResult::OracleTextLexed => self.oracle_text_lexed += 1,
-            TestResult::OracleTextParsed => self.oracle_text_parsed += 1,
-            TestResult::FullCardParsed => self.fully_parsed += 1,
+            TestResult::OracleTextParsed => {
+                self.oracle_text_lexed += 1;
+                self.oracle_text_parsed += 1;
+            },
+            TestResult::FullCardParsed => {
+                self.oracle_text_lexed += 1;
+                self.oracle_text_parsed += 1;
+                self.fully_parsed += 1;
+            },
         }
     }
 }
