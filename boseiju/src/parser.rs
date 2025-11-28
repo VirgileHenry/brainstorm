@@ -62,28 +62,6 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 
     /* Keep looping until we have nodes that need to be explored */
     while let Some(to_explore) = states_to_explore.pop() {
-        /* Start with a sanity check */
-        for window in to_explore.nodes.windows(2) {
-            let (current, next) = match window {
-                [c, n] => (c, n),
-                _ => unreachable!(),
-            };
-            if !rule_map.can_succeed(current, next) {
-                /* Update best error */
-                if let Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) = best_error {
-                    if state_size > to_explore.nodes.len() {
-                        best_error = Some(error::ParserError::UnexpectedFollowingToken {
-                            state_size: to_explore.nodes.len(),
-                            current: current.clone(),
-                            next: next.clone(),
-                        })
-                    }
-                }
-                /* No rules will ever allow to merge current and next tokens, we can stop */
-                continue;
-            }
-        }
-
         /* Get all next possible states */
         let mut next_states = Vec::new();
 
@@ -108,12 +86,40 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 
                     let next_node = ParserState { nodes };
 
-                    if !states_explored.contains(&next_node) {
-                        /* Call user function when a new node have been discovered */
-                        on_node_explored(&to_explore, &next_node);
-
-                        next_states.push(next_node);
+                    if states_explored.contains(&next_node) {
+                        continue;
                     }
+
+                    /* If anywhere in the new node, two consecutive tokens are not allowed, stop */
+                    let mut allowed = true;
+                    for window in next_node.nodes.windows(2) {
+                        let (current, next) = match window {
+                            [c, n] => (c, n),
+                            _ => unreachable!(),
+                        };
+                        if !rule_map.can_succeed(current, next) {
+                            /* Update best error */
+                            if let Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) = best_error {
+                                if state_size > next_node.nodes.len() {
+                                    best_error = Some(error::ParserError::UnexpectedFollowingToken {
+                                        state_size: next_node.nodes.len(),
+                                        current: current.clone(),
+                                        next: next.clone(),
+                                    })
+                                }
+                            }
+                            /* No rules will ever allow to merge current and next tokens, we can stop */
+                            allowed = false;
+                            break;
+                        }
+                    }
+                    if !allowed {
+                        continue;
+                    }
+
+                    /* Call user function when a new node have been discovered */
+                    on_node_explored(&to_explore, &next_node);
+                    next_states.push(next_node);
                 }
             }
         }
