@@ -28,9 +28,7 @@ impl KrarkHarness {
         &mut self.krark_args
     }
 
-    pub fn run<
-        R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe + Sync,
-    >(
+    pub fn run<R: Fn(&mtg_cardbase::Card, KrarkResult) -> KrarkResult + std::panic::RefUnwindSafe + Sync>(
         &mut self,
         test_func: R,
     ) {
@@ -41,12 +39,12 @@ impl KrarkHarness {
         use rayon::iter::ParallelIterator;
         let results: Vec<_> = cards
             .par_iter()
-            .map(|card| {
-                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
+            .map(
+                |card| match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name.clone()))) {
                     Ok(result) => result,
-                    Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
-                }
-            })
+                    Err(payload) => KrarkResult::from_panic_payload(card.name.clone(), payload),
+                },
+            )
             .collect();
 
         for result in results.into_iter() {
@@ -75,12 +73,12 @@ impl KrarkHarness {
         let results: Vec<_> = cards
             .par_iter()
             .filter(|card| filter(card))
-            .map(|card| {
-                match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name))) {
+            .map(
+                |card| match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name.clone()))) {
                     Ok(result) => result,
-                    Err(payload) => KrarkResult::from_panic_payload(card.name, payload),
-                }
-            })
+                    Err(payload) => KrarkResult::from_panic_payload(card.name.clone(), payload),
+                },
+            )
             .collect();
 
         for result in results.into_iter() {

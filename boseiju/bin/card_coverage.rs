@@ -111,8 +111,8 @@ fn main() -> std::io::Result<()> {
 }
 
 fn run_card(card: &mtg_cardbase::Card) -> TestResult {
-    let card_name = card.name;
-    let oracle_text = match card.oracle_text {
+    let card_name = &card.name;
+    let oracle_text = match card.oracle_text.as_ref() {
         Some(ot) => ot,
         /* If there is no oracle text, attempt to raw parse */
         None => match boseiju::Card::try_from(card) {
@@ -140,8 +140,8 @@ fn run_card(card: &mtg_cardbase::Card) -> TestResult {
 
 fn card_legal_in(card: &mtg_cardbase::Card, format: mtg_data::Format) -> bool {
     let legality = match format {
-        mtg_data::Format::Commander => card.legalities.commander,
-        mtg_data::Format::Standard => card.legalities.standard,
+        mtg_data::Format::Commander => &card.legalities.commander,
+        mtg_data::Format::Standard => &card.legalities.standard,
         _ => unreachable!(),
     };
     legality == "legal" || legality == "restricted"

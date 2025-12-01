@@ -7,9 +7,9 @@ fn main() -> Result<(), String> {
     krark_harness.run_filter(
         |card| card.set == "fdn",
         |card, mut results| {
-            match card.oracle_text {
+            match card.oracle_text.as_ref() {
                 Some(text) => {
-                    let oracle_text = lexer::preprocess(card.name, text);
+                    let oracle_text = lexer::preprocess(&card.name, text);
                     match lexer::lex(&oracle_text) {
                         /* Don't take into account cards we couldn't lex */
                         Err(_) => results.skip(),

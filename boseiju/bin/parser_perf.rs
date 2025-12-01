@@ -24,15 +24,15 @@ fn main() -> Result<(), String> {
     let results: Vec<_> = cards
         .iter()
         .filter(|card| card.set == "fdn")
-        .map(|card| match card.oracle_text {
+        .map(|card| match card.oracle_text.as_ref() {
             Some(text) => {
-                let oracle_text = lexer::preprocess(card.name, text);
+                let oracle_text = lexer::preprocess(&card.name, text);
                 match lexer::lex(&oracle_text) {
                     /* Don't take into account cards we couldn't lex */
                     Err(_) => None,
                     Ok(tokens) => {
                         let (_, iters) = parser::parse_and_count_iters(&tokens);
-                        Some((iters, card.name))
+                        Some((iters, card.name.as_str()))
                     }
                 }
             }

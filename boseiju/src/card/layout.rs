@@ -62,35 +62,35 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
         use std::str::FromStr;
 
-        match raw_card.layout {
+        match raw_card.layout.as_str() {
             "normal" => Ok(Layout::Normal {
-                mana_cost: match raw_card.mana_cost {
+                mana_cost: match raw_card.mana_cost.as_ref() {
                     Some(mana_cost) => Some(
                         crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
                             .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                     ),
                     None => None,
                 },
-                card_type: crate::card::card_type::CardType::parse(raw_card.type_line, raw_card)
+                card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                abilities: match raw_card.oracle_text {
-                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                abilities: match raw_card.oracle_text.as_ref() {
+                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
                         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                     None => crate::AbilityTree::empty(),
                 },
             }),
             "token" => Ok(Layout::Token {
-                card_type: crate::card::card_type::CardType::parse(raw_card.type_line, raw_card)
+                card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
                     .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                abilities: match raw_card.oracle_text {
-                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                abilities: match raw_card.oracle_text.as_ref() {
+                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
                         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                     None => crate::AbilityTree::empty(),
                 },
             }),
             "saga" => {
-                let ability_tree = match raw_card.oracle_text {
-                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, raw_card.name)
+                let ability_tree = match raw_card.oracle_text.as_ref() {
+                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
                         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                     None => crate::AbilityTree::empty(),
                 };
@@ -104,14 +104,14 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
                     }
                 }
                 Ok(Layout::Saga {
-                    mana_cost: match raw_card.mana_cost {
+                    mana_cost: match raw_card.mana_cost.as_ref() {
                         Some(mana_cost) => Some(
                             crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
                                 .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
                         ),
                         None => None,
                     },
-                    card_type: crate::card::card_type::CardType::parse(raw_card.type_line, raw_card)
+                    card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
                         .map_err(|e| format!("Failed to parse card type: {e}"))?,
                     chapters,
                 })

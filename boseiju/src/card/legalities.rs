@@ -81,26 +81,27 @@ impl TryFrom<&mtg_cardbase::Legalities> for Legalities {
         use std::str::FromStr;
         // Fixme: there are differences between the legailities got from the direct api and the one in the cards
         Ok(Legalities {
-            alchemy: Legality::from_str(value.alchemy).map_err(|e| format!("Failed to parse format alchemy: {e}"))?,
-            brawl: Legality::from_str(value.brawl).map_err(|e| format!("Failed to parse format brawl: {e}"))?,
-            commander: Legality::from_str(value.commander).map_err(|e| format!("Failed to parse format commander: {e}"))?,
-            duel: Legality::from_str(value.duel).map_err(|e| format!("Failed to parse format duel: {e}"))?,
+            alchemy: Legality::from_str(&value.alchemy).map_err(|e| format!("Failed to parse format alchemy: {e}"))?,
+            brawl: Legality::from_str(&value.brawl).map_err(|e| format!("Failed to parse format brawl: {e}"))?,
+            commander: Legality::from_str(&value.commander).map_err(|e| format!("Failed to parse format commander: {e}"))?,
+            duel: Legality::from_str(&value.duel).map_err(|e| format!("Failed to parse format duel: {e}"))?,
             explorer: Legality::Notlegal,
-            future: Legality::from_str(value.future).map_err(|e| format!("Failed to parse format future: {e}"))?,
-            gladiator: Legality::from_str(value.gladiator).map_err(|e| format!("Failed to parse format gladiator: {e}"))?,
-            historic: Legality::from_str(value.historic).map_err(|e| format!("Failed to parse format historic: {e}"))?,
+            future: Legality::from_str(&value.future).map_err(|e| format!("Failed to parse format future: {e}"))?,
+            gladiator: Legality::from_str(&value.gladiator).map_err(|e| format!("Failed to parse format gladiator: {e}"))?,
+            historic: Legality::from_str(&value.historic).map_err(|e| format!("Failed to parse format historic: {e}"))?,
             historicbrawl: Legality::Notlegal,
-            legacy: Legality::from_str(value.legacy).map_err(|e| format!("Failed to parse format legacy: {e}"))?,
-            modern: Legality::from_str(value.modern).map_err(|e| format!("Failed to parse format modern: {e}"))?,
-            oathbreaker: Legality::from_str(value.oathbreaker).map_err(|e| format!("Failed to parse format oathbreaker: {e}"))?,
-            pauper: Legality::from_str(value.pauper).map_err(|e| format!("Failed to parse format pauper: {e}"))?,
+            legacy: Legality::from_str(&value.legacy).map_err(|e| format!("Failed to parse format legacy: {e}"))?,
+            modern: Legality::from_str(&value.modern).map_err(|e| format!("Failed to parse format modern: {e}"))?,
+            oathbreaker: Legality::from_str(&value.oathbreaker)
+                .map_err(|e| format!("Failed to parse format oathbreaker: {e}"))?,
+            pauper: Legality::from_str(&value.pauper).map_err(|e| format!("Failed to parse format pauper: {e}"))?,
             pauper_commander: Legality::Notlegal,
-            penny: Legality::from_str(value.penny).map_err(|e| format!("Failed to parse format penny: {e}"))?,
+            penny: Legality::from_str(&value.penny).map_err(|e| format!("Failed to parse format penny: {e}"))?,
             pionner: Legality::Notlegal,
-            predh: Legality::from_str(value.predh).map_err(|e| format!("Failed to parse format predh: {e}"))?,
-            premodern: Legality::from_str(value.premodern).map_err(|e| format!("Failed to parse format premodern: {e}"))?,
-            standard: Legality::from_str(value.standard).map_err(|e| format!("Failed to parse format standard: {e}"))?,
-            vintage: Legality::from_str(value.vintage).map_err(|e| format!("Failed to parse format vintage: {e}"))?,
+            predh: Legality::from_str(&value.predh).map_err(|e| format!("Failed to parse format predh: {e}"))?,
+            premodern: Legality::from_str(&value.premodern).map_err(|e| format!("Failed to parse format premodern: {e}"))?,
+            standard: Legality::from_str(&value.standard).map_err(|e| format!("Failed to parse format standard: {e}"))?,
+            vintage: Legality::from_str(&value.vintage).map_err(|e| format!("Failed to parse format vintage: {e}"))?,
         })
     }
 }

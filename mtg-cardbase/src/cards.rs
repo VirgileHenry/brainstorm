@@ -1,28 +1,23 @@
 use std::ops::{Deref, DerefMut};
 
-/// If this throws an error, you might be missing the card database.
-/// Run the python script "data_fetcher.py" to get it.
-const CARDS_JSON: &'static str = include_str!("../data/cards.json");
-
 pub struct AllCardsIter(Vec<crate::Card>);
 
 impl AllCardsIter {
     pub fn new() -> Self {
-        let json_obj =
-            crate::static_json::parse(CARDS_JSON).expect("Invalid json for provided card list!");
-        let json_vec = match json_obj {
-            crate::static_json::StaticJsonValue::Array(array) => array,
-            other => panic!(
-                "Invalid json for provided cards list! Expected array, found {:?}",
-                other
-            ),
-        };
-        use crate::static_json::FromJsonValue;
-        let all_cards = json_vec
-            .into_iter()
-            .map(|json_card| crate::Card::from_json_value(&json_card))
-            .collect::<Result<_, _>>()
-            .expect("Failed to convert a card from json");
+        /* Depending on using cargo bin or test, the pwd won't be the same, let's support all of them */
+        const SEARCH_PATHS: &[&'static str] = &["mtg-cardbase/data/cards.json", "../mtg-cardbase/data/cards.json"];
+        /*
+            If this throws an error, you might be missing the card database.
+            Run the python script "data_fetcher.py" to get it.
+        */
+        let mut cards_json = None;
+        for search_path in SEARCH_PATHS {
+            if let Ok(cards) = std::fs::read_to_string(search_path) {
+                cards_json = Some(cards);
+            }
+        }
+        let cards_json = cards_json.expect("Missing json card database!");
+        let all_cards: Vec<crate::Card> = serde_json::from_str(&cards_json).expect("Invalid json for provided card list!");
         AllCardsIter(all_cards)
     }
 

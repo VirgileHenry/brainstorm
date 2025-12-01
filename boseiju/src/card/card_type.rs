@@ -43,10 +43,7 @@ impl CardType {
             vanguard: None,
         }
     }
-    pub fn parse(
-        type_line: &str,
-        raw_card: &mtg_cardbase::Card,
-    ) -> Result<Self, String /* Fixme */> {
+    pub fn parse(type_line: &str, raw_card: &mtg_cardbase::Card) -> Result<Self, String /* Fixme */> {
         use std::str::FromStr;
 
         let mut result = Self::empty();
@@ -56,10 +53,7 @@ impl CardType {
                 .expect("Failed to compile the tokens regex");
         );
 
-        let mut tokens = tokens_regex
-            .find_iter(type_line)
-            .map(|m| m.as_str())
-            .peekable();
+        let mut tokens = tokens_regex.find_iter(type_line).map(|m| m.as_str()).peekable();
 
         /* Parse supertypes first */
         while let Some(token) = tokens.peek() {
@@ -104,9 +98,7 @@ impl CardType {
                         mtg_data::CardType::Conspiracy => match result.conspiracy {
                             None => result.conspiracy = Some(ConspiracySubtype),
                             Some(_) => {
-                                return Err(format!(
-                                    "Consiparacy type present twice in card type!"
-                                ));
+                                return Err(format!("Consiparacy type present twice in card type!"));
                             }
                         },
                         mtg_data::CardType::Creature => match result.creature {
@@ -138,9 +130,7 @@ impl CardType {
                                 })
                             }
                             Some(_) => {
-                                return Err(format!(
-                                    "Enchantment type present twice in card type!"
-                                ));
+                                return Err(format!("Enchantment type present twice in card type!"));
                             }
                         },
                         mtg_data::CardType::Hero => match result.hero {
@@ -193,20 +183,19 @@ impl CardType {
                         },
                         mtg_data::CardType::Planeswalker => match result.planeswalker {
                             None => {
-                                let loyalty = raw_card.loyalty.ok_or_else(|| {
-                                    format!("No loyalty field on card with planeswalker type!")
-                                })?;
+                                let loyalty = raw_card
+                                    .loyalty
+                                    .as_ref()
+                                    .ok_or_else(|| format!("No loyalty field on card with planeswalker type!"))?;
                                 result.planeswalker = Some(PlaneswalkerSubtype {
                                     subtypes: arrayvec::ArrayVec::new(),
-                                    loyalty: loyalty.parse().map_err(|e| {
-                                        format!("Failed to parse loyalty \"{loyalty}\": {e}")
-                                    })?,
+                                    loyalty: loyalty
+                                        .parse()
+                                        .map_err(|e| format!("Failed to parse loyalty \"{loyalty}\": {e}"))?,
                                 })
                             }
                             Some(_) => {
-                                return Err(format!(
-                                    "Planeswalker type present twice in card type!"
-                                ));
+                                return Err(format!("Planeswalker type present twice in card type!"));
                             }
                         },
                         mtg_data::CardType::Scheme => match result.scheme {

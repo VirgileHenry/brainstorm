@@ -1,23 +1,20 @@
 pub struct KrarkResult {
-    pub card_name: &'static str,
+    pub card_name: String,
     pub status: KrarkResultStatus,
 }
 
 impl KrarkResult {
-    pub(crate) fn new(card_name: &'static str) -> KrarkResult {
+    pub(crate) fn new(card_name: String) -> KrarkResult {
         KrarkResult {
-            card_name,
+            card_name: card_name.clone(),
             status: KrarkResultStatus::Passed(PassedResult {
-                card_name,
+                card_name: card_name.clone(),
                 passed: vec![],
             }),
         }
     }
 
-    pub(crate) fn from_panic_payload(
-        card_name: &'static str,
-        payload: Box<dyn std::any::Any + Send + 'static>,
-    ) -> KrarkResult {
+    pub(crate) fn from_panic_payload(card_name: String, payload: Box<dyn std::any::Any + Send + 'static>) -> KrarkResult {
         /* Most panic payloads are strings with panic info */
         let trace = if let Some(s) = payload.downcast_ref::<&str>() {
             s.to_string()
@@ -27,23 +24,21 @@ impl KrarkResult {
             "Unknown panic payload".to_string()
         };
         KrarkResult {
-            card_name,
-            status: KrarkResultStatus::Panicked(PanickedResult { card_name, trace }),
+            card_name: card_name.clone(),
+            status: KrarkResultStatus::Panicked(PanickedResult {
+                card_name: card_name.clone(),
+                trace,
+            }),
         }
     }
 
-    pub fn assert_eq<T: PartialEq + std::fmt::Debug>(
-        &mut self,
-        expected: T,
-        obtained: T,
-        name: String,
-    ) {
+    pub fn assert_eq<T: PartialEq + std::fmt::Debug>(&mut self, expected: T, obtained: T, name: String) {
         match (&mut self.status, expected == obtained) {
             (KrarkResultStatus::Panicked { .. }, _) => { /*  */ }
             (KrarkResultStatus::Passed(passed), true) => passed.passed.push(name),
             (KrarkResultStatus::Passed(passed), false) => {
                 self.status = KrarkResultStatus::Failed(FailedResult {
-                    card_name: self.card_name,
+                    card_name: self.card_name.clone(),
                     passed: std::mem::take(&mut passed.passed),
                     failed: vec![FailedTc {
                         check_name: name,
@@ -66,7 +61,7 @@ impl KrarkResult {
             (KrarkResultStatus::Passed(passed), Ok(_)) => passed.passed.push(name),
             (KrarkResultStatus::Passed(passed), Err(err)) => {
                 self.status = KrarkResultStatus::Failed(FailedResult {
-                    card_name: self.card_name,
+                    card_name: self.card_name.clone(),
                     passed: std::mem::take(&mut passed.passed),
                     failed: vec![FailedTc {
                         check_name: name,
@@ -96,16 +91,16 @@ pub enum KrarkResultStatus {
 }
 
 pub struct PassedResult {
-    pub card_name: &'static str,
+    pub card_name: String,
     pub passed: Vec<String>,
 }
 pub struct FailedResult {
-    pub card_name: &'static str,
+    pub card_name: String,
     pub passed: Vec<String>,
     pub failed: Vec<FailedTc>,
 }
 pub struct PanickedResult {
-    pub card_name: &'static str,
+    pub card_name: String,
     pub trace: String,
 }
 

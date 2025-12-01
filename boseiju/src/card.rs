@@ -32,9 +32,9 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
         use std::str::FromStr;
         Ok(Card {
-            name: types::CardName::from(raw_card.name)
+            name: types::CardName::from(&raw_card.name)
                 .map_err(|e| format!("in {}, failed to parse card name: {e}", raw_card.name))?,
-            scryfall_id: uuid::Uuid::from_str(raw_card.id)
+            scryfall_id: uuid::Uuid::from_str(&raw_card.id)
                 .map_err(|e| format!("in {}, failed to parse scryfall id to uuid: {e}", raw_card.name))?,
             legalities: legalities::Legalities::try_from(&raw_card.legalities)
                 .map_err(|e| format!("in {}, failed to parse legalities: {e}", raw_card.name))?,
