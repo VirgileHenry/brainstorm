@@ -4,8 +4,15 @@ pub struct AllCardsIter(Vec<crate::Card>);
 
 impl AllCardsIter {
     pub fn new() -> Self {
-        /* Depending on using cargo bin or test, the pwd won't be the same, let's support all of them */
-        const SEARCH_PATHS: &[&'static str] = &["mtg-cardbase/data/cards.json", "../mtg-cardbase/data/cards.json"];
+        /* All possible serach paths ? */
+        const SEARCH_PATHS: &[&'static str] = &[
+            /* Cargo bin run the executables from the workspaces */
+            "mtg-cardbase/data/cards.json",
+            /* Cargo test run them from the crates, so we need to go back */
+            "../mtg-cardbase/data/cards.json",
+            /* Brainstorm can be used as a lib, so we shall account for that too */
+            "deps/brainstorm/mtg-cardbase/data/cards.json",
+        ];
         /*
             If this throws an error, you might be missing the card database.
             Run the python script "data_fetcher.py" to get it.
