@@ -4,6 +4,9 @@ mod layout;
 mod legalities;
 mod types;
 
+/// A parsed card.
+///
+/// This is the main data type used and passed around.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Card {
     pub name: types::CardName,
@@ -11,6 +14,7 @@ pub struct Card {
     pub legalities: legalities::Legalities,
     pub color_identity: colors::Colors,
     pub layout: layout::Layout,
+    pub images_uris: Option<mtg_cardbase::ImageUris>,
 }
 
 impl Card {
@@ -42,6 +46,7 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
                 .map_err(|e| format!("in {}, failed to parse color identity: {e}", raw_card.name))?,
             layout: layout::Layout::try_from(raw_card)
                 .map_err(|e| format!("in {}, failed to parse layout: {e}", raw_card.name))?,
+            images_uris: raw_card.image_uris.clone(),
         })
     }
 }
