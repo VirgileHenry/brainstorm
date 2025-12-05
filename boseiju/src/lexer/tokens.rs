@@ -113,12 +113,12 @@ create_token_kind!(
     Supertype, mtg_data::Supertype;
     ControlFlow, non_terminals::ControlFlow;
     TapUntapCost, non_terminals::TapUntapCost;
-    EnglishKeywords, non_terminals::EnglishKeywords;
+    EnglishKeyword, non_terminals::EnglishKeyword;
     SelfReferencing, non_terminals::SelfReferencing;
     NumberReference, non_terminals::NumberReference;
     NotOfAKind, non_terminals::NotOfAKind;
-    ActionKeywords, non_terminals::ActionKeywords;
+    ActionKeyword, non_terminals::ActionKeyword;
     DamageKind, non_terminals::DamageKind;
-    PlayerActions, non_terminals::PlayerActions;
+    PlayerAction, non_terminals::PlayerAction;
     VhyToSortLater, non_terminals::VhyToSortLater;
 );

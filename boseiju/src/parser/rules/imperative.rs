@@ -13,7 +13,7 @@ pub const IMPERATIVE_RULES: &[super::ParserRule] = &[
     /* "Destroy ..." imperative */
     crate::make_parser_rule!(
         [
-            ParserNode::LexerToken(TokenKind::PlayerActions(non_terminals::PlayerActions::Destroy)),
+            ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)),
             ParserNode::ObjectReference(object),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot))
         ] => Some(ParserNode::Imperative( {

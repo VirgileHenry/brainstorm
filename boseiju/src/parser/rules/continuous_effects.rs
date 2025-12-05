@@ -8,7 +8,7 @@ macro_rules! get_power_touhness_mod {
         crate::make_parser_rule!(
             [
                 ParserNode::ObjectReference(object),
-                ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Get)),
+                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Get)),
                 ParserNode::LexerToken(TokenKind::PowerToughnessModifier($keyword))
             ] => Some(ParserNode::ContinuousEffectKind({
                 crate::ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
@@ -53,7 +53,7 @@ macro_rules! gain_ab_tree_to_continuous_effect {
         crate::make_parser_rule!(
             [
                 ParserNode::ObjectReference(object),
-                ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Gain)),
+                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Gain)),
                 ParserNode::AbilityTree(tree),
                 ParserNode::LexerToken(TokenKind::ContinuousEffectDuration($duration)),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot))
@@ -79,7 +79,7 @@ pub const CONTINUOUS_EFFECTS_RULES: &[super::ParserRule] = &[
     crate::parser::rules::ParserRule::create(
         crate::state_id!( [
             ParserNode::ObjectReference(object),
-            ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Get)),
+            ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Get)),
             ParserNode::LexerToken(TokenKind::PowerToughnessModifier(crate::ability_tree::terminals::PowerToughnessModifier::Constant {
                 power: 0,
                 toughness: 0
@@ -89,7 +89,7 @@ pub const CONTINUOUS_EFFECTS_RULES: &[super::ParserRule] = &[
         |tokens| match tokens {
             [
                 ParserNode::ObjectReference(object),
-                ParserNode::LexerToken(TokenKind::ActionKeywords(non_terminals::ActionKeywords::Get)),
+                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Get)),
                 ParserNode::LexerToken(TokenKind::PowerToughnessModifier(crate::ability_tree::terminals::PowerToughnessModifier::Constant {
                     power,
                     toughness
@@ -140,7 +140,7 @@ pub const CONTINUOUS_EFFECTS_RULES: &[super::ParserRule] = &[
     crate::make_parser_rule!(
         [
             ParserNode::ObjectReference(object),
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Have)),
+            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)),
             ParserNode::AbilityTree(tree),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot))
         ] => Some(ParserNode::ContinuousEffect({

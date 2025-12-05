@@ -72,7 +72,7 @@ pub const OBJECT_SPECIFIER_RULES: &[super::ParserRule] = &[
     crate::make_parser_rule!(
         [
             ParserNode::ObjectSpecifier(spec1),
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Or)),
+            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Or)),
             ParserNode::ObjectSpecifier(spec2)
         ] => Some(ParserNode::ObjectSpecifiers( {
             let mut specifiers = arrayvec::ArrayVec::new();
@@ -86,7 +86,7 @@ pub const OBJECT_SPECIFIER_RULES: &[super::ParserRule] = &[
     crate::make_parser_rule!(
         [
             ParserNode::ObjectSpecifier(spec1),
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::And)),
+            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::And)),
             ParserNode::ObjectSpecifier(spec2)
         ] => Some(ParserNode::ObjectSpecifiers( {
             let mut specifiers = arrayvec::ArrayVec::new();

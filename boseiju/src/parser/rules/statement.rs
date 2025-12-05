@@ -9,7 +9,7 @@ macro_rules! may_ability_from_player {
         crate::make_parser_rule!(
             [
                 ParserNode::LexerToken(TokenKind::PlayerSpecifier($player)),
-                ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::May)),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::May)),
                 ParserNode::Imperative(imperative)
                 // Fixme: there are also "if they don't / if they do" stuff
             ] => Some(ParserNode::Statement( {
