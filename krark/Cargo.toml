@@ -2,6 +2,7 @@
 name = "krark"
 version.workspace = true
 edition.workspace = true
+workspace = ".."
 
 [dependencies]
 lazy_static = { workspace = true }

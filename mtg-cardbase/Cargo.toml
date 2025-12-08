@@ -2,6 +2,7 @@
 name = "mtg-cardbase"
 version.workspace = true
 edition.workspace = true
+workspace = ".."
 
 [dependencies]
 arrayvec = { workspace = true }
