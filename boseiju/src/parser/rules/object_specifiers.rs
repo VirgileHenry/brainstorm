@@ -4,39 +4,8 @@ use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
 
-macro_rules! card_type_to_object_kind {
-    ( $ty:path ) => {
-        crate::make_parser_rule!(
-            [ParserNode::LexerToken(TokenKind::CardType($ty))] => Some(ParserNode::ObjectKind( {
-                crate::ability_tree::object::ObjectKind::Type($ty)
-            } ))
-        )
-    };
-}
-
 #[rustfmt::skip]
 pub const OBJECT_SPECIFIER_RULES: &[super::ParserRule] = &[
-
-    /* ========================================================= */
-    /* ========== Any Card Type Can Be an Object Kind ========== */
-    /* ========================================================= */
-    card_type_to_object_kind!(mtg_data::CardType::Artifact),
-    card_type_to_object_kind!(mtg_data::CardType::Battle),
-    card_type_to_object_kind!(mtg_data::CardType::Conspiracy),
-    card_type_to_object_kind!(mtg_data::CardType::Creature),
-    card_type_to_object_kind!(mtg_data::CardType::Dungeon),
-    card_type_to_object_kind!(mtg_data::CardType::Emblem),
-    card_type_to_object_kind!(mtg_data::CardType::Enchantment),
-    card_type_to_object_kind!(mtg_data::CardType::Hero),
-    card_type_to_object_kind!(mtg_data::CardType::Instant),
-    card_type_to_object_kind!(mtg_data::CardType::Kindred),
-    card_type_to_object_kind!(mtg_data::CardType::Land),
-    card_type_to_object_kind!(mtg_data::CardType::Phenomenon),
-    card_type_to_object_kind!(mtg_data::CardType::Plane),
-    card_type_to_object_kind!(mtg_data::CardType::Planeswalker),
-    card_type_to_object_kind!(mtg_data::CardType::Scheme),
-    card_type_to_object_kind!(mtg_data::CardType::Sorcery),
-    card_type_to_object_kind!(mtg_data::CardType::Vanguard),
 
     /* ==================================================== */
     /* ========== Conversion to Object Specifier ========== */

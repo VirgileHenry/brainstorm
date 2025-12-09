@@ -17,6 +17,18 @@ impl Terminal for mtg_data::KeywordAbility {
     }
 }
 
+impl Terminal for mtg_data::KeywordAction {
+    fn try_from_str(source: &str) -> Option<Self> {
+        from_str_singular_or_plural::<Self>(source)
+    }
+}
+
+impl Terminal for mtg_data::AbilityWord {
+    fn try_from_str(source: &str) -> Option<Self> {
+        from_str_singular_or_plural::<Self>(source)
+    }
+}
+
 impl Terminal for mtg_data::Mana {
     fn try_from_str(source: &str) -> Option<Self> {
         from_str_singular_or_plural::<Self>(source)

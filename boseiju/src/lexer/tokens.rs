@@ -1,5 +1,6 @@
 pub mod non_terminals;
 
+use crate::ability_tree::object;
 use crate::ability_tree::terminals;
 use crate::ability_tree::terminals::Terminal;
 use crate::ability_tree::zone;
@@ -100,17 +101,11 @@ create_token_kind!(
     ContinuousEffectDuration, terminals::ContinuousEffectDuration;
     Zone, zone::Zone;
     Color, mtg_data::Color;
+    AbilityWord, mtg_data::AbilityWord;
     KeywordAbility, mtg_data::KeywordAbility;
+    KeywordAction, mtg_data::KeywordAction;
     Mana, mtg_data::Mana;
-    CardType, mtg_data::CardType;
-    CreatureType, mtg_data::CreatureType;
-    EnchantmentType, mtg_data::EnchantmentType;
-    LandType, mtg_data::LandType;
-    PlaneswalkerType, mtg_data::PlaneswalkerType;
-    BattleType, mtg_data::BattleType;
-    ArtifactType, mtg_data::ArtifactType;
-    SpellType, mtg_data::SpellType;
-    Supertype, mtg_data::Supertype;
+    ObjectKind, object::ObjectKind;
     ControlFlow, non_terminals::ControlFlow;
     TapUntapCost, non_terminals::TapUntapCost;
     EnglishKeyword, non_terminals::EnglishKeyword;
@@ -120,5 +115,7 @@ create_token_kind!(
     ActionKeyword, non_terminals::ActionKeyword;
     DamageKind, non_terminals::DamageKind;
     PlayerAction, non_terminals::PlayerAction;
+    ThisTurn, non_terminals::ThisTurn;
+    NonKind, non_terminals::NonKind;
     VhyToSortLater, non_terminals::VhyToSortLater;
 );

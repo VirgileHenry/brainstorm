@@ -49,6 +49,11 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
         static ref rule_map: rules::RuleMap = rules::RuleMap::default().expect("Default Rule Map shall be OK");
     );
 
+    /* We don't need to do any parsing if there are no tokens */
+    if tokens.is_empty() {
+        return Ok(crate::AbilityTree::empty());
+    }
+
     /* Initialize the nodes from the tokens */
     let nodes: arrayvec::ArrayVec<node::ParserNode, 128> = tokens.iter().cloned().map(node::ParserNode::from).collect();
 
