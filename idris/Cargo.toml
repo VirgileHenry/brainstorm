@@ -5,6 +5,7 @@ authors.workspace = true
 description.workspace = true
 documentation.workspace = true
 edition.workspace = true
+workspace = ".."
 
 [lib]
 proc-macro = true

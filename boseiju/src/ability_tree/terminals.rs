@@ -14,6 +14,7 @@ pub enum Number {
     Number(u32),
     X,
     OrMore(u32),
+    AnyNumber,
 }
 
 impl std::fmt::Display for Number {
@@ -22,6 +23,7 @@ impl std::fmt::Display for Number {
             Number::X => write!(f, "x"),
             Number::Number(num) => write!(f, "{num}"),
             Number::OrMore(num) => write!(f, "{num} or more"),
+            Number::AnyNumber => write!(f, "any number of"),
         }
     }
 }
@@ -30,8 +32,6 @@ impl Terminal for Number {
     fn try_from_str(source: &str) -> Option<Self> {
         if let Some(num) = crate::utils::parse_num(source) {
             Some(Number::Number(num))
-        } else if source == "x" {
-            Some(Number::X)
         } else if let Some(stripped) = source.strip_suffix(" or more") {
             let num = crate::utils::parse_num(stripped)?;
             Some(Number::OrMore(num))
@@ -39,7 +39,11 @@ impl Terminal for Number {
             let num = crate::utils::parse_num(stripped)?;
             Some(Number::OrMore(num))
         } else {
-            None
+            match source {
+                "x" => Some(Number::X),
+                "any number of" => Some(Number::AnyNumber),
+                _ => None,
+            }
         }
     }
 }
@@ -72,9 +76,9 @@ impl Terminal for CountSpecifier {
         match source {
             "all" => Some(CountSpecifier::All),
             "each" => Some(CountSpecifier::All),
-            "target" => Some(CountSpecifier::Target),
+            "target" | "targets" => Some(CountSpecifier::Target),
             "any target" => Some(CountSpecifier::Target),
-            "any number of target" => Some(CountSpecifier::AnyNumberOfTargets),
+            "any number of target" | "any number of targets" => Some(CountSpecifier::AnyNumberOfTargets),
             "other" | "others" => Some(CountSpecifier::Others),
             other => {
                 let prefix = "up to ";

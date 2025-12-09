@@ -24,7 +24,7 @@ pub const ABILITY_TREE_RULES: &[super::ParserRule] = &[
     /* Triggered abilities from all their keywords: When, Whenever */
     crate::make_parser_rule!(
         [
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::When)),
+            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)),
             ParserNode::TriggerCondition(condition),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
             ParserNode::Statement(statement)
@@ -39,7 +39,7 @@ pub const ABILITY_TREE_RULES: &[super::ParserRule] = &[
     ),
     crate::make_parser_rule!(
         [
-            ParserNode::LexerToken(TokenKind::EnglishKeywords(non_terminals::EnglishKeywords::Whenever)),
+            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)),
             ParserNode::TriggerCondition(condition),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
             ParserNode::Statement(statement)

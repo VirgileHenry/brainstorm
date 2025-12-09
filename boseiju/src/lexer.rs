@@ -4,7 +4,6 @@ pub mod tokens;
 
 /// Preprocess a card oracle text to properly lex it.
 pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
-    let card_name_lowercase = card_name.to_ascii_lowercase();
     let result = oracle_text;
 
     /* replace all raw unicode char points by they values */
@@ -12,7 +11,6 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
         static ref unicode_regex: regex::Regex = regex::Regex::new("\\\\u(\\d{4})")
             .expect("Failed to compile unicode character point regex");
     );
-
     let replacement = |cap: &regex::Captures| -> String {
         let (_, [point]) = cap.extract();
         let point = u32::from_str_radix(point, 16).expect("Regex matched a non valid u32!");
@@ -21,9 +19,12 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
     };
     let result = unicode_regex.replace_all(result, &replacement);
 
+    /* Use lowercase for parsing */
     let result = result.to_ascii_lowercase();
+
+    /* Actual text modifications preprocessing */
     let result = remove_comments(&result);
-    let result = result.replace(&card_name_lowercase, "~");
+    let result = replace_name(card_name, &result);
     let result = result.replace("\\n", "\n");
 
     result
@@ -54,6 +55,20 @@ fn remove_parens<I: Iterator<Item = char>>(chars: &mut I) {
             _ => { /* keep popping */ }
         }
     }
+}
+
+fn replace_name(card_name: &str, lowercase_oracle_text: &str) -> String {
+    let card_name_lowercase = card_name.to_ascii_lowercase();
+    let card_name_without_epithet = card_name_lowercase.split(',').next();
+
+    let result = lowercase_oracle_text;
+    let result = result.replace(&card_name_lowercase, "~");
+    let result = match card_name_without_epithet {
+        Some(card_name) => result.replace(card_name, "~"),
+        None => result,
+    };
+
+    result
 }
 
 /// Create a vec of Terminals from a string. Can fail, and will return an error if it does.
@@ -99,8 +114,6 @@ pub fn lex<'src>(input: &'src str) -> Result<Vec<tokens::Token<'src>>, error::Le
     } else {
         let start = raw_tokens[0].start();
         let end = raw_tokens[raw_tokens.len() - 1].end();
-        Err(error::LexerError::NoTokenMatch(
-            input[start..end].to_string(),
-        ))
+        Err(error::LexerError::NoTokenMatch(input[start..end].to_string()))
     }
 }

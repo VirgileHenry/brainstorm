@@ -2,6 +2,7 @@
 name = "boseiju"
 version.workspace = true
 edition.workspace = true
+workspace = ".."
 
 [dependencies]
 arrayvec = { workspace = true }
