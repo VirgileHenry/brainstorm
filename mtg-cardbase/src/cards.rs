@@ -11,7 +11,7 @@ impl AllCardsIter {
             /* Cargo test run them from the crates, so we need to go back */
             "../mtg-cardbase/data/cards.json",
             /* Brainstorm can be used as a lib, so we shall account for that too */
-            "deps/brainstorm/mtg-cardbase/data/cards.json",
+            "../brainstorm/mtg-cardbase/data/cards.json",
         ];
         /*
             If this throws an error, you might be missing the card database.
