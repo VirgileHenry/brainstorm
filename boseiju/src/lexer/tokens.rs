@@ -99,6 +99,7 @@ create_token_kind!(
     PlaneswalkerAbilityCost, terminals::PlaneswalkerAbilityCost;
     SagaChapterNumber, terminals::SagaChapterNumber;
     ContinuousEffectDuration, terminals::ContinuousEffectDuration;
+    NamedToken, terminals::NamedToken;
     Zone, zone::Zone;
     Color, mtg_data::Color;
     AbilityWord, mtg_data::AbilityWord;
@@ -117,5 +118,10 @@ create_token_kind!(
     PlayerAction, non_terminals::PlayerAction;
     ThisTurn, non_terminals::ThisTurn;
     NonKind, non_terminals::NonKind;
+    AmountReplacement, non_terminals::AmountReplacement;
+    UnderControl, non_terminals::UnderControl;
+    IntoHand, non_terminals::IntoHand;
+    PlayerProperties, non_terminals::PlayerProperties;
+    IndirectReference, non_terminals::IndirectReference;
     VhyToSortLater, non_terminals::VhyToSortLater;
 );

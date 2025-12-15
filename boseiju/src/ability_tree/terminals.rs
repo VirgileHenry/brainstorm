@@ -1,7 +1,9 @@
 mod counter;
 mod mtg_data_as_terminals;
+mod named_tokens;
 
 pub use counter::Counter;
+pub use named_tokens::NamedToken;
 
 pub trait Terminal: std::fmt::Display + Sized {
     fn try_from_str(source: &str) -> Option<Self>;
@@ -246,7 +248,10 @@ impl Terminal for CardActions {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerSpecifier {
     AnOpponent,
+    TargetOpponent,
+    EachOpponent,
     Any,
+    All,
     ToYourLeft,
     ToYourRight,
     You,
@@ -256,7 +261,10 @@ impl std::fmt::Display for PlayerSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PlayerSpecifier::AnOpponent => write!(f, "an opponent"),
+            PlayerSpecifier::TargetOpponent => write!(f, "target opponent"),
+            PlayerSpecifier::EachOpponent => write!(f, "each opponent"),
             PlayerSpecifier::Any => write!(f, "a player"),
+            PlayerSpecifier::All => write!(f, "all players"),
             PlayerSpecifier::ToYourLeft => write!(f, "the player to your left"),
             PlayerSpecifier::ToYourRight => write!(f, "the player to your right"),
             PlayerSpecifier::You => write!(f, "you"),
@@ -267,8 +275,11 @@ impl std::fmt::Display for PlayerSpecifier {
 impl Terminal for PlayerSpecifier {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "an opponent" | "each opponent" => Some(PlayerSpecifier::AnOpponent),
-            "a player" | "each player" => Some(PlayerSpecifier::Any),
+            "an opponent" => Some(PlayerSpecifier::AnOpponent),
+            "target opponent" => Some(PlayerSpecifier::TargetOpponent),
+            "each opponent" => Some(PlayerSpecifier::EachOpponent),
+            "a player" => Some(PlayerSpecifier::Any),
+            "each player" => Some(PlayerSpecifier::All),
             "the player to your left" => Some(PlayerSpecifier::ToYourLeft),
             "the player to your right" => Some(PlayerSpecifier::ToYourRight),
             "you" => Some(PlayerSpecifier::You),
@@ -314,6 +325,7 @@ pub enum PermanentState {
     Attacking,
     Blocking,
     Blocked,
+    Enchanted,
     Equipped,
     Tapped,
     Untapped,
@@ -325,9 +337,10 @@ impl std::fmt::Display for PermanentState {
             PermanentState::Attacking => write!(f, "attacking"),
             PermanentState::Blocking => write!(f, "blocking"),
             PermanentState::Blocked => write!(f, "blocked"),
+            PermanentState::Enchanted => write!(f, "enchanted"),
+            PermanentState::Equipped => write!(f, "equipped"),
             PermanentState::Tapped => write!(f, "tapped"),
             PermanentState::Untapped => write!(f, "untapped"),
-            PermanentState::Equipped => write!(f, "equipped"),
         }
     }
 }
@@ -338,9 +351,10 @@ impl Terminal for PermanentState {
             "attacking" => Some(PermanentState::Attacking),
             "blocking" => Some(PermanentState::Blocking),
             "blocked" => Some(PermanentState::Blocked),
+            "enchanted" => Some(PermanentState::Enchanted),
+            "equipped" => Some(PermanentState::Equipped),
             "tapped" => Some(PermanentState::Tapped),
             "untapped" => Some(PermanentState::Untapped),
-            "equipped" => Some(PermanentState::Equipped),
             _ => None,
         }
     }

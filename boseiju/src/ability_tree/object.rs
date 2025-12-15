@@ -199,22 +199,24 @@ pub enum ObjectReference {
         amount: crate::ability_tree::terminals::CountSpecifier,
         specifiers: ObjectSpecifiers,
     },
+    ObjectAttachedTo,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
     fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            ObjectReference::SelfReferencing => write!(out, "Self Referencing (~)"),
-            ObjectReference::SpecifiedObj { amount, specifiers } => {
-                write!(out, "Specified Object:")?;
+            Self::SelfReferencing => write!(out, "self referencing (~)"),
+            Self::ObjectAttachedTo => write!(out, "object this is attached to"),
+            Self::SpecifiedObj { amount, specifiers } => {
+                write!(out, "specified object:")?;
                 out.push_inter_branch()?;
-                write!(out, "Amount:")?;
+                write!(out, "amount:")?;
                 out.push_final_branch()?;
                 write!(out, "{amount}")?;
                 out.pop_branch();
                 out.next_final_branch()?;
-                write!(out, "Specifier(s):")?;
+                write!(out, "specifier(s):")?;
                 out.push_final_branch()?;
                 specifiers.display(out)?;
                 out.pop_branch();
