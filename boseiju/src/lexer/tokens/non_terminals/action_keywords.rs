@@ -11,7 +11,7 @@ pub enum ActionKeyword {
 impl ActionKeyword {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "deal" | "deals" => Some(ActionKeyword::Deals),
+            "deal" | "deals" | "dealt" => Some(ActionKeyword::Deals),
             "gain" | "gains" => Some(ActionKeyword::Gain),
             "get" | "gets" => Some(ActionKeyword::Get),
             "put" | "puts" => Some(ActionKeyword::Put),

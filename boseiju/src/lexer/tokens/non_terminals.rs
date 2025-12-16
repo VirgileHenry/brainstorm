@@ -1,5 +1,8 @@
 mod action_keywords;
 mod amount_replacement;
+mod any_number_of_clause;
+mod choice;
+mod choice_reference;
 mod control_flow;
 mod damage_kind;
 mod english_keywords;
@@ -7,6 +10,7 @@ mod indirect_reference;
 mod into_hand;
 mod non_kind;
 mod not_of_a_kind;
+mod number_of_times;
 mod number_reference;
 mod player_action;
 mod player_properties;
@@ -14,9 +18,13 @@ mod self_referencing;
 mod tap_untap_cost;
 mod this_turn;
 mod under_control;
+mod win_lose_clauses;
 
 pub use action_keywords::ActionKeyword;
 pub use amount_replacement::AmountReplacement;
+pub use any_number_of_clause::AnyNumberOfClause;
+pub use choice::Choice;
+pub use choice_reference::ChoiceReference;
 pub use control_flow::ControlFlow;
 pub use damage_kind::DamageKind;
 pub use english_keywords::EnglishKeyword;
@@ -24,6 +32,7 @@ pub use indirect_reference::IndirectReference;
 pub use into_hand::IntoHand;
 pub use non_kind::NonKind;
 pub use not_of_a_kind::NotOfAKind;
+pub use number_of_times::NumberOfTimes;
 pub use number_reference::NumberReference;
 pub use player_action::PlayerAction;
 pub use player_properties::PlayerProperties;
@@ -31,6 +40,7 @@ pub use self_referencing::SelfReferencing;
 pub use tap_untap_cost::TapUntapCost;
 pub use this_turn::ThisTurn;
 pub use under_control::UnderControl;
+pub use win_lose_clauses::WinLoseClause;
 
 #[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

@@ -123,5 +123,10 @@ create_token_kind!(
     IntoHand, non_terminals::IntoHand;
     PlayerProperties, non_terminals::PlayerProperties;
     IndirectReference, non_terminals::IndirectReference;
+    NumberOfTimes, non_terminals::NumberOfTimes;
+    ChoiceReference, non_terminals::ChoiceReference;
+    Choice, non_terminals::Choice;
+    AnyNumberOfClause, non_terminals::AnyNumberOfClause;
+    WinLoseClause, non_terminals::WinLoseClause;
     VhyToSortLater, non_terminals::VhyToSortLater;
 );

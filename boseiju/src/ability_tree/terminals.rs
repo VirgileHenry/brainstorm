@@ -212,20 +212,24 @@ impl Terminal for Appartenance {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardActions {
     Attacks,
+    Becomes,
     Blocks,
     Dies,
     Enters,
     Fight,
+    Leave,
 }
 
 impl std::fmt::Display for CardActions {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             CardActions::Attacks => write!(f, "attacks"),
+            CardActions::Becomes => write!(f, "becomes"),
             CardActions::Blocks => write!(f, "blocks"),
             CardActions::Dies => write!(f, "dies"),
             CardActions::Enters => write!(f, "enters"),
             CardActions::Fight => write!(f, "fights"),
+            CardActions::Leave => write!(f, "leaves"),
         }
     }
 }
@@ -234,10 +238,12 @@ impl Terminal for CardActions {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "attack" | "attacks" => Some(CardActions::Attacks),
-            "block" | "blocks" => Some(CardActions::Attacks),
+            "become" | "becomes" => Some(CardActions::Becomes),
+            "block" | "blocks" => Some(CardActions::Blocks),
             "die" | "dies" => Some(CardActions::Dies),
             "enter" | "enters" => Some(CardActions::Enters),
             "fight" | "fights" => Some(CardActions::Fight),
+            "leave" | "leaves" => Some(CardActions::Leave),
             _ => None,
         }
     }
@@ -277,7 +283,7 @@ impl Terminal for PlayerSpecifier {
         match source {
             "an opponent" => Some(PlayerSpecifier::AnOpponent),
             "target opponent" => Some(PlayerSpecifier::TargetOpponent),
-            "each opponent" => Some(PlayerSpecifier::EachOpponent),
+            "each opponent" | "opponents" => Some(PlayerSpecifier::EachOpponent),
             "a player" => Some(PlayerSpecifier::Any),
             "each player" => Some(PlayerSpecifier::All),
             "the player to your left" => Some(PlayerSpecifier::ToYourLeft),
@@ -396,6 +402,7 @@ pub enum Phase {
     Combat,
     PostcombatMain,
     End,
+    Current,
 }
 
 impl std::fmt::Display for Phase {
@@ -406,6 +413,7 @@ impl std::fmt::Display for Phase {
             Phase::Combat => write!(f, "combat phase"),
             Phase::PostcombatMain => write!(f, "postcombat main phase"),
             Phase::End => write!(f, "end phase"),
+            Phase::Current => write!(f, "this phase"),
         }
     }
 }
@@ -415,10 +423,11 @@ impl Terminal for Phase {
         match source {
             "beginning phase" => Some(Phase::Beginning),
             "precombat main phase" => Some(Phase::PrecombatMain),
-            "combat phase" => Some(Phase::Combat),
+            "combat phase" | "combat" => Some(Phase::Combat),
             "postcombat main phase" => Some(Phase::PostcombatMain),
             "end phase" => Some(Phase::End),
             "end of turn" => Some(Phase::End),
+            "this phase" => Some(Phase::Current),
             _ => None,
         }
     }

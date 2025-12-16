@@ -43,7 +43,15 @@ impl Terminal for mtg_data::CardType {
 
 impl Terminal for mtg_data::CreatureType {
     fn try_from_str(source: &str) -> Option<Self> {
-        from_str_singular_or_plural::<Self>(source)
+        if let Some(creature_type) = from_str_singular_or_plural::<Self>(source) {
+            return Some(creature_type);
+        } else {
+            /* Weird special cases */
+            match source {
+                "elves" => Some(mtg_data::CreatureType::Elf),
+                _ => None,
+            }
+        }
     }
 }
 

@@ -12,6 +12,10 @@ pub fn parse_num(input: &str) -> Option<u32> {
         "four" => Some(4),
         "five" => Some(5),
         "six" => Some(6),
+        "seven" => Some(7),
+        "eight" => Some(8),
+        "nine" => Some(9),
+        "ten" => Some(10),
         "thirteen" => Some(13),
         other => other.parse::<u32>().ok(),
     }
