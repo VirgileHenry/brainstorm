@@ -1,5 +1,6 @@
 pub mod error;
 mod node;
+mod rule_map;
 mod rules;
 
 /// The parser state represents a single node in a graph where all nodes are arrays of tokens.
@@ -46,7 +47,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 ) -> Result<crate::AbilityTree, error::ParserError> {
     /* Rule map, all our parsing rules in a single struct */
     lazy_static::lazy_static!(
-        static ref rule_map: rules::RuleMap = rules::RuleMap::default().expect("Default Rule Map shall be OK");
+        static ref rules: rule_map::RuleMap = rule_map::RuleMap::default().expect("Default Rule Map shall be OK");
     );
 
     /* We don't need to do any parsing if there are no tokens */
@@ -71,12 +72,12 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
         let mut next_states = Vec::new();
 
         /* At most, we iterate over the biggest number of tokens in any rule */
-        let max_tokens_per_rule = to_explore.nodes.len().min(rule_map.max_rule_size);
+        let max_tokens_per_rule = to_explore.nodes.len().min(rules.max_rule_size);
 
         for token_count in (1..=max_tokens_per_rule).rev() {
             for (offset, window) in to_explore.nodes.windows(token_count).enumerate() {
                 on_fuse_attempt(window);
-                if let Some(fused) = rule_map.fuse(window) {
+                if let Some(fused) = rules.fuse(window) {
                     /* Create the concatenated node array */
                     let mut nodes = arrayvec::ArrayVec::<_, 128>::new();
                     nodes.extend(to_explore.nodes.iter().take(offset).cloned());
@@ -102,16 +103,26 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                             [c, n] => (c, n),
                             _ => unreachable!(),
                         };
-                        if !rule_map.can_succeed(current, next) {
+                        if !rules.can_succeed(current, next) {
                             /* Update best error */
-                            if let Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) = best_error {
-                                if state_size > next_node.nodes.len() {
+                            match best_error {
+                                Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) => {
+                                    if state_size > next_node.nodes.len() {
+                                        best_error = Some(error::ParserError::UnexpectedFollowingToken {
+                                            state_size: next_node.nodes.len(),
+                                            current: current.clone(),
+                                            next: next.clone(),
+                                        })
+                                    }
+                                }
+                                None => {
                                     best_error = Some(error::ParserError::UnexpectedFollowingToken {
                                         state_size: next_node.nodes.len(),
                                         current: current.clone(),
                                         next: next.clone(),
                                     })
                                 }
+                                _ => {}
                             }
                             /* No rules will ever allow to merge current and next tokens, we can stop */
                             allowed = false;
