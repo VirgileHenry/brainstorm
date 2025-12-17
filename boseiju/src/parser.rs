@@ -72,7 +72,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
         let mut next_states = Vec::new();
 
         /* At most, we iterate over the biggest number of tokens in any rule */
-        let max_tokens_per_rule = to_explore.nodes.len().min(rules.max_rule_size);
+        let max_tokens_per_rule = to_explore.nodes.len().min(rules.max_rule_size());
 
         for token_count in (1..=max_tokens_per_rule).rev() {
             for (offset, window) in to_explore.nodes.windows(token_count).enumerate() {

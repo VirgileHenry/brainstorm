@@ -1,7 +1,8 @@
-use crate::parser::rules::ParserRule;
 use std::collections::HashSet;
 
+#[derive(Debug, Clone)]
 pub struct AllowedSuccessors {
+    #[allow(unused)]
     from_node: usize,
     allowed_successors: HashSet<usize>,
 }
@@ -14,25 +15,46 @@ impl AllowedSuccessors {
         }
     }
 
-    pub fn update_for_rule(&mut self, rule: ParserRule) -> bool {
-        let mut update_made = false;
+    pub fn allowed(&self, token: usize) -> bool {
+        self.allowed_successors.contains(&token)
+    }
 
-        /* Iterate over the rules raw tokens. If we found our from_node, add the next node in the allowed successors. */
-        for window in rule.state.ids.windows(2).take(rule.state.size.saturating_sub(1)) {
-            let [current, next] = window else { unreachable!() };
-            let current = usize::from(*current);
-            let next = usize::from(*next);
-            if current == self.from_node {
-                update_made |= self.allowed_successors.insert(next);
-            }
-        }
+    /// Simply allow the given token.
+    /// This puts it straight into the allowed successors.
+    pub fn allow_next(&mut self, next: usize) -> bool {
+        self.allowed_successors.insert(next)
+    }
 
-        /* If the rule result is in our allowed successors, the first token of the rule shall also be */
+    /// If the result of the given rule is in our set of allowed successors,
+    /// also put the first token of the rule in our allowed successors.
+    ///
+    /// Since the new token might use that rule to merge into a result token we allowed,
+    /// we might as well allow this new token.
+    ///
+    /// For example, if `B` is allowed after `A`, and there is a rule that merges `C, D` into `B`,
+    /// `C` is allowed after `A`, since we might have a legal merge `A, C, D -> A, B`.
+    ///
+    /// This functions also return wheteher the set was updated or not.
+    pub fn allow_rule_first_token_from_result(&mut self, rule: &crate::parser::rules::ParserRule) -> bool {
         if self.allowed_successors.contains(&rule.result) {
             let rule_first_token = usize::from(rule.state.first());
-            update_made |= self.allowed_successors.insert(rule_first_token);
+            self.allowed_successors.insert(rule_first_token)
+        } else {
+            false
         }
+    }
 
-        update_made
+    /// For a given rule `A, B -> C`, all tokens that are allowed after the result (`C`) shall also be allowed
+    /// after the last token of that rule (`B`).
+    ///
+    /// For instance, with the previous rule `A, B -> C`,
+    /// if we have `A, B, D` and `C, D` is allowed, then `B, C` shall be allowed as the `B` might be merged into `C`.
+    /// Therefore, the aforementionned sequence shall be valid.
+    pub fn allow_allowed_after_rule_result_from_last_token(&mut self, allowed_after_result: &Self) -> bool {
+        let mut updated = false;
+        for allowed in allowed_after_result.allowed_successors.iter() {
+            updated |= self.allowed_successors.insert(*allowed);
+        }
+        updated
     }
 }
