@@ -1,141 +1,31 @@
+#[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ObjectKind {
+    #[idris(rec)]
     ArtifactSubtype(mtg_data::ArtifactType),
+    #[idris(rec)]
     BattleSubtype(mtg_data::BattleType),
     Card,
+    #[idris(rec)]
     CreatureSubtype(mtg_data::CreatureType),
+    #[idris(rec)]
     EnchantmentSubtype(mtg_data::EnchantmentType),
+    #[idris(rec)]
     InstantSubtype(mtg_data::SpellType),
+    #[idris(rec)]
     LandSubtype(mtg_data::LandType),
     Permanent,
+    #[idris(rec)]
     PlaneswalkerSubtype(mtg_data::PlaneswalkerType),
     Spell,
+    #[idris(rec)]
     Supertype(mtg_data::Supertype),
+    #[idris(rec)]
     CardType(mtg_data::CardType),
+    #[idris(rec)]
     SorcerySubtype(mtg_data::SpellType),
-}
-
-impl ObjectKind {
-    pub const COUNT: usize = {
-        mtg_data::ArtifactType::COUNT
-            + mtg_data::BattleType::COUNT
-            + 1
-            + mtg_data::CreatureType::COUNT
-            + mtg_data::EnchantmentType::COUNT
-            + mtg_data::SpellType::COUNT
-            + mtg_data::LandType::COUNT
-            + 1
-            + mtg_data::PlaneswalkerType::COUNT
-            + 1
-            + mtg_data::Supertype::COUNT
-            + mtg_data::CardType::COUNT
-            + mtg_data::SpellType::COUNT
-    };
-    pub const fn id(&self) -> usize {
-        /* Hey GRT, please don't judge me too much for this */
-        match self {
-            Self::ArtifactSubtype(subtype) => subtype.id(),
-            Self::BattleSubtype(subtype) => mtg_data::ArtifactType::COUNT + subtype.id(),
-            Self::Card => mtg_data::ArtifactType::COUNT + mtg_data::BattleType::COUNT,
-            Self::CreatureSubtype(subtype) => mtg_data::ArtifactType::COUNT + mtg_data::BattleType::COUNT + 1 + subtype.id(),
-            Self::EnchantmentSubtype(subtype) => {
-                mtg_data::ArtifactType::COUNT + mtg_data::BattleType::COUNT + 1 + mtg_data::CreatureType::COUNT + subtype.id()
-            }
-            Self::InstantSubtype(subtype) => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + subtype.id()
-            }
-            Self::LandSubtype(subtype) => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + subtype.id()
-            }
-            Self::Permanent => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + mtg_data::LandType::COUNT
-                    + 1
-            }
-            Self::PlaneswalkerSubtype(subtype) => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + mtg_data::LandType::COUNT
-                    + 1
-                    + subtype.id()
-            }
-            Self::Spell => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + mtg_data::LandType::COUNT
-                    + 1
-                    + mtg_data::PlaneswalkerType::COUNT
-                    + 1
-            }
-            Self::Supertype(subtype) => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + mtg_data::LandType::COUNT
-                    + 1
-                    + mtg_data::PlaneswalkerType::COUNT
-                    + 1
-                    + subtype.id()
-            }
-            Self::CardType(card_type) => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + mtg_data::LandType::COUNT
-                    + 1
-                    + mtg_data::PlaneswalkerType::COUNT
-                    + 1
-                    + mtg_data::Supertype::COUNT
-                    + card_type.id()
-            }
-            Self::SorcerySubtype(subtype) => {
-                mtg_data::ArtifactType::COUNT
-                    + mtg_data::BattleType::COUNT
-                    + 1
-                    + mtg_data::CreatureType::COUNT
-                    + mtg_data::EnchantmentType::COUNT
-                    + mtg_data::SpellType::COUNT
-                    + mtg_data::LandType::COUNT
-                    + 1
-                    + mtg_data::PlaneswalkerType::COUNT
-                    + 1
-                    + mtg_data::Supertype::COUNT
-                    + mtg_data::CardType::COUNT
-                    + subtype.id()
-            }
-        }
-    }
 }
 
 impl std::fmt::Display for ObjectKind {

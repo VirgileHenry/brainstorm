@@ -99,31 +99,18 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                     /* If anywhere in the new node, two consecutive tokens are not allowed, stop */
                     let mut allowed = true;
                     for window in next_node.nodes.windows(2) {
-                        let (current, next) = match window {
-                            [c, n] => (c, n),
-                            _ => unreachable!(),
-                        };
+                        let [current, next] = window else { unreachable!() };
                         if !rules.can_succeed(current, next) {
                             /* Update best error */
-                            match best_error {
-                                Some(error::ParserError::UnexpectedFollowingToken { state_size, .. }) => {
-                                    if state_size > next_node.nodes.len() {
-                                        best_error = Some(error::ParserError::UnexpectedFollowingToken {
-                                            state_size: next_node.nodes.len(),
-                                            current: current.clone(),
-                                            next: next.clone(),
-                                        })
-                                    }
+                            let prev_best_error = best_error.take();
+                            best_error = Some(
+                                error::ParserError::UnexpectedFollowingToken {
+                                    state_size: next_node.nodes.len(),
+                                    current: current.clone(),
+                                    next: next.clone(),
                                 }
-                                None => {
-                                    best_error = Some(error::ParserError::UnexpectedFollowingToken {
-                                        state_size: next_node.nodes.len(),
-                                        current: current.clone(),
-                                        next: next.clone(),
-                                    })
-                                }
-                                _ => {}
-                            }
+                                .keep_best_error(prev_best_error),
+                            );
                             /* No rules will ever allow to merge current and next tokens, we can stop */
                             allowed = false;
                             break;

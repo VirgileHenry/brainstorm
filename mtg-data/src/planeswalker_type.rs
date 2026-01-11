@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlaneswalkerType {
@@ -196,8 +197,6 @@ impl std::str::FromStr for PlaneswalkerType {
 }
 
 impl PlaneswalkerType {
-    pub const VARIANT_COUNT: usize = 91;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Abian => "abian",

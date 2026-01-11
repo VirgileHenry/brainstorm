@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum KeywordAbility {
@@ -438,8 +439,6 @@ impl std::str::FromStr for KeywordAbility {
 }
 
 impl KeywordAbility {
-    pub const VARIANT_COUNT: usize = 212;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Absorb => "absorb",

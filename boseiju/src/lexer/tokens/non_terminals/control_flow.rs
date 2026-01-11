@@ -1,4 +1,3 @@
-#[derive(idris::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ControlFlow {
     NewLine,

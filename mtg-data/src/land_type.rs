@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum LandType {
@@ -50,8 +51,6 @@ impl std::str::FromStr for LandType {
 }
 
 impl LandType {
-    pub const VARIANT_COUNT: usize = 18;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Cave => "cave",

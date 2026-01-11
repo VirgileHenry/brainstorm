@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ArtifactType {
@@ -52,8 +53,6 @@ impl std::str::FromStr for ArtifactType {
 }
 
 impl ArtifactType {
-    pub const VARIANT_COUNT: usize = 19;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Attraction => "attraction",

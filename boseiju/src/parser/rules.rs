@@ -2,6 +2,7 @@ mod ability_tree;
 mod continuous_effects;
 mod imperative;
 mod keyword_to_ability;
+mod object_kinds;
 mod object_references;
 mod object_specifiers;
 mod statement;
@@ -37,14 +38,14 @@ pub struct ParserRule {
 
 impl ParserRule {
     pub const fn create(
-        from_state: StateId,
-        to_state: usize,
+        state: StateId,
+        result: usize,
         conversion_func: fn(&[ParserNode]) -> Option<ParserNode>,
         creation_loc: ParserRuleDeclarationLocation,
     ) -> Self {
         Self {
-            state: from_state,
-            result: to_state,
+            state,
+            result,
             conversion_func,
             creation_loc,
         }

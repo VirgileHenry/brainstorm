@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BattleType {
@@ -16,8 +17,6 @@ impl std::str::FromStr for BattleType {
 }
 
 impl BattleType {
-    pub const VARIANT_COUNT: usize = 1;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Siege => "siege",

@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Format {
@@ -54,8 +55,6 @@ impl std::str::FromStr for Format {
 }
 
 impl Format {
-    pub const VARIANT_COUNT: usize = 20;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Alchemy => "alchemy",

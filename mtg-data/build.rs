@@ -123,6 +123,7 @@ impl<'a> ToGenerateEnum<'a> {
 
         /* Write out the enum */
         writeln!(destination, "#[derive(idris::Idris)]")?;
+        writeln!(destination, "#[idris(repr = u16)]")?;
         writeln!(destination, "#[derive(serde::Serialize, serde::Deserialize)]")?;
         writeln!(
             destination,
@@ -155,10 +156,7 @@ impl<'a> ToGenerateEnum<'a> {
         /* Impl for the type */
         writeln!(destination, "")?;
         writeln!(destination, "impl {} {{", self.name)?;
-        /* get total enum variant count */
-        writeln!(destination, "{S4}pub const VARIANT_COUNT: usize = {};", variants.len())?;
         /* Write out the display funcs */
-        writeln!(destination, "")?;
         writeln!(destination, "{S4}pub fn as_str(&self) -> &'static str {{")?;
         writeln!(destination, "{S8}match self {{")?;
         for (line, variant) in variants.iter() {

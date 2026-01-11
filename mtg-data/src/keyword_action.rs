@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum KeywordAction {
@@ -146,8 +147,6 @@ impl std::str::FromStr for KeywordAction {
 }
 
 impl KeywordAction {
-    pub const VARIANT_COUNT: usize = 66;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Abandon => "abandon",

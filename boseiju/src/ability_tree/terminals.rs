@@ -10,6 +10,7 @@ pub trait Terminal: std::fmt::Display + Sized {
 }
 
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Number {
@@ -50,7 +51,6 @@ impl Terminal for Number {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CountSpecifier {
@@ -95,7 +95,6 @@ impl Terminal for CountSpecifier {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ControlSpecifier {
@@ -122,7 +121,6 @@ impl Terminal for ControlSpecifier {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnerSpecifier {
@@ -152,7 +150,6 @@ impl Terminal for OwnerSpecifier {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Order {
@@ -179,7 +176,6 @@ impl Terminal for Order {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Appartenance {
@@ -207,7 +203,6 @@ impl Terminal for Appartenance {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardActions {
@@ -249,7 +244,6 @@ impl Terminal for CardActions {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerSpecifier {
@@ -294,7 +288,6 @@ impl Terminal for PlayerSpecifier {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentProperty {
@@ -324,7 +317,6 @@ impl Terminal for PermanentProperty {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentState {
@@ -366,7 +358,6 @@ impl Terminal for PermanentState {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SpellProperty {
@@ -393,7 +384,6 @@ impl Terminal for SpellProperty {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Phase {
@@ -433,7 +423,6 @@ impl Terminal for Phase {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Step {
@@ -530,7 +519,6 @@ impl Terminal for PowerToughness {
     }
 }
 
-#[derive(idris::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PowerToughnessModifier {
@@ -701,7 +689,7 @@ impl std::fmt::Display for ManaCost {
 }
 
 /// Duration for a continuous effect.
-#[derive(idris::Idris)]
+
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ContinuousEffectDuration {

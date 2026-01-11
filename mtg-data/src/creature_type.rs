@@ -1,4 +1,5 @@
 #[derive(idris::Idris)]
+#[idris(repr = u16)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CreatureType {
@@ -666,8 +667,6 @@ impl std::str::FromStr for CreatureType {
 }
 
 impl CreatureType {
-    pub const VARIANT_COUNT: usize = 326;
-
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Advisor => "advisor",
