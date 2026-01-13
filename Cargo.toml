@@ -14,6 +14,7 @@ edition = "2024"
 # Own crates as dependencies
 boseiju = { path = "boseiju" }
 idris = { path = "idris" }
+idris-derive = { path = "idris-derive" }
 krark = { path = "krark" }
 mtg-data = { path = "mtg-data" }
 mtg-cardbase = { path = "mtg-cardbase" }

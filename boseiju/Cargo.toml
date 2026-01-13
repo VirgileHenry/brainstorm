@@ -7,6 +7,7 @@ workspace = ".."
 [dependencies]
 arrayvec = { workspace = true }
 idris = { workspace = true }
+idris-derive = { workspace = true }
 lazy_static = { workspace = true }
 mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }

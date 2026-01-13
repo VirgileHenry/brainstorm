@@ -9,14 +9,14 @@ pub trait Terminal: std::fmt::Display + Sized {
     fn try_from_str(source: &str) -> Option<Self>;
 }
 
-#[derive(idris::Idris)]
-#[idris(repr = u16)]
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Number {
-    Number(u32),
+    Number { num: u32 },
     X,
-    OrMore(u32),
+    OrMore { num: u32 },
     AnyNumber,
 }
 
@@ -24,8 +24,8 @@ impl std::fmt::Display for Number {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Number::X => write!(f, "x"),
-            Number::Number(num) => write!(f, "{num}"),
-            Number::OrMore(num) => write!(f, "{num} or more"),
+            Number::Number { num } => write!(f, "{num}"),
+            Number::OrMore { num } => write!(f, "{num} or more"),
             Number::AnyNumber => write!(f, "any number of"),
         }
     }
@@ -34,13 +34,13 @@ impl std::fmt::Display for Number {
 impl Terminal for Number {
     fn try_from_str(source: &str) -> Option<Self> {
         if let Some(num) = crate::utils::parse_num(source) {
-            Some(Number::Number(num))
+            Some(Number::Number { num })
         } else if let Some(stripped) = source.strip_suffix(" or more") {
             let num = crate::utils::parse_num(stripped)?;
-            Some(Number::OrMore(num))
+            Some(Number::OrMore { num })
         } else if let Some(stripped) = source.strip_suffix(" or greater") {
             let num = crate::utils::parse_num(stripped)?;
-            Some(Number::OrMore(num))
+            Some(Number::OrMore { num })
         } else {
             match source {
                 "x" => Some(Number::X),
@@ -51,12 +51,14 @@ impl Terminal for Number {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CountSpecifier {
     All,
     Target,
-    UpTo(u32),
+    UpTo { num: u32 },
     AnyNumberOfTargets,
     Others,
 }
@@ -66,7 +68,7 @@ impl std::fmt::Display for CountSpecifier {
         match self {
             CountSpecifier::All => write!(f, "all"),
             CountSpecifier::Target => write!(f, "target"),
-            CountSpecifier::UpTo(amount) => write!(f, "up to {amount}"),
+            CountSpecifier::UpTo { num } => write!(f, "up to {num}"),
             CountSpecifier::AnyNumberOfTargets => write!(f, "any number of target"),
             CountSpecifier::Others => write!(f, "others"),
         }
@@ -86,7 +88,7 @@ impl Terminal for CountSpecifier {
                 let prefix = "up to ";
                 if other.starts_with(prefix) {
                     let num = crate::utils::parse_num(&other[prefix.len()..])?;
-                    Some(CountSpecifier::UpTo(num))
+                    Some(CountSpecifier::UpTo { num })
                 } else {
                     None
                 }
@@ -95,6 +97,8 @@ impl Terminal for CountSpecifier {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ControlSpecifier {
@@ -121,6 +125,8 @@ impl Terminal for ControlSpecifier {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnerSpecifier {
@@ -150,6 +156,8 @@ impl Terminal for OwnerSpecifier {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Order {
@@ -176,6 +184,8 @@ impl Terminal for Order {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Appartenance {
@@ -203,6 +213,8 @@ impl Terminal for Appartenance {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardActions {
@@ -244,6 +256,8 @@ impl Terminal for CardActions {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerSpecifier {
@@ -288,6 +302,8 @@ impl Terminal for PlayerSpecifier {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentProperty {
@@ -317,6 +333,8 @@ impl Terminal for PermanentProperty {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PermanentState {
@@ -358,6 +376,8 @@ impl Terminal for PermanentState {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SpellProperty {
@@ -384,6 +404,8 @@ impl Terminal for SpellProperty {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Phase {
@@ -423,6 +445,8 @@ impl Terminal for Phase {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Step {
@@ -519,6 +543,8 @@ impl Terminal for PowerToughness {
     }
 }
 
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PowerToughnessModifier {
@@ -689,7 +715,8 @@ impl std::fmt::Display for ManaCost {
 }
 
 /// Duration for a continuous effect.
-
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ContinuousEffectDuration {

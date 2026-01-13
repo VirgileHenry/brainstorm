@@ -1,3 +1,5 @@
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NamedToken {
@@ -7,7 +9,7 @@ pub enum NamedToken {
 impl std::fmt::Display for NamedToken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::KomasCoil => write!(f, "coma's coil"),
+            Self::KomasCoil => write!(f, "koma's coil"),
         }
     }
 }

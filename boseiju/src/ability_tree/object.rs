@@ -1,30 +1,20 @@
-#[derive(idris::Idris)]
-#[idris(repr = u16)]
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ObjectKind {
-    #[idris(rec)]
     ArtifactSubtype(mtg_data::ArtifactType),
-    #[idris(rec)]
     BattleSubtype(mtg_data::BattleType),
     Card,
-    #[idris(rec)]
     CreatureSubtype(mtg_data::CreatureType),
-    #[idris(rec)]
     EnchantmentSubtype(mtg_data::EnchantmentType),
-    #[idris(rec)]
     InstantSubtype(mtg_data::SpellType),
-    #[idris(rec)]
     LandSubtype(mtg_data::LandType),
     Permanent,
-    #[idris(rec)]
     PlaneswalkerSubtype(mtg_data::PlaneswalkerType),
     Spell,
-    #[idris(rec)]
     Supertype(mtg_data::Supertype),
-    #[idris(rec)]
     CardType(mtg_data::CardType),
-    #[idris(rec)]
     SorcerySubtype(mtg_data::SpellType),
 }
 

@@ -8,4 +8,5 @@ workspace = ".."
 
 [dependencies]
 idris = { workspace = true }
+idris-derive = { workspace = true }
 serde = { workspace = true }

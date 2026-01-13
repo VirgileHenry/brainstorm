@@ -37,7 +37,7 @@ impl AllowedSuccessors {
     /// This functions also return wheteher the set was updated or not.
     pub fn allow_rule_first_token_from_result(&mut self, rule: &crate::parser::rules::ParserRule) -> bool {
         if self.allowed_successors.contains(&rule.result) {
-            let rule_first_token = usize::from(rule.state.first());
+            let rule_first_token = usize::from(rule.from.first());
             self.allowed_successors.insert(rule_first_token)
         } else {
             false

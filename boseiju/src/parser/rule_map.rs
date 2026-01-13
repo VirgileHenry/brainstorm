@@ -2,9 +2,8 @@ mod allowed_successors;
 mod error;
 
 use crate::parser::node::ParserNode;
-use crate::parser::rules::ALL_RULES;
 use crate::parser::rules::ParserRule;
-use crate::parser::rules::StateId;
+use crate::parser::rules::RuleLhs;
 use error::RuleMapCreationError;
 use std::collections::HashMap;
 
@@ -19,7 +18,7 @@ pub struct RuleMap {
     ///
     /// and the presence of a rule in the HashMap for a given state id does not guarantee
     /// that the tokens will be fused.
-    rules: HashMap<StateId, ParserRule>,
+    rules: HashMap<RuleLhs, ParserRule>,
     /// For each token id, we store the list of tokens that can be found after it,
     /// following our rules.
     /// This allows to quickly find that our state will fail,
@@ -29,16 +28,15 @@ pub struct RuleMap {
 
 impl RuleMap {
     pub fn default() -> Result<Self, RuleMapCreationError> {
-        Self::create(ALL_RULES)
+        Self::create(crate::parser::rules::default_rules())
     }
 
-    fn create(rules: &[&[ParserRule]]) -> Result<Self, RuleMapCreationError> {
+    fn create<I: Iterator<Item = ParserRule>>(rules: I) -> Result<Self, RuleMapCreationError> {
         /* Create first the full rule map */
-        let flat_rules = rules.iter().cloned().flatten().cloned().collect();
-        let rules = create_rules_map(flat_rules)?;
+        let rules = create_rules_map(rules)?;
 
         /* The rule map can be used to get the max rule size */
-        let max_rule_size = rules.keys().map(|k| k.size).max().unwrap_or(0);
+        let max_rule_size = rules.keys().map(|k| k.length).max().unwrap_or(0);
 
         /* And we can build the token succession rules */
         let allowed_succeeding = create_allow_succeeding(&rules);
@@ -55,12 +53,15 @@ impl RuleMap {
     }
 
     pub fn fuse(&self, tokens: &[ParserNode]) -> Option<ParserNode> {
-        let state_id = StateId::new(tokens);
-        let rule = self.rules.get(&state_id)?;
-        (rule.conversion_func)(tokens)
+        let mut ids = Vec::with_capacity(tokens.len());
+        ids.extend(tokens.iter().map(idris::Idris::id));
+        let lhs = RuleLhs::new(&ids);
+        let rule = self.rules.get(&lhs)?;
+        (rule.reduction)(tokens)
     }
 
     pub fn can_succeed(&self, token: &ParserNode, next: &ParserNode) -> bool {
+        use idris::Idris;
         match self.allowed_succeeding.get(&token.id()) {
             Some(set) => set.allowed(next.id()),
             None => false,
@@ -73,10 +74,10 @@ impl RuleMap {
 /// If two rules require the same input state, this will return a rule map creation error.
 ///
 /// Otherwise, for each state id, we will have the corresponding rule to merge that state.
-fn create_rules_map(rules: Vec<ParserRule>) -> Result<HashMap<StateId, ParserRule>, RuleMapCreationError> {
-    let mut fuse_rules: HashMap<StateId, ParserRule> = HashMap::new();
+fn create_rules_map<I: Iterator<Item = ParserRule>>(rules: I) -> Result<HashMap<RuleLhs, ParserRule>, RuleMapCreationError> {
+    let mut fuse_rules: HashMap<RuleLhs, ParserRule> = HashMap::new();
     for rule in rules.into_iter() {
-        match fuse_rules.get(&rule.state) {
+        match fuse_rules.get(&rule.from) {
             Some(prev) => {
                 return Err(RuleMapCreationError::DuplicateRule {
                     rule1_loc: prev.creation_loc.clone(),
@@ -84,7 +85,7 @@ fn create_rules_map(rules: Vec<ParserRule>) -> Result<HashMap<StateId, ParserRul
                 });
             }
             None => {
-                fuse_rules.insert(rule.state, rule);
+                fuse_rules.insert(rule.from, rule);
             }
         }
     }
@@ -103,13 +104,13 @@ fn create_rules_map(rules: Vec<ParserRule>) -> Result<HashMap<StateId, ParserRul
 ///
 /// The core idea is to loop over all the rules, and start by saying that tokens next to each others in a rule are allowed.
 /// Then we extend this set by checking tokens that might get merged into allowed tokens.
-fn create_allow_succeeding(rules: &HashMap<StateId, ParserRule>) -> HashMap<usize, allowed_successors::AllowedSuccessors> {
+fn create_allow_succeeding(rules: &HashMap<RuleLhs, ParserRule>) -> HashMap<usize, allowed_successors::AllowedSuccessors> {
     let mut allowed_succeeding: HashMap<usize, allowed_successors::AllowedSuccessors> = HashMap::new();
 
     /* Start by iterating through all the rules, as tokens next to each others in a rule are allowed */
     for state in rules.keys() {
         /* For each rule, iterate through succeeding tokens, and set the follower to be allowed to follow the followee. */
-        for window in state.ids.windows(2).take(state.size.saturating_sub(1)) {
+        for window in state.tokens.windows(2).take(state.length.saturating_sub(1)) {
             let [current, next] = window else { unreachable!() };
             let current = usize::from(*current);
             let next = usize::from(*next);
@@ -136,7 +137,7 @@ fn create_allow_succeeding(rules: &HashMap<StateId, ParserRule>) -> HashMap<usiz
                 updated |= possible_nexts.allow_rule_first_token_from_result(rule);
             }
             /* 2) Add allowed from rule last token / result */
-            let rule_last_token = usize::from(rule.state.last());
+            let rule_last_token = usize::from(rule.from.last());
             if let Some(allowed_after_result) = allowed_succeeding.get(&rule.result) {
                 let allowed_after_last_token = next_allowed_succeeding
                     .entry(rule_last_token)

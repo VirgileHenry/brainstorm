@@ -1,8 +1,17 @@
 [package]
-name = "idris"
+name = "idris-derive"
 version.workspace = true
 authors.workspace = true
 description.workspace = true
 documentation.workspace = true
 edition.workspace = true
 workspace = ".."
+
+[lib]
+proc-macro = true
+
+[dependencies]
+idris = { workspace = true }
+proc-macro2 = "1.0.105"
+quote = "1.0.42"
+syn = "2.0.111"

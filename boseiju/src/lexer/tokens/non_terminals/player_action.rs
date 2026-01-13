@@ -1,3 +1,5 @@
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerAction {
     Add,

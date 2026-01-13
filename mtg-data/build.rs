@@ -122,8 +122,8 @@ impl<'a> ToGenerateEnum<'a> {
             .map_err(|e| std::io::Error::other(format!("Failed to sanitize input line: {e}")))?;
 
         /* Write out the enum */
-        writeln!(destination, "#[derive(idris::Idris)]")?;
-        writeln!(destination, "#[idris(repr = u16)]")?;
+        writeln!(destination, "#[derive(idris_derive::Idris)]")?;
+        writeln!(destination, "#[idris(repr = usize)]")?;
         writeln!(destination, "#[derive(serde::Serialize, serde::Deserialize)]")?;
         writeln!(
             destination,

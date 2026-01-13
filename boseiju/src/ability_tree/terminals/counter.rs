@@ -1,7 +1,8 @@
 // Auto-generated: Counter enum with Display and try_from_str implementations.
 // Source: MTG Wiki — Counter (marker) / Full List
 // Note: keep `super::Terminal` in scope where you include this file.
-
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Counter {
