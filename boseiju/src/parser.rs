@@ -86,7 +86,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 
                     /* Exit condition: there is only a single token, the full tree */
                     match nodes.as_slice() {
-                        [node::ParserNode::AbilityTree(tree)] => return Ok(*tree.clone()),
+                        [node::ParserNode::AbilityTree { tree }] => return Ok(*tree.clone()),
                         _ => {}
                     }
 

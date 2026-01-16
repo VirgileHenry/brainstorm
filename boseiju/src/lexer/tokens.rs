@@ -84,9 +84,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::Step(kind),
                 span,
             })
-        } else if let Some(kind) = terminals::PowerToughness::try_from_str(span.text) {
+        } else if let Some(pt) = terminals::PowerToughness::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::PowerToughness(kind),
+                kind: TokenKind::PowerToughness { pt },
                 span,
             })
         } else if let Some(kind) = terminals::PowerToughnessModifier::try_from_str(span.text) {
@@ -94,14 +94,14 @@ impl<'src> Token<'src> {
                 kind: TokenKind::PowerToughnessModifier(kind),
                 span,
             })
-        } else if let Some(kind) = terminals::PlaneswalkerAbilityCost::try_from_str(span.text) {
+        } else if let Some(cost) = terminals::PlaneswalkerAbilityCost::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::PlaneswalkerAbilityCost(kind),
+                kind: TokenKind::PlaneswalkerAbilityCost { cost },
                 span,
             })
-        } else if let Some(kind) = terminals::SagaChapterNumber::try_from_str(span.text) {
+        } else if let Some(chapter) = terminals::SagaChapterNumber::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::SagaChapterNumber(kind),
+                kind: TokenKind::SagaChapterNumber { chapter },
                 span,
             })
         } else if let Some(kind) = terminals::ContinuousEffectDuration::try_from_str(span.text) {
@@ -164,19 +164,19 @@ impl<'src> Token<'src> {
                 kind: TokenKind::EnglishKeyword(kind),
                 span,
             })
-        } else if let Some(kind) = non_terminals::SelfReferencing::try_from_str(span.text) {
+        } else if let Some(reference) = non_terminals::SelfReferencing::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::SelfReferencing(kind),
+                kind: TokenKind::SelfReferencing { reference },
                 span,
             })
-        } else if let Some(kind) = non_terminals::NumberReference::try_from_str(span.text) {
+        } else if let Some(reference) = non_terminals::NumberReference::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::NumberReference(kind),
+                kind: TokenKind::NumberReference { reference },
                 span,
             })
-        } else if let Some(kind) = non_terminals::NotOfAKind::try_from_str(span.text) {
+        } else if let Some(not) = non_terminals::NotOfAKind::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::NotOfAKind(kind),
+                kind: TokenKind::NotOfAKind { not },
                 span,
             })
         } else if let Some(kind) = non_terminals::ActionKeyword::try_from_str(span.text) {
@@ -194,9 +194,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::PlayerAction(kind),
                 span,
             })
-        } else if let Some(kind) = non_terminals::ThisTurn::try_from_str(span.text) {
+        } else if let Some(this_turn) = non_terminals::ThisTurn::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::ThisTurn(kind),
+                kind: TokenKind::ThisTurn { this_turn },
                 span,
             })
         } else if let Some(kind) = non_terminals::NonKind::try_from_str(span.text) {
@@ -244,9 +244,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::Choice(kind),
                 span,
             })
-        } else if let Some(kind) = non_terminals::AnyNumberOfClause::try_from_str(span.text) {
+        } else if let Some(clauses) = non_terminals::AnyNumberOfClause::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::AnyNumberOfClause(kind),
+                kind: TokenKind::AnyNumberOfClause { clauses },
                 span,
             })
         } else if let Some(kind) = non_terminals::WinLoseClause::try_from_str(span.text) {
@@ -266,11 +266,12 @@ impl<'src> Token<'src> {
 
     pub const TOKEN_COUNT: usize = 0;
     pub fn token_id(&self) -> usize {
-        TokenKind::COUNT
+        <TokenKind as idris::Idris<usize>>::COUNT
     }
 }
 
-#[derive(idris::Idris)]
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
     Number(terminals::Number),
@@ -287,10 +288,10 @@ pub enum TokenKind {
     SpellProperty(terminals::SpellProperty),
     Phase(terminals::Phase),
     Step(terminals::Step),
-    PowerToughness(terminals::PowerToughness),
+    PowerToughness { pt: terminals::PowerToughness },
     PowerToughnessModifier(terminals::PowerToughnessModifier),
-    PlaneswalkerAbilityCost(terminals::PlaneswalkerAbilityCost),
-    SagaChapterNumber(terminals::SagaChapterNumber),
+    PlaneswalkerAbilityCost { cost: terminals::PlaneswalkerAbilityCost },
+    SagaChapterNumber { chapter: terminals::SagaChapterNumber },
     ContinuousEffectDuration(terminals::ContinuousEffectDuration),
     NamedToken(terminals::NamedToken),
     Zone(zone::Zone),
@@ -303,13 +304,13 @@ pub enum TokenKind {
     ControlFlow(non_terminals::ControlFlow),
     TapUntapCost(non_terminals::TapUntapCost),
     EnglishKeyword(non_terminals::EnglishKeyword),
-    SelfReferencing(non_terminals::SelfReferencing),
-    NumberReference(non_terminals::NumberReference),
-    NotOfAKind(non_terminals::NotOfAKind),
+    SelfReferencing { reference: non_terminals::SelfReferencing },
+    NumberReference { reference: non_terminals::NumberReference },
+    NotOfAKind { not: non_terminals::NotOfAKind },
     ActionKeyword(non_terminals::ActionKeyword),
     DamageKind(non_terminals::DamageKind),
     PlayerAction(non_terminals::PlayerAction),
-    ThisTurn(non_terminals::ThisTurn),
+    ThisTurn { this_turn: non_terminals::ThisTurn },
     NonKind(non_terminals::NonKind),
     AmountReplacement(non_terminals::AmountReplacement),
     UnderControl(non_terminals::UnderControl),
@@ -319,7 +320,7 @@ pub enum TokenKind {
     NumberOfTimes(non_terminals::NumberOfTimes),
     ChoiceReference(non_terminals::ChoiceReference),
     Choice(non_terminals::Choice),
-    AnyNumberOfClause(non_terminals::AnyNumberOfClause),
+    AnyNumberOfClause { clauses: non_terminals::AnyNumberOfClause },
     WinLoseClause(non_terminals::WinLoseClause),
     VhyToSortLater(non_terminals::VhyToSortLater),
 }

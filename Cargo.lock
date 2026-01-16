@@ -76,6 +76,7 @@ version = "0.0.1"
 dependencies = [
  "arrayvec",
  "idris",
+ "idris-derive",
  "krark",
  "lazy_static",
  "mtg-cardbase",
@@ -224,7 +225,13 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 [[package]]
 name = "idris"
 version = "0.0.1"
+
+[[package]]
+name = "idris-derive"
+version = "0.0.1"
 dependencies = [
+ "idris",
+ "proc-macro2",
  "quote",
  "syn",
 ]
@@ -316,6 +323,7 @@ name = "mtg-data"
 version = "0.0.1"
 dependencies = [
  "idris",
+ "idris-derive",
  "serde",
 ]
 
@@ -345,9 +353,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.101"
+version = "1.0.105"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89ae43fd86e4158d6db51ad8e2b80f313af9cc74f5c0e03ccb87de09998732de"
+checksum = "535d180e0ecab6268a3e718bb9fd44db66bbbc256257165fc699dadf70d16fe7"
 dependencies = [
  "unicode-ident",
 ]

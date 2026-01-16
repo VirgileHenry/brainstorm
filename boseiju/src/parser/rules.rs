@@ -8,64 +8,84 @@ mod object_specifiers;
 mod statement;
 mod trigger_condition;
 
-mod rule_loc;
-mod state_id;
-
-pub use rule_loc::ParserRuleDeclarationLocation;
-pub use state_id::StateId;
-
 use crate::parser::node::ParserNode;
 
-pub const ALL_RULES: &[&[ParserRule]] = &[
-    ability_tree::ABILITY_TREE_RULES,
-    continuous_effects::CONTINUOUS_EFFECTS_RULES,
-    imperative::IMPERATIVE_RULES,
-    keyword_to_ability::KEYWORD_TO_ABILITY_RULES,
-    object_references::OBJECT_REFERENCES_RULES,
-    object_specifiers::OBJECT_SPECIFIER_RULES,
-    statement::STATEMENT_RULES,
-    trigger_condition::TRIGGER_CONDITION_RULES,
-];
+pub fn default_rules() -> impl Iterator<Item = ParserRule> {
+    /* Mmh, I think this will create vtables for Iterator<Item = ParserRule> ? */
+    let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
+        Box::new(ability_tree::rules()),
+        Box::new(continuous_effects::rules()),
+        Box::new(imperative::rules()),
+        Box::new(keyword_to_ability::rules()),
+        Box::new(object_kinds::rules()),
+        Box::new(object_references::rules()),
+        Box::new(object_specifiers::rules()),
+        Box::new(statement::rules()),
+        Box::new(trigger_condition::rules()),
+    ];
+    rules_iters.into_iter().flatten()
+}
 
 /// A single rule of merging nodes together for the parser.
 #[derive(Debug, Clone)]
 pub struct ParserRule {
-    pub state: StateId,
+    pub from: RuleLhs,
     pub result: usize,
-    pub conversion_func: fn(&[ParserNode]) -> Option<ParserNode>,
+    pub reduction: fn(&[ParserNode]) -> Option<ParserNode>,
     pub creation_loc: ParserRuleDeclarationLocation,
 }
 
-impl ParserRule {
-    pub const fn create(
-        state: StateId,
-        result: usize,
-        conversion_func: fn(&[ParserNode]) -> Option<ParserNode>,
-        creation_loc: ParserRuleDeclarationLocation,
-    ) -> Self {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct RuleLhs {
+    pub tokens: [usize; Self::MAX_TOKENS],
+    pub length: usize,
+}
+
+impl RuleLhs {
+    const MAX_TOKENS: usize = 8;
+
+    pub fn new(tokens: &[usize]) -> Self {
+        if tokens.len() > Self::MAX_TOKENS {
+            panic!("Can only create rules with up to {} tokens", Self::MAX_TOKENS);
+        }
+        if tokens.is_empty() {
+            panic!("Can only create rules with at least 1 token");
+        }
+
         Self {
-            state,
-            result,
-            conversion_func,
-            creation_loc,
+            tokens: std::array::from_fn(|i| tokens.get(i).cloned().unwrap_or(0)),
+            length: tokens.len(),
+        }
+    }
+
+    pub fn first(&self) -> usize {
+        self.tokens[0]
+    }
+
+    pub fn last(&self) -> usize {
+        self.tokens[self.length - 1]
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ParserRuleDeclarationLocation {
+    pub file: &'static str,
+    pub line: u32,
+}
+
+impl ParserRuleDeclarationLocation {
+    #[track_caller]
+    pub fn here() -> Self {
+        let caller = std::panic::Location::caller();
+        Self {
+            file: caller.file(),
+            line: caller.line(),
         }
     }
 }
 
-#[macro_export]
-macro_rules! make_parser_rule {
-    ( [ $($tokens:tt)+ ] => Some( ParserNode:: $node:ident ( { $($gen:tt)+ } ) ) ) => {
-        crate::parser::rules::ParserRule::create(
-            crate::state_id!( [ $($tokens)+ ] ),
-            crate::parser::node::ParserNodeKind::$node.id(),
-            |tokens| match tokens {
-                [ $($tokens)+ ] => Some( ParserNode:: $node ( { $($gen)+ } )),
-                _ => None,
-            },
-            crate::parser::rules::ParserRuleDeclarationLocation {
-                file: std::file!(),
-                line: std::line!(),
-            },
-        )
-    };
+impl std::fmt::Display for ParserRuleDeclarationLocation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.file, self.line)
+    }
 }
