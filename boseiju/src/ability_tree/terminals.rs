@@ -58,7 +58,7 @@ impl Terminal for Number {
 pub enum CountSpecifier {
     All,
     Target,
-    UpTo { num: u32 },
+    UpTo { up_to: u32 },
     AnyNumberOfTargets,
     Others,
 }
@@ -68,7 +68,7 @@ impl std::fmt::Display for CountSpecifier {
         match self {
             CountSpecifier::All => write!(f, "all"),
             CountSpecifier::Target => write!(f, "target"),
-            CountSpecifier::UpTo { num } => write!(f, "up to {num}"),
+            CountSpecifier::UpTo { up_to: num } => write!(f, "up to {num}"),
             CountSpecifier::AnyNumberOfTargets => write!(f, "any number of target"),
             CountSpecifier::Others => write!(f, "others"),
         }
@@ -88,7 +88,7 @@ impl Terminal for CountSpecifier {
                 let prefix = "up to ";
                 if other.starts_with(prefix) {
                     let num = crate::utils::parse_num(&other[prefix.len()..])?;
-                    Some(CountSpecifier::UpTo { num })
+                    Some(CountSpecifier::UpTo { up_to: num })
                 } else {
                     None
                 }
@@ -219,7 +219,7 @@ impl Terminal for Appartenance {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CardActions {
     Attacks,
-    Becomes,
+    Becomes, /* Fixme: becomes <state> ? */
     Blocks,
     Dies,
     Enters,
@@ -662,7 +662,7 @@ impl Terminal for SagaChapterNumber {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct ManaCost(arrayvec::ArrayVec<mtg_data::Mana, 16>);
+pub struct ManaCost(pub arrayvec::ArrayVec<mtg_data::Mana, 16>);
 
 impl ManaCost {
     pub const COUNT: usize = 1;

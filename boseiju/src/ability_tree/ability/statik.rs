@@ -9,7 +9,7 @@
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum StaticAbility {
     ContinuousEffect(crate::ability_tree::continuous_effect::ContinuousEffect),
-    CharasteristicDefiningAbility(crate::ability_tree::charasteristic_defining_ability::CharasteristicDefiningAbility),
+    CharasteristicDefiningAbility(crate::ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for StaticAbility {

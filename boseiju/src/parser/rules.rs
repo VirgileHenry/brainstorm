@@ -1,22 +1,29 @@
 mod ability_tree;
-// mod continuous_effects;
-// mod imperative;
-// mod keyword_to_ability;
-// mod object_kinds;
-// mod object_references;
-// mod object_specifiers;
-// mod statement;
-// mod trigger_condition;
+mod continuous_effects;
+mod imperative;
+mod keyword_to_ability;
+mod object_kinds;
+mod object_references;
+mod object_specifiers;
+mod statement;
+mod trigger_condition;
 
 use crate::parser::node::ParserNode;
 
 pub fn default_rules() -> impl Iterator<Item = ParserRule> {
-    [ability_tree::ability_tree_rules()].into_iter().flatten()
-}
-
-pub fn uninit<T>() -> T {
-    let uninit = std::mem::MaybeUninit::uninit();
-    unsafe { uninit.assume_init() }
+    /* Mmh, I think this will create vtables for Iterator<Item = ParserRule> ? */
+    let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
+        Box::new(ability_tree::rules()),
+        Box::new(continuous_effects::rules()),
+        Box::new(imperative::rules()),
+        Box::new(keyword_to_ability::rules()),
+        Box::new(object_kinds::rules()),
+        Box::new(object_references::rules()),
+        Box::new(object_specifiers::rules()),
+        Box::new(statement::rules()),
+        Box::new(trigger_condition::rules()),
+    ];
+    rules_iters.into_iter().flatten()
 }
 
 /// A single rule of merging nodes together for the parser.

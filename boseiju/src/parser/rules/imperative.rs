@@ -1,44 +1,36 @@
 use super::ParserNode;
-
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
+use crate::parser::node::DummyInit;
+use idris::Idris;
 
-#[rustfmt::skip]
-pub const IMPERATIVE_RULES: &[super::ParserRule] = &[
-
-    /* ==================================================================== */
-    /* =========== Imperatives are a fully parsed Player Action =========== */
-    /* ==================================================================== */
-
-    /* "Destroy ..." imperative */
-    crate::make_parser_rule!(
-        [
-            ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)),
-            ParserNode::ObjectReference(object),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot))
-        ] => Some(ParserNode::Imperative( {
-            crate::ability_tree::imperative::Imperative::Destroy {
-                object: object.clone(),
+pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+    [super::ParserRule {
+        from: super::RuleLhs::new(&[
+            ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)).id(),
+            ParserNode::ObjectReference {
+                reference: DummyInit::dummy_init(),
             }
-        } ))
-    )
-];
-
-const DESTROY_TO_IMPERATIVE: Rule = Rule {
-    from: &[
-        ParserNodeKind::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)).id(),
-        ParserNodeKind::ObjectReference.id(),
-        ParserNodeKind::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
-    ],
-    to: ParserNodeKind::Imperative.id(),
-    reduce: |elems| match elems {
-        [
-            ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)),
-            ParserNode::ObjectReference(object),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-        ] => Some(ParserNode::Imperative({
-            crate::ability_tree::imperative::Imperative::Destroy { object: object.clone() }
-        })),
-        _ => None,
-    },
-};
+            .id(),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
+        ]),
+        result: ParserNode::Imperative {
+            imperative: DummyInit::dummy_init(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)),
+                ParserNode::ObjectReference { reference },
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+            ] => Some(ParserNode::Imperative {
+                imperative: crate::ability_tree::imperative::Imperative::Destroy {
+                    object: reference.clone(),
+                },
+            }),
+            _ => None,
+        },
+        creation_loc: super::ParserRuleDeclarationLocation::here(),
+    }]
+    .into_iter()
+}

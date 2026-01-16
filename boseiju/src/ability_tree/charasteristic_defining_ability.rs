@@ -7,19 +7,19 @@
 /// See https://mtg.fandom.com/wiki/Characteristic-defining_ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum CharasteristicDefiningAbility {
+pub enum CharacteristicDefiningAbility {
     // Fixme: that's wrong, CDA works in all zones, like devoid.
     // Here, it only works on the battle field, it's some kind of static ability ?
     PowerToughnessModifier(crate::ability_tree::terminals::PowerToughnessModifier),
 }
 
-impl crate::ability_tree::AbilityTreeImpl for CharasteristicDefiningAbility {
+impl crate::ability_tree::AbilityTreeImpl for CharacteristicDefiningAbility {
     fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "Characteristic defining ability:")?;
         out.push_final_branch()?;
         match self {
-            CharasteristicDefiningAbility::PowerToughnessModifier(modifier) => {
+            CharacteristicDefiningAbility::PowerToughnessModifier(modifier) => {
                 write!(out, "Power / Tougness modifier: {modifier}")?
             }
         }
