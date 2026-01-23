@@ -129,6 +129,7 @@ impl<'a> ToGenerateEnum<'a> {
             destination,
             "#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]"
         )?;
+        writeln!(destination, "#[cfg_attr(feature = \"ts_export\", derive(ts_rs::TS))]")?;
         writeln!(destination, "pub enum {} {{", self.name)?;
         for (_, variant) in variants.iter() {
             writeln!(destination, "{S4}{},", variant)?;

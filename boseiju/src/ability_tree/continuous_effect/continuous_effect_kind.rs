@@ -2,6 +2,7 @@
 /// https://mtg.fandom.com/wiki/Continuous_effect
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ContinuousEffectKind {
     ObjectGainsAbilies {
         object: crate::ability_tree::object::ObjectReference,

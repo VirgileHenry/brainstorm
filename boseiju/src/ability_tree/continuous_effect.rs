@@ -9,6 +9,7 @@ pub mod continuous_effect_kind;
 /// See https://mtg.fandom.com/wiki/Continuous_effect.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffect {
     pub duration: crate::ability_tree::terminals::ContinuousEffectDuration,
     pub effect: continuous_effect_kind::ContinuousEffectKind,

@@ -13,6 +13,7 @@ pub trait Terminal: std::fmt::Display + Sized {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Number {
     Number { num: u32 },
     X,
@@ -55,6 +56,7 @@ impl Terminal for Number {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CountSpecifier {
     All,
     Target,
@@ -101,6 +103,7 @@ impl Terminal for CountSpecifier {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ControlSpecifier {
     YouControl,
     YouDontControl,
@@ -129,6 +132,7 @@ impl Terminal for ControlSpecifier {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum OwnerSpecifier {
     YouOwn,
     YouDontOwn,
@@ -160,6 +164,7 @@ impl Terminal for OwnerSpecifier {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Order {
     RandomOrder,
     ChosenOrder,
@@ -188,6 +193,7 @@ impl Terminal for Order {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Appartenance {
     Your,
     AnOpponent,
@@ -217,6 +223,7 @@ impl Terminal for Appartenance {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CardActions {
     Attacks,
     Becomes, /* Fixme: becomes <state> ? */
@@ -260,6 +267,7 @@ impl Terminal for CardActions {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PlayerSpecifier {
     AnOpponent,
     TargetOpponent,
@@ -306,6 +314,7 @@ impl Terminal for PlayerSpecifier {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PermanentProperty {
     Power,
     Tougness,
@@ -337,6 +346,7 @@ impl Terminal for PermanentProperty {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PermanentState {
     Attacking,
     Blocking,
@@ -380,6 +390,7 @@ impl Terminal for PermanentState {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum SpellProperty {
     Countered,
     Kicked,
@@ -408,6 +419,7 @@ impl Terminal for SpellProperty {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Phase {
     Beginning,
     PrecombatMain,
@@ -449,6 +461,7 @@ impl Terminal for Phase {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Step {
     Untap,
     Upkeep,
@@ -505,6 +518,7 @@ impl Terminal for Step {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughness {
     power: u32,
     toughness: u32,
@@ -547,6 +561,7 @@ impl Terminal for PowerToughness {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PowerToughnessModifier {
     Constant { power: i32, toughness: i32 },
     PlusXPlusX,
@@ -602,6 +617,7 @@ impl Terminal for PowerToughnessModifier {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlaneswalkerAbilityCost(i32);
 
 impl PlaneswalkerAbilityCost {
@@ -631,6 +647,7 @@ impl Terminal for PlaneswalkerAbilityCost {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SagaChapterNumber(u32);
 
 impl SagaChapterNumber {
@@ -662,6 +679,7 @@ impl Terminal for SagaChapterNumber {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ManaCost(pub arrayvec::ArrayVec<mtg_data::Mana, 16>);
 
 impl ManaCost {
@@ -719,6 +737,7 @@ impl std::fmt::Display for ManaCost {
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ContinuousEffectDuration {
     /// The duration last for ever, as long as the object creating it exists.
     ObjectStaticAbility,

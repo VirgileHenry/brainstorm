@@ -1,5 +1,6 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ActivatedAbility {
     costs: arrayvec::ArrayVec<crate::ability_tree::cost::Cost, 8>,
     effect: crate::ability_tree::statement::Statement,

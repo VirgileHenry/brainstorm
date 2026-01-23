@@ -2,6 +2,7 @@
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Zone {
     Anywhere,
     Battlefield,
@@ -40,6 +41,7 @@ impl crate::ability_tree::terminals::Terminal for Zone {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ZoneReference {
     TheBattlefield,
     OwnedZone {

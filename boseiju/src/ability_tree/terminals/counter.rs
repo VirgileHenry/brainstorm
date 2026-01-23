@@ -5,6 +5,7 @@
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Counter {
     PlusOnePlusOne,
     MinusOneMinusOne,

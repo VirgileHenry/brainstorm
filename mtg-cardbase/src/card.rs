@@ -1,5 +1,6 @@
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Card {
     pub object: String,
     pub id: String,
@@ -72,8 +73,9 @@ pub struct Card {
     pub purchase_uris: Option<PurchaseUris>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Legalities {
     pub standard: String,
     pub future: String,
@@ -98,8 +100,9 @@ pub struct Legalities {
     pub predh: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ImageUris {
     pub small: String,
     pub normal: String,
@@ -109,16 +112,18 @@ pub struct ImageUris {
     pub border_crop: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Preview {
     pub source: String,
     pub source_uri: String,
     pub previewed_at: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Prices {
     pub usd: Option<String>,
     pub usd_foil: Option<String>,
@@ -128,8 +133,9 @@ pub struct Prices {
     pub tix: Option<String>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct RelatedUris {
     pub gatherer: Option<String>,
     pub tcgplayer_infinite_articles: Option<String>,
@@ -137,8 +143,9 @@ pub struct RelatedUris {
     pub edhrec: Option<String>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PurchaseUris {
     pub tcgplayer: Option<String>,
     pub cardmarket: Option<String>,

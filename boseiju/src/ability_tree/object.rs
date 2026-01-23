@@ -2,6 +2,7 @@
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectKind {
     ArtifactSubtype(mtg_data::ArtifactType),
     BattleSubtype(mtg_data::BattleType),
@@ -73,6 +74,7 @@ impl crate::ability_tree::terminals::Terminal for ObjectKind {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectReference {
     SelfReferencing,
     SpecifiedObj {
@@ -109,6 +111,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectSpecifiers {
     Single(ObjectSpecifier),
     And(arrayvec::ArrayVec<ObjectSpecifier, 8>),
@@ -146,6 +149,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifiers {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectSpecifier {
     Color(mtg_data::Color),
     Control(crate::ability_tree::terminals::ControlSpecifier),

@@ -7,6 +7,7 @@
 /// See the MTG wiki: https://mtg.fandom.com/wiki/Static_ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum StaticAbility {
     ContinuousEffect(crate::ability_tree::continuous_effect::ContinuousEffect),
     CharasteristicDefiningAbility(crate::ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility),

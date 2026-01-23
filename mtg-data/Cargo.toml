@@ -10,3 +10,8 @@ workspace = ".."
 idris = { workspace = true }
 idris-derive = { workspace = true }
 serde = { workspace = true }
+ts-rs = { workspace = true, optional = true }
+
+[features]
+default = []
+ts_export = ["dep:ts-rs"]

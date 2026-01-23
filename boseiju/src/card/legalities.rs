@@ -1,5 +1,6 @@
 /// For each format in [mtg_data::Format], the associated [mtg_data::Legality].
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Legalities {
     pub alchemy: mtg_data::Legality,
     pub brawl: mtg_data::Legality,

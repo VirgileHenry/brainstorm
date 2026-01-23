@@ -1,5 +1,6 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SagaChapter {
     pub chapter: crate::ability_tree::terminals::SagaChapterNumber,
     pub effect: crate::ability_tree::statement::Statement,

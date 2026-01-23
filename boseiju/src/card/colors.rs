@@ -1,12 +1,13 @@
 use std::fmt::Write;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Colors {
-    white: bool,
-    blue: bool,
-    black: bool,
-    red: bool,
-    green: bool,
+    pub white: bool,
+    pub blue: bool,
+    pub black: bool,
+    pub red: bool,
+    pub green: bool,
 }
 
 impl Colors {

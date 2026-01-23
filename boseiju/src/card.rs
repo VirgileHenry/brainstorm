@@ -1,15 +1,15 @@
-mod card_type;
-mod colors;
-mod layout;
-mod legalities;
-mod types;
+pub mod card_type;
+pub mod colors;
+pub mod layout;
+pub mod legalities;
 
 /// A parsed card.
 ///
 /// This is the main data type used and passed around.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Card {
-    pub name: types::CardName,
+    pub name: String,
     pub scryfall_id: uuid::Uuid,
     pub legalities: legalities::Legalities,
     pub color_identity: colors::Colors,
@@ -36,8 +36,7 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
         use std::str::FromStr;
         Ok(Card {
-            name: types::CardName::from(&raw_card.name)
-                .map_err(|e| format!("in {}, failed to parse card name: {e}", raw_card.name))?,
+            name: raw_card.name.to_string(),
             scryfall_id: uuid::Uuid::from_str(&raw_card.id)
                 .map_err(|e| format!("in {}, failed to parse scryfall id to uuid: {e}", raw_card.name))?,
             legalities: legalities::Legalities::try_from(&raw_card.legalities)
