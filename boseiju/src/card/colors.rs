@@ -32,6 +32,25 @@ impl Colors {
         .into_iter()
         .filter_map(|(on, name)| on.then_some(name))
     }
+
+    pub fn from_bitmask(bitmask: i16) -> Self {
+        Colors {
+            white: (bitmask & (1 << 0)) > 0,
+            blue: (bitmask & (1 << 1)) > 0,
+            black: (bitmask & (1 << 2)) > 0,
+            red: (bitmask & (1 << 3)) > 0,
+            green: (bitmask & (1 << 4)) > 0,
+        }
+    }
+
+    pub fn to_bitmask(&self) -> i16 {
+        let white = if self.white { 1 << 0 } else { 0 };
+        let blue = if self.blue { 1 << 1 } else { 0 };
+        let black = if self.black { 1 << 2 } else { 0 };
+        let red = if self.red { 1 << 3 } else { 0 };
+        let green = if self.green { 1 << 4 } else { 0 };
+        white | blue | black | red | green
+    }
 }
 
 impl std::fmt::Display for Colors {
