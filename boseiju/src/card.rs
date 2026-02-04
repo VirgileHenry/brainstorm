@@ -29,6 +29,14 @@ impl Card {
         writeln!(output, "╰────")?;
         Ok(())
     }
+
+    pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
+        self.layout.card_types()
+    }
+
+    pub fn mana_value(&self) -> usize {
+        self.layout.mana_value()
+    }
 }
 
 impl TryFrom<&mtg_cardbase::Card> for Card {

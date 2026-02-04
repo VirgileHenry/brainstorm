@@ -1,6 +1,7 @@
 use std::fmt::Write;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Colors {
     pub white: bool,
@@ -63,6 +64,18 @@ impl std::fmt::Display for Colors {
             }
         }
         Ok(())
+    }
+}
+
+impl Default for Colors {
+    fn default() -> Self {
+        Self {
+            white: false,
+            blue: false,
+            black: false,
+            red: false,
+            green: false,
+        }
     }
 }
 

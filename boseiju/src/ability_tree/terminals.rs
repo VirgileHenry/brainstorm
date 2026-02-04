@@ -687,6 +687,10 @@ impl ManaCost {
     pub const fn id(&self) -> usize {
         0
     }
+
+    pub fn mana_value(&self) -> usize {
+        self.0.iter().map(|mana| mana.mana_value()).sum()
+    }
 }
 
 impl std::ops::Deref for ManaCost {

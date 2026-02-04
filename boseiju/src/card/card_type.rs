@@ -44,6 +44,7 @@ impl CardType {
             vanguard: None,
         }
     }
+
     pub fn parse(type_line: &str, raw_card: &mtg_cardbase::Card) -> Result<Self, String /* Fixme */> {
         use std::str::FromStr;
 
@@ -324,6 +325,64 @@ impl CardType {
         }
 
         Ok(result)
+    }
+
+    pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
+        let mut result = arrayvec::ArrayVec::new();
+
+        if self.artifact.is_some() {
+            result.push(mtg_data::CardType::Artifact)
+        }
+        if self.battle.is_some() {
+            result.push(mtg_data::CardType::Battle)
+        }
+        if self.conspiracy.is_some() {
+            result.push(mtg_data::CardType::Conspiracy)
+        }
+        if self.creature.is_some() {
+            result.push(mtg_data::CardType::Creature)
+        }
+        if self.dungeon.is_some() {
+            result.push(mtg_data::CardType::Dungeon)
+        }
+        if self.emblem.is_some() {
+            result.push(mtg_data::CardType::Emblem)
+        }
+        if self.enchantment.is_some() {
+            result.push(mtg_data::CardType::Enchantment)
+        }
+        if self.hero.is_some() {
+            result.push(mtg_data::CardType::Hero)
+        }
+        if self.instant.is_some() {
+            result.push(mtg_data::CardType::Instant)
+        }
+        if self.kindred.is_some() {
+            result.push(mtg_data::CardType::Kindred)
+        }
+        if self.land.is_some() {
+            result.push(mtg_data::CardType::Land)
+        }
+        if self.phenomenon.is_some() {
+            result.push(mtg_data::CardType::Phenomenon)
+        }
+        if self.plane.is_some() {
+            result.push(mtg_data::CardType::Plane)
+        }
+        if self.planeswalker.is_some() {
+            result.push(mtg_data::CardType::Planeswalker)
+        }
+        if self.scheme.is_some() {
+            result.push(mtg_data::CardType::Scheme)
+        }
+        if self.sorcery.is_some() {
+            result.push(mtg_data::CardType::Sorcery)
+        }
+        if self.vanguard.is_some() {
+            result.push(mtg_data::CardType::Vanguard)
+        }
+
+        result
     }
 }
 

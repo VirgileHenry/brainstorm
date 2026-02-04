@@ -14,6 +14,21 @@ pub enum Mana {
     Snow,
 }
 
+impl Mana {
+    pub fn mana_value(&self) -> usize {
+        match self {
+            Mana::X => 0,
+            Mana::Any { number } => *number,
+            Mana::Colored { .. } => 1,
+            Mana::Hybrid { .. } => 1,
+            Mana::MonocoloredHybrid { number, .. } => 1.max(*number),
+            Mana::Phyrexian { .. } => 1,
+            Mana::HybridPhyrexian { .. } => 1,
+            Mana::Snow => 1,
+        }
+    }
+}
+
 impl std::str::FromStr for Mana {
     type Err = String;
     fn from_str(from: &str) -> Result<Self, Self::Err> {

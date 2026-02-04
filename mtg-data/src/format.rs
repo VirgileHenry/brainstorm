@@ -38,12 +38,12 @@ impl std::str::FromStr for Format {
             "future" => Ok(Self::Future),
             "gladiator" => Ok(Self::Gladiator),
             "historic" => Ok(Self::Historic),
-            "historicbrawl" => Ok(Self::HistoricBrawl),
+            "historic brawl" => Ok(Self::HistoricBrawl),
             "legacy" => Ok(Self::Legacy),
             "modern" => Ok(Self::Modern),
             "oathbreaker" => Ok(Self::Oathbreaker),
             "pauper" => Ok(Self::Pauper),
-            "paupercommander" => Ok(Self::PauperCommander),
+            "pauper commander" => Ok(Self::PauperCommander),
             "penny" => Ok(Self::Penny),
             "pionner" => Ok(Self::Pionner),
             "predh" => Ok(Self::Predh),
@@ -66,12 +66,12 @@ impl Format {
             Self::Future => "future",
             Self::Gladiator => "gladiator",
             Self::Historic => "historic",
-            Self::HistoricBrawl => "historicbrawl",
+            Self::HistoricBrawl => "historic brawl",
             Self::Legacy => "legacy",
             Self::Modern => "modern",
             Self::Oathbreaker => "oathbreaker",
             Self::Pauper => "pauper",
-            Self::PauperCommander => "paupercommander",
+            Self::PauperCommander => "pauper commander",
             Self::Penny => "penny",
             Self::Pionner => "pionner",
             Self::Predh => "predh",
@@ -111,7 +111,6 @@ impl Format {
             Self::Premodern,
             Self::Standard,
             Self::Vintage,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

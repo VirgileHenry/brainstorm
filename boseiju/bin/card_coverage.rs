@@ -35,12 +35,12 @@ impl CoverageTestResults {
             TestResult::OracleTextParsed => {
                 self.oracle_text_lexed += 1;
                 self.oracle_text_parsed += 1;
-            },
+            }
             TestResult::FullCardParsed => {
                 self.oracle_text_lexed += 1;
                 self.oracle_text_parsed += 1;
                 self.fully_parsed += 1;
-            },
+            }
         }
     }
 }
@@ -64,7 +64,7 @@ fn main() -> std::io::Result<()> {
     /* Create the different coverage categories */
     let categories = vec![
         CoverageTestCase::new("Foundation set (FDN)", Box::new(|card| card.set == "fdn")),
-        CoverageTestCase::new("Last set (TLA)", Box::new(|card| card.set == "tla")), // Fixme: fetch last set ?
+        CoverageTestCase::new("Last set (ECL)", Box::new(|card| card.set == "ecl")), // Fixme: fetch last set ?
         CoverageTestCase::new(
             "Standard-legal cards",
             Box::new(|card| card_legal_in(card, mtg_data::Format::Standard)),
@@ -94,17 +94,21 @@ fn main() -> std::io::Result<()> {
     println!("|-----|-----|-----|-----|-----|");
 
     for (category, results) in categories_results.iter() {
-        println!(
-            "|{}|{}|{} ({}%)|{} ({}%)|{} ({}%)|",
-            category.name,
-            results.total,
-            results.oracle_text_lexed,
-            results.oracle_text_lexed * 100 / results.total,
-            results.oracle_text_parsed,
-            results.oracle_text_parsed * 100 / results.total,
-            results.fully_parsed,
-            results.fully_parsed * 100 / results.total,
-        );
+        if results.total > 0 {
+            println!(
+                "|{}|{}|{} ({}%)|{} ({}%)|{} ({}%)|",
+                category.name,
+                results.total,
+                results.oracle_text_lexed,
+                results.oracle_text_lexed * 100 / results.total,
+                results.oracle_text_parsed,
+                results.oracle_text_parsed * 100 / results.total,
+                results.fully_parsed,
+                results.fully_parsed * 100 / results.total,
+            );
+        } else {
+            println!("|{}|0|skipped|skipped|skipped|", category.name);
+        }
     }
 
     Ok(())

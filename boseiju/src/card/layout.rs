@@ -58,6 +58,56 @@ impl Layout {
             _ => writeln!(output, "Unimplemented!"),
         }
     }
+
+    pub fn mana_value(&self) -> usize {
+        match self {
+            Self::Normal { mana_cost, .. } => mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0),
+            Self::Split {} => 0,
+            Self::Flip {} => 0,
+            Self::Transform {} => 0,
+            Self::ModalDfc {} => 0,
+            Self::Meld {} => 0,
+            Self::Leveler {} => 0,
+            Self::Class {} => 0,
+            Self::Case {} => 0,
+            Self::Saga { mana_cost, .. } => mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0),
+            Self::Adventure {} => 0,
+            Self::Mutate {} => 0,
+            Self::Prototype {} => 0,
+            Self::Battle {} => 0,
+            Self::Planar {} => 0,
+            Self::Scheme {} => 0,
+            Self::Vanguard {} => 0,
+            Self::Token { .. } => 0,
+            Self::DoubleFaced {} => 0,
+            Self::Emblem {} => 0,
+        }
+    }
+
+    pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
+        match self {
+            Self::Normal { card_type, .. } => card_type.card_types(),
+            Self::Split {} => arrayvec::ArrayVec::new(),
+            Self::Flip {} => arrayvec::ArrayVec::new(),
+            Self::Transform {} => arrayvec::ArrayVec::new(),
+            Self::ModalDfc {} => arrayvec::ArrayVec::new(),
+            Self::Meld {} => arrayvec::ArrayVec::new(),
+            Self::Leveler {} => arrayvec::ArrayVec::new(),
+            Self::Class {} => arrayvec::ArrayVec::new(),
+            Self::Case {} => arrayvec::ArrayVec::new(),
+            Self::Saga { card_type, .. } => card_type.card_types(),
+            Self::Adventure {} => arrayvec::ArrayVec::new(),
+            Self::Mutate {} => arrayvec::ArrayVec::new(),
+            Self::Prototype {} => arrayvec::ArrayVec::new(),
+            Self::Battle {} => arrayvec::ArrayVec::new(),
+            Self::Planar {} => arrayvec::ArrayVec::new(),
+            Self::Scheme {} => arrayvec::ArrayVec::new(),
+            Self::Vanguard {} => arrayvec::ArrayVec::new(),
+            Self::Token { card_type, .. } => card_type.card_types(),
+            Self::DoubleFaced {} => arrayvec::ArrayVec::new(),
+            Self::Emblem {} => arrayvec::ArrayVec::new(),
+        }
+    }
 }
 
 impl TryFrom<&mtg_cardbase::Card> for Layout {

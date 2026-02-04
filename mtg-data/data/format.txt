@@ -6,12 +6,12 @@ Explorer
 Future
 Gladiator
 Historic
-HistoricBrawl
+Historic Brawl
 Legacy
 Modern
 Oathbreaker
 Pauper
-PauperCommander
+Pauper Commander
 Penny
 Pionner
 Predh
