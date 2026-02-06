@@ -9,14 +9,13 @@ pub enum ObjectKind {
     Card,
     CreatureSubtype(mtg_data::CreatureType),
     EnchantmentSubtype(mtg_data::EnchantmentType),
-    InstantSubtype(mtg_data::SpellType),
+    InstantSorcerySubtype(mtg_data::SpellType),
     LandSubtype(mtg_data::LandType),
     Permanent,
     PlaneswalkerSubtype(mtg_data::PlaneswalkerType),
     Spell,
     Supertype(mtg_data::Supertype),
     CardType(mtg_data::CardType),
-    SorcerySubtype(mtg_data::SpellType),
 }
 
 impl std::fmt::Display for ObjectKind {
@@ -27,14 +26,13 @@ impl std::fmt::Display for ObjectKind {
             ObjectKind::Card => write!(f, "card"),
             ObjectKind::CreatureSubtype(subtype) => subtype.fmt(f),
             ObjectKind::EnchantmentSubtype(subtype) => subtype.fmt(f),
-            ObjectKind::InstantSubtype(subtype) => subtype.fmt(f),
+            ObjectKind::InstantSorcerySubtype(subtype) => subtype.fmt(f),
             ObjectKind::LandSubtype(subtype) => subtype.fmt(f),
             ObjectKind::Permanent => write!(f, "permanent"),
             ObjectKind::PlaneswalkerSubtype(subtype) => subtype.fmt(f),
             ObjectKind::Spell => write!(f, "spell"),
             ObjectKind::Supertype(supertype) => supertype.fmt(f),
             ObjectKind::CardType(ty) => ty.fmt(f),
-            ObjectKind::SorcerySubtype(subtype) => subtype.fmt(f),
         }
     }
 }
@@ -50,7 +48,7 @@ impl crate::ability_tree::terminals::Terminal for ObjectKind {
         } else if let Some(subtype) = mtg_data::EnchantmentType::try_from_str(source) {
             return Some(Self::EnchantmentSubtype(subtype));
         } else if let Some(subtype) = mtg_data::SpellType::try_from_str(source) {
-            return Some(Self::InstantSubtype(subtype));
+            return Some(Self::InstantSorcerySubtype(subtype));
         } else if let Some(subtype) = mtg_data::LandType::try_from_str(source) {
             return Some(Self::LandSubtype(subtype));
         } else if let Some(subtype) = mtg_data::PlaneswalkerType::try_from_str(source) {
@@ -59,8 +57,6 @@ impl crate::ability_tree::terminals::Terminal for ObjectKind {
             return Some(Self::Supertype(subtype));
         } else if let Some(subtype) = mtg_data::CardType::try_from_str(source) {
             return Some(Self::CardType(subtype));
-        } else if let Some(subtype) = mtg_data::SpellType::try_from_str(source) {
-            return Some(Self::SorcerySubtype(subtype));
         } else {
             match source {
                 "card" | "cards" => Some(Self::Card),
@@ -153,6 +149,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifiers {
 pub enum ObjectSpecifier {
     Color(mtg_data::Color),
     Control(crate::ability_tree::terminals::ControlSpecifier),
+    Cast(crate::ability_tree::terminals::CastSpecifier),
     Kind(ObjectKind),
     NotOfAKind(ObjectKind),
 }
@@ -165,6 +162,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
             ObjectSpecifier::Kind(object) => write!(out, "kind specifier: {object}"),
             ObjectSpecifier::NotOfAKind(object) => write!(out, "not of a kind specifier: not {object}"),
             ObjectSpecifier::Control(control) => write!(out, "control specifier: {control}"),
+            ObjectSpecifier::Cast(cast) => write!(out, "cast specifier: {cast}"),
         }
     }
 }

@@ -2,9 +2,9 @@
 #[derive(Debug, Clone)]
 pub enum ParserError {
     UnexpectedFollowingToken {
-        state_size: usize,
         current: super::node::ParserNode,
         next: super::node::ParserNode,
+        current_best: Vec<super::node::ParserNode>,
     },
     UnparsableInput {
         nodes: Vec<crate::lexer::tokens::TokenKind>,
@@ -18,41 +18,41 @@ impl ParserError {
             (current, Some(Self::UnparsableInput { .. })) => current,
             (
                 Self::UnexpectedFollowingToken {
-                    state_size: self_state_size,
                     current: self_current,
                     next: self_next,
+                    current_best: self_current_best,
                 },
                 Some(Self::UnexpectedFollowingToken {
-                    state_size: other_state_size,
                     current: other_current,
                     next: other_next,
+                    current_best: other_current_best,
                 }),
             ) => {
-                if self_state_size < other_state_size {
+                if self_current_best.len() < other_current_best.len() {
                     Self::UnexpectedFollowingToken {
-                        state_size: self_state_size,
                         current: self_current,
                         next: self_next,
+                        current_best: self_current_best,
                     }
                 } else {
                     Self::UnexpectedFollowingToken {
-                        state_size: other_state_size,
                         current: other_current,
                         next: other_next,
+                        current_best: other_current_best,
                     }
                 }
             }
             (
                 Self::UnparsableInput { .. },
                 Some(Self::UnexpectedFollowingToken {
-                    state_size,
                     current,
                     next,
+                    current_best,
                 }),
             ) => Self::UnexpectedFollowingToken {
-                state_size,
                 current,
                 next,
+                current_best,
             },
         }
     }

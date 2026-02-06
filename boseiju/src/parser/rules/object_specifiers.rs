@@ -48,6 +48,47 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* Cast specifiers can be object specifiers */
+        super::ParserRule {
+            from: super::RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::You)).id(),
+                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
+            ]),
+            result: ParserNode::ObjectSpecifier {
+                specifier: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::You)),
+                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
+                ] => Some(ParserNode::ObjectSpecifier {
+                    specifier: crate::ability_tree::object::ObjectSpecifier::Cast(terminals::CastSpecifier::YouCast),
+                }),
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            from: super::RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::EachOpponent)).id(),
+                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
+            ]),
+            result: ParserNode::ObjectSpecifier {
+                specifier: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::EachOpponent)),
+                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
+                ] => Some(ParserNode::ObjectSpecifier {
+                    specifier: crate::ability_tree::object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast),
+                }),
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
         /* In some cases, object kinds can be kind specifiers */
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::ObjectKind {

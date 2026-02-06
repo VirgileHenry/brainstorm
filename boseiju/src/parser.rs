@@ -12,7 +12,7 @@ mod rules;
 /// Or if there is no path to a terminal node, fail as fast as possible.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ParserState {
-    nodes: arrayvec::ArrayVec<node::ParserNode, 128>,
+    nodes: Vec<node::ParserNode>,
 }
 
 /// Display implementation thats is use for the petgraph debugging, no real prod use case.
@@ -56,7 +56,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
     }
 
     /* Initialize the nodes from the tokens */
-    let nodes: arrayvec::ArrayVec<node::ParserNode, 128> = tokens.iter().cloned().map(node::ParserNode::from).collect();
+    let nodes: Vec<node::ParserNode> = tokens.iter().cloned().map(node::ParserNode::from).collect();
 
     let mut best_error: Option<error::ParserError> = None;
 
@@ -79,18 +79,20 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                 on_fuse_attempt(window);
                 if let Some(fused) = rules.fuse(window) {
                     /* Create the concatenated node array */
-                    let mut nodes = arrayvec::ArrayVec::<_, 128>::new();
+                    let mut nodes = Vec::<_>::with_capacity(to_explore.nodes.len());
                     nodes.extend(to_explore.nodes.iter().take(offset).cloned());
                     nodes.push(fused);
                     nodes.extend(to_explore.nodes.iter().skip(offset + token_count).cloned());
+                    let next_node = ParserState { nodes };
+
+                    /* New node explored, call the user function */
+                    on_node_explored(&to_explore, &next_node);
 
                     /* Exit condition: there is only a single token, the full tree */
-                    match nodes.as_slice() {
+                    match next_node.nodes.as_slice() {
                         [node::ParserNode::AbilityTree { tree }] => return Ok(*tree.clone()),
                         _ => {}
                     }
-
-                    let next_node = ParserState { nodes };
 
                     if states_explored.contains(&next_node) {
                         continue;
@@ -105,9 +107,9 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                             let prev_best_error = best_error.take();
                             best_error = Some(
                                 error::ParserError::UnexpectedFollowingToken {
-                                    state_size: next_node.nodes.len(),
                                     current: current.clone(),
                                     next: next.clone(),
+                                    current_best: next_node.nodes.clone(),
                                 }
                                 .keep_best_error(prev_best_error),
                             );
@@ -120,8 +122,6 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                         continue;
                     }
 
-                    /* Call user function when a new node have been discovered */
-                    on_node_explored(&to_explore, &next_node);
                     next_states.push(next_node);
                 }
             }
@@ -162,7 +162,7 @@ impl std::fmt::Display for Edge {
 pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> petgraph::Graph<ParserState, Edge> {
     /* Initialize the graphs, add first node */
     let mut graph = petgraph::Graph::new();
-    let nodes: arrayvec::ArrayVec<node::ParserNode, 128> = tokens.iter().cloned().map(node::ParserNode::from).collect();
+    let nodes: Vec<node::ParserNode> = tokens.iter().cloned().map(node::ParserNode::from).collect();
     graph.add_node(ParserState { nodes: nodes.clone() });
 
     /* Use a counter to keep track of the order of exploration */

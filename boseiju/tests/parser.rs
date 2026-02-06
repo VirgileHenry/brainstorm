@@ -15,7 +15,7 @@ fn main() -> Result<(), String> {
                         Err(_) => results.skip(),
                         Ok(tokens) => {
                             let tree = parser::parse(&tokens);
-                            results.assert_ok(tree, format!("Check the tokens has been parsed: \"{oracle_text:?}\""));
+                            results.assert_ok(tree, format!("Check the tokens has been parsed: {oracle_text:?}"));
                         }
                     }
                 }

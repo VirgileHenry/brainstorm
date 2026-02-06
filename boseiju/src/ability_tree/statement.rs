@@ -7,7 +7,7 @@ pub enum Statement {
         player: crate::ability_tree::terminals::PlayerSpecifier,
         action: crate::ability_tree::imperative::Imperative,
     },
-    CreateContinuousEffect(crate::ability_tree::continuous_effect::ContinuousEffect),
+    CreateContinuousEffect(crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for Statement {

@@ -8,6 +8,7 @@ pkgs.mkShell {
     pkgs.rustfmt
     pkgs.python313
     pkgs.python313Packages.requests
+    pkgs.graphviz
   ];
   RUST_BACKTRACE=1;
   TMPDIR="/tmp";

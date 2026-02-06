@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Flying";
+    let oracle_text = "this spell costs {3} less to cast if you've gained 3 or more life this turn.\nreturn up to two target creature cards from your graveyard to your hand.";
     let card_name = "aggressive mammoth";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
@@ -10,7 +10,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (res, iters) = parser::parse_and_count_iters(&tokens);
     let success = res.is_ok();
 
-    let output = "./output.dot";
+    let output = "output.dot";
     let mut file = std::fs::File::create(output)?;
     use std::io::Write;
     file.write_all(
@@ -21,7 +21,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Parsing successeful: {success}");
     println!("Parsing took {} iterations", num_fmt(iters));
-    println!("debug graph written at {output}");
+    println!("Debug graph written at {output}");
+
+    let svg = "parser_graph.svg";
+    let output = std::process::Command::new("dot")
+        .arg(format!("-Tsvg {output}"))
+        .arg(format!("-o {svg}"))
+        .output();
+
+    match output {
+        Ok(_) => println!("Svg graph written at {svg}"),
+        Err(e) => println!("Failed to convert output to svg: {e}"),
+    }
 
     Ok(())
 }

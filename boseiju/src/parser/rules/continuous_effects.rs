@@ -23,14 +23,14 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                 ParserNode::LexerToken(TokenKind::PowerToughnessModifier(modifier))
             ] => Some(ParserNode::ContinuousEffectKind{
                 kind:
-                crate::ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                crate::ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
                     object: reference.clone(),
                     abilities: Box::new(crate::ability_tree::AbilityTree {
                         abilities: {
                             let mut abilities = arrayvec::ArrayVec::new();
                             abilities.push(crate::ability_tree::ability::Ability::Static(
                                 crate::ability_tree::ability::statik::StaticAbility::CharasteristicDefiningAbility(
-                                    crate::ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility::PowerToughnessModifier(*modifier)
+                                    crate::ability_tree::ability::statik::charasteristic_defining_ability::CharacteristicDefiningAbility::PowerToughnessModifier(*modifier)
                                 )
                             ));
                             abilities
@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                 ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
             ] => Some(ParserNode::ContinuousEffect {
-                effect: crate::ability_tree::continuous_effect::ContinuousEffect {
+                effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
                     duration: *duration,
                     effect: kind.clone(),
                 },
@@ -110,10 +110,10 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                 ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
             ] => Some(ParserNode::ContinuousEffect {
-                effect: crate::ability_tree::continuous_effect::ContinuousEffect {
+                effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
                     duration: *duration,
                     effect:
-                        crate::ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                        crate::ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
                             object: reference.clone(),
                             abilities: tree.clone(),
                         },
@@ -142,7 +142,8 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                 kind: DummyInit::dummy_init(),
             }
             .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
+            reduction: |nodes: &[ParserNode]| {
+                match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Get)),
@@ -151,14 +152,14 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     )),
                 ] => Some(ParserNode::ContinuousEffectKind {
                     kind:
-                        crate::ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                        crate::ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
                             object: reference.clone(),
                             abilities: Box::new(crate::ability_tree::AbilityTree {
                                 abilities: {
                                     let mut abilities = arrayvec::ArrayVec::new();
                                     abilities.push(crate::ability_tree::ability::Ability::Static(
                                 crate::ability_tree::ability::statik::StaticAbility::CharasteristicDefiningAbility(
-                                    crate::ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility::PowerToughnessModifier(
+                                    crate::ability_tree::ability::statik::charasteristic_defining_ability::CharacteristicDefiningAbility::PowerToughnessModifier(
                                         crate::ability_tree::terminals::PowerToughnessModifier::Constant {
                                             power: *power,
                                             toughness: *toughness
@@ -172,6 +173,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                         },
                 }),
                 _ => None,
+            }
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -200,9 +202,9 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     ParserNode::AbilityTree { tree },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot))
                 ] => Some(ParserNode::ContinuousEffect{
-                    effect: crate::ability_tree::continuous_effect::ContinuousEffect {
+                    effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
                         duration: crate::ability_tree::terminals::ContinuousEffectDuration::ObjectStaticAbility,
-                        effect: crate::ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+                        effect: crate::ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
                             object: reference.clone(),
                             abilities: tree.clone(),
                         },

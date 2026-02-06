@@ -15,19 +15,31 @@ pub enum ParserNode {
         tree: Box<ability_tree::AbilityTree>,
     },
     CharacteristicDefiningAbility {
-        ability: ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility,
+        ability: ability_tree::ability::statik::charasteristic_defining_ability::CharacteristicDefiningAbility,
     },
     ContinuousEffect {
-        effect: ability_tree::continuous_effect::ContinuousEffect,
+        effect: ability_tree::ability::statik::continuous_effect::ContinuousEffect,
     },
     ContinuousEffectKind {
-        kind: ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind,
+        kind: ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind,
     },
     Cost {
         inner: ability_tree::cost::Cost,
     },
+    CostModification {
+        cost_modification: ability_tree::ability::statik::cost_modification_effect::CostModification,
+    },
+    CostModificationEffect {
+        cost_modification: ability_tree::ability::statik::cost_modification_effect::CostModificationEffect,
+    },
+    IfCondition {
+        condition: ability_tree::if_condition::IfCondition,
+    },
     Imperative {
         imperative: ability_tree::imperative::Imperative,
+    },
+    ManaCost {
+        mana_cost: ability_tree::terminals::ManaCost,
     },
     ObjectKind {
         kind: ability_tree::object::ObjectKind,
@@ -41,11 +53,17 @@ pub enum ParserNode {
     ObjectSpecifiers {
         specifiers: ability_tree::object::ObjectSpecifiers,
     },
+    PlayerAction {
+        player_action: ability_tree::player_action::PlayerAction,
+    },
     Statement {
         statement: ability_tree::statement::Statement,
     },
     TriggerCondition {
         condition: ability_tree::ability::triggered::trigger_cond::TriggerCondition,
+    },
+    Zone {
+        zone: ability_tree::zone::ZoneReference,
     },
 }
 
@@ -97,6 +115,12 @@ impl DummyInit for mtg_data::Color {
     }
 }
 
+impl DummyInit for mtg_data::KeywordAction {
+    fn dummy_init() -> Self {
+        Self::Abandon
+    }
+}
+
 impl DummyInit for ability_tree::ability::Ability {
     fn dummy_init() -> Self {
         Self::Keyword(ability_tree::ability::keyword::KeywordAbility::SingleKeyword(
@@ -113,7 +137,7 @@ impl DummyInit for ability_tree::AbilityTree {
     }
 }
 
-impl DummyInit for ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility {
+impl DummyInit for ability_tree::ability::statik::charasteristic_defining_ability::CharacteristicDefiningAbility {
     fn dummy_init() -> Self {
         Self::PowerToughnessModifier(DummyInit::dummy_init())
     }
@@ -125,20 +149,36 @@ impl DummyInit for crate::ability_tree::terminals::PowerToughnessModifier {
     }
 }
 
-impl DummyInit for ability_tree::continuous_effect::ContinuousEffect {
+impl DummyInit for ability_tree::ability::statik::continuous_effect::ContinuousEffect {
     fn dummy_init() -> Self {
         Self {
             duration: crate::ability_tree::terminals::ContinuousEffectDuration::UntilEndOfTurn,
-            effect: ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::dummy_init(),
+            effect: ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::dummy_init(),
         }
     }
 }
 
-impl DummyInit for ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind {
+impl DummyInit for ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind {
     fn dummy_init() -> Self {
-        ability_tree::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
+        Self::ObjectGainsAbilies {
             object: DummyInit::dummy_init(),
             abilities: DummyInit::dummy_init(),
+        }
+    }
+}
+
+impl DummyInit for ability_tree::ability::statik::cost_modification_effect::CostModification {
+    fn dummy_init() -> Self {
+        Self::Set(DummyInit::dummy_init())
+    }
+}
+
+impl DummyInit for ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
+    fn dummy_init() -> Self {
+        Self {
+            applies_to: DummyInit::dummy_init(),
+            modification: DummyInit::dummy_init(),
+            condition: None,
         }
     }
 }
@@ -152,6 +192,22 @@ impl DummyInit for ability_tree::cost::Cost {
 impl DummyInit for ability_tree::terminals::ManaCost {
     fn dummy_init() -> Self {
         ability_tree::terminals::ManaCost(DummyInit::dummy_init())
+    }
+}
+
+impl DummyInit for ability_tree::if_condition::IfCondition {
+    fn dummy_init() -> Self {
+        Self::PlayerDidAction {
+            player: DummyInit::dummy_init(),
+            action: DummyInit::dummy_init(),
+            timeframe: DummyInit::dummy_init(),
+        }
+    }
+}
+
+impl DummyInit for ability_tree::if_condition::condition_timeframe::ConditionTimeframe {
+    fn dummy_init() -> Self {
+        Self::ThisTurn
     }
 }
 
@@ -187,6 +243,20 @@ impl DummyInit for ability_tree::object::ObjectSpecifiers {
     }
 }
 
+impl DummyInit for ability_tree::terminals::PlayerSpecifier {
+    fn dummy_init() -> Self {
+        Self::You
+    }
+}
+
+impl DummyInit for ability_tree::player_action::PlayerAction {
+    fn dummy_init() -> Self {
+        Self::KeywordAction {
+            action: DummyInit::dummy_init(),
+        }
+    }
+}
+
 impl DummyInit for ability_tree::statement::Statement {
     fn dummy_init() -> Self {
         Self::Imperative(DummyInit::dummy_init())
@@ -205,5 +275,26 @@ impl DummyInit for ability_tree::ability::triggered::trigger_cond::TriggerCondit
 impl DummyInit for ability_tree::terminals::CardActions {
     fn dummy_init() -> Self {
         Self::Attacks
+    }
+}
+
+impl DummyInit for ability_tree::terminals::OwnerSpecifier {
+    fn dummy_init() -> Self {
+        Self::YouOwn
+    }
+}
+
+impl DummyInit for ability_tree::zone::Zone {
+    fn dummy_init() -> Self {
+        Self::Anywhere
+    }
+}
+
+impl DummyInit for ability_tree::zone::ZoneReference {
+    fn dummy_init() -> Self {
+        Self::OwnedZone {
+            zone: DummyInit::dummy_init(),
+            owner: DummyInit::dummy_init(),
+        }
     }
 }

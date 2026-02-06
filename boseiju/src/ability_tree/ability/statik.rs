@@ -1,3 +1,7 @@
+pub mod charasteristic_defining_ability;
+pub mod continuous_effect;
+pub mod cost_modification_effect;
+
 /// A static ability, from the comprehensive rules:
 ///
 /// A kind of ability.
@@ -9,8 +13,9 @@
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum StaticAbility {
-    ContinuousEffect(crate::ability_tree::continuous_effect::ContinuousEffect),
-    CharasteristicDefiningAbility(crate::ability_tree::charasteristic_defining_ability::CharacteristicDefiningAbility),
+    ContinuousEffect(continuous_effect::ContinuousEffect),
+    CharasteristicDefiningAbility(charasteristic_defining_ability::CharacteristicDefiningAbility),
+    CostModificationEffect(cost_modification_effect::CostModificationEffect),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for StaticAbility {
@@ -21,6 +26,7 @@ impl crate::ability_tree::AbilityTreeImpl for StaticAbility {
         match self {
             StaticAbility::ContinuousEffect(effect) => effect.display(out)?,
             StaticAbility::CharasteristicDefiningAbility(ability) => ability.display(out)?,
+            Self::CostModificationEffect(effect) => effect.display(out)?,
         }
         out.pop_branch();
         Ok(())

@@ -133,6 +133,36 @@ impl Terminal for ControlSpecifier {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub enum CastSpecifier {
+    YouCast,
+    YourOpponentsCast,
+}
+
+impl std::fmt::Display for CastSpecifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CastSpecifier::YouCast => write!(f, "you cast"),
+            CastSpecifier::YourOpponentsCast => write!(f, "your opponents cast"),
+        }
+    }
+}
+
+impl Terminal for CastSpecifier {
+    fn try_from_str(_: &str) -> Option<Self> {
+        /*
+         * "you cast" can't be lexed directyly, as it may not be a cast specifier.
+         * For instance, "whenever you cast a spell" is not the same meaning as
+         * "spells you cast cost 1 less to cast".
+         */
+        None
+    }
+}
+
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum OwnerSpecifier {
     YouOwn,
     YouDontOwn,
@@ -144,7 +174,7 @@ impl std::fmt::Display for OwnerSpecifier {
         match self {
             OwnerSpecifier::YouOwn => write!(f, "you own"),
             OwnerSpecifier::YouDontOwn => write!(f, "you don't own"),
-            OwnerSpecifier::ObjectOwner => write!(f, "it's owner"),
+            OwnerSpecifier::ObjectOwner => write!(f, "its owner"),
         }
     }
 }
@@ -152,9 +182,9 @@ impl std::fmt::Display for OwnerSpecifier {
 impl Terminal for OwnerSpecifier {
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "you own" => Some(OwnerSpecifier::YouOwn),
+            "you own" | "your" => Some(OwnerSpecifier::YouOwn),
             "you don't own" => Some(OwnerSpecifier::YouDontOwn),
-            "it's owner" => Some(OwnerSpecifier::ObjectOwner),
+            "its owner" => Some(OwnerSpecifier::ObjectOwner),
             _ => None,
         }
     }
@@ -184,36 +214,6 @@ impl Terminal for Order {
         match source {
             "a random order" => Some(Order::RandomOrder),
             "any order" => Some(Order::ChosenOrder),
-            _ => None,
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum Appartenance {
-    Your,
-    AnOpponent,
-}
-
-impl std::fmt::Display for Appartenance {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Appartenance::Your => write!(f, "your"),
-            Appartenance::AnOpponent => write!(f, "an opponent's"),
-        }
-    }
-}
-
-impl Terminal for Appartenance {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "your" => Some(Appartenance::Your),
-            "an opponent" => Some(Appartenance::AnOpponent),
-            "their" => Some(Appartenance::AnOpponent),
             _ => None,
         }
     }
@@ -299,7 +299,7 @@ impl Terminal for PlayerSpecifier {
         match source {
             "an opponent" => Some(PlayerSpecifier::AnOpponent),
             "target opponent" => Some(PlayerSpecifier::TargetOpponent),
-            "each opponent" | "opponents" => Some(PlayerSpecifier::EachOpponent),
+            "each opponent" | "opponents" | "your opponents" => Some(PlayerSpecifier::EachOpponent),
             "a player" => Some(PlayerSpecifier::Any),
             "each player" => Some(PlayerSpecifier::All),
             "the player to your left" => Some(PlayerSpecifier::ToYourLeft),

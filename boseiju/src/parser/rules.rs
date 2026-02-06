@@ -1,12 +1,17 @@
 mod ability_tree;
 mod continuous_effects;
+mod cost_modifications;
+mod if_condition;
 mod imperative;
 mod keyword_to_ability;
+mod mana;
 mod object_kinds;
 mod object_references;
 mod object_specifiers;
+mod player_actions;
 mod statement;
 mod trigger_condition;
+mod zone;
 
 use crate::parser::node::ParserNode;
 
@@ -15,13 +20,18 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
     let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
         Box::new(ability_tree::rules()),
         Box::new(continuous_effects::rules()),
+        Box::new(cost_modifications::rules()),
+        Box::new(if_condition::rules()),
         Box::new(imperative::rules()),
         Box::new(keyword_to_ability::rules()),
+        Box::new(mana::rules()),
         Box::new(object_kinds::rules()),
         Box::new(object_references::rules()),
         Box::new(object_specifiers::rules()),
+        Box::new(player_actions::rules()),
         Box::new(statement::rules()),
         Box::new(trigger_condition::rules()),
+        Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()
 }

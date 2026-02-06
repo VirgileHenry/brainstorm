@@ -44,5 +44,23 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
     })
     .collect::<Vec<_>>();
 
-    [may_abilities_from_players].into_iter().flatten()
+    let default_statement_rules = vec![super::ParserRule {
+        from: super::RuleLhs::new(&[ParserNode::Imperative {
+            imperative: DummyInit::dummy_init(),
+        }
+        .id()]),
+        result: ParserNode::Statement {
+            statement: DummyInit::dummy_init(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[ParserNode::Imperative { imperative }] => Some(ParserNode::Statement {
+                statement: crate::ability_tree::statement::Statement::Imperative(imperative.clone()),
+            }),
+            _ => None,
+        },
+        creation_loc: super::ParserRuleDeclarationLocation::here(),
+    }];
+
+    [may_abilities_from_players, default_statement_rules].into_iter().flatten()
 }

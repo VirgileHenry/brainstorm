@@ -113,6 +113,34 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        super::ParserRule {
+            from: super::RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to: 0 })).id(),
+                ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::Target)).id(),
+                ParserNode::ObjectSpecifiers {
+                    specifiers: DummyInit::dummy_init(),
+                }
+                .id(),
+            ]),
+            result: ParserNode::ObjectReference {
+                reference: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to })),
+                    ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::Target)),
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Some(ParserNode::ObjectReference {
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj {
+                        amount: terminals::CountSpecifier::UpTo { up_to: *up_to },
+                        specifiers: specifiers.clone(),
+                    },
+                }),
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
     ];
 
     [count_and_object_to_ref, non_repeting_rules].into_iter().flatten()

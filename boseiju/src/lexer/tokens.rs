@@ -44,11 +44,6 @@ impl<'src> Token<'src> {
                 kind: TokenKind::Order(kind),
                 span,
             })
-        } else if let Some(kind) = terminals::Appartenance::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Appartenance(kind),
-                span,
-            })
         } else if let Some(kind) = terminals::CardActions::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::CardActions(kind),
@@ -139,9 +134,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::KeywordAction(kind),
                 span,
             })
-        } else if let Some(kind) = mtg_data::Mana::try_from_str(span.text) {
+        } else if let Some(mana) = mtg_data::Mana::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::Mana(kind),
+                kind: TokenKind::Mana { mana },
                 span,
             })
         } else if let Some(kind) = object::ObjectKind::try_from_str(span.text) {
@@ -194,9 +189,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::PlayerAction(kind),
                 span,
             })
-        } else if let Some(this_turn) = non_terminals::ThisTurn::try_from_str(span.text) {
+        } else if let Some(_) = non_terminals::ThisTurn::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::ThisTurn { this_turn },
+                kind: TokenKind::ThisTurn,
                 span,
             })
         } else if let Some(kind) = non_terminals::NonKind::try_from_str(span.text) {
@@ -214,19 +209,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::UnderControl(kind),
                 span,
             })
-        } else if let Some(kind) = non_terminals::IntoHand::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::IntoHand(kind),
-                span,
-            })
         } else if let Some(kind) = non_terminals::PlayerProperties::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::PlayerProperties(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::IndirectReference::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::IndirectReference(kind),
                 span,
             })
         } else if let Some(kind) = non_terminals::NumberOfTimes::try_from_str(span.text) {
@@ -280,7 +265,6 @@ pub enum TokenKind {
     ControlSpecifier(terminals::ControlSpecifier),
     OwnerSpecifier(terminals::OwnerSpecifier),
     Order(terminals::Order),
-    Appartenance(terminals::Appartenance),
     CardActions(terminals::CardActions),
     PlayerSpecifier(terminals::PlayerSpecifier),
     PermanentState(terminals::PermanentState),
@@ -299,7 +283,7 @@ pub enum TokenKind {
     AbilityWord(mtg_data::AbilityWord),
     KeywordAbility(mtg_data::KeywordAbility),
     KeywordAction(mtg_data::KeywordAction),
-    Mana(mtg_data::Mana),
+    Mana { mana: mtg_data::Mana },
     ObjectKind(object::ObjectKind),
     ControlFlow(non_terminals::ControlFlow),
     TapUntapCost(non_terminals::TapUntapCost),
@@ -310,13 +294,12 @@ pub enum TokenKind {
     ActionKeyword(non_terminals::ActionKeyword),
     DamageKind(non_terminals::DamageKind),
     PlayerAction(non_terminals::PlayerAction),
-    ThisTurn { this_turn: non_terminals::ThisTurn },
+    ThisTurn,
     NonKind(non_terminals::NonKind),
     AmountReplacement(non_terminals::AmountReplacement),
     UnderControl(non_terminals::UnderControl),
-    IntoHand(non_terminals::IntoHand),
     PlayerProperties(non_terminals::PlayerProperties),
-    IndirectReference(non_terminals::IndirectReference),
+
     NumberOfTimes(non_terminals::NumberOfTimes),
     ChoiceReference(non_terminals::ChoiceReference),
     Choice(non_terminals::Choice),

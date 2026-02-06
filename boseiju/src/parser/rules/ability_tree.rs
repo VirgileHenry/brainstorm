@@ -84,6 +84,26 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* Cost reduction effects are static ailities */
+        super::ParserRule {
+            from: super::RuleLhs::new(&[ParserNode::CostModificationEffect {
+                cost_modification: DummyInit::dummy_init(),
+            }
+            .id()]),
+            result: ParserNode::Ability {
+                ability: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::CostModificationEffect { cost_modification }] => Some(ParserNode::Ability {
+                    ability: Box::new(crate::ability_tree::ability::Ability::Static(
+                        crate::ability_tree::ability::statik::StaticAbility::CostModificationEffect(cost_modification.clone()),
+                    )),
+                }),
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
         /* Characteristic defining ability is an ability */
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::CharacteristicDefiningAbility {
