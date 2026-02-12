@@ -4,8 +4,6 @@ pub fn is_digits(input: &str) -> bool {
 
 pub fn parse_num(input: &str) -> Option<u32> {
     match input {
-        "a" => Some(1),
-        "an" => Some(1),
         "one" => Some(1),
         "two" => Some(2),
         "three" => Some(3),

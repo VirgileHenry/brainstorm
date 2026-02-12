@@ -1,4 +1,5 @@
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CardType {
     supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
@@ -496,89 +497,106 @@ impl std::fmt::Display for CardType {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ArtifactSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::ArtifactType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct BattleSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::BattleType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ConspiracySubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreatureSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct DungeonSubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct EmblemSubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct EnchantmentSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::EnchantmentType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct HeroSubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct InstantSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct KindredSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct LandSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::LandType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PhenomenonSubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlaneSubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlaneswalkerSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::PlaneswalkerType, 4>,
     loyalty: u64,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SchemeSubtype;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SorcerySubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct VanguardSubtype;

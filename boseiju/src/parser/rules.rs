@@ -1,14 +1,18 @@
 mod ability_tree;
 mod continuous_effects;
+mod continuous_effects_kind;
 mod cost_modifications;
+mod event;
+mod event_replacement;
 mod if_condition;
 mod imperative;
 mod keyword_to_ability;
 mod mana;
+mod number;
 mod object_kinds;
 mod object_references;
 mod object_specifiers;
-mod player_actions;
+mod replacement_effect;
 mod statement;
 mod trigger_condition;
 mod zone;
@@ -20,15 +24,19 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
     let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
         Box::new(ability_tree::rules()),
         Box::new(continuous_effects::rules()),
+        Box::new(continuous_effects_kind::rules()),
         Box::new(cost_modifications::rules()),
+        Box::new(event::rules()),
+        Box::new(event_replacement::rules()),
         Box::new(if_condition::rules()),
         Box::new(imperative::rules()),
         Box::new(keyword_to_ability::rules()),
         Box::new(mana::rules()),
+        Box::new(number::rules()),
         Box::new(object_kinds::rules()),
         Box::new(object_references::rules()),
         Box::new(object_specifiers::rules()),
-        Box::new(player_actions::rules()),
+        Box::new(replacement_effect::rules()),
         Box::new(statement::rules()),
         Box::new(trigger_condition::rules()),
         Box::new(zone::rules()),

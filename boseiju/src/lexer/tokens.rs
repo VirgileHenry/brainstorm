@@ -14,12 +14,7 @@ pub struct Token<'src> {
 
 impl<'src> Token<'src> {
     pub fn try_from_str(span: Span<'src>) -> Option<Token<'src>> {
-        if let Some(kind) = terminals::Number::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Number(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::Counter::try_from_str(span.text) {
+        if let Some(kind) = terminals::Counter::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::Counter(kind),
                 span,
@@ -164,9 +159,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::SelfReferencing { reference },
                 span,
             })
-        } else if let Some(reference) = non_terminals::NumberReference::try_from_str(span.text) {
+        } else if let Some(number) = non_terminals::Number::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::NumberReference { reference },
+                kind: TokenKind::Number(number),
                 span,
             })
         } else if let Some(not) = non_terminals::NotOfAKind::try_from_str(span.text) {
@@ -197,11 +192,6 @@ impl<'src> Token<'src> {
         } else if let Some(kind) = non_terminals::NonKind::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::NonKind(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::AmountReplacement::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::AmountReplacement(kind),
                 span,
             })
         } else if let Some(kind) = non_terminals::UnderControl::try_from_str(span.text) {
@@ -259,7 +249,6 @@ impl<'src> Token<'src> {
 #[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
-    Number(terminals::Number),
     Counter(terminals::Counter),
     CountSpecifier(terminals::CountSpecifier),
     ControlSpecifier(terminals::ControlSpecifier),
@@ -289,17 +278,15 @@ pub enum TokenKind {
     TapUntapCost(non_terminals::TapUntapCost),
     EnglishKeyword(non_terminals::EnglishKeyword),
     SelfReferencing { reference: non_terminals::SelfReferencing },
-    NumberReference { reference: non_terminals::NumberReference },
+    Number(non_terminals::Number),
     NotOfAKind { not: non_terminals::NotOfAKind },
     ActionKeyword(non_terminals::ActionKeyword),
     DamageKind(non_terminals::DamageKind),
     PlayerAction(non_terminals::PlayerAction),
     ThisTurn,
     NonKind(non_terminals::NonKind),
-    AmountReplacement(non_terminals::AmountReplacement),
     UnderControl(non_terminals::UnderControl),
     PlayerProperties(non_terminals::PlayerProperties),
-
     NumberOfTimes(non_terminals::NumberOfTimes),
     ChoiceReference(non_terminals::ChoiceReference),
     Choice(non_terminals::Choice),

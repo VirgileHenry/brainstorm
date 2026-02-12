@@ -32,6 +32,18 @@ pub enum ParserNode {
     CostModificationEffect {
         cost_modification: ability_tree::ability::statik::cost_modification_effect::CostModificationEffect,
     },
+    Event {
+        event: ability_tree::event::Event,
+    },
+    EventReplacement {
+        replacement: ability_tree::event::replacement::EventReplacement,
+    },
+    EventSource {
+        source: ability_tree::event::source::EventSource,
+    },
+    EventSourceReference {
+        source: ability_tree::event::replacement::source_ref::EventSourceReference,
+    },
     IfCondition {
         condition: ability_tree::if_condition::IfCondition,
     },
@@ -40,6 +52,9 @@ pub enum ParserNode {
     },
     ManaCost {
         mana_cost: ability_tree::terminals::ManaCost,
+    },
+    Number {
+        number: ability_tree::number::Number,
     },
     ObjectKind {
         kind: ability_tree::object::ObjectKind,
@@ -53,8 +68,14 @@ pub enum ParserNode {
     ObjectSpecifiers {
         specifiers: ability_tree::object::ObjectSpecifiers,
     },
-    PlayerAction {
-        player_action: ability_tree::player_action::PlayerAction,
+    ReplacedCounterKind {
+        kind: ability_tree::event::replacement::counter_on_permanent::ReplacedCounterKind,
+    },
+    ReplacedPermanentKind {
+        kind: ability_tree::event::replacement::counter_on_permanent::ReplacedPermanentKind,
+    },
+    ReplacedTokenKind {
+        kind: ability_tree::event::replacement::token_creation::ReplacedTokenKind,
     },
     Statement {
         statement: ability_tree::statement::Statement,
@@ -197,10 +218,9 @@ impl DummyInit for ability_tree::terminals::ManaCost {
 
 impl DummyInit for ability_tree::if_condition::IfCondition {
     fn dummy_init() -> Self {
-        Self::PlayerDidAction {
-            player: DummyInit::dummy_init(),
-            action: DummyInit::dummy_init(),
-            timeframe: DummyInit::dummy_init(),
+        Self::EventOccured {
+            timeframe: (),
+            event: DummyInit::dummy_init(),
         }
     }
 }
@@ -249,14 +269,6 @@ impl DummyInit for ability_tree::terminals::PlayerSpecifier {
     }
 }
 
-impl DummyInit for ability_tree::player_action::PlayerAction {
-    fn dummy_init() -> Self {
-        Self::KeywordAction {
-            action: DummyInit::dummy_init(),
-        }
-    }
-}
-
 impl DummyInit for ability_tree::statement::Statement {
     fn dummy_init() -> Self {
         Self::Imperative(DummyInit::dummy_init())
@@ -269,6 +281,12 @@ impl DummyInit for ability_tree::ability::triggered::trigger_cond::TriggerCondit
             object: DummyInit::dummy_init(),
             action: DummyInit::dummy_init(),
         }
+    }
+}
+
+impl DummyInit for ability_tree::number::Number {
+    fn dummy_init() -> Self {
+        Self::Number { num: 0 }
     }
 }
 
@@ -296,5 +314,54 @@ impl DummyInit for ability_tree::zone::ZoneReference {
             zone: DummyInit::dummy_init(),
             owner: DummyInit::dummy_init(),
         }
+    }
+}
+
+impl DummyInit for ability_tree::event::Event {
+    fn dummy_init() -> Self {
+        Self::CreateTokens {
+            source: DummyInit::dummy_init(),
+            quantity: DummyInit::dummy_init(),
+            token_specifiers: None,
+        }
+    }
+}
+
+impl DummyInit for ability_tree::event::replacement::EventReplacement {
+    fn dummy_init() -> Self {
+        Self::TokenCreationReplacement {
+            source_ref: DummyInit::dummy_init(),
+            tokens: Vec::with_capacity(0),
+        }
+    }
+}
+
+impl DummyInit for ability_tree::event::replacement::source_ref::EventSourceReference {
+    fn dummy_init() -> Self {
+        Self::ThatEvent
+    }
+}
+
+impl DummyInit for ability_tree::event::replacement::token_creation::ReplacedTokenKind {
+    fn dummy_init() -> Self {
+        Self::PreviouslyMentionnedToken
+    }
+}
+
+impl DummyInit for ability_tree::event::replacement::counter_on_permanent::ReplacedCounterKind {
+    fn dummy_init() -> Self {
+        Self::PreviouslyMentionnedCounter
+    }
+}
+
+impl DummyInit for ability_tree::event::replacement::counter_on_permanent::ReplacedPermanentKind {
+    fn dummy_init() -> Self {
+        Self::PreviouslyMentionnedPermanent
+    }
+}
+
+impl DummyInit for ability_tree::event::source::EventSource {
+    fn dummy_init() -> Self {
+        Self::AnEffect
     }
 }

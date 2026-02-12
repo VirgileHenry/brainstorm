@@ -15,7 +15,7 @@ pub enum PlayerAction {
     Double,
     Draw,
     Exile,
-    Gain,
+    Gain, /* Fixme: out of place, and need different tense forms */
     LookAt,
     Lose,
     Pay,

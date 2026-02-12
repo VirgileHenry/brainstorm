@@ -2,10 +2,12 @@
 #[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EnglishKeyword {
-    Already,
+    A,
     Additional,
+    Already,
     After,
     Among,
+    An,
     And,
     AndOr,
     Another,
@@ -83,10 +85,12 @@ pub enum EnglishKeyword {
 impl EnglishKeyword {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "already" => Some(EnglishKeyword::Already),
+            "a" => Some(EnglishKeyword::A),
             "additional" => Some(EnglishKeyword::Additional),
+            "already" => Some(EnglishKeyword::Already),
             "after" => Some(EnglishKeyword::After),
             "among" => Some(EnglishKeyword::Among),
+            "an" => Some(EnglishKeyword::An),
             "and" => Some(EnglishKeyword::And),
             "and/or" => Some(EnglishKeyword::AndOr),
             "another" => Some(EnglishKeyword::Another),

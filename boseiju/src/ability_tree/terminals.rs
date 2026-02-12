@@ -14,49 +14,6 @@ pub trait Terminal: std::fmt::Display + Sized {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum Number {
-    Number { num: u32 },
-    X,
-    OrMore { num: u32 },
-    AnyNumber,
-}
-
-impl std::fmt::Display for Number {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Number::X => write!(f, "x"),
-            Number::Number { num } => write!(f, "{num}"),
-            Number::OrMore { num } => write!(f, "{num} or more"),
-            Number::AnyNumber => write!(f, "any number of"),
-        }
-    }
-}
-
-impl Terminal for Number {
-    fn try_from_str(source: &str) -> Option<Self> {
-        if let Some(num) = crate::utils::parse_num(source) {
-            Some(Number::Number { num })
-        } else if let Some(stripped) = source.strip_suffix(" or more") {
-            let num = crate::utils::parse_num(stripped)?;
-            Some(Number::OrMore { num })
-        } else if let Some(stripped) = source.strip_suffix(" or greater") {
-            let num = crate::utils::parse_num(stripped)?;
-            Some(Number::OrMore { num })
-        } else {
-            match source {
-                "x" => Some(Number::X),
-                "any number of" => Some(Number::AnyNumber),
-                _ => None,
-            }
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CountSpecifier {
     All,
     Target,

@@ -10,6 +10,7 @@ fn dummy<T: DummyInit>() -> T {
 
 pub fn rules() -> impl Iterator<Item = super::ParserRule> {
     [
+        /* Cost reduction */
         super::ParserRule {
             from: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
@@ -36,6 +37,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* Cost increment */
         super::ParserRule {
             from: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
@@ -62,6 +64,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* Cost set to fixed value */
         super::ParserRule {
             from: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
@@ -86,6 +89,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* Apply cost modification to objects */
         super::ParserRule {
             from: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
@@ -117,6 +121,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* Apply cost modification to objects under an if condition */
         super::ParserRule {
             from: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
@@ -125,7 +130,6 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     cost_modification: dummy(),
                 }
                 .id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)).id(),
                 ParserNode::IfCondition { condition: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
@@ -138,7 +142,6 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)),
                     ParserNode::CostModification { cost_modification },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),
                     ParserNode::IfCondition { condition },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Some(ParserNode::CostModificationEffect {

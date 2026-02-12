@@ -1,8 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "this spell costs {3} less to cast if you've gained 3 or more life this turn.\nreturn up to two target creature cards from your graveyard to your hand.";
-    let card_name = "aggressive mammoth";
+    let oracle_text = "if an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nif an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.";
+    let card_name = "doubling season";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;
@@ -32,6 +32,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match output {
         Ok(_) => println!("Svg graph written at {svg}"),
         Err(e) => println!("Failed to convert output to svg: {e}"),
+    }
+
+    if let Ok(abilities) = res {
+        abilities.display_from_root(&mut std::io::stdout(), "").unwrap();
     }
 
     Ok(())

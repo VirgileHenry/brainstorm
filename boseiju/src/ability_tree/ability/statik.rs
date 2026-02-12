@@ -13,6 +13,7 @@ pub mod cost_modification_effect;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum StaticAbility {
+    /// https://mtg.fandom.com/wiki/Continuous_effect
     ContinuousEffect(continuous_effect::ContinuousEffect),
     CharasteristicDefiningAbility(charasteristic_defining_ability::CharacteristicDefiningAbility),
     CostModificationEffect(cost_modification_effect::CostModificationEffect),

@@ -110,8 +110,11 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectSpecifiers {
     Single(ObjectSpecifier),
-    And(arrayvec::ArrayVec<ObjectSpecifier, 8>),
-    Or(arrayvec::ArrayVec<ObjectSpecifier, 8>),
+    And(arrayvec::ArrayVec<ObjectSpecifier, 16>),
+    Or(arrayvec::ArrayVec<ObjectSpecifier, 16>),
+    /// This one is a bit tricky, but it avoids recursive specifiers.
+    /// We can have crosses of and / or: "basic forest or plain" is "(basic and forest) or (basic and plain)".
+    OrOfAnd(arrayvec::ArrayVec<arrayvec::ArrayVec<ObjectSpecifier, 4>, 4>),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifiers {
@@ -120,22 +123,50 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifiers {
         match self {
             ObjectSpecifiers::Single(specifier) => specifier.display(out),
             ObjectSpecifiers::And(specifiers) => {
-                for specifier in specifiers.iter().take(specifiers.len().saturating_sub(1)) {
+                write!(out, "and:")?;
+                for (i, specifier) in specifiers.iter().enumerate() {
+                    if i == specifiers.len() - 1 {
+                        out.push_final_branch()?;
+                    } else {
+                        out.push_inter_branch()?;
+                    }
                     specifier.display(out)?;
-                    write!(out, " and ")?;
-                }
-                if let Some(specifier) = specifiers.last() {
-                    specifier.display(out)?;
+                    out.pop_branch();
                 }
                 Ok(())
             }
             ObjectSpecifiers::Or(specifiers) => {
-                for specifier in specifiers.iter().take(specifiers.len().saturating_sub(1)) {
+                write!(out, "or:")?;
+                for (i, specifier) in specifiers.iter().enumerate() {
+                    if i == specifiers.len() - 1 {
+                        out.push_final_branch()?;
+                    } else {
+                        out.push_inter_branch()?;
+                    }
                     specifier.display(out)?;
-                    write!(out, " or ")?;
+                    out.pop_branch();
                 }
-                if let Some(specifier) = specifiers.last() {
-                    specifier.display(out)?;
+                Ok(())
+            }
+            ObjectSpecifiers::OrOfAnd(specifiers) => {
+                write!(out, "or:")?;
+                for (i, and_specifiers) in specifiers.iter().enumerate() {
+                    if i == specifiers.len() - 1 {
+                        out.push_final_branch()?;
+                    } else {
+                        out.push_inter_branch()?;
+                    }
+                    write!(out, "and:")?;
+                    for (j, specifier) in and_specifiers.iter().enumerate() {
+                        if j == and_specifiers.len() - 1 {
+                            out.push_final_branch()?;
+                        } else {
+                            out.push_inter_branch()?;
+                        }
+                        specifier.display(out)?;
+                        out.pop_branch();
+                    }
+                    out.pop_branch();
                 }
                 Ok(())
             }

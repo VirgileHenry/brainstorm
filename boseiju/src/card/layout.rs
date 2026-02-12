@@ -1,14 +1,25 @@
+mod normal_layout;
+mod saga_layout;
+mod token_layout;
+
+pub use normal_layout::NormalLayout;
+pub use saga_layout::SagaLayout;
+pub use token_layout::TokenLayout;
+
+trait LayoutImpl: Sized {
+    fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4>;
+    fn mana_value(&self) -> usize;
+    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String>;
+    fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()>;
+}
+
 /// All the layouts of Magic: The Gathering for playable cards.
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Layout {
-    Normal {
-        mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
-        card_type: crate::card::card_type::CardType,
-        abilities: crate::AbilityTree,
-    },
+    Normal { layout: NormalLayout },
     Split {},
     Flip {},
     Transform {},
@@ -17,11 +28,7 @@ pub enum Layout {
     Leveler {},
     Class {},
     Case {},
-    Saga {
-        mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
-        card_type: crate::card::card_type::CardType,
-        chapters: arrayvec::ArrayVec<crate::ability_tree::ability::saga_chapter::SagaChapter, 4>,
-    },
+    Saga { layout: SagaLayout },
     Adventure {},
     Mutate {},
     Prototype {},
@@ -29,10 +36,7 @@ pub enum Layout {
     Planar {},
     Scheme {},
     Vanguard {},
-    Token {
-        card_type: crate::card::card_type::CardType,
-        abilities: crate::AbilityTree,
-    },
+    Token { layout: TokenLayout },
     DoubleFaced {},
     Emblem {},
 }
@@ -40,28 +44,14 @@ pub enum Layout {
 impl Layout {
     pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
         match self {
-            Layout::Normal {
-                mana_cost,
-                card_type,
-                abilities,
-            } => {
-                writeln!(output, "│ ╰─ Normal:")?;
-                if let Some(mana_cost) = mana_cost {
-                    writeln!(output, "│    ├─ Mana Cost: {mana_cost}")?;
-                }
-                writeln!(output, "│    ├─ Type Line: {card_type}")?;
-                write!(output, "│    ╰─ Abilities: ")?;
-                abilities.display_from_root(output, "│       ")?;
-                writeln!(output, "")?;
-                Ok(())
-            }
+            Layout::Normal { layout } => layout.display(output),
             _ => writeln!(output, "Unimplemented!"),
         }
     }
 
     pub fn mana_value(&self) -> usize {
         match self {
-            Self::Normal { mana_cost, .. } => mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0),
+            Self::Normal { layout } => layout.mana_value(),
             Self::Split {} => 0,
             Self::Flip {} => 0,
             Self::Transform {} => 0,
@@ -70,7 +60,7 @@ impl Layout {
             Self::Leveler {} => 0,
             Self::Class {} => 0,
             Self::Case {} => 0,
-            Self::Saga { mana_cost, .. } => mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0),
+            Self::Saga { layout } => layout.mana_value(),
             Self::Adventure {} => 0,
             Self::Mutate {} => 0,
             Self::Prototype {} => 0,
@@ -78,7 +68,7 @@ impl Layout {
             Self::Planar {} => 0,
             Self::Scheme {} => 0,
             Self::Vanguard {} => 0,
-            Self::Token { .. } => 0,
+            Self::Token { layout } => layout.mana_value(),
             Self::DoubleFaced {} => 0,
             Self::Emblem {} => 0,
         }
@@ -86,7 +76,7 @@ impl Layout {
 
     pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
         match self {
-            Self::Normal { card_type, .. } => card_type.card_types(),
+            Self::Normal { layout } => layout.card_types(),
             Self::Split {} => arrayvec::ArrayVec::new(),
             Self::Flip {} => arrayvec::ArrayVec::new(),
             Self::Transform {} => arrayvec::ArrayVec::new(),
@@ -95,7 +85,7 @@ impl Layout {
             Self::Leveler {} => arrayvec::ArrayVec::new(),
             Self::Class {} => arrayvec::ArrayVec::new(),
             Self::Case {} => arrayvec::ArrayVec::new(),
-            Self::Saga { card_type, .. } => card_type.card_types(),
+            Self::Saga { layout } => layout.card_types(),
             Self::Adventure {} => arrayvec::ArrayVec::new(),
             Self::Mutate {} => arrayvec::ArrayVec::new(),
             Self::Prototype {} => arrayvec::ArrayVec::new(),
@@ -103,7 +93,7 @@ impl Layout {
             Self::Planar {} => arrayvec::ArrayVec::new(),
             Self::Scheme {} => arrayvec::ArrayVec::new(),
             Self::Vanguard {} => arrayvec::ArrayVec::new(),
-            Self::Token { card_type, .. } => card_type.card_types(),
+            Self::Token { layout } => layout.card_types(),
             Self::DoubleFaced {} => arrayvec::ArrayVec::new(),
             Self::Emblem {} => arrayvec::ArrayVec::new(),
         }
@@ -113,62 +103,16 @@ impl Layout {
 impl TryFrom<&mtg_cardbase::Card> for Layout {
     type Error = String; // Fixme!
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
-        use std::str::FromStr;
-
         match raw_card.layout.as_str() {
             "normal" => Ok(Layout::Normal {
-                mana_cost: match raw_card.mana_cost.as_ref() {
-                    Some(mana_cost) => Some(
-                        crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
-                            .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
-                    ),
-                    None => None,
-                },
-                card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
-                    .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                abilities: match raw_card.oracle_text.as_ref() {
-                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
-                        .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-                    None => crate::AbilityTree::empty(),
-                },
+                layout: NormalLayout::from_raw_card(raw_card)?,
             }),
-            "token" => Ok(Layout::Token {
-                card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
-                    .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                abilities: match raw_card.oracle_text.as_ref() {
-                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
-                        .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-                    None => crate::AbilityTree::empty(),
-                },
+            "token" => Ok(Self::Token {
+                layout: TokenLayout::from_raw_card(raw_card)?,
             }),
-            "saga" => {
-                let ability_tree = match raw_card.oracle_text.as_ref() {
-                    Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
-                        .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-                    None => crate::AbilityTree::empty(),
-                };
-                let mut chapters = arrayvec::ArrayVec::new();
-                for ability in ability_tree.abilities.into_iter() {
-                    match ability {
-                        crate::ability_tree::ability::Ability::SagaChapter(chapter) => chapters.push(chapter),
-                        other => {
-                            return Err(format!("Invalid ability for Saga: expected Chapter, found {other:?}"));
-                        }
-                    }
-                }
-                Ok(Layout::Saga {
-                    mana_cost: match raw_card.mana_cost.as_ref() {
-                        Some(mana_cost) => Some(
-                            crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
-                                .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
-                        ),
-                        None => None,
-                    },
-                    card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
-                        .map_err(|e| format!("Failed to parse card type: {e}"))?,
-                    chapters,
-                })
-            }
+            "saga" => Ok(Self::Saga {
+                layout: SagaLayout::from_raw_card(raw_card)?,
+            }),
             other => Err(format!("Invalid layout in card: {other}")),
         }
     }

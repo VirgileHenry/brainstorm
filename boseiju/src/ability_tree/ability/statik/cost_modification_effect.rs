@@ -14,7 +14,9 @@ impl crate::ability_tree::AbilityTreeImpl for CostModificationEffect {
         write!(out, "cost modification effect:")?;
         out.push_inter_branch()?;
         write!(out, "applies to:")?;
+        out.push_final_branch()?;
         self.applies_to.display(out)?;
+        out.pop_branch();
         out.next_final_branch()?;
         self.modification.display(out)?;
         out.pop_branch();
@@ -36,7 +38,7 @@ impl crate::ability_tree::AbilityTreeImpl for CostModification {
         use std::io::Write;
         match self {
             Self::More(mana) => write!(out, "Cost {} more to cast", mana)?,
-            Self::Less(mana) => write!(out, "Cost {} more to cast", mana)?,
+            Self::Less(mana) => write!(out, "Cost {} less to cast", mana)?,
             Self::Set(mana) => write!(out, "Cost {} to cast", mana)?,
         }
         Ok(())

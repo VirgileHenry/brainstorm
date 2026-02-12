@@ -4,14 +4,14 @@
 pub enum Imperative {
     DealsDamage {
         dealer: crate::ability_tree::object::ObjectReference,
-        amount: crate::ability_tree::terminals::Number,
+        amount: crate::ability_tree::number::Number,
         to: crate::ability_tree::object::ObjectReference,
     },
     Destroy {
         object: crate::ability_tree::object::ObjectReference,
     },
     Put {
-        amount: crate::ability_tree::terminals::Number,
+        amount: crate::ability_tree::number::Number,
         of: crate::ability_tree::terminals::Counter,
         on: crate::ability_tree::object::ObjectReference,
     },

@@ -229,6 +229,11 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                                 crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
                             }
                             crate::ability_tree::object::ObjectSpecifiers::Single(_) => return None,
+                            crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(_) => {
+                                /* Here, it's important to reject the parsing, as we can't tell which specifier were distributed.
+                                 * The parser must start by parsing the full comma array, then distribute. */
+                                return None;
+                            }
                         }
                     },
                 }),
@@ -236,11 +241,77 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* when there is no clear separator, it's an "and". for example, "black creatures you control" are all 3 specifiers. */
+        /* Here, it gets more tricky.
+         * If we have a specifier before / after an or specifier, it applies to both in an AndOfOr list */
         super::ParserRule {
             from: super::RuleLhs::new(&[
                 ParserNode::ObjectSpecifier {
                     specifier: DummyInit::dummy_init(),
+                }
+                .id(),
+                ParserNode::ObjectSpecifiers {
+                    specifiers: DummyInit::dummy_init(),
+                }
+                .id(),
+            ]),
+            result: ParserNode::ObjectSpecifiers {
+                specifiers: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectSpecifier { specifier },
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Some(ParserNode::ObjectSpecifiers {
+                    specifiers: {
+                        match specifiers {
+                            /* New specifier before and or: it's an "or of ands".
+                             * For example, "basic plain or forest card".
+                             * The "and" shall apply to all the previous specifiers */
+                            crate::ability_tree::object::ObjectSpecifiers::Or(specifiers) => {
+                                let mut new_specifiers = arrayvec::ArrayVec::new();
+                                for prev_or_specifier in specifiers.iter() {
+                                    let mut and_specifiers = arrayvec::ArrayVec::new();
+                                    and_specifiers.push(specifier.clone());
+                                    and_specifiers.push(prev_or_specifier.clone());
+                                    new_specifiers.push(and_specifiers);
+                                }
+                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
+                            }
+                            /* Here, we are just chaining ands: "red creature and artifact card" is all ands */
+                            crate::ability_tree::object::ObjectSpecifiers::And(specifiers) => {
+                                let mut new_specifiers = specifiers.clone();
+                                new_specifiers.insert(0, specifier.clone());
+                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
+                            }
+                            /* A specifier in front of a single specifier is basically and and: "red creature" */
+                            crate::ability_tree::object::ObjectSpecifiers::Single(prev_specifier) => {
+                                let mut new_specifiers = arrayvec::ArrayVec::new();
+                                new_specifiers.push(specifier.clone());
+                                new_specifiers.push(prev_specifier.clone());
+                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
+                            }
+                            /* We already have an Or of Ands, add the specifier to the full array:
+                             * "Red Artifact Creature or Enchantment" red shall be distributed to everything */
+                            crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(specifiers) => {
+                                let mut new_specifiers = specifiers.clone();
+                                for specifiers in new_specifiers.iter_mut() {
+                                    specifiers.insert(0, specifier.clone());
+                                }
+                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
+                            }
+                        }
+                    },
+                }),
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Same for specifiers after or lists, like in "instant or sorcery card" */
+        super::ParserRule {
+            from: super::RuleLhs::new(&[
+                ParserNode::ObjectSpecifiers {
+                    specifiers: DummyInit::dummy_init(),
                 }
                 .id(),
                 ParserNode::ObjectSpecifier {
@@ -254,14 +325,56 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectSpecifier { specifier: spec1 },
-                    ParserNode::ObjectSpecifier { specifier: spec2 },
+                    ParserNode::ObjectSpecifiers { specifiers },
+                    ParserNode::ObjectSpecifier { specifier },
                 ] => Some(ParserNode::ObjectSpecifiers {
                     specifiers: {
-                        let mut specifiers = arrayvec::ArrayVec::new();
-                        specifiers.push(spec1.clone());
-                        specifiers.push(spec2.clone());
-                        crate::ability_tree::object::ObjectSpecifiers::And(specifiers)
+                        match specifiers {
+                            /* New specifier after and or: it's an "or of ands".
+                             * For example, "red or green creature".
+                             * The "and" shall apply to all the previous specifiers */
+                            crate::ability_tree::object::ObjectSpecifiers::Or(specifiers) => {
+                                let mut new_specifiers = arrayvec::ArrayVec::new();
+                                for prev_or_specifier in specifiers.iter() {
+                                    let mut and_specifiers = arrayvec::ArrayVec::new();
+                                    and_specifiers.push(prev_or_specifier.clone());
+                                    and_specifiers.push(specifier.clone());
+                                    new_specifiers.push(and_specifiers);
+                                }
+                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
+                            }
+                            /* Fixme because maybe this will be a problem later on.
+                             * When there is "A and B C", it usually means "any of A C or B C".
+                             * For instance, "instants and sorceries you cast" -> applies to both, not spells that are both.
+                             * So I'm making a OrOfAnd out of it for now.
+                             */
+                            crate::ability_tree::object::ObjectSpecifiers::And(specifiers) => {
+                                let mut new_specifiers = arrayvec::ArrayVec::new();
+                                for prev_or_specifier in specifiers.iter() {
+                                    let mut and_specifiers = arrayvec::ArrayVec::new();
+                                    and_specifiers.push(prev_or_specifier.clone());
+                                    and_specifiers.push(specifier.clone());
+                                    new_specifiers.push(and_specifiers);
+                                }
+                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
+                            }
+                            /* A specifier after a single specifier is basically and and: "red creature" */
+                            crate::ability_tree::object::ObjectSpecifiers::Single(prev_specifier) => {
+                                let mut new_specifiers = arrayvec::ArrayVec::new();
+                                new_specifiers.push(prev_specifier.clone());
+                                new_specifiers.push(specifier.clone());
+                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
+                            }
+                            /* We already have an Or of Ands, add the specifier to the full array:
+                             * "Red or Green Artifact Creature" creature shall be distributed to everything */
+                            crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(specifiers) => {
+                                let mut new_specifiers = specifiers.clone();
+                                for specifiers in new_specifiers.iter_mut() {
+                                    specifiers.push(specifier.clone());
+                                }
+                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
+                            }
+                        }
                     },
                 }),
                 _ => None,
