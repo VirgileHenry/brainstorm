@@ -1,0 +1,92 @@
+use crate::lexer::tokens::TokenKind;
+use crate::lexer::tokens::non_terminals;
+use crate::parser::node::DummyInit;
+use crate::parser::rules::ParserNode;
+use crate::parser::rules::ParserRule;
+use crate::parser::rules::ParserRuleDeclarationLocation;
+use crate::parser::rules::RuleLhs;
+use idris::Idris;
+
+fn dummy<T: DummyInit>() -> T {
+    T::dummy_init()
+}
+
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+    [
+        /* A single choice is presented with a newline, bullet and imperative. */
+        ParserRule {
+            from: RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)).id(),
+                ParserNode::SpellAbility { ability: dummy() }.id(),
+            ]),
+            result: ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
+                    ParserNode::SpellAbility { ability },
+                ] => Some(ParserNode::ImperativeChoices {
+                    choices: vec![ability.clone()],
+                }),
+                _ => None,
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* Add choices to choices */
+        ParserRule {
+            from: RuleLhs::new(&[
+                ParserNode::ImperativeChoices { choices: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)).id(),
+                ParserNode::SpellAbility { ability: dummy() }.id(),
+            ]),
+            result: ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ImperativeChoices { choices },
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
+                    ParserNode::SpellAbility { ability },
+                ] => Some(ParserNode::ImperativeChoices {
+                    choices: {
+                        let mut choices = choices.clone();
+                        choices.push(ability.clone());
+                        choices
+                    },
+                }),
+                _ => None,
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* From a choose clause and choices, we can make a choose imperative */
+        ParserRule {
+            from: RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Choose)).id(),
+                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)).id(),
+                ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            ]),
+            result: ParserNode::Imperative { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Choose)),
+                    ParserNode::Number { number },
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)),
+                    ParserNode::ImperativeChoices { choices },
+                ] => Some(ParserNode::Imperative {
+                    imperative: crate::ability_tree::imperative::Imperative::Choose(
+                        crate::ability_tree::imperative::ChooseImperative {
+                            choice_count: number.clone(),
+                            can_choose_same_mode: false,
+                            choices: choices.clone(),
+                        },
+                    ),
+                }),
+                _ => None,
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+    ]
+    .into_iter()
+}

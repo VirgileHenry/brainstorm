@@ -9,7 +9,7 @@ fn dummy<T: DummyInit>() -> T {
     T::dummy_init()
 }
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let english_to_numbers_rules = vec![
         /* "An", "A" can be used as a number: "A card" really means "1 card" */
         super::ParserRule {

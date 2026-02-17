@@ -8,7 +8,7 @@ fn dummy<T: DummyInit>() -> T {
     T::dummy_init()
 }
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_rules = vec![super::ParserRule {
         from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Zone(crate::ability_tree::zone::Zone::Battlefield)).id()]),
         result: ParserNode::Zone { zone: dummy() }.id(),

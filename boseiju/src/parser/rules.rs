@@ -9,12 +9,11 @@ mod imperative;
 mod keyword_to_ability;
 mod mana;
 mod number;
-mod object_kinds;
 mod object_references;
 mod object_specifiers;
 mod replacement_effect;
 mod statement;
-mod trigger_condition;
+mod triggered_ability;
 mod zone;
 
 use crate::parser::node::ParserNode;
@@ -33,12 +32,11 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(keyword_to_ability::rules()),
         Box::new(mana::rules()),
         Box::new(number::rules()),
-        Box::new(object_kinds::rules()),
         Box::new(object_references::rules()),
         Box::new(object_specifiers::rules()),
         Box::new(replacement_effect::rules()),
         Box::new(statement::rules()),
-        Box::new(trigger_condition::rules()),
+        Box::new(triggered_ability::rules()),
         Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()

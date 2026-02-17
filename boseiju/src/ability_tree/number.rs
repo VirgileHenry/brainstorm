@@ -20,3 +20,10 @@ impl std::fmt::Display for Number {
         }
     }
 }
+
+impl crate::ability_tree::AbilityTreeImpl for Number {
+    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+}

@@ -57,6 +57,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 
     /* Initialize the nodes from the tokens */
     let nodes: Vec<node::ParserNode> = tokens.iter().cloned().map(node::ParserNode::from).collect();
+    token_precedence_check(&rules, &nodes)?;
 
     let mut best_error: Option<error::ParserError> = None;
 
@@ -99,27 +100,8 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
                     }
 
                     /* If anywhere in the new node, two consecutive tokens are not allowed, stop */
-                    let mut allowed = true;
-                    for window in next_node.nodes.windows(2) {
-                        let [current, next] = window else { unreachable!() };
-                        if !rules.can_succeed(current, next) {
-                            /* Update best error */
-                            let prev_best_error = best_error.take();
-                            best_error = Some(
-                                error::ParserError::UnexpectedFollowingToken {
-                                    current: current.clone(),
-                                    next: next.clone(),
-                                    current_best: next_node.nodes.clone(),
-                                }
-                                .keep_best_error(prev_best_error),
-                            );
-                            /* No rules will ever allow to merge current and next tokens, we can stop */
-                            allowed = false;
-                            break;
-                        }
-                    }
-                    if !allowed {
-                        continue;
+                    if let Err(error) = token_precedence_check(&rules, &next_node.nodes) {
+                        best_error = Some(error.keep_best_error(best_error))
                     }
 
                     next_states.push(next_node);
@@ -142,6 +124,20 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
             nodes: tokens.iter().map(|t| t.kind.clone()).collect(),
         },
     })
+}
+
+fn token_precedence_check(rules: &rule_map::RuleMap, nodes: &[node::ParserNode]) -> Result<(), error::ParserError> {
+    for window in nodes.windows(2) {
+        let [current, next] = window else { unreachable!() };
+        if !rules.can_succeed(current, next) {
+            return Err(error::ParserError::UnexpectedFollowingToken {
+                current: current.clone(),
+                next: next.clone(),
+                current_best: nodes.to_vec(),
+            });
+        }
+    }
+    Ok(())
 }
 
 /// Parser function without artifacts, to get the result straight out.

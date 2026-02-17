@@ -8,7 +8,7 @@ fn dummy<T: DummyInit>() -> T {
     T::dummy_init()
 }
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_event_replacement_rules = vec![
         /* Create source reference: that effect (it), that player, etc */
         super::ParserRule {
@@ -118,27 +118,6 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "That permanent" is a reference to previously mentionned permanent */
-        super::ParserRule {
-            from: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::That)).id(),
-                ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Permanent)).id(),
-            ]),
-            result: ParserNode::ReplacedPermanentKind { kind: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::That)),
-                    ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Permanent)),
-                ] => {
-                    use crate::ability_tree::event::replacement::counter_on_permanent;
-                    Some(ParserNode::ReplacedPermanentKind {
-                        kind: counter_on_permanent::ReplacedPermanentKind::PreviouslyMentionnedPermanent,
-                    })
-                }
-                _ => None,
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
         /* counter replacement with "twice that many" */
         super::ParserRule {
             from: super::RuleLhs::new(&[
@@ -147,7 +126,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                 ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
                 ParserNode::ReplacedCounterKind { kind: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
-                ParserNode::ReplacedPermanentKind { kind: dummy() }.id(),
+                ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
             result: ParserNode::EventReplacement { replacement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -157,7 +136,9 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)),
                     ParserNode::ReplacedCounterKind { kind: counter_kind },
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
-                    ParserNode::ReplacedPermanentKind { kind: permanent_kind },
+                    ParserNode::ObjectReference {
+                        reference: permanent_kind,
+                    },
                 ] => {
                     use crate::ability_tree::event::replacement;
                     use crate::ability_tree::number::Number;

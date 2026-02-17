@@ -18,6 +18,22 @@ pub enum ObjectKind {
     CardType(mtg_data::CardType),
 }
 
+impl ObjectKind {
+    pub fn all() -> impl Iterator<Item = Self> {
+        [Self::Card, Self::Permanent, Self::Spell]
+            .into_iter()
+            .chain(mtg_data::ArtifactType::all().map(Self::ArtifactSubtype))
+            .chain(mtg_data::BattleType::all().map(Self::BattleSubtype))
+            .chain(mtg_data::CreatureType::all().map(Self::CreatureSubtype))
+            .chain(mtg_data::EnchantmentType::all().map(Self::EnchantmentSubtype))
+            .chain(mtg_data::SpellType::all().map(Self::InstantSorcerySubtype))
+            .chain(mtg_data::LandType::all().map(Self::LandSubtype))
+            .chain(mtg_data::PlaneswalkerType::all().map(Self::PlaneswalkerSubtype))
+            .chain(mtg_data::Supertype::all().map(Self::Supertype))
+            .chain(mtg_data::CardType::all().map(Self::CardType))
+    }
+}
+
 impl std::fmt::Display for ObjectKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -78,6 +94,7 @@ pub enum ObjectReference {
         specifiers: ObjectSpecifiers,
     },
     ObjectAttachedTo,
+    PreviouslyMentionned(PreviouslyMentionnedObject),
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
@@ -101,6 +118,7 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectReference {
                 out.pop_branch();
                 Ok(())
             }
+            Self::PreviouslyMentionned(object) => write!(out, "previously mentionned: {object}"),
         }
     }
 }
@@ -115,6 +133,39 @@ pub enum ObjectSpecifiers {
     /// This one is a bit tricky, but it avoids recursive specifiers.
     /// We can have crosses of and / or: "basic forest or plain" is "(basic and forest) or (basic and plain)".
     OrOfAnd(arrayvec::ArrayVec<arrayvec::ArrayVec<ObjectSpecifier, 4>, 4>),
+}
+
+impl ObjectSpecifiers {
+    pub fn add_factor_specifier(self, factor_specifier: ObjectSpecifier) -> Self {
+        match self {
+            Self::Single(specifier) => {
+                let mut specifiers = arrayvec::ArrayVec::new();
+                specifiers.push(specifier);
+                specifiers.push(factor_specifier);
+                Self::And(specifiers)
+            }
+            Self::And(mut specifiers) => {
+                specifiers.push(factor_specifier);
+                Self::And(specifiers)
+            }
+            Self::Or(specifiers) => {
+                let mut or_specifiers = arrayvec::ArrayVec::new();
+                for prev_specifier in specifiers.into_iter() {
+                    let mut and_specifiers = arrayvec::ArrayVec::new();
+                    and_specifiers.push(prev_specifier);
+                    and_specifiers.push(factor_specifier.clone());
+                    or_specifiers.push(and_specifiers);
+                }
+                Self::OrOfAnd(or_specifiers)
+            }
+            Self::OrOfAnd(mut specifiers) => {
+                for and_specifiers in specifiers.iter_mut() {
+                    and_specifiers.push(factor_specifier.clone());
+                }
+                Self::OrOfAnd(specifiers)
+            }
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifiers {
@@ -183,6 +234,7 @@ pub enum ObjectSpecifier {
     Cast(crate::ability_tree::terminals::CastSpecifier),
     Kind(ObjectKind),
     NotOfAKind(ObjectKind),
+    Another,
 }
 
 impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
@@ -194,6 +246,21 @@ impl crate::ability_tree::AbilityTreeImpl for ObjectSpecifier {
             ObjectSpecifier::NotOfAKind(object) => write!(out, "not of a kind specifier: not {object}"),
             ObjectSpecifier::Control(control) => write!(out, "control specifier: {control}"),
             ObjectSpecifier::Cast(cast) => write!(out, "cast specifier: {cast}"),
+            ObjectSpecifier::Another => write!(out, "not self specifier: another"),
         }
+    }
+}
+
+/// Anything from "that permanent", "those counters", "that card", etc.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct PreviouslyMentionnedObject {
+    pub kind: ObjectKind,
+}
+
+impl std::fmt::Display for PreviouslyMentionnedObject {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Previously mentionned object of kind: {}", self.kind)
     }
 }

@@ -30,7 +30,7 @@ pub enum ReplacedTokenKind {
 impl std::fmt::Display for ReplacedTokenKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::PreviouslyMentionnedToken => write!(f, "previously mentionned tokens"),
+            Self::PreviouslyMentionnedToken => write!(f, "previously mentionned token"),
             Self::NewToken(token) => write!(f, "{}", token.name),
         }
     }

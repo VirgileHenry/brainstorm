@@ -1,10 +1,8 @@
-pub mod trigger_cond;
-
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TriggeredAbility {
-    pub condition: trigger_cond::TriggerCondition,
+    pub condition: crate::ability_tree::event::Event,
     pub effect: crate::ability_tree::statement::Statement,
 }
 

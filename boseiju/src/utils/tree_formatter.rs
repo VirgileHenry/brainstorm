@@ -4,11 +4,7 @@ pub struct TreeFormatter<'out, W: std::io::Write> {
 }
 
 impl<'out, W: std::io::Write> TreeFormatter<'out, W> {
-    pub fn new(
-        output: &'out mut W,
-        padding_capacity: usize,
-        prefix: &str,
-    ) -> TreeFormatter<'out, W> {
+    pub fn new(output: &'out mut W, padding_capacity: usize, prefix: &str) -> TreeFormatter<'out, W> {
         let mut padding = String::with_capacity(padding_capacity);
         padding.push_str(prefix);
         TreeFormatter { output, padding }

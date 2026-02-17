@@ -5,7 +5,7 @@ use crate::lexer::tokens::non_terminals;
 use crate::parser::node::DummyInit;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let power_toughness_modifier_rules = [
         crate::ability_tree::terminals::PowerToughnessModifier::PlusXPlusX,
         crate::ability_tree::terminals::PowerToughnessModifier::PlusXMinusX,

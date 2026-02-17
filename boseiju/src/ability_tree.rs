@@ -7,6 +7,7 @@ pub mod number;
 pub mod object;
 pub mod statement;
 pub mod terminals;
+pub mod time;
 pub mod zone;
 
 /// Trait to implement common method on all nodes of an ability tree.

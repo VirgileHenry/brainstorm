@@ -5,8 +5,8 @@ use crate::lexer::tokens::non_terminals;
 use crate::parser::node::DummyInit;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
-    [
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+    let object_specifiers_rules = vec![
         /* Control specifiers are object specifiers */
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::ControlSpecifier(
@@ -71,7 +71,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
         },
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::EachOpponent)).id(),
+                ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
             result: ParserNode::ObjectSpecifier {
@@ -80,28 +80,10 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::EachOpponent)),
+                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Some(ParserNode::ObjectSpecifier {
                     specifier: crate::ability_tree::object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast),
-                }),
-                _ => None,
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
-        /* In some cases, object kinds can be kind specifiers */
-        super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::ObjectKind {
-                kind: DummyInit::dummy_init(),
-            }
-            .id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ObjectKind { kind }] => Some(ParserNode::ObjectSpecifier {
-                    specifier: crate::ability_tree::object::ObjectSpecifier::Kind(*kind),
                 }),
                 _ => None,
             },
@@ -263,45 +245,7 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     ParserNode::ObjectSpecifier { specifier },
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Some(ParserNode::ObjectSpecifiers {
-                    specifiers: {
-                        match specifiers {
-                            /* New specifier before and or: it's an "or of ands".
-                             * For example, "basic plain or forest card".
-                             * The "and" shall apply to all the previous specifiers */
-                            crate::ability_tree::object::ObjectSpecifiers::Or(specifiers) => {
-                                let mut new_specifiers = arrayvec::ArrayVec::new();
-                                for prev_or_specifier in specifiers.iter() {
-                                    let mut and_specifiers = arrayvec::ArrayVec::new();
-                                    and_specifiers.push(specifier.clone());
-                                    and_specifiers.push(prev_or_specifier.clone());
-                                    new_specifiers.push(and_specifiers);
-                                }
-                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
-                            }
-                            /* Here, we are just chaining ands: "red creature and artifact card" is all ands */
-                            crate::ability_tree::object::ObjectSpecifiers::And(specifiers) => {
-                                let mut new_specifiers = specifiers.clone();
-                                new_specifiers.insert(0, specifier.clone());
-                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
-                            }
-                            /* A specifier in front of a single specifier is basically and and: "red creature" */
-                            crate::ability_tree::object::ObjectSpecifiers::Single(prev_specifier) => {
-                                let mut new_specifiers = arrayvec::ArrayVec::new();
-                                new_specifiers.push(specifier.clone());
-                                new_specifiers.push(prev_specifier.clone());
-                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
-                            }
-                            /* We already have an Or of Ands, add the specifier to the full array:
-                             * "Red Artifact Creature or Enchantment" red shall be distributed to everything */
-                            crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(specifiers) => {
-                                let mut new_specifiers = specifiers.clone();
-                                for specifiers in new_specifiers.iter_mut() {
-                                    specifiers.insert(0, specifier.clone());
-                                }
-                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
-                            }
-                        }
-                    },
+                    specifiers: specifiers.clone().add_factor_specifier(specifier.clone()),
                 }),
                 _ => None,
             },
@@ -328,59 +272,93 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
                     ParserNode::ObjectSpecifiers { specifiers },
                     ParserNode::ObjectSpecifier { specifier },
                 ] => Some(ParserNode::ObjectSpecifiers {
-                    specifiers: {
-                        match specifiers {
-                            /* New specifier after and or: it's an "or of ands".
-                             * For example, "red or green creature".
-                             * The "and" shall apply to all the previous specifiers */
-                            crate::ability_tree::object::ObjectSpecifiers::Or(specifiers) => {
-                                let mut new_specifiers = arrayvec::ArrayVec::new();
-                                for prev_or_specifier in specifiers.iter() {
-                                    let mut and_specifiers = arrayvec::ArrayVec::new();
-                                    and_specifiers.push(prev_or_specifier.clone());
-                                    and_specifiers.push(specifier.clone());
-                                    new_specifiers.push(and_specifiers);
-                                }
-                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
-                            }
-                            /* Fixme because maybe this will be a problem later on.
-                             * When there is "A and B C", it usually means "any of A C or B C".
-                             * For instance, "instants and sorceries you cast" -> applies to both, not spells that are both.
-                             * So I'm making a OrOfAnd out of it for now.
-                             */
-                            crate::ability_tree::object::ObjectSpecifiers::And(specifiers) => {
-                                let mut new_specifiers = arrayvec::ArrayVec::new();
-                                for prev_or_specifier in specifiers.iter() {
-                                    let mut and_specifiers = arrayvec::ArrayVec::new();
-                                    and_specifiers.push(prev_or_specifier.clone());
-                                    and_specifiers.push(specifier.clone());
-                                    new_specifiers.push(and_specifiers);
-                                }
-                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
-                            }
-                            /* A specifier after a single specifier is basically and and: "red creature" */
-                            crate::ability_tree::object::ObjectSpecifiers::Single(prev_specifier) => {
-                                let mut new_specifiers = arrayvec::ArrayVec::new();
-                                new_specifiers.push(prev_specifier.clone());
-                                new_specifiers.push(specifier.clone());
-                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
-                            }
-                            /* We already have an Or of Ands, add the specifier to the full array:
-                             * "Red or Green Artifact Creature" creature shall be distributed to everything */
-                            crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(specifiers) => {
-                                let mut new_specifiers = specifiers.clone();
-                                for specifiers in new_specifiers.iter_mut() {
-                                    specifiers.push(specifier.clone());
-                                }
-                                crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(new_specifiers)
-                            }
-                        }
-                    },
+                    specifiers: specifiers.clone().add_factor_specifier(specifier.clone()),
                 }),
                 _ => None,
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+    ];
+
+    let object_kind_to_specifiers = crate::ability_tree::object::ObjectKind::all()
+        .map(|object_kind| super::ParserRule {
+            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind)).id()]),
+            result: ParserNode::ObjectSpecifier {
+                specifier: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind))] => Some(ParserNode::ObjectSpecifier {
+                    specifier: crate::ability_tree::object::ObjectSpecifier::Kind(object_kind.clone()),
+                }),
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        })
+        .collect::<Vec<_>>();
+
+    let object_non_kind_to_specifiers = vec![
+        super::ParserRule {
+            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonCreature)).id()]),
+            result: ParserNode::ObjectSpecifier {
+                specifier: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonCreature))] => {
+                    Some(ParserNode::ObjectSpecifier {
+                        specifier: crate::ability_tree::object::ObjectSpecifier::NotOfAKind(
+                            crate::ability_tree::object::ObjectKind::CardType(mtg_data::CardType::Creature),
+                        ),
+                    })
+                }
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonLand)).id()]),
+            result: ParserNode::ObjectSpecifier {
+                specifier: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonLand))] => {
+                    Some(ParserNode::ObjectSpecifier {
+                        specifier: crate::ability_tree::object::ObjectSpecifier::NotOfAKind(
+                            crate::ability_tree::object::ObjectKind::CardType(mtg_data::CardType::Land),
+                        ),
+                    })
+                }
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonToken)).id()]),
+            result: ParserNode::ObjectSpecifier {
+                specifier: DummyInit::dummy_init(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonToken))] => {
+                    Some(ParserNode::ObjectSpecifier {
+                        specifier: crate::ability_tree::object::ObjectSpecifier::NotOfAKind(
+                            crate::ability_tree::object::ObjectKind::Permanent,
+                        ),
+                    })
+                }
+                _ => None,
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+    ];
+
+    [
+        object_specifiers_rules,
+        object_kind_to_specifiers,
+        object_non_kind_to_specifiers,
     ]
     .into_iter()
+    .flatten()
 }

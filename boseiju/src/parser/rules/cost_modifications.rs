@@ -8,7 +8,7 @@ fn dummy<T: DummyInit>() -> T {
     T::dummy_init()
 }
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Cost reduction */
         super::ParserRule {

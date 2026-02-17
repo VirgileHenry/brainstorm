@@ -44,20 +44,23 @@ pub enum ParserNode {
     EventSourceReference {
         source: ability_tree::event::replacement::source_ref::EventSourceReference,
     },
+    ExileFollowUp {
+        follow_up: ability_tree::imperative::ExileFollowUp,
+    },
     IfCondition {
         condition: ability_tree::if_condition::IfCondition,
     },
     Imperative {
         imperative: ability_tree::imperative::Imperative,
     },
+    ImperativeChoices {
+        choices: Vec<ability_tree::ability::spell::SpellAbility>,
+    },
     ManaCost {
         mana_cost: ability_tree::terminals::ManaCost,
     },
     Number {
         number: ability_tree::number::Number,
-    },
-    ObjectKind {
-        kind: ability_tree::object::ObjectKind,
     },
     ObjectReference {
         reference: ability_tree::object::ObjectReference,
@@ -68,20 +71,20 @@ pub enum ParserNode {
     ObjectSpecifiers {
         specifiers: ability_tree::object::ObjectSpecifiers,
     },
+    PreviouslyMentionnedObject {
+        object: ability_tree::object::PreviouslyMentionnedObject,
+    },
     ReplacedCounterKind {
         kind: ability_tree::event::replacement::counter_on_permanent::ReplacedCounterKind,
-    },
-    ReplacedPermanentKind {
-        kind: ability_tree::event::replacement::counter_on_permanent::ReplacedPermanentKind,
     },
     ReplacedTokenKind {
         kind: ability_tree::event::replacement::token_creation::ReplacedTokenKind,
     },
+    SpellAbility {
+        ability: crate::ability_tree::ability::spell::SpellAbility,
+    },
     Statement {
         statement: ability_tree::statement::Statement,
-    },
-    TriggerCondition {
-        condition: ability_tree::ability::triggered::trigger_cond::TriggerCondition,
     },
     Zone {
         zone: ability_tree::zone::ZoneReference,
@@ -106,7 +109,13 @@ impl<T: DummyInit> DummyInit for Box<T> {
     }
 }
 
-impl<T: DummyInit> DummyInit for Vec<T> {
+impl<T> DummyInit for Option<T> {
+    fn dummy_init() -> Self {
+        None
+    }
+}
+
+impl<T> DummyInit for Vec<T> {
     fn dummy_init() -> Self {
         Vec::with_capacity(0)
     }
@@ -233,9 +242,9 @@ impl DummyInit for ability_tree::if_condition::condition_timeframe::ConditionTim
 
 impl DummyInit for ability_tree::imperative::Imperative {
     fn dummy_init() -> Self {
-        Self::Destroy {
+        Self::Destroy(ability_tree::imperative::DestroyImperative {
             object: DummyInit::dummy_init(),
-        }
+        })
     }
 }
 
@@ -275,15 +284,6 @@ impl DummyInit for ability_tree::statement::Statement {
     }
 }
 
-impl DummyInit for ability_tree::ability::triggered::trigger_cond::TriggerCondition {
-    fn dummy_init() -> Self {
-        Self::ObjectDoesAction {
-            object: DummyInit::dummy_init(),
-            action: DummyInit::dummy_init(),
-        }
-    }
-}
-
 impl DummyInit for ability_tree::number::Number {
     fn dummy_init() -> Self {
         Self::Number { num: 0 }
@@ -319,11 +319,11 @@ impl DummyInit for ability_tree::zone::ZoneReference {
 
 impl DummyInit for ability_tree::event::Event {
     fn dummy_init() -> Self {
-        Self::CreateTokens {
+        Self::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
             source: DummyInit::dummy_init(),
             quantity: DummyInit::dummy_init(),
             token_specifiers: None,
-        }
+        })
     }
 }
 
@@ -331,7 +331,7 @@ impl DummyInit for ability_tree::event::replacement::EventReplacement {
     fn dummy_init() -> Self {
         Self::TokenCreationReplacement {
             source_ref: DummyInit::dummy_init(),
-            tokens: Vec::with_capacity(0),
+            tokens: DummyInit::dummy_init(),
         }
     }
 }
@@ -354,14 +354,43 @@ impl DummyInit for ability_tree::event::replacement::counter_on_permanent::Repla
     }
 }
 
-impl DummyInit for ability_tree::event::replacement::counter_on_permanent::ReplacedPermanentKind {
-    fn dummy_init() -> Self {
-        Self::PreviouslyMentionnedPermanent
-    }
-}
-
 impl DummyInit for ability_tree::event::source::EventSource {
     fn dummy_init() -> Self {
         Self::AnEffect
+    }
+}
+
+impl DummyInit for ability_tree::imperative::ExileFollowUp {
+    fn dummy_init() -> Self {
+        Self::ReturnIt {
+            return_imperative: DummyInit::dummy_init(),
+            at: DummyInit::dummy_init(),
+        }
+    }
+}
+
+impl DummyInit for ability_tree::object::PreviouslyMentionnedObject {
+    fn dummy_init() -> Self {
+        Self {
+            kind: DummyInit::dummy_init(),
+        }
+    }
+}
+
+impl DummyInit for ability_tree::imperative::ReturnImperative {
+    fn dummy_init() -> Self {
+        Self {
+            object: DummyInit::dummy_init(),
+            from: DummyInit::dummy_init(),
+            to: DummyInit::dummy_init(),
+        }
+    }
+}
+
+impl DummyInit for ability_tree::ability::spell::SpellAbility {
+    fn dummy_init() -> Self {
+        Self {
+            effects: DummyInit::dummy_init(),
+        }
     }
 }

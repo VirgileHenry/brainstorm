@@ -4,61 +4,19 @@ use crate::lexer::tokens::non_terminals;
 use crate::parser::node::DummyInit;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+fn dummy<T: DummyInit>() -> T {
+    T::dummy_init()
+}
+
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Statements are spell abilities */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::Statement {
-                statement: DummyInit::dummy_init(),
-            }
-            .id()]),
-            result: ParserNode::Ability {
-                ability: DummyInit::dummy_init(),
-            }
-            .id(),
+            from: super::RuleLhs::new(&[ParserNode::SpellAbility { ability: dummy() }.id()]),
+            result: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Statement { statement }] => Some(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Spell(
-                        crate::ability_tree::ability::spell::SpellAbility {
-                            effect: statement.clone(),
-                        },
-                    )),
-                }),
-                _ => None,
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
-        /* Triggered abilities from all their keywords: When, Whenever */
-        super::ParserRule {
-            from: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)).id(),
-                ParserNode::TriggerCondition {
-                    condition: DummyInit::dummy_init(),
-                }
-                .id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
-                ParserNode::Statement {
-                    statement: DummyInit::dummy_init(),
-                }
-                .id(),
-            ]),
-            result: ParserNode::Ability {
-                ability: DummyInit::dummy_init(),
-            }
-            .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)),
-                    ParserNode::TriggerCondition { condition },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
-                    ParserNode::Statement { statement },
-                ] => Some(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
-                        crate::ability_tree::ability::triggered::TriggeredAbility {
-                            condition: condition.clone(),
-                            effect: statement.clone(),
-                        },
-                    )),
+                &[ParserNode::SpellAbility { ability }] => Some(ParserNode::Ability {
+                    ability: Box::new(crate::ability_tree::ability::Ability::Spell(ability.clone())),
                 }),
                 _ => None,
             },
@@ -66,14 +24,8 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
         },
         /* Continuous effects are static abilities */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::ContinuousEffect {
-                effect: DummyInit::dummy_init(),
-            }
-            .id()]),
-            result: ParserNode::Ability {
-                ability: DummyInit::dummy_init(),
-            }
-            .id(),
+            from: super::RuleLhs::new(&[ParserNode::ContinuousEffect { effect: dummy() }.id()]),
+            result: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ContinuousEffect { effect }] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Static(
@@ -87,13 +39,10 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
         /* Cost reduction effects are static ailities */
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::CostModificationEffect {
-                cost_modification: DummyInit::dummy_init(),
+                cost_modification: dummy(),
             }
             .id()]),
-            result: ParserNode::Ability {
-                ability: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::CostModificationEffect { cost_modification }] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Static(
@@ -106,14 +55,8 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
         },
         /* Characteristic defining ability is an ability */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::CharacteristicDefiningAbility {
-                ability: DummyInit::dummy_init(),
-            }
-            .id()]),
-            result: ParserNode::Ability {
-                ability: DummyInit::dummy_init(),
-            }
-            .id(),
+            from: super::RuleLhs::new(&[ParserNode::CharacteristicDefiningAbility { ability: dummy() }.id()]),
+            result: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::CharacteristicDefiningAbility { ability }] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Static(
@@ -126,14 +69,8 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
         },
         /* A single Ability can be turned into an ability tree with a single element */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::Ability {
-                ability: DummyInit::dummy_init(),
-            }
-            .id()]),
-            result: ParserNode::AbilityTree {
-                tree: DummyInit::dummy_init(),
-            }
-            .id(),
+            from: super::RuleLhs::new(&[ParserNode::Ability { ability: dummy() }.id()]),
+            result: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Ability { ability }] => Some(ParserNode::AbilityTree {
                     tree: {
@@ -149,20 +86,11 @@ pub fn rules() -> impl Iterator<Item = super::ParserRule> {
         /* Abilities separated by new lines can be merged into a single ability tree */
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::AbilityTree {
-                    tree: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::AbilityTree { tree: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
-                ParserNode::Ability {
-                    ability: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::Ability { ability: dummy() }.id(),
             ]),
-            result: ParserNode::AbilityTree {
-                tree: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::AbilityTree { tree },

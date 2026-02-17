@@ -3,7 +3,7 @@ use crate::lexer::tokens::TokenKind;
 use crate::parser::node::DummyInit;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = super::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     mtg_data::KeywordAbility::all().map(|keyword| super::ParserRule {
         from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::KeywordAbility(keyword)).id()]),
         result: ParserNode::Ability {
