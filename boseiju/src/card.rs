@@ -1,4 +1,3 @@
-pub mod card_type;
 pub mod colors;
 pub mod layout;
 pub mod legalities;
@@ -39,6 +38,7 @@ impl Card {
     }
 }
 
+#[cfg(feature = "parser")]
 impl TryFrom<&mtg_cardbase::Card> for Card {
     type Error = String; // Fixme: proper error handling accross everything
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {

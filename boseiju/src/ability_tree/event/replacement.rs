@@ -1,62 +1,47 @@
-pub mod counter_on_permanent;
-pub mod source_ref;
-pub mod token_creation;
+mod counter_on_permanent;
+mod source_ref;
+mod token_creation;
 
+pub use counter_on_permanent::CounterOnPermanentReplacement;
+pub use source_ref::EventSourceReference;
+pub use token_creation::TokenCreationReplacement;
+
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
+/// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum EventReplacement {
-    TokenCreationReplacement {
-        source_ref: source_ref::EventSourceReference,
-        tokens: Vec<token_creation::TokenCreation>,
-    },
-    CounterOnPermanentReplacement {
-        source_ref: source_ref::EventSourceReference,
-        counters: Vec<counter_on_permanent::CounterOnPermanent>,
-    },
+    TokenCreation(TokenCreationReplacement),
+    CounterOnPermanent(CounterOnPermanentReplacement),
 }
 
-impl crate::ability_tree::AbilityTreeImpl for EventReplacement {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
-        use std::io::Write;
+impl crate::ability_tree::AbilityTreeNode for EventReplacement {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::EventReplacement.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::TokenCreationReplacement { source_ref, tokens } => {
-                write!(out, "create tokens:")?;
-                out.push_inter_branch()?;
-                write!(out, "source: {source_ref}")?;
-                out.next_final_branch()?;
-                write!(out, "tokens:")?;
-                for token in tokens.iter().take(tokens.len().saturating_sub(1)) {
-                    out.push_inter_branch()?;
-                    token.display(out)?;
-                    out.pop_branch();
-                }
-                if let Some(token) = tokens.last() {
-                    out.push_final_branch()?;
-                    token.display(out)?;
-                    out.pop_branch();
-                }
-                out.pop_branch();
-            }
-            Self::CounterOnPermanentReplacement { source_ref, counters } => {
-                write!(out, "put counters on permanent:")?;
-                out.push_inter_branch()?;
-                write!(out, "source: {source_ref}")?;
-                out.next_final_branch()?;
-                write!(out, "tokens:")?;
-                for counter in counters.iter().take(counters.len().saturating_sub(1)) {
-                    out.push_inter_branch()?;
-                    counter.display(out)?;
-                    out.pop_branch();
-                }
-                if let Some(counter) = counters.last() {
-                    out.push_final_branch()?;
-                    counter.display(out)?;
-                    out.pop_branch();
-                }
-                out.pop_branch();
-            }
+            Self::TokenCreation(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CounterOnPermanent(child) => children.push(child as &dyn AbilityTreeNode),
         }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "event replacement")?;
+        out.push_final_branch()?;
+        match self {
+            Self::TokenCreation(child) => child.display(out)?,
+            Self::CounterOnPermanent(child) => child.display(out)?,
+        }
+        out.pop_branch();
         Ok(())
     }
 }

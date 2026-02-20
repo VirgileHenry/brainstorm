@@ -9,7 +9,7 @@ pub enum TriggerCondition {
 }
 
 impl crate::ability_tree::AbilityTreeImpl for TriggerCondition {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
             TriggerCondition::ObjectDoesAction { object, action } => {

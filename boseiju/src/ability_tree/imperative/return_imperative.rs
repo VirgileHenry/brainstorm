@@ -1,3 +1,7 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
+/// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -7,8 +11,21 @@ pub struct ReturnImperative {
     pub to: crate::ability_tree::zone::ZoneReference,
 }
 
-impl crate::ability_tree::AbilityTreeImpl for ReturnImperative {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl AbilityTreeNode for ReturnImperative {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ReturnImperative.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.object as &dyn AbilityTreeNode);
+        children.push(&self.from as &dyn AbilityTreeNode);
+        children.push(&self.to as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "return:")?;
         out.push_inter_branch()?;

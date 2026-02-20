@@ -131,7 +131,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectSpecifier { specifier: spec2 },
                 ] => Some(ParserNode::ObjectSpecifiers {
                     specifiers: {
-                        let mut specifiers = arrayvec::ArrayVec::new();
+                        let mut specifiers = arrayvec::ArrayVec::new_const();
                         specifiers.push(spec1.clone());
                         specifiers.push(spec2.clone());
                         crate::ability_tree::object::ObjectSpecifiers::Or(specifiers)
@@ -165,7 +165,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectSpecifier { specifier: spec2 },
                 ] => Some(ParserNode::ObjectSpecifiers {
                     specifiers: {
-                        let mut specifiers = arrayvec::ArrayVec::new();
+                        let mut specifiers = arrayvec::ArrayVec::new_const();
                         specifiers.push(spec1.clone());
                         specifiers.push(spec2.clone());
                         crate::ability_tree::object::ObjectSpecifiers::And(specifiers)

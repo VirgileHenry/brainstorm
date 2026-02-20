@@ -3,8 +3,16 @@
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SagaLayout {
     pub mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
-    pub card_type: crate::card::card_type::CardType,
-    pub chapters: arrayvec::ArrayVec<crate::ability_tree::ability::saga_chapter::SagaChapter, 4>,
+    pub card_type: crate::ability_tree::type_line::TypeLine,
+    pub chapters: arrayvec::ArrayVec<SagaChapter, 4>,
+}
+
+#[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct SagaChapter {
+    chapter: usize,
+    effect: crate::ability_tree::ability::spell::SpellAbility,
 }
 
 impl super::LayoutImpl for SagaLayout {
@@ -16,6 +24,7 @@ impl super::LayoutImpl for SagaLayout {
         self.mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0)
     }
 
+    #[cfg(feature = "parser")]
     fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
         use std::str::FromStr;
 
@@ -24,7 +33,7 @@ impl super::LayoutImpl for SagaLayout {
                 .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
             None => crate::AbilityTree::empty(),
         };
-        let mut chapters = arrayvec::ArrayVec::new();
+        let mut chapters = arrayvec::ArrayVec::new_const();
         for ability in ability_tree.abilities.into_iter() {
             match ability {
                 crate::ability_tree::ability::Ability::SagaChapter(chapter) => chapters.push(chapter),
@@ -41,13 +50,13 @@ impl super::LayoutImpl for SagaLayout {
                 ),
                 None => None,
             },
-            card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
+            card_type: crate::ability_tree::type_line::TypeLine::parse(&raw_card.type_line, raw_card)
                 .map_err(|e| format!("Failed to parse card type: {e}"))?,
             chapters,
         })
     }
 
-    fn display<W: std::io::Write>(&self, _output: &mut W) -> std::io::Result<()> {
+    fn layout_debug_display<W: std::io::Write>(&self, _output: &mut W) -> std::io::Result<()> {
         unimplemented!()
     }
 }

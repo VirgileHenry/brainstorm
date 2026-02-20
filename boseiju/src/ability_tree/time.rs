@@ -1,21 +1,169 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::terminals::Terminal;
+
+/// Fixme: doc
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Instant {
     AtTheBeginningOfTheNextEndStep,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum ForwardDuration {
-    UntilEndOfTurn,
-    ForAsLongAsItsExiled,
+impl AbilityTreeNode for Instant {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::InstantIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::Instant(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
 }
 
+impl std::fmt::Display for Instant {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::AtTheBeginningOfTheNextEndStep => write!(f, "at the beginning of the next endstep"),
+        }
+    }
+}
+
+impl Terminal for Instant {
+    #[cfg(feature = "lexer")]
+    fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            /* Fixme  */
+            _ => None,
+        }
+    }
+}
+
+/// Fixme: doc
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub enum ForwardDuration {
+    ForAsLongAsItsExiled,
+    ObjectLifetime,
+    UntilEndOfTurn,
+}
+
+impl AbilityTreeNode for ForwardDuration {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::ForwardDurationIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::ForwardDuration(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+}
+
+impl std::fmt::Display for ForwardDuration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ForAsLongAsItsExiled => write!(f, "for as long as it remains exiled"),
+            Self::ObjectLifetime => write!(f, "for the object lifetime"),
+            Self::UntilEndOfTurn => write!(f, "until end of turn"),
+        }
+    }
+}
+
+impl Terminal for ForwardDuration {
+    #[cfg(feature = "lexer")]
+    fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            /* Fixme  */
+            _ => None,
+        }
+    }
+}
+
+/// Fixme: doc
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum BackwardDuration {
     ThisTurn,
+}
+
+impl AbilityTreeNode for BackwardDuration {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::BackwardDurationIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::BackwardDuration(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+}
+
+impl std::fmt::Display for BackwardDuration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ThisTurn => write!(f, "this turn"),
+        }
+    }
+}
+
+impl Terminal for BackwardDuration {
+    #[cfg(feature = "lexer")]
+    fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            /* Fixme  */
+            _ => None,
+        }
+    }
 }

@@ -1,3 +1,7 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
+/// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -7,8 +11,21 @@ pub struct DealsDamageImperative {
     pub to: crate::ability_tree::object::ObjectReference,
 }
 
-impl crate::ability_tree::AbilityTreeImpl for DealsDamageImperative {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl AbilityTreeNode for DealsDamageImperative {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::DealsDamageImperative.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.dealer as &dyn AbilityTreeNode);
+        children.push(&self.amount as &dyn AbilityTreeNode);
+        children.push(&self.to as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "deals damage:")?;
         out.push_inter_branch()?;
@@ -19,7 +36,7 @@ impl crate::ability_tree::AbilityTreeImpl for DealsDamageImperative {
         out.next_inter_branch()?;
         write!(out, "amount:")?;
         out.push_final_branch()?;
-        write!(out, "{}", self.amount)?;
+        self.amount.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "to:")?;

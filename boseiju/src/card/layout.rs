@@ -1,17 +1,4 @@
-mod normal_layout;
-mod saga_layout;
-mod token_layout;
-
-pub use normal_layout::NormalLayout;
-pub use saga_layout::SagaLayout;
-pub use token_layout::TokenLayout;
-
-trait LayoutImpl: Sized {
-    fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4>;
-    fn mana_value(&self) -> usize;
-    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String>;
-    fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()>;
-}
+use crate::ability_tree::card_layout::*;
 
 /// All the layouts of Magic: The Gathering for playable cards.
 #[derive(idris_derive::Idris)]
@@ -44,7 +31,7 @@ pub enum Layout {
 impl Layout {
     pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
         match self {
-            Layout::Normal { layout } => layout.display(output),
+            Layout::Normal { layout } => layout.layout_debug_display(output),
             _ => writeln!(output, "Unimplemented!"),
         }
     }
@@ -77,29 +64,30 @@ impl Layout {
     pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
         match self {
             Self::Normal { layout } => layout.card_types(),
-            Self::Split {} => arrayvec::ArrayVec::new(),
-            Self::Flip {} => arrayvec::ArrayVec::new(),
-            Self::Transform {} => arrayvec::ArrayVec::new(),
-            Self::ModalDfc {} => arrayvec::ArrayVec::new(),
-            Self::Meld {} => arrayvec::ArrayVec::new(),
-            Self::Leveler {} => arrayvec::ArrayVec::new(),
-            Self::Class {} => arrayvec::ArrayVec::new(),
-            Self::Case {} => arrayvec::ArrayVec::new(),
+            Self::Split {} => arrayvec::ArrayVec::new_const(),
+            Self::Flip {} => arrayvec::ArrayVec::new_const(),
+            Self::Transform {} => arrayvec::ArrayVec::new_const(),
+            Self::ModalDfc {} => arrayvec::ArrayVec::new_const(),
+            Self::Meld {} => arrayvec::ArrayVec::new_const(),
+            Self::Leveler {} => arrayvec::ArrayVec::new_const(),
+            Self::Class {} => arrayvec::ArrayVec::new_const(),
+            Self::Case {} => arrayvec::ArrayVec::new_const(),
             Self::Saga { layout } => layout.card_types(),
-            Self::Adventure {} => arrayvec::ArrayVec::new(),
-            Self::Mutate {} => arrayvec::ArrayVec::new(),
-            Self::Prototype {} => arrayvec::ArrayVec::new(),
-            Self::Battle {} => arrayvec::ArrayVec::new(),
-            Self::Planar {} => arrayvec::ArrayVec::new(),
-            Self::Scheme {} => arrayvec::ArrayVec::new(),
-            Self::Vanguard {} => arrayvec::ArrayVec::new(),
+            Self::Adventure {} => arrayvec::ArrayVec::new_const(),
+            Self::Mutate {} => arrayvec::ArrayVec::new_const(),
+            Self::Prototype {} => arrayvec::ArrayVec::new_const(),
+            Self::Battle {} => arrayvec::ArrayVec::new_const(),
+            Self::Planar {} => arrayvec::ArrayVec::new_const(),
+            Self::Scheme {} => arrayvec::ArrayVec::new_const(),
+            Self::Vanguard {} => arrayvec::ArrayVec::new_const(),
             Self::Token { layout } => layout.card_types(),
-            Self::DoubleFaced {} => arrayvec::ArrayVec::new(),
-            Self::Emblem {} => arrayvec::ArrayVec::new(),
+            Self::DoubleFaced {} => arrayvec::ArrayVec::new_const(),
+            Self::Emblem {} => arrayvec::ArrayVec::new_const(),
         }
     }
 }
 
+#[cfg(feature = "parser")]
 impl TryFrom<&mtg_cardbase::Card> for Layout {
     type Error = String; // Fixme!
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {

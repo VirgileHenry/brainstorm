@@ -1,8 +1,22 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::MAX_NODE_DATA_SIZE;
+
+const MAX_SUPERTYPES_COUNT: usize = 4;
+
+/// The type line of a mtg card contains all the card types.
+///
+/// From the comprehensive rules:
+/// Part of a card. The type line is printed directly below the illustration
+/// and contains the card’s card type(s), subtype(s), and/or supertype(s).
+/// See rule 205, “Type Line.”
+///
+/// See also: https://mtg.fandom.com/wiki/Type_line
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CardType {
-    supertypes: arrayvec::ArrayVec<mtg_data::Supertype, 4>,
+pub struct TypeLine {
+    supertypes: arrayvec::ArrayVec<mtg_data::Supertype, MAX_SUPERTYPES_COUNT>,
     artifact: Option<ArtifactSubtype>,
     battle: Option<BattleSubtype>,
     conspiracy: Option<ConspiracySubtype>,
@@ -22,10 +36,10 @@ pub struct CardType {
     vanguard: Option<VanguardSubtype>,
 }
 
-impl CardType {
-    fn empty() -> CardType {
-        CardType {
-            supertypes: arrayvec::ArrayVec::new(),
+impl TypeLine {
+    fn empty() -> TypeLine {
+        TypeLine {
+            supertypes: arrayvec::ArrayVec::new_const(),
             artifact: None,
             battle: None,
             conspiracy: None,
@@ -81,7 +95,7 @@ impl CardType {
                         mtg_data::CardType::Artifact => match result.artifact {
                             None => {
                                 result.artifact = Some(ArtifactSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -91,7 +105,7 @@ impl CardType {
                         mtg_data::CardType::Battle => match result.battle {
                             None => {
                                 result.battle = Some(BattleSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -107,7 +121,7 @@ impl CardType {
                         mtg_data::CardType::Creature => match result.creature {
                             None => {
                                 result.creature = Some(CreatureSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -129,7 +143,7 @@ impl CardType {
                         mtg_data::CardType::Enchantment => match result.enchantment {
                             None => {
                                 result.enchantment = Some(EnchantmentSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -145,7 +159,7 @@ impl CardType {
                         mtg_data::CardType::Instant => match result.instant {
                             None => {
                                 result.instant = Some(InstantSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -155,7 +169,7 @@ impl CardType {
                         mtg_data::CardType::Kindred => match result.kindred {
                             None => {
                                 result.kindred = Some(KindredSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -165,7 +179,7 @@ impl CardType {
                         mtg_data::CardType::Land => match result.land {
                             None => {
                                 result.land = Some(LandSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -191,7 +205,7 @@ impl CardType {
                                     .as_ref()
                                     .ok_or_else(|| format!("No loyalty field on card with planeswalker type!"))?;
                                 result.planeswalker = Some(PlaneswalkerSubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                     loyalty: loyalty
                                         .parse()
                                         .map_err(|e| format!("Failed to parse loyalty \"{loyalty}\": {e}"))?,
@@ -210,7 +224,7 @@ impl CardType {
                         mtg_data::CardType::Sorcery => match result.sorcery {
                             None => {
                                 result.sorcery = Some(SorcerySubtype {
-                                    subtypes: arrayvec::ArrayVec::new(),
+                                    subtypes: arrayvec::ArrayVec::new_const(),
                                 })
                             }
                             Some(_) => {
@@ -329,7 +343,7 @@ impl CardType {
     }
 
     pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
-        let mut result = arrayvec::ArrayVec::new();
+        let mut result = arrayvec::ArrayVec::new_const();
 
         if self.artifact.is_some() {
             result.push(mtg_data::CardType::Artifact)
@@ -387,7 +401,115 @@ impl CardType {
     }
 }
 
-impl std::fmt::Display for CardType {
+impl AbilityTreeNode for TypeLine {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::TypeLineIdMarker.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+
+        /* Create an iterator of dummy empty nodes as ability tree */
+        let dummy_nodes = std::iter::repeat(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node());
+        let dummy_nodes = dummy_nodes.map(|c| c as &dyn AbilityTreeNode);
+
+        /* Iterate over the specifiers, filled up with dummy nodes if there are less than OR_OF_AND_LIST_INNER_ARRAY_LENGTH specifiers */
+        for supertype in self
+            .supertypes
+            .iter()
+            .map(|s| s as &dyn AbilityTreeNode)
+            .chain(dummy_nodes)
+            .take(MAX_SUPERTYPES_COUNT)
+        {
+            children.push(supertype as &dyn AbilityTreeNode);
+        }
+
+        let none_node = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::none_node();
+
+        match self.artifact.as_ref() {
+            Some(artifact) => children.push(artifact as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.battle.as_ref() {
+            Some(battle) => children.push(battle as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.conspiracy.as_ref() {
+            Some(conspiracy) => children.push(conspiracy as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.creature.as_ref() {
+            Some(creature) => children.push(creature as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.dungeon.as_ref() {
+            Some(dungeon) => children.push(dungeon as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.emblem.as_ref() {
+            Some(emblem) => children.push(emblem as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.enchantment.as_ref() {
+            Some(enchantment) => children.push(enchantment as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.hero.as_ref() {
+            Some(hero) => children.push(hero as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.instant.as_ref() {
+            Some(instant) => children.push(instant as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.kindred.as_ref() {
+            Some(kindred) => children.push(kindred as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.land.as_ref() {
+            Some(land) => children.push(land as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.phenomenon.as_ref() {
+            Some(phenomenon) => children.push(phenomenon as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.plane.as_ref() {
+            Some(plane) => children.push(plane as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.planeswalker.as_ref() {
+            Some(planeswalker) => children.push(planeswalker as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.scheme.as_ref() {
+            Some(scheme) => children.push(scheme as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.sorcery.as_ref() {
+            Some(sorcery) => children.push(sorcery as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+        match self.vanguard.as_ref() {
+            Some(vanguard) => children.push(vanguard as &dyn AbilityTreeNode),
+            None => children.push(none_node as &dyn AbilityTreeNode),
+        }
+
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "type line:")?;
+        out.push_final_branch()?;
+        write!(out, "{self}")?;
+        out.pop_branch();
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for TypeLine {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for supertype in self.supertypes.iter() {
             write!(f, "{supertype} ")?;
@@ -501,14 +623,84 @@ impl std::fmt::Display for CardType {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ArtifactSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::ArtifactType, 4>,
+    subtypes: arrayvec::ArrayVec<mtg_data::ArtifactType, MAX_CHILDREN_PER_NODE>,
+}
+
+impl AbilityTreeNode for ArtifactSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::ArtifactSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "artifact type")?;
+        out.push_final_branch()?;
+        write!(out, "artifact subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct BattleSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::BattleType, 4>,
+    subtypes: arrayvec::ArrayVec<mtg_data::BattleType, MAX_CHILDREN_PER_NODE>,
+}
+
+impl AbilityTreeNode for BattleSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::BattleSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "battle type")?;
+        out.push_final_branch()?;
+        write!(out, "battle subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -516,11 +708,67 @@ pub struct BattleSubtype {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ConspiracySubtype;
 
+impl AbilityTreeNode for ConspiracySubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::ConspiracySubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "conspiracy type")?;
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreatureSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
+    /* Fixme: power / toughness ? */
+    subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, MAX_CHILDREN_PER_NODE>,
+}
+
+impl AbilityTreeNode for CreatureSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::CreatureSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        /* Fixme: power / toughness, and reduce the number of creature subtypes */
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "creature type")?;
+        out.push_final_branch()?;
+        write!(out, "creature subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -528,10 +776,48 @@ pub struct CreatureSubtype {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct DungeonSubtype;
 
+impl AbilityTreeNode for DungeonSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::DungeonSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "dungeon type")?;
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct EmblemSubtype;
+
+impl AbilityTreeNode for EmblemSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::EmblemSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "emblem type")?;
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -540,16 +826,105 @@ pub struct EnchantmentSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::EnchantmentType, 4>,
 }
 
+impl AbilityTreeNode for EnchantmentSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::EnchantmentSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "enchantment type")?;
+        out.push_final_branch()?;
+        write!(out, "enchantment subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct HeroSubtype;
+
+impl AbilityTreeNode for HeroSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::HeroSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "emblem type")?;
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct InstantSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
+}
+
+impl AbilityTreeNode for InstantSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::InstantSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "instant type")?;
+        out.push_final_branch()?;
+        write!(out, "instant subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -559,6 +934,41 @@ pub struct KindredSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
 }
 
+impl AbilityTreeNode for KindredSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::KindredSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "kindred type")?;
+        out.push_final_branch()?;
+        write!(out, "kindred subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -566,28 +976,160 @@ pub struct LandSubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::LandType, 4>,
 }
 
+impl AbilityTreeNode for LandSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::LandSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "land type")?;
+        out.push_final_branch()?;
+        write!(out, "land subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PhenomenonSubtype;
+
+impl AbilityTreeNode for PhenomenonSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::PhenomenonSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "phenomenon type")?;
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlaneSubtype;
 
+impl AbilityTreeNode for PlaneSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::PlaneSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "plane type")?;
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlaneswalkerSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::PlaneswalkerType, 4>,
     loyalty: u64,
+    subtypes: arrayvec::ArrayVec<mtg_data::PlaneswalkerType, 4>,
+}
+
+impl AbilityTreeNode for PlaneswalkerSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::PlaneswalkerSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
+        /* Fixme: terrible for the AI */
+        self.loyalty.to_le_bytes().into_iter().collect()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "planeswalker type")?;
+        out.push_final_branch()?;
+        write!(out, "planeswalker subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SchemeSubtype;
+
+impl AbilityTreeNode for SchemeSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::SchemeSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "scheme type")?;
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -596,7 +1138,61 @@ pub struct SorcerySubtype {
     subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
 }
 
+impl AbilityTreeNode for SorcerySubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::SorcerySubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for subtype in self.subtypes.iter() {
+            children.push(subtype as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "sorcery type")?;
+        out.push_final_branch()?;
+        write!(out, "sorcery subtypes:")?;
+        for (i, subtype) in self.subtypes.iter().enumerate() {
+            if i == self.subtypes.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            subtype.display(out)?;
+            out.pop_branch();
+        }
+        out.pop_branch();
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct VanguardSubtype;
+
+impl AbilityTreeNode for VanguardSubtype {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TypeLineNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::TypeLine(TypeLineNodeKind::VanguardSubtype).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "vanguard type")?;
+        Ok(())
+    }
+}

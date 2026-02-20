@@ -74,7 +74,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Ability { ability }] => Some(ParserNode::AbilityTree {
                     tree: {
-                        let mut abilities = arrayvec::ArrayVec::new();
+                        let mut abilities = arrayvec::ArrayVec::new_const();
                         abilities.push(*ability.clone());
                         Box::new(crate::AbilityTree { abilities })
                     },

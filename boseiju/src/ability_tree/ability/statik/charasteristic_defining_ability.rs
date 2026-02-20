@@ -1,3 +1,6 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
 /// Charasteristic defining abilities, from the comprehensive rules:
 ///
 /// A kind of static ability that conveys information about an object’s characteristics
@@ -8,21 +11,28 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CharacteristicDefiningAbility {
-    // Fixme: that's wrong, CDA works in all zones, like devoid.
-    // Here, it only works on the battle field, it's some kind of static ability ?
-    PowerToughnessModifier(crate::ability_tree::terminals::PowerToughnessModifier),
-}
+pub enum CharacteristicDefiningAbility {}
 
-impl crate::ability_tree::AbilityTreeImpl for CharacteristicDefiningAbility {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl AbilityTreeNode for CharacteristicDefiningAbility {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::CharacteristicDefiningAbility.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let children = arrayvec::ArrayVec::new_const();
+        match self {
+            _ => {}
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "Characteristic defining ability:")?;
+        write!(out, "characteristic defining ability:")?;
         out.push_final_branch()?;
         match self {
-            CharacteristicDefiningAbility::PowerToughnessModifier(modifier) => {
-                write!(out, "Power / Tougness modifier: {modifier}")?
-            }
+            _ => {}
         }
         out.pop_branch();
         Ok(())

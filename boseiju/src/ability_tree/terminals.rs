@@ -1,179 +1,29 @@
+mod cast_specifier;
+mod control_specifier;
+mod count_specifier;
 mod counter;
+mod mana_cost;
 mod mtg_data_as_terminals;
 mod named_tokens;
+mod order;
+mod owner_specifier;
+mod player_specifier;
+mod power_toughness_modifier;
 
+pub use cast_specifier::CastSpecifier;
+pub use control_specifier::ControlSpecifier;
+pub use count_specifier::CountSpecifier;
 pub use counter::Counter;
+pub use mana_cost::ManaCost;
 pub use named_tokens::NamedToken;
+pub use order::Order;
+pub use owner_specifier::OwnerSpecifier;
+pub use player_specifier::PlayerSpecifier;
+pub use power_toughness_modifier::PowerToughnessModifier;
 
 pub trait Terminal: std::fmt::Display + Sized {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self>;
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CountSpecifier {
-    All,
-    Target,
-    UpTo { up_to: u32 },
-    AnyNumberOfTargets,
-    Others,
-}
-
-impl std::fmt::Display for CountSpecifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CountSpecifier::All => write!(f, "all"),
-            CountSpecifier::Target => write!(f, "target"),
-            CountSpecifier::UpTo { up_to: num } => write!(f, "up to {num}"),
-            CountSpecifier::AnyNumberOfTargets => write!(f, "any number of target"),
-            CountSpecifier::Others => write!(f, "others"),
-        }
-    }
-}
-
-impl Terminal for CountSpecifier {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "all" => Some(CountSpecifier::All),
-            "each" => Some(CountSpecifier::All),
-            "target" | "targets" => Some(CountSpecifier::Target),
-            "any target" => Some(CountSpecifier::Target),
-            "any number of target" | "any number of targets" => Some(CountSpecifier::AnyNumberOfTargets),
-            "other" | "others" => Some(CountSpecifier::Others),
-            other => {
-                let prefix = "up to ";
-                if other.starts_with(prefix) {
-                    let num = crate::utils::parse_num(&other[prefix.len()..])?;
-                    Some(CountSpecifier::UpTo { up_to: num })
-                } else {
-                    None
-                }
-            }
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum ControlSpecifier {
-    YouControl,
-    YouDontControl,
-}
-
-impl std::fmt::Display for ControlSpecifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ControlSpecifier::YouControl => write!(f, "you control"),
-            ControlSpecifier::YouDontControl => write!(f, "you don't control"),
-        }
-    }
-}
-
-impl Terminal for ControlSpecifier {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "you control" | "you already control" => Some(ControlSpecifier::YouControl),
-            "you don't control" | "your opponents control" | "an opponent controls" => Some(ControlSpecifier::YouDontControl),
-            _ => None,
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CastSpecifier {
-    YouCast,
-    YourOpponentsCast,
-}
-
-impl std::fmt::Display for CastSpecifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CastSpecifier::YouCast => write!(f, "you cast"),
-            CastSpecifier::YourOpponentsCast => write!(f, "your opponents cast"),
-        }
-    }
-}
-
-impl Terminal for CastSpecifier {
-    fn try_from_str(_: &str) -> Option<Self> {
-        /*
-         * "you cast" can't be lexed directyly, as it may not be a cast specifier.
-         * For instance, "whenever you cast a spell" is not the same meaning as
-         * "spells you cast cost 1 less to cast".
-         */
-        None
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum OwnerSpecifier {
-    YouOwn,
-    YouDontOwn,
-    ObjectOwner,
-}
-
-impl std::fmt::Display for OwnerSpecifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            OwnerSpecifier::YouOwn => write!(f, "you own"),
-            OwnerSpecifier::YouDontOwn => write!(f, "you don't own"),
-            OwnerSpecifier::ObjectOwner => write!(f, "its owner"),
-        }
-    }
-}
-
-impl Terminal for OwnerSpecifier {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "you own" | "your" => Some(OwnerSpecifier::YouOwn),
-            "you don't own" => Some(OwnerSpecifier::YouDontOwn),
-            "its owner" => Some(OwnerSpecifier::ObjectOwner),
-            _ => None,
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum Order {
-    RandomOrder,
-    ChosenOrder,
-}
-
-impl std::fmt::Display for Order {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Order::RandomOrder => write!(f, "a random order"),
-            Order::ChosenOrder => write!(f, "any order"),
-        }
-    }
-}
-
-impl Terminal for Order {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "a random order" => Some(Order::RandomOrder),
-            "any order" => Some(Order::ChosenOrder),
-            _ => None,
-        }
-    }
 }
 
 #[derive(idris_derive::Idris)]
@@ -206,6 +56,7 @@ impl std::fmt::Display for CardActions {
 }
 
 impl Terminal for CardActions {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "attack" | "attacks" => Some(CardActions::Attacks),
@@ -215,53 +66,6 @@ impl Terminal for CardActions {
             "enter" | "enters" => Some(CardActions::Enters),
             "fight" | "fights" => Some(CardActions::Fight),
             "leave" | "leaves" => Some(CardActions::Leave),
-            _ => None,
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum PlayerSpecifier {
-    AnOpponent,
-    TargetOpponent,
-    EachOpponent,
-    Any,
-    All,
-    ToYourLeft,
-    ToYourRight,
-    You,
-}
-
-impl std::fmt::Display for PlayerSpecifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PlayerSpecifier::AnOpponent => write!(f, "an opponent"),
-            PlayerSpecifier::TargetOpponent => write!(f, "target opponent"),
-            PlayerSpecifier::EachOpponent => write!(f, "each opponent"),
-            PlayerSpecifier::Any => write!(f, "a player"),
-            PlayerSpecifier::All => write!(f, "all players"),
-            PlayerSpecifier::ToYourLeft => write!(f, "the player to your left"),
-            PlayerSpecifier::ToYourRight => write!(f, "the player to your right"),
-            PlayerSpecifier::You => write!(f, "you"),
-        }
-    }
-}
-
-impl Terminal for PlayerSpecifier {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "an opponent" => Some(PlayerSpecifier::AnOpponent),
-            "target opponent" => Some(PlayerSpecifier::TargetOpponent),
-            "each opponent" | "opponents" | "your opponents" => Some(PlayerSpecifier::EachOpponent),
-            "a player" => Some(PlayerSpecifier::Any),
-            "each player" => Some(PlayerSpecifier::All),
-            "the player to your left" => Some(PlayerSpecifier::ToYourLeft),
-            "the player to your right" => Some(PlayerSpecifier::ToYourRight),
-            "you" => Some(PlayerSpecifier::You),
             _ => None,
         }
     }
@@ -289,6 +93,7 @@ impl std::fmt::Display for PermanentProperty {
 }
 
 impl Terminal for PermanentProperty {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "power" => Some(PermanentProperty::Power),
@@ -329,6 +134,7 @@ impl std::fmt::Display for PermanentState {
 }
 
 impl Terminal for PermanentState {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "attacking" => Some(PermanentState::Attacking),
@@ -363,6 +169,7 @@ impl std::fmt::Display for SpellProperty {
 }
 
 impl Terminal for SpellProperty {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "countered" => Some(SpellProperty::Countered),
@@ -400,6 +207,7 @@ impl std::fmt::Display for Phase {
 }
 
 impl Terminal for Phase {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "beginning phase" => Some(Phase::Beginning),
@@ -454,6 +262,7 @@ impl std::fmt::Display for Step {
 }
 
 impl Terminal for Step {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "untap step" => Some(Step::Untap),
@@ -495,6 +304,7 @@ impl std::fmt::Display for PowerToughness {
 }
 
 impl Terminal for PowerToughness {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         let split: Vec<_> = source.split('/').collect();
         let (raw_pow, raw_tough) = match split.as_slice() {
@@ -511,64 +321,6 @@ impl Terminal for PowerToughness {
             power: raw_pow.parse().ok()?,
             toughness: raw_tough.parse().ok()?,
         })
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum PowerToughnessModifier {
-    Constant { power: i32, toughness: i32 },
-    PlusXPlusX,
-    PlusXMinusX,
-    MinusXPlusX,
-}
-
-impl std::fmt::Display for PowerToughnessModifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PowerToughnessModifier::Constant { power, toughness } => {
-                write!(f, "{:+}/{:+}", power, toughness)
-            }
-            PowerToughnessModifier::PlusXPlusX => write!(f, "+x/+x"),
-            PowerToughnessModifier::PlusXMinusX => write!(f, "+x/-x"),
-            PowerToughnessModifier::MinusXPlusX => write!(f, "-x/+x"),
-        }
-    }
-}
-
-impl Terminal for PowerToughnessModifier {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "+x/+x" => Some(PowerToughnessModifier::PlusXPlusX),
-            "+x/-x" => Some(PowerToughnessModifier::PlusXMinusX),
-            "-x/+x" => Some(PowerToughnessModifier::MinusXPlusX),
-            other => {
-                let split: Vec<_> = other.split('/').collect();
-                let (raw_pow, raw_tough) = match split.as_slice() {
-                    [pow, tough] => (pow, tough),
-                    _ => return None,
-                };
-                if !raw_pow.starts_with(&['+', '-']) {
-                    return None;
-                }
-                if !crate::utils::is_digits(&raw_pow[1..]) {
-                    return None;
-                }
-                if !raw_tough.starts_with(&['+', '-']) {
-                    return None;
-                }
-                if !crate::utils::is_digits(&raw_tough[1..]) {
-                    return None;
-                }
-                Some(PowerToughnessModifier::Constant {
-                    power: raw_pow.parse().ok()?,
-                    toughness: raw_tough.parse().ok()?,
-                })
-            }
-        }
     }
 }
 
@@ -591,6 +343,7 @@ impl std::fmt::Display for PlaneswalkerAbilityCost {
 }
 
 impl Terminal for PlaneswalkerAbilityCost {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         if !source.starts_with(&['+', '-']) {
             return None;
@@ -621,6 +374,7 @@ impl std::fmt::Display for SagaChapterNumber {
 }
 
 impl Terminal for SagaChapterNumber {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "i" => Some(SagaChapterNumber(1)),
@@ -631,65 +385,6 @@ impl Terminal for SagaChapterNumber {
             "vi" => Some(SagaChapterNumber(6)),
             _ => None,
         }
-    }
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct ManaCost(pub arrayvec::ArrayVec<mtg_data::Mana, 16>);
-
-impl ManaCost {
-    pub const COUNT: usize = 1;
-    pub const fn id(&self) -> usize {
-        0
-    }
-
-    pub fn mana_value(&self) -> usize {
-        self.0.iter().map(|mana| mana.mana_value()).sum()
-    }
-}
-
-impl std::ops::Deref for ManaCost {
-    type Target = [mtg_data::Mana];
-    fn deref(&self) -> &Self::Target {
-        self.0.as_slice()
-    }
-}
-
-impl std::ops::DerefMut for ManaCost {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        self.0.as_mut_slice()
-    }
-}
-
-impl std::str::FromStr for ManaCost {
-    type Err = String; // Fixme!
-    fn from_str(raw_mana_cost: &str) -> Result<Self, Self::Err> {
-        let mut result = arrayvec::ArrayVec::new();
-
-        /* Yeah, yeah, it's not that hard and may not need a regex. Whatever for now. */
-        lazy_static::lazy_static!(
-            static ref mana_cost_regex: regex::Regex = regex::Regex::new(r"(\{[^{}]+\})")
-                .expect("Failed to compile the mana cost iterator regex: {e}");
-        );
-
-        for capture in mana_cost_regex.captures_iter(raw_mana_cost) {
-            let mana = mtg_data::Mana::from_str(capture.get_match().as_str())
-                .map_err(|e| format!("Failed to parse captured mana cost: {e}"))?;
-            result.push(mana);
-        }
-
-        Ok(ManaCost(result))
-    }
-}
-
-impl std::fmt::Display for ManaCost {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for mana in self.iter() {
-            write!(f, "{}", mana)?;
-        }
-        Ok(())
     }
 }
 
@@ -719,6 +414,7 @@ impl std::fmt::Display for ContinuousEffectDuration {
 }
 
 impl Terminal for ContinuousEffectDuration {
+    #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             "until end of turn" => Some(ContinuousEffectDuration::UntilEndOfTurn),

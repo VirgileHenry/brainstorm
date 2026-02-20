@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Return)).id(),
             ParserNode::PreviouslyMentionnedObject { object: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
-            ParserNode::Zone { zone: dummy() }.id(),
+            ParserNode::ZoneReference { zone: dummy() }.id(),
         ]),
         result: ParserNode::ExileFollowUp { follow_up: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {

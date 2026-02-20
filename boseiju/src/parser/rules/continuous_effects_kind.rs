@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         object: reference.clone(),
                         abilities: Box::new(crate::ability_tree::AbilityTree {
                             abilities: {
-                                let mut abilities = arrayvec::ArrayVec::new();
+                                let mut abilities = arrayvec::ArrayVec::new_const();
                                 abilities.push(crate::ability_tree::ability::Ability::Static(
                                     statik::StaticAbility::CharasteristicDefiningAbility(
                                         CharacteristicDefiningAbility::PowerToughnessModifier(*modifier),
@@ -113,7 +113,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::terminals::PowerToughnessModifier::Constant { power, toughness },
                     )),
                 ] => {
-                    let mut abilities = arrayvec::ArrayVec::new();
+                    let mut abilities = arrayvec::ArrayVec::new_const();
                     abilities.push(crate::ability_tree::ability::Ability::Static(
                         statik::StaticAbility::CharasteristicDefiningAbility(
                             statik::charasteristic_defining_ability::CharacteristicDefiningAbility::PowerToughnessModifier(

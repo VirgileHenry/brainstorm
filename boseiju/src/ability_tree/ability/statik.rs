@@ -2,6 +2,9 @@ pub mod charasteristic_defining_ability;
 pub mod continuous_effect;
 pub mod cost_modification_effect;
 
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
 /// A static ability, from the comprehensive rules:
 ///
 /// A kind of ability.
@@ -13,21 +16,35 @@ pub mod cost_modification_effect;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum StaticAbility {
-    /// https://mtg.fandom.com/wiki/Continuous_effect
     ContinuousEffect(continuous_effect::ContinuousEffect),
     CharasteristicDefiningAbility(charasteristic_defining_ability::CharacteristicDefiningAbility),
     CostModificationEffect(cost_modification_effect::CostModificationEffect),
 }
 
-impl crate::ability_tree::AbilityTreeImpl for StaticAbility {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl AbilityTreeNode for StaticAbility {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::StaticAbility.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self {
+            Self::ContinuousEffect(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CharasteristicDefiningAbility(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CostModificationEffect(child) => children.push(child as &dyn AbilityTreeNode),
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "Static Ability:")?;
+        write!(out, "static ability:")?;
         out.push_final_branch()?;
         match self {
-            StaticAbility::ContinuousEffect(effect) => effect.display(out)?,
-            StaticAbility::CharasteristicDefiningAbility(ability) => ability.display(out)?,
-            Self::CostModificationEffect(effect) => effect.display(out)?,
+            Self::ContinuousEffect(ability) => ability.display(out)?,
+            Self::CharasteristicDefiningAbility(ability) => ability.display(out)?,
+            Self::CostModificationEffect(ability) => ability.display(out)?,
         }
         out.pop_branch();
         Ok(())

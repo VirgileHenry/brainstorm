@@ -1,5 +1,8 @@
 pub mod continuous_effect_kind;
 
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
 /// A continuous effect, from the comprehensive rules:
 ///
 /// An effect that modifies characteristics of objects,
@@ -11,18 +14,30 @@ pub mod continuous_effect_kind;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffect {
-    pub duration: crate::ability_tree::terminals::ContinuousEffectDuration,
     pub effect: continuous_effect_kind::ContinuousEffectKind,
+    pub duration: crate::ability_tree::time::ForwardDuration,
 }
 
-impl crate::ability_tree::AbilityTreeImpl for ContinuousEffect {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl crate::ability_tree::AbilityTreeNode for ContinuousEffect {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ContinuousEffect.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.effect as &dyn AbilityTreeNode);
+        children.push(&self.duration as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "Continuous Effect:")?;
+        write!(out, "continuous effect:")?;
         out.push_inter_branch()?;
-        write!(out, "Duration: {}", self.duration)?;
+        write!(out, "duration: {}", self.duration)?;
         out.next_final_branch()?;
-        write!(out, "Effect:")?;
+        write!(out, "effect:")?;
         out.push_final_branch()?;
         self.effect.display(out)?;
         out.pop_branch();

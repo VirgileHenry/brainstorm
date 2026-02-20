@@ -1,10 +1,10 @@
-pub struct TreeFormatter<'out, W: std::io::Write> {
-    output: &'out mut W,
+pub struct TreeFormatter<'out> {
+    output: &'out mut dyn std::io::Write,
     padding: String,
 }
 
-impl<'out, W: std::io::Write> TreeFormatter<'out, W> {
-    pub fn new(output: &'out mut W, padding_capacity: usize, prefix: &str) -> TreeFormatter<'out, W> {
+impl<'out> TreeFormatter<'out> {
+    pub fn new(output: &'out mut dyn std::io::Write, padding_capacity: usize, prefix: &str) -> TreeFormatter<'out> {
         let mut padding = String::with_capacity(padding_capacity);
         padding.push_str(prefix);
         TreeFormatter { output, padding }
@@ -46,7 +46,7 @@ impl<'out, W: std::io::Write> TreeFormatter<'out, W> {
     }
 }
 
-impl<'out, W: std::io::Write> std::io::Write for TreeFormatter<'out, W> {
+impl<'out> std::io::Write for TreeFormatter<'out> {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         self.output.write(buf)
     }

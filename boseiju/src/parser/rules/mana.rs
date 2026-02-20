@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::Mana { mana })] => Some(ParserNode::ManaCost {
                     mana_cost: {
-                        let mut mana_cost = arrayvec::ArrayVec::new();
+                        let mut mana_cost = arrayvec::ArrayVec::new_const();
                         mana_cost.push(mana.clone());
                         terminals::ManaCost(mana_cost)
                     },

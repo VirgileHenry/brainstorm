@@ -3,6 +3,8 @@ mod node;
 mod rule_map;
 mod rules;
 
+pub use node::ParserNode;
+
 /// The parser state represents a single node in a graph where all nodes are arrays of tokens.
 /// Nodes are connected to each other when a single rule application allows to fuse a sub slice
 /// of the tokens together, creating a smaller array of tokens. For example:
@@ -12,7 +14,7 @@ mod rules;
 /// Or if there is no path to a terminal node, fail as fast as possible.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ParserState {
-    nodes: Vec<node::ParserNode>,
+    nodes: Vec<ParserNode>,
 }
 
 /// Display implementation thats is use for the petgraph debugging, no real prod use case.
@@ -40,7 +42,7 @@ impl std::fmt::Display for ParserState {
 ///
 /// Furthermore, we can keep track of explored nodes to avoid exploring them again.
 /// It's unlikely the algorithm will loop, but multiple paths can lead to the same nodes.
-fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode])>(
+fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[ParserNode])>(
     tokens: &[crate::lexer::tokens::Token],
     mut on_node_explored: F,
     mut on_fuse_attempt: G,
@@ -56,7 +58,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
     }
 
     /* Initialize the nodes from the tokens */
-    let nodes: Vec<node::ParserNode> = tokens.iter().cloned().map(node::ParserNode::from).collect();
+    let nodes: Vec<ParserNode> = tokens.iter().cloned().map(ParserNode::from).collect();
     token_precedence_check(&rules, &nodes)?;
 
     let mut best_error: Option<error::ParserError> = None;
@@ -91,7 +93,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
 
                     /* Exit condition: there is only a single token, the full tree */
                     match next_node.nodes.as_slice() {
-                        [node::ParserNode::AbilityTree { tree }] => return Ok(*tree.clone()),
+                        [ParserNode::AbilityTree { tree }] => return Ok(*tree.clone()),
                         _ => {}
                     }
 
@@ -126,7 +128,7 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[node::ParserNode]
     })
 }
 
-fn token_precedence_check(rules: &rule_map::RuleMap, nodes: &[node::ParserNode]) -> Result<(), error::ParserError> {
+fn token_precedence_check(rules: &rule_map::RuleMap, nodes: &[ParserNode]) -> Result<(), error::ParserError> {
     for window in nodes.windows(2) {
         let [current, next] = window else { unreachable!() };
         if !rules.can_succeed(current, next) {
@@ -158,7 +160,7 @@ impl std::fmt::Display for Edge {
 pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> petgraph::Graph<ParserState, Edge> {
     /* Initialize the graphs, add first node */
     let mut graph = petgraph::Graph::new();
-    let nodes: Vec<node::ParserNode> = tokens.iter().cloned().map(node::ParserNode::from).collect();
+    let nodes: Vec<ParserNode> = tokens.iter().cloned().map(ParserNode::from).collect();
     graph.add_node(ParserState { nodes: nodes.clone() });
 
     /* Use a counter to keep track of the order of exploration */

@@ -3,7 +3,7 @@
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct NormalLayout {
     pub mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
-    pub card_type: crate::card::card_type::CardType,
+    pub card_type: crate::ability_tree::type_line::TypeLine,
     pub abilities: crate::AbilityTree,
 }
 
@@ -16,6 +16,7 @@ impl super::LayoutImpl for NormalLayout {
         self.mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0)
     }
 
+    #[cfg(feature = "parser")]
     fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
         use std::str::FromStr;
 
@@ -27,7 +28,7 @@ impl super::LayoutImpl for NormalLayout {
                 ),
                 None => None,
             },
-            card_type: crate::card::card_type::CardType::parse(&raw_card.type_line, raw_card)
+            card_type: crate::ability_tree::type_line::TypeLine::parse(&raw_card.type_line, raw_card)
                 .map_err(|e| format!("Failed to parse card type: {e}"))?,
             abilities: match raw_card.oracle_text.as_ref() {
                 Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
@@ -37,7 +38,7 @@ impl super::LayoutImpl for NormalLayout {
         })
     }
 
-    fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
+    fn layout_debug_display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
         writeln!(output, "│ ╰─ Normal:")?;
         if let Some(mana_cost) = self.mana_cost.as_ref() {
             writeln!(output, "│    ├─ Mana Cost: {mana_cost}")?;

@@ -1,66 +1,55 @@
+mod owned_zone;
+mod zone;
+
+use idris::Idris;
+pub use owned_zone::OwnedZone;
+pub use zone::OwnableZone;
+
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
+/// Reference to a "zone", which are the various places of the game.
+///
+/// Some references are to zone that are common to all players: exile, the battlefield, etc.
+/// Otherwise, there are "owned zones" such as the players hand, libraries, etc.
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum Zone {
-    Anywhere,
-    Battlefield,
-    Exile,
-    Graveyard,
-    Hand,
-    Library,
-}
-
-impl std::fmt::Display for Zone {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Zone::Anywhere => write!(f, "anywhere"),
-            Zone::Battlefield => write!(f, "the battlefield"),
-            Zone::Exile => write!(f, "exile"),
-            Zone::Graveyard => write!(f, "graveyard"),
-            Zone::Hand => write!(f, "hand"),
-            Zone::Library => write!(f, "library"),
-        }
-    }
-}
-
-impl crate::ability_tree::terminals::Terminal for Zone {
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "anywhere" => Some(Zone::Anywhere),
-            "the battlefield" => Some(Zone::Battlefield),
-            "exile" => Some(Zone::Exile),
-            "graveyard" => Some(Zone::Graveyard),
-            "hand" => Some(Zone::Hand),
-            "library" => Some(Zone::Library),
-            _ => None,
-        }
-    }
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ZoneReference {
+    Anywhere,
+    Exile,
+    OwnedZone(OwnedZone),
     TheBattlefield,
-    OwnedZone {
-        zone: Zone,
-        owner: crate::ability_tree::terminals::OwnerSpecifier,
-    },
 }
 
-impl crate::ability_tree::AbilityTreeImpl for ZoneReference {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl AbilityTreeNode for ZoneReference {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ZoneReferenceIdMarker.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self {
+            Self::OwnedZone(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Anywhere | Self::Exile | Self::TheBattlefield => {
+                children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+                    crate::ability_tree::NodeKind::ZoneReference(self.clone()).id(),
+                ) as &dyn AbilityTreeNode)
+            }
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            ZoneReference::TheBattlefield => write!(out, "The Battlefield"),
-            ZoneReference::OwnedZone {
-                zone,
-                owner: appartenance,
-            } => {
-                write!(out, "{appartenance} {zone}")
-            }
+            ZoneReference::Anywhere => write!(out, "anywhere"),
+            ZoneReference::Exile => write!(out, "exile"),
+            ZoneReference::OwnedZone(owned) => owned.display(out),
+            ZoneReference::TheBattlefield => write!(out, "the battlefield"),
         }
     }
 }

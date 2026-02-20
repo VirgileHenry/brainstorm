@@ -13,6 +13,9 @@ pub use life_gained_event::LifeGainedEvent;
 pub use player_cast_spell_event::PlayerCastsSpellEvent;
 pub use put_counter_on_permanent_event::PutCounterOnPermanentEvent;
 
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
 /// An event is anything that happens in a Magic: The Gathering game.
 ///
 /// From the comprehensive rules:
@@ -33,14 +36,43 @@ pub enum Event {
     PutCounterOnPermanent(PutCounterOnPermanentEvent),
 }
 
-impl crate::ability_tree::AbilityTreeImpl for Event {
-    fn display<W: std::io::Write>(&self, out: &mut crate::utils::TreeFormatter<'_, W>) -> std::io::Result<()> {
+impl crate::ability_tree::AbilityTreeNode for Event {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::Event.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::CreateTokens(event) => event.display(out),
-            Self::EntersTheBattlefield(event) => event.display(out),
-            Self::LifeGained(event) => event.display(out),
-            Self::PlayerCastsSpell(event) => event.display(out),
-            Self::PutCounterOnPermanent(event) => event.display(out),
+            Self::CreateTokens(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::EntersTheBattlefield(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::LifeGained(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PlayerCastsSpell(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PutCounterOnPermanent(child) => children.push(child as &dyn AbilityTreeNode),
         }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "event:")?;
+        out.push_final_branch()?;
+        match self {
+            Self::CreateTokens(event) => event.display(out)?,
+            Self::EntersTheBattlefield(event) => event.display(out)?,
+            Self::LifeGained(event) => event.display(out)?,
+            Self::PlayerCastsSpell(event) => event.display(out)?,
+            Self::PutCounterOnPermanent(event) => event.display(out)?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for Event {
+    fn dummy_init() -> Self {
+        Self::CreateTokens(crate::utils::dummy())
     }
 }

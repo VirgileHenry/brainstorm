@@ -11,11 +11,13 @@ fn dummy<T: DummyInit>() -> T {
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_rules = vec![super::ParserRule {
         from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Zone(crate::ability_tree::zone::Zone::Battlefield)).id()]),
-        result: ParserNode::Zone { zone: dummy() }.id(),
+        result: ParserNode::ZoneReference { zone: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(TokenKind::Zone(crate::ability_tree::zone::Zone::Battlefield))] => Some(ParserNode::Zone {
-                zone: crate::ability_tree::zone::ZoneReference::TheBattlefield,
-            }),
+            &[ParserNode::LexerToken(TokenKind::Zone(crate::ability_tree::zone::Zone::Battlefield))] => {
+                Some(ParserNode::ZoneReference {
+                    zone: crate::ability_tree::zone::ZoneReference::TheBattlefield,
+                })
+            }
             _ => None,
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -34,12 +36,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)).id(),
                     ParserNode::LexerToken(TokenKind::Zone(zone)).id(),
                 ]),
-                result: ParserNode::Zone { zone: dummy() }.id(),
+                result: ParserNode::ZoneReference { zone: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)),
                         ParserNode::LexerToken(TokenKind::Zone(zone)),
-                    ] => Some(ParserNode::Zone {
+                    ] => Some(ParserNode::ZoneReference {
                         zone: crate::ability_tree::zone::ZoneReference::OwnedZone {
                             zone: zone.clone(),
                             owner: owner.clone(),
