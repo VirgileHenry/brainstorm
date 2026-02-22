@@ -9,7 +9,7 @@ use crate::ability_tree::terminals::Terminal;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Instant {
-    AtTheBeginningOfTheNextEndStep,
+    TheBeginningOfTheNextEndStep,
 }
 
 impl AbilityTreeNode for Instant {
@@ -42,7 +42,7 @@ impl Terminal for Instant {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            /* Fixme  */
+            "the beginning of the next end step" => Some(Self::TheBeginningOfTheNextEndStep),
             _ => None,
         }
     }
@@ -51,14 +51,14 @@ impl Terminal for Instant {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Instant {
     fn dummy_init() -> Self {
-        Self::AtTheBeginningOfTheNextEndStep
+        Self::TheBeginningOfTheNextEndStep
     }
 }
 
 impl std::fmt::Display for Instant {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::AtTheBeginningOfTheNextEndStep => write!(f, "at the beginning of the next endstep"),
+            Self::TheBeginningOfTheNextEndStep => write!(f, "at the beginning of the next endstep"),
         }
     }
 }
@@ -171,7 +171,7 @@ impl Terminal for BackwardDuration {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            /* Fixme  */
+            "this turn" => Some(Self::ThisTurn),
             _ => None,
         }
     }

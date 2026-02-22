@@ -36,7 +36,7 @@ impl RuleMap {
         let rules = create_rules_map(rules)?;
 
         /* The rule map can be used to get the max rule size */
-        let max_rule_size = rules.keys().map(|k| k.length).max().unwrap_or(0);
+        let max_rule_size = rules.keys().map(|k| k.length.get()).max().unwrap_or(0);
 
         /* And we can build the token succession rules */
         let allowed_succeeding = create_allow_succeeding(&rules);
@@ -110,7 +110,7 @@ fn create_allow_succeeding(rules: &HashMap<RuleLhs, ParserRule>) -> HashMap<usiz
     /* Start by iterating through all the rules, as tokens next to each others in a rule are allowed */
     for state in rules.keys() {
         /* For each rule, iterate through succeeding tokens, and set the follower to be allowed to follow the followee. */
-        for window in state.tokens.windows(2).take(state.length.saturating_sub(1)) {
+        for window in state.tokens.windows(2).take(state.length.get() - 1) {
             let [current, next] = window else { unreachable!() };
             let current = usize::from(*current);
             let next = usize::from(*next);
