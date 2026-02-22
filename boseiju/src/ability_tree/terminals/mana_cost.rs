@@ -79,3 +79,12 @@ impl std::ops::DerefMut for ManaCost {
         self.cost.as_mut_slice()
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ManaCost {
+    fn dummy_init() -> Self {
+        Self {
+            cost: arrayvec::ArrayVec::new_const(),
+        }
+    }
+}

@@ -35,7 +35,7 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Statement {
     fn dummy_init() -> Self {
-        Self::Written(crate::utils::dummy())
+        Self::Imperative(crate::utils::dummy())
     }
 }
 
@@ -77,6 +77,9 @@ impl crate::ability_tree::AbilityTreeNode for MayAbility {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for MayAbility {
     fn dummy_init() -> Self {
-        Self::Written(crate::utils::dummy())
+        Self {
+            player: crate::utils::dummy(),
+            action: crate::utils::dummy(),
+        }
     }
 }

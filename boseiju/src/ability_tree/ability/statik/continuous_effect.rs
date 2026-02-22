@@ -45,3 +45,13 @@ impl crate::ability_tree::AbilityTreeNode for ContinuousEffect {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ContinuousEffect {
+    fn dummy_init() -> Self {
+        Self {
+            effect: crate::utils::dummy(),
+            duration: crate::utils::dummy(),
+        }
+    }
+}

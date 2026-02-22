@@ -1,12 +1,8 @@
 use super::ParserNode;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -16,9 +12,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::Mana { mana })] => Some(ParserNode::ManaCost {
                     mana_cost: {
-                        let mut mana_cost = arrayvec::ArrayVec::new_const();
-                        mana_cost.push(mana.clone());
-                        terminals::ManaCost(mana_cost)
+                        let mut cost = arrayvec::ArrayVec::new_const();
+                        cost.push(mana.clone());
+                        terminals::ManaCost { cost }
                     },
                 }),
                 _ => None,
@@ -38,11 +34,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Some(ParserNode::ManaCost {
                     mana_cost: {
                         let mut mana_cost = mana_cost.clone();
-                        if mana_cost.0.len() == mana_cost.0.capacity() {
+                        if mana_cost.cost.len() == mana_cost.cost.capacity() {
                             /* Safety: avoid the panic if it happens */
                             return None;
                         }
-                        mana_cost.0.push(mana.clone());
+                        mana_cost.cost.push(mana.clone());
                         mana_cost
                     },
                 }),

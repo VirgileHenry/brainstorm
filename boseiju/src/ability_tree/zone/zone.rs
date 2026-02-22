@@ -61,3 +61,10 @@ impl Terminal for OwnableZone {
         }
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for OwnableZone {
+    fn dummy_init() -> Self {
+        Self::Library
+    }
+}

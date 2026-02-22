@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughnessModifier {
-    modifier: crate::ability_tree::terminals::PowerToughnessModifier,
+    pub modifier: crate::ability_tree::terminals::PowerToughnessModifier,
 }
 
 impl AbilityTreeNode for PowerToughnessModifier {
@@ -31,5 +31,14 @@ impl AbilityTreeNode for PowerToughnessModifier {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for PowerToughnessModifier {
+    fn dummy_init() -> Self {
+        Self {
+            modifier: crate::utils::dummy(),
+        }
     }
 }

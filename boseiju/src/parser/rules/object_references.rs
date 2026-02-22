@@ -2,12 +2,8 @@ use super::ParserNode;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* A count specifier as well as specifiers can be merged into an object reference */
@@ -29,10 +25,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::CountSpecifier(count)),
                 ParserNode::ObjectSpecifiers { specifiers },
             ] => Some(ParserNode::ObjectReference {
-                reference: crate::ability_tree::object::ObjectReference::SpecifiedObj {
-                    amount: *count,
-                    specifiers: specifiers.clone(),
-                },
+                reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                    crate::ability_tree::object::SpecifiedObject {
+                        amount: *count,
+                        specifiers: specifiers.clone(),
+                    },
+                ),
             }),
             _ => None,
         },
@@ -55,28 +53,35 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::Target)),
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Some(ParserNode::ObjectReference {
-                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj {
-                        amount: terminals::CountSpecifier::Target,
-                        specifiers: {
-                            let new_specifiers = specifiers.clone();
-                            new_specifiers.add_factor_specifier(crate::ability_tree::object::ObjectSpecifier::Another)
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: terminals::CountSpecifier::Target,
+                            specifiers: {
+                                let new_specifiers = specifiers.clone();
+                                let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
+                                    crate::ability_tree::object::AnotherObjectSpecifier,
+                                );
+                                new_specifiers.add_factor_specifier(another_specifier)
+                            },
                         },
-                    },
+                    ),
                 }),
                 _ => None,
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* Some cases, there will be no count specifier, there is an implicit "all". */
+        /* In some cases, there will be no count specifier, there is an implicit "all". */
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::ObjectSpecifiers { specifiers: dummy() }.id()]),
             result: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ObjectSpecifiers { specifiers }] => Some(ParserNode::ObjectReference {
-                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj {
-                        amount: terminals::CountSpecifier::All,
-                        specifiers: specifiers.clone(),
-                    },
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: terminals::CountSpecifier::All,
+                            specifiers: specifiers.clone(),
+                        },
+                    ),
                 }),
                 _ => None,
             },
@@ -84,18 +89,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Self Referencing reference */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::SelfReferencing {
-                reference: non_terminals::SelfReferencing,
-            })
-            .id()]),
+            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::SelfReferencing { reference: dummy() }).id()]),
             result: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(TokenKind::SelfReferencing {
-                        reference: non_terminals::SelfReferencing,
-                    }),
-                ] => Some(ParserNode::ObjectReference {
-                    reference: crate::ability_tree::object::ObjectReference::SelfReferencing,
+                &[ParserNode::LexerToken(TokenKind::SelfReferencing { reference })] => Some(ParserNode::ObjectReference {
+                    reference: crate::ability_tree::object::ObjectReference::SelfReferencing(reference.clone()),
                 }),
                 _ => None,
             },
@@ -113,10 +111,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to })),
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Some(ParserNode::ObjectReference {
-                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj {
-                        amount: terminals::CountSpecifier::UpTo { up_to: *up_to },
-                        specifiers: specifiers.clone(),
-                    },
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: terminals::CountSpecifier::UpTo { up_to: *up_to },
+                            specifiers: specifiers.clone(),
+                        },
+                    ),
                 }),
                 _ => None,
             },
@@ -135,10 +135,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::Target)),
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Some(ParserNode::ObjectReference {
-                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj {
-                        amount: terminals::CountSpecifier::UpTo { up_to: *up_to },
-                        specifiers: specifiers.clone(),
-                    },
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: terminals::CountSpecifier::UpTo { up_to: *up_to },
+                            specifiers: specifiers.clone(),
+                        },
+                    ),
                 }),
                 _ => None,
             },

@@ -4,7 +4,8 @@ pub mod tokens;
 
 /// Preprocess a card oracle text to properly lex it.
 pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
-    let result = oracle_text;
+    let card_name = card_name.to_lowercase();
+    let result = oracle_text.to_lowercase();
 
     /* replace all raw unicode char points by they values */
     lazy_static::lazy_static!(
@@ -17,14 +18,14 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
         let ch = char::from_u32(point).expect("Regex matched a non valid unicode point!");
         ch.to_string()
     };
-    let result = unicode_regex.replace_all(result, &replacement);
+    let result = unicode_regex.replace_all(&result, &replacement);
 
     /* Use lowercase for parsing */
     let result = result.to_ascii_lowercase();
 
     /* Actual text modifications preprocessing */
     let result = remove_comments(&result);
-    let result = replace_name(card_name, &result);
+    let result = replace_name(&card_name, &result);
     let result = result.replace("\\n", "\n");
 
     result

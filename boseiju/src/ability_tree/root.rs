@@ -8,6 +8,7 @@ use crate::ability_tree::*;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct AbilityTree {
+    /* Fixme: we need to desambiguate having multiple spell abilities vs a single spell ability with multiple statements */
     pub abilities: arrayvec::ArrayVec<ability::WrittenOrKeywordAbilty, MAX_CHILDREN_PER_NODE>,
 }
 

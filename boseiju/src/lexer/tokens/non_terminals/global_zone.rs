@@ -1,15 +1,14 @@
+#[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct ThisTurn;
+pub enum GlobalZone {
+    TheBattlefield,
+}
 
-impl ThisTurn {
-    pub const COUNT: usize = 1;
-    pub const fn id(&self) -> usize {
-        0
-    }
-
+impl GlobalZone {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "this turn" => Some(ThisTurn),
+            "the battlefield" => Some(Self::TheBattlefield),
             _ => None,
         }
     }

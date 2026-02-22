@@ -7,8 +7,12 @@ mod specified_object;
 
 pub use attached_to::ObjectAttachedTo;
 pub use object_kind::ObjectKind;
+pub use object_specifiers::AnotherObjectSpecifier;
 pub use object_specifiers::ObjectSpecifier;
 pub use object_specifiers::ObjectSpecifiers;
+pub use object_specifiers::SpecifierAndList;
+pub use object_specifiers::SpecifierOrList;
+pub use object_specifiers::SpecifierOrOfAndList;
 pub use previously_mentionned::PreviouslyMentionnedObject;
 pub use self_referencing::SelfReferencingObject;
 pub use specified_object::SpecifiedObject;

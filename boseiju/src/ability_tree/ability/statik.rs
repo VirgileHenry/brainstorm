@@ -1,4 +1,3 @@
-pub mod charasteristic_defining_ability;
 pub mod continuous_effect;
 pub mod cost_modification_effect;
 
@@ -17,7 +16,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum StaticAbility {
     ContinuousEffect(continuous_effect::ContinuousEffect),
-    CharasteristicDefiningAbility(charasteristic_defining_ability::CharacteristicDefiningAbility),
     CostModificationEffect(cost_modification_effect::CostModificationEffect),
 }
 
@@ -31,7 +29,6 @@ impl AbilityTreeNode for StaticAbility {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::ContinuousEffect(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::CharasteristicDefiningAbility(child) => children.push(child as &dyn AbilityTreeNode),
             Self::CostModificationEffect(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -43,7 +40,6 @@ impl AbilityTreeNode for StaticAbility {
         out.push_final_branch()?;
         match self {
             Self::ContinuousEffect(ability) => ability.display(out)?,
-            Self::CharasteristicDefiningAbility(ability) => ability.display(out)?,
             Self::CostModificationEffect(ability) => ability.display(out)?,
         }
         out.pop_branch();

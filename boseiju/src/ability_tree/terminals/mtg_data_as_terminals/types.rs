@@ -7,6 +7,17 @@ use crate::ability_tree::object::ObjectKind;
 use crate::ability_tree::tree_node::MtgDataNodeKind;
 use idris::Idris;
 
+fn from_str_singular_or_plural<T: std::str::FromStr>(source: &str) -> Option<T> {
+    if let Ok(value) = T::from_str(source) {
+        return Some(value);
+    } else if let Some(singular) = source.strip_suffix('s') {
+        if let Ok(value) = T::from_str(singular) {
+            return Some(value);
+        }
+    }
+    None
+}
+
 impl AbilityTreeNode for mtg_data::CreatureType {
     fn node_id(&self) -> usize {
         crate::ability_tree::NodeKind::MtgData(MtgDataNodeKind::CreatureTypeIdMarker).id()

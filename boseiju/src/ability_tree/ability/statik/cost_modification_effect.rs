@@ -46,6 +46,17 @@ impl crate::ability_tree::AbilityTreeNode for CostModificationEffect {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CostModificationEffect {
+    fn dummy_init() -> Self {
+        Self {
+            applies_to: crate::utils::dummy(),
+            modification: crate::utils::dummy(),
+            condition: crate::utils::dummy(),
+        }
+    }
+}
+
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -86,12 +97,19 @@ impl crate::ability_tree::AbilityTreeNode for CostModification {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CostModification {
+    fn dummy_init() -> Self {
+        Self::Less(crate::utils::dummy())
+    }
+}
+
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationCostMore {
-    more: crate::ability_tree::terminals::ManaCost,
+    pub more: crate::ability_tree::terminals::ManaCost,
 }
 
 impl AbilityTreeNode for CostModificationCostMore {
@@ -112,12 +130,21 @@ impl AbilityTreeNode for CostModificationCostMore {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CostModificationCostMore {
+    fn dummy_init() -> Self {
+        Self {
+            more: crate::utils::dummy(),
+        }
+    }
+}
+
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationCostLess {
-    less: crate::ability_tree::terminals::ManaCost,
+    pub less: crate::ability_tree::terminals::ManaCost,
 }
 
 impl AbilityTreeNode for CostModificationCostLess {
@@ -138,12 +165,21 @@ impl AbilityTreeNode for CostModificationCostLess {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CostModificationCostLess {
+    fn dummy_init() -> Self {
+        Self {
+            less: crate::utils::dummy(),
+        }
+    }
+}
+
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationCostSet {
-    set: crate::ability_tree::terminals::ManaCost,
+    pub set: crate::ability_tree::terminals::ManaCost,
 }
 
 impl AbilityTreeNode for CostModificationCostSet {
@@ -161,5 +197,14 @@ impl AbilityTreeNode for CostModificationCostSet {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "cost {} to cast", self.set)
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CostModificationCostSet {
+    fn dummy_init() -> Self {
+        Self {
+            set: crate::utils::dummy(),
+        }
     }
 }

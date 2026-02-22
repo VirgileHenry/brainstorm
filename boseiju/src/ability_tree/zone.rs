@@ -53,3 +53,10 @@ impl AbilityTreeNode for ZoneReference {
         }
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ZoneReference {
+    fn dummy_init() -> Self {
+        Self::Anywhere
+    }
+}

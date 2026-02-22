@@ -52,6 +52,16 @@ impl crate::ability_tree::AbilityTreeNode for ExileImperative {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ExileImperative {
+    fn dummy_init() -> Self {
+        Self {
+            object: crate::utils::dummy(),
+            follow_up: crate::utils::dummy(),
+        }
+    }
+}
+
 /// List of things that can happen after exiling stuff
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -83,6 +93,13 @@ impl AbilityTreeNode for ExileFollowUp {
         }
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ExileFollowUp {
+    fn dummy_init() -> Self {
+        Self::ReturnIt(crate::utils::dummy())
     }
 }
 
@@ -132,5 +149,15 @@ impl AbilityTreeNode for ExileFollowUpReturn {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ExileFollowUpReturn {
+    fn dummy_init() -> Self {
+        Self {
+            return_imperative: crate::utils::dummy(),
+            at: crate::utils::dummy(),
+        }
     }
 }

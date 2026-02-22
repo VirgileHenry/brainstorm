@@ -1,12 +1,8 @@
 use super::ParserNode;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_event_replacement_rules = vec![
@@ -19,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::It))] => {
                     Some(ParserNode::EventSourceReference {
-                        source: crate::ability_tree::event::replacement::source_ref::EventSourceReference::ThatEvent,
+                        source: crate::ability_tree::event::replacement::EventSourceReference::ThatEvent,
                     })
                 }
                 _ => None,
@@ -39,7 +35,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 )))
                 .id(),
             ]),
-            result: ParserNode::ReplacedTokenKind { kind: dummy() }.id(),
+            result: ParserNode::CreatedTokenKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
@@ -47,8 +43,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
                         mtg_data::Supertype::Token,
                     ))),
-                ] => Some(ParserNode::ReplacedTokenKind {
-                    kind: crate::ability_tree::event::replacement::token_creation::ReplacedTokenKind::PreviouslyMentionnedToken,
+                ] => Some(ParserNode::CreatedTokenKind {
+                    kind: crate::ability_tree::imperative::CreatedTokenKind::PreviouslyMentionnedToken,
                 }),
                 _ => None,
             },
@@ -60,7 +56,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::EventSourceReference { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)).id(),
                 ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
-                ParserNode::ReplacedTokenKind { kind: dummy() }.id(),
+                ParserNode::CreatedTokenKind { kind: dummy() }.id(),
             ]),
             result: ParserNode::EventReplacement { replacement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -68,24 +64,28 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::EventSourceReference { source },
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)),
                     ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)),
-                    ParserNode::ReplacedTokenKind { kind },
+                    ParserNode::CreatedTokenKind { kind },
                 ] => {
                     use crate::ability_tree::event::replacement;
                     use crate::ability_tree::number::Number;
                     Some(ParserNode::EventReplacement {
-                        replacement: replacement::EventReplacement::TokenCreationReplacement {
+                        replacement: replacement::EventReplacement::TokenCreation(replacement::TokenCreationReplacement {
                             source_ref: source.clone(),
-                            tokens: vec![
-                                replacement::token_creation::TokenCreation {
-                                    amount: Number::ThatMany,
-                                    token: kind.clone(),
+                            create_tokens: crate::ability_tree::imperative::CreateTokenImperative {
+                                tokens: {
+                                    let mut tokens = arrayvec::ArrayVec::new_const();
+                                    tokens.push(crate::ability_tree::imperative::TokenCreation {
+                                        amount: Number::ThatMany,
+                                        token: kind.clone(),
+                                    });
+                                    tokens.push(crate::ability_tree::imperative::TokenCreation {
+                                        amount: Number::ThatMany,
+                                        token: kind.clone(),
+                                    });
+                                    tokens
                                 },
-                                replacement::token_creation::TokenCreation {
-                                    amount: Number::ThatMany,
-                                    token: kind.clone(),
-                                },
-                            ],
-                        },
+                            },
+                        }),
                     })
                 }
                 _ => None,
@@ -102,18 +102,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)).id(), /* Fixme */
             ]),
-            result: ParserNode::ReplacedCounterKind { kind: dummy() }.id(),
+            result: ParserNode::PutCounterKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)),
-                ] => {
-                    use crate::ability_tree::event::replacement::counter_on_permanent;
-                    Some(ParserNode::ReplacedCounterKind {
-                        kind: counter_on_permanent::ReplacedCounterKind::PreviouslyMentionnedCounter,
-                    })
-                }
+                ] => Some(ParserNode::PutCounterKind {
+                    kind: crate::ability_tree::imperative::CounterKind::PreviouslyMentionnedCounter,
+                }),
                 _ => None,
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -124,7 +121,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::EventSourceReference { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
                 ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
-                ParserNode::ReplacedCounterKind { kind: dummy() }.id(),
+                ParserNode::PutCounterKind { kind: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
@@ -134,7 +131,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::EventSourceReference { source },
                     ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
                     ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)),
-                    ParserNode::ReplacedCounterKind { kind: counter_kind },
+                    ParserNode::PutCounterKind { kind: counter_kind },
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
                     ParserNode::ObjectReference {
                         reference: permanent_kind,
@@ -143,21 +140,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     use crate::ability_tree::event::replacement;
                     use crate::ability_tree::number::Number;
                     Some(ParserNode::EventReplacement {
-                        replacement: replacement::EventReplacement::CounterOnPermanentReplacement {
-                            source_ref: source.clone(),
-                            counters: vec![
-                                replacement::counter_on_permanent::CounterOnPermanent {
-                                    amount: Number::ThatMany,
-                                    counter: counter_kind.clone(),
-                                    on_permanent: permanent_kind.clone(),
+                        replacement: replacement::EventReplacement::CounterOnPermanent(
+                            replacement::CounterOnPermanentReplacement {
+                                source_ref: source.clone(),
+                                put_counters: crate::ability_tree::imperative::PutCountersImperative {
+                                    object: permanent_kind.clone(),
+                                    counters: {
+                                        let mut counters = arrayvec::ArrayVec::new_const();
+                                        counters.push(crate::ability_tree::imperative::CounterOnPermanent {
+                                            amount: Number::ThatMany,
+                                            counter: counter_kind.clone(),
+                                        });
+                                        counters.push(crate::ability_tree::imperative::CounterOnPermanent {
+                                            amount: Number::ThatMany,
+                                            counter: counter_kind.clone(),
+                                        });
+                                        counters
+                                    },
                                 },
-                                replacement::counter_on_permanent::CounterOnPermanent {
-                                    amount: Number::ThatMany,
-                                    counter: counter_kind.clone(),
-                                    on_permanent: permanent_kind.clone(),
-                                },
-                            ],
-                        },
+                            },
+                        ),
                     })
                 }
                 _ => None,

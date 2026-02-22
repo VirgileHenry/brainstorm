@@ -1,15 +1,11 @@
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
 use crate::parser::rules::RuleLhs;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -27,7 +23,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
                     ParserNode::SpellAbility { ability },
                 ] => Some(ParserNode::ImperativeChoices {
-                    choices: vec![ability.clone()],
+                    choices: {
+                        let mut choices = Box::new(arrayvec::ArrayVec::new_const());
+                        choices.push(ability.clone());
+                        choices
+                    },
                 }),
                 _ => None,
             },

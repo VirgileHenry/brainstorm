@@ -47,3 +47,14 @@ impl AbilityTreeNode for ReturnImperative {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ReturnImperative {
+    fn dummy_init() -> Self {
+        Self {
+            object: crate::utils::dummy(),
+            from: crate::utils::dummy(),
+            to: crate::utils::dummy(),
+        }
+    }
+}

@@ -53,3 +53,10 @@ impl Terminal for SelfReferencingObject {
         }
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for SelfReferencingObject {
+    fn dummy_init() -> Self {
+        Self
+    }
+}

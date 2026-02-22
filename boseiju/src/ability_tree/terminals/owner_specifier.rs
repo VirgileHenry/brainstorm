@@ -60,3 +60,10 @@ impl Terminal for OwnerSpecifier {
         }
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for OwnerSpecifier {
+    fn dummy_init() -> Self {
+        Self::YouOwn
+    }
+}

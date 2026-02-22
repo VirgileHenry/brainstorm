@@ -55,12 +55,19 @@ impl AbilityTreeNode for Number {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for Number {
+    fn dummy_init() -> Self {
+        Self::Number(crate::utils::dummy())
+    }
+}
+
 /// A literal number in an ability, such as "1", "two", "10"
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct FixedNumber {
-    number: u32,
+    pub number: u32,
 }
 
 impl AbilityTreeNode for FixedNumber {
@@ -91,13 +98,20 @@ impl idris::Idris<usize> for FixedNumber {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for FixedNumber {
+    fn dummy_init() -> Self {
+        Self { number: 0 }
+    }
+}
+
 /// An X number, where X is some other reference in the card:
 /// a mana cost, some value on cards, etc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct XNumber {
-    x_definition: (), /* Fixme */
+    pub x_definition: (), /* Fixme */
 }
 
 impl AbilityTreeNode for XNumber {
@@ -134,7 +148,7 @@ impl idris::Idris<usize> for XNumber {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct OrMoreNumber {
-    minimum: u32,
+    pub minimum: u32,
 }
 
 impl AbilityTreeNode for OrMoreNumber {

@@ -11,6 +11,47 @@ pub enum ObjectSpecifiers {
     OrOfAnd(SpecifierOrOfAndList),
 }
 
+impl ObjectSpecifiers {
+    pub fn add_factor_specifier(&self, factor_specifier: ObjectSpecifier) -> Self {
+        match self {
+            Self::Single(specifier) => Self::And(SpecifierAndList {
+                specifiers: {
+                    let mut specifiers = arrayvec::ArrayVec::new_const();
+                    specifiers.push(specifier.clone());
+                    specifiers.push(factor_specifier);
+                    specifiers
+                },
+            }),
+            Self::And(specifiers) => Self::And({
+                let mut and_specifiers = specifiers.clone();
+                and_specifiers.specifiers.push(factor_specifier);
+                and_specifiers
+            }),
+            Self::Or(specifiers) => Self::OrOfAnd({
+                let mut or_specifiers = arrayvec::ArrayVec::new_const();
+                for specifier in specifiers.specifiers.iter() {
+                    let mut and_specifiers = arrayvec::ArrayVec::new_const();
+                    and_specifiers.push(specifier.clone());
+                    and_specifiers.push(factor_specifier.clone());
+                    or_specifiers.push(and_specifiers);
+                }
+                SpecifierOrOfAndList {
+                    specifiers: or_specifiers,
+                }
+            }),
+            Self::OrOfAnd(specifiers) => Self::OrOfAnd({
+                let mut or_specifiers = specifiers.specifiers.clone();
+                for and_specifiers in or_specifiers.iter_mut() {
+                    and_specifiers.push(factor_specifier.clone());
+                }
+                SpecifierOrOfAndList {
+                    specifiers: or_specifiers,
+                }
+            }),
+        }
+    }
+}
+
 impl crate::ability_tree::AbilityTreeNode for ObjectSpecifiers {
     fn node_id(&self) -> usize {
         use idris::Idris;
@@ -43,6 +84,13 @@ impl crate::ability_tree::AbilityTreeNode for ObjectSpecifiers {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ObjectSpecifiers {
+    fn dummy_init() -> Self {
+        Self::Single(crate::utils::dummy())
+    }
+}
+
 /// A list of object specifiers, grouped with a logical AND.
 ///
 /// It means that for an object to match these specifiers,
@@ -51,7 +99,7 @@ impl crate::ability_tree::AbilityTreeNode for ObjectSpecifiers {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifierAndList {
-    specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
+    pub specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
 }
 
 impl AbilityTreeNode for SpecifierAndList {
@@ -101,7 +149,7 @@ impl crate::utils::DummyInit for SpecifierAndList {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifierOrList {
-    specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
+    pub specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
 }
 
 impl SpecifierOrList {
@@ -175,7 +223,7 @@ const OR_OF_AND_LIST_INNER_ARRAY_LENGTH: usize = MAX_CHILDREN_PER_NODE / OR_OF_A
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifierOrOfAndList {
-    specifiers: arrayvec::ArrayVec<
+    pub specifiers: arrayvec::ArrayVec<
         arrayvec::ArrayVec<ObjectSpecifier, OR_OF_AND_LIST_INNER_ARRAY_LENGTH>,
         OR_OF_AND_LIST_OUTER_ARRAY_LENGTH,
     >,
@@ -299,6 +347,13 @@ impl AbilityTreeNode for ObjectSpecifier {
         }
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ObjectSpecifier {
+    fn dummy_init() -> Self {
+        Self::Color(crate::utils::dummy())
     }
 }
 

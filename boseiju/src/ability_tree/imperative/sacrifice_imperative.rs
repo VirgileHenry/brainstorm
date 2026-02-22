@@ -33,3 +33,12 @@ impl AbilityTreeNode for SacrificeImperative {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for SacrificeImperative {
+    fn dummy_init() -> Self {
+        Self {
+            object: crate::utils::dummy(),
+        }
+    }
+}

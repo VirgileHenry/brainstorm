@@ -81,6 +81,6 @@ impl std::fmt::Display for CountSpecifier {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for CountSpecifier {
     fn dummy_init() -> Self {
-        Self::You
+        Self::All
     }
 }

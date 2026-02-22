@@ -32,3 +32,12 @@ impl AbilityTreeNode for PreviouslyMentionnedObject {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for PreviouslyMentionnedObject {
+    fn dummy_init() -> Self {
+        Self {
+            kind: crate::utils::dummy(),
+        }
+    }
+}

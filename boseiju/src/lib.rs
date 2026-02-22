@@ -31,3 +31,5 @@ pub use lexer::preprocess;
 pub mod parser;
 #[cfg(feature = "parser")]
 pub use parser::parse;
+#[cfg(feature = "parser")]
+pub mod error;

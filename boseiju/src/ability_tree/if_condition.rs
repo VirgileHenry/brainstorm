@@ -35,13 +35,20 @@ impl AbilityTreeNode for IfCondition {
     }
 }
 
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for IfCondition {
+    fn dummy_init() -> Self {
+        Self::EventOccured(crate::utils::dummy())
+    }
+}
+
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct IfConditionEventOccured {
-    event: crate::ability_tree::event::Event,
-    timeframe: crate::ability_tree::time::BackwardDuration,
+    pub event: crate::ability_tree::event::Event,
+    pub timeframe: crate::ability_tree::time::BackwardDuration,
 }
 
 impl crate::ability_tree::AbilityTreeNode for IfConditionEventOccured {
@@ -72,5 +79,15 @@ impl crate::ability_tree::AbilityTreeNode for IfConditionEventOccured {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for IfConditionEventOccured {
+    fn dummy_init() -> Self {
+        Self {
+            event: crate::utils::dummy(),
+            timeframe: crate::utils::dummy(),
+        }
     }
 }

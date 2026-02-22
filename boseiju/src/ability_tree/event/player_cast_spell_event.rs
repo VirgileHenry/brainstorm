@@ -54,7 +54,7 @@ impl crate::utils::DummyInit for PlayerCastsSpellEvent {
     fn dummy_init() -> Self {
         Self {
             player: crate::utils::dummy(),
-            minimum_amount: crate::utils::dummy(),
+            spell_specifiers: crate::utils::dummy(),
         }
     }
 }

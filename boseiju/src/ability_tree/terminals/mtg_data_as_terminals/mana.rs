@@ -43,13 +43,14 @@ impl AbilityTreeNode for mtg_data::Mana {
 impl Terminal for mtg_data::Mana {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
-        from_str_singular_or_plural::<Self>(source)
+        use std::str::FromStr;
+        Self::from_str(source).ok()
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for PutCounterOnPermanentEvent {
-    fn dummy_init() -> Mana {
+impl crate::utils::DummyInit for mtg_data::Mana {
+    fn dummy_init() -> Self {
         Self::X
     }
 }

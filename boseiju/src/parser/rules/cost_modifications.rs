@@ -1,12 +1,8 @@
 use super::ParserNode;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -30,7 +26,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Some(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::Less(
-                        mana_cost.clone(),
+                        crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostLess {
+                            less: mana_cost.clone(),
+                        },
                     ),
                 }),
                 _ => None,
@@ -57,7 +55,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Some(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::More(
-                        mana_cost.clone(),
+                        crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostMore {
+                            more: mana_cost.clone(),
+                        },
                     ),
                 }),
                 _ => None,
@@ -82,7 +82,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Some(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::Set(
-                        mana_cost.clone(),
+                        crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostSet {
+                            set: mana_cost.clone(),
+                        },
                     ),
                 }),
                 _ => None,

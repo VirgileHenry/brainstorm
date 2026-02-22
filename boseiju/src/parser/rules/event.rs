@@ -8,12 +8,8 @@ use super::ParserNode;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Players can be the source of events: "if a player would <event action>" */
@@ -51,7 +47,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Effect)),
                 ] => Some(ParserNode::EventSource {
-                    source: crate::ability_tree::event::source::EventSource::AnEffect,
+                    source: crate::ability_tree::event::source::EventSource::AnEffect(
+                        crate::ability_tree::event::source::EffectEventSource,
+                    ),
                 }),
                 _ => None,
             },

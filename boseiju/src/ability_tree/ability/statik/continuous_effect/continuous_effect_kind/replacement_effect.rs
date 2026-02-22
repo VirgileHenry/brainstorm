@@ -8,8 +8,8 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffectReplacementEvent {
-    replaced_event: crate::ability_tree::event::Event,
-    replaced_by: crate::ability_tree::event::replacement::EventReplacement,
+    pub replaced_event: crate::ability_tree::event::Event,
+    pub replaced_by: crate::ability_tree::event::replacement::EventReplacement,
 }
 
 impl AbilityTreeNode for ContinuousEffectReplacementEvent {
@@ -40,5 +40,15 @@ impl AbilityTreeNode for ContinuousEffectReplacementEvent {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ContinuousEffectReplacementEvent {
+    fn dummy_init() -> Self {
+        Self {
+            replaced_event: crate::utils::dummy(),
+            replaced_by: crate::utils::dummy(),
+        }
     }
 }

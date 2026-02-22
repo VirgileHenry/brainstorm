@@ -14,9 +14,6 @@ pub enum ParserNode {
     AbilityTree {
         tree: Box<ability_tree::AbilityTree>,
     },
-    CharacteristicDefiningAbility {
-        ability: ability_tree::ability::statik::charasteristic_defining_ability::CharacteristicDefiningAbility,
-    },
     ContinuousEffect {
         effect: ability_tree::ability::statik::continuous_effect::ContinuousEffect,
     },
@@ -32,6 +29,9 @@ pub enum ParserNode {
     CostModificationEffect {
         cost_modification: ability_tree::ability::statik::cost_modification_effect::CostModificationEffect,
     },
+    CreatedTokenKind {
+        kind: ability_tree::imperative::CreatedTokenKind,
+    },
     Event {
         event: ability_tree::event::Event,
     },
@@ -42,7 +42,7 @@ pub enum ParserNode {
         source: ability_tree::event::source::EventSource,
     },
     EventSourceReference {
-        source: ability_tree::event::replacement::source_ref::EventSourceReference,
+        source: ability_tree::event::replacement::EventSourceReference,
     },
     ExileFollowUp {
         follow_up: ability_tree::imperative::ExileFollowUp,
@@ -54,7 +54,10 @@ pub enum ParserNode {
         imperative: ability_tree::imperative::Imperative,
     },
     ImperativeChoices {
-        choices: Vec<ability_tree::ability::spell::SpellAbility>,
+        choices: Box<arrayvec::ArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>>,
+    },
+    KeywordAbility {
+        ability: ability_tree::ability::KeywordAbility,
     },
     ManaCost {
         mana_cost: ability_tree::terminals::ManaCost,
@@ -74,11 +77,8 @@ pub enum ParserNode {
     PreviouslyMentionnedObject {
         object: ability_tree::object::PreviouslyMentionnedObject,
     },
-    ReplacedCounterKind {
-        kind: ability_tree::event::replacement::counter_on_permanent::ReplacedCounterKind,
-    },
-    ReplacedTokenKind {
-        kind: ability_tree::event::replacement::token_creation::ReplacedTokenKind,
+    PutCounterKind {
+        kind: ability_tree::imperative::CounterKind,
     },
     SpellAbility {
         ability: crate::ability_tree::ability::spell::SpellAbility,

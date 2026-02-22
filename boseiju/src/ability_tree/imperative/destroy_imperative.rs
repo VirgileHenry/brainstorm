@@ -33,3 +33,12 @@ impl crate::ability_tree::AbilityTreeNode for DestroyImperative {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for DestroyImperative {
+    fn dummy_init() -> Self {
+        Self {
+            object: crate::utils::dummy(),
+        }
+    }
+}

@@ -1,12 +1,8 @@
 use super::ParserNode;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -53,20 +49,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* Characteristic defining ability is an ability */
-        super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::CharacteristicDefiningAbility { ability: dummy() }.id()]),
-            result: ParserNode::Ability { ability: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CharacteristicDefiningAbility { ability }] => Some(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Static(
-                        crate::ability_tree::ability::statik::StaticAbility::CharasteristicDefiningAbility(ability.clone()),
-                    )),
-                }),
-                _ => None,
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
         /* A single Ability can be turned into an ability tree with a single element */
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::Ability { ability: dummy() }.id()]),
@@ -75,7 +57,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[ParserNode::Ability { ability }] => Some(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = arrayvec::ArrayVec::new_const();
-                        abilities.push(*ability.clone());
+                        abilities.push(crate::ability_tree::ability::WrittenOrKeywordAbilty::Written(
+                            *ability.clone(),
+                        ));
                         Box::new(crate::AbilityTree { abilities })
                     },
                 }),
@@ -99,7 +83,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Some(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = tree.abilities.clone();
-                        abilities.push(*ability.clone());
+                        abilities.push(crate::ability_tree::ability::WrittenOrKeywordAbilty::Written(
+                            *ability.clone(),
+                        ));
                         Box::new(crate::AbilityTree { abilities })
                     },
                 }),

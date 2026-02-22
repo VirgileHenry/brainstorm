@@ -6,8 +6,8 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffectObjectGainsAbilies {
-    object: crate::ability_tree::object::ObjectReference,
-    abilities: Box<crate::AbilityTree>,
+    pub object: crate::ability_tree::object::ObjectReference,
+    pub abilities: Box<crate::AbilityTree>,
 }
 
 impl AbilityTreeNode for ContinuousEffectObjectGainsAbilies {
@@ -38,5 +38,15 @@ impl AbilityTreeNode for ContinuousEffectObjectGainsAbilies {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ContinuousEffectObjectGainsAbilies {
+    fn dummy_init() -> Self {
+        Self {
+            object: crate::utils::dummy(),
+            abilities: crate::utils::dummy(),
+        }
     }
 }

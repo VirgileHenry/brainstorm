@@ -6,8 +6,8 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct OwnedZone {
-    zone: crate::ability_tree::zone::OwnableZone,
-    owner: crate::ability_tree::terminals::OwnerSpecifier,
+    pub zone: crate::ability_tree::zone::OwnableZone,
+    pub owner: crate::ability_tree::terminals::OwnerSpecifier,
 }
 
 impl AbilityTreeNode for OwnedZone {

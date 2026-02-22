@@ -43,3 +43,10 @@ impl AbilityTreeNode for ContinuousEffectKind {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ContinuousEffectKind {
+    fn dummy_init() -> Self {
+        Self::ObjectGainsAbilies(crate::utils::dummy())
+    }
+}

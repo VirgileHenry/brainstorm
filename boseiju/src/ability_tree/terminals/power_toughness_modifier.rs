@@ -42,19 +42,6 @@ impl AbilityTreeNode for PowerToughnessModifier {
     }
 }
 
-impl std::fmt::Display for PowerToughnessModifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PowerToughnessModifier::Constant { power, toughness } => {
-                write!(f, "{:+}/{:+}", power, toughness)
-            }
-            PowerToughnessModifier::PlusXPlusX => write!(f, "+x/+x"),
-            PowerToughnessModifier::PlusXMinusX => write!(f, "+x/-x"),
-            PowerToughnessModifier::MinusXPlusX => write!(f, "-x/+x"),
-        }
-    }
-}
-
 impl Terminal for PowerToughnessModifier {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
@@ -85,6 +72,26 @@ impl Terminal for PowerToughnessModifier {
                     toughness: raw_tough.parse().ok()?,
                 })
             }
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for PowerToughnessModifier {
+    fn dummy_init() -> Self {
+        Self::PlusXPlusX
+    }
+}
+
+impl std::fmt::Display for PowerToughnessModifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PowerToughnessModifier::Constant { power, toughness } => {
+                write!(f, "{:+}/{:+}", power, toughness)
+            }
+            PowerToughnessModifier::PlusXPlusX => write!(f, "+x/+x"),
+            PowerToughnessModifier::PlusXMinusX => write!(f, "+x/-x"),
+            PowerToughnessModifier::MinusXPlusX => write!(f, "-x/+x"),
         }
     }
 }

@@ -14,7 +14,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpellAbility {
-    pub effects: arrayvec::ArrayVec<crate::ability_tree::statement::Statement, MAX_CHILDREN_PER_NODE>,
+    pub effects: Box<arrayvec::ArrayVec<crate::ability_tree::statement::Statement, MAX_CHILDREN_PER_NODE>>,
 }
 
 impl crate::ability_tree::AbilityTreeNode for SpellAbility {
@@ -41,5 +41,14 @@ impl crate::ability_tree::AbilityTreeNode for SpellAbility {
             effect.display(out)?;
         }
         Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for SpellAbility {
+    fn dummy_init() -> Self {
+        Self {
+            effects: Box::new(arrayvec::ArrayVec::new_const()),
+        }
     }
 }

@@ -1,4 +1,8 @@
-use idris::Idris;
+mod keyword_to_abilities;
+mod standalone_kw_abilities;
+
+pub use keyword_to_abilities::keyword_to_abilities;
+pub use standalone_kw_abilities::all_standalone_kw_abilities;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -234,6 +238,8 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use idris::Idris;
+
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Ward(ward) => children.push(ward as &dyn AbilityTreeNode),
@@ -259,7 +265,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ExpandedKeywordAbility {
     fn dummy_init() -> Self {
-        Self::Spell(crate::utils::dummy())
+        Self::Absorb
     }
 }
 
@@ -298,7 +304,7 @@ impl idris::Idris<usize> for WardKeywordAbility {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ExpandedKeywordAbility {
+impl crate::utils::DummyInit for WardKeywordAbility {
     fn dummy_init() -> WardKeywordAbility {
         Self {
             cost: crate::utils::dummy(),

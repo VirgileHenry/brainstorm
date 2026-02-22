@@ -61,3 +61,14 @@ impl AbilityTreeNode for ChooseImperative {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ChooseImperative {
+    fn dummy_init() -> Self {
+        Self {
+            choice_count: crate::utils::dummy(),
+            can_choose_same_mode: false,
+            choices: crate::utils::dummy(),
+        }
+    }
+}

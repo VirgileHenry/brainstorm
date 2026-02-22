@@ -1,19 +1,17 @@
 use super::ParserNode;
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
-use crate::parser::node::DummyInit;
+use crate::lexer::tokens::{TokenKind, non_terminals};
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_rules = vec![super::ParserRule {
-        from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Zone(crate::ability_tree::zone::Zone::Battlefield)).id()]),
+        from: super::RuleLhs::new(&[
+            ParserNode::LexerToken(TokenKind::GlobalZone(non_terminals::GlobalZone::TheBattlefield)).id(),
+        ]),
         result: ParserNode::ZoneReference { zone: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(TokenKind::Zone(crate::ability_tree::zone::Zone::Battlefield))] => {
+            &[ParserNode::LexerToken(TokenKind::GlobalZone(non_terminals::GlobalZone::TheBattlefield))] => {
                 Some(ParserNode::ZoneReference {
                     zone: crate::ability_tree::zone::ZoneReference::TheBattlefield,
                 })
@@ -22,10 +20,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     }];
+
     let owned_zone_rules = [
-        crate::ability_tree::zone::Zone::Graveyard,
-        crate::ability_tree::zone::Zone::Hand,
-        crate::ability_tree::zone::Zone::Library,
+        crate::ability_tree::zone::OwnableZone::Graveyard,
+        crate::ability_tree::zone::OwnableZone::Hand,
+        crate::ability_tree::zone::OwnableZone::Library,
     ]
     .into_iter()
     .map(|zone| {
@@ -34,18 +33,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .map(move |owner| super::ParserRule {
                 from: super::RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)).id(),
-                    ParserNode::LexerToken(TokenKind::Zone(zone)).id(),
+                    ParserNode::LexerToken(TokenKind::OwnableZone(zone)).id(),
                 ]),
                 result: ParserNode::ZoneReference { zone: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)),
-                        ParserNode::LexerToken(TokenKind::Zone(zone)),
+                        ParserNode::LexerToken(TokenKind::OwnableZone(zone)),
                     ] => Some(ParserNode::ZoneReference {
-                        zone: crate::ability_tree::zone::ZoneReference::OwnedZone {
+                        zone: crate::ability_tree::zone::ZoneReference::OwnedZone(crate::ability_tree::zone::OwnedZone {
                             zone: zone.clone(),
                             owner: owner.clone(),
-                        },
+                        }),
                     }),
                     _ => None,
                 },

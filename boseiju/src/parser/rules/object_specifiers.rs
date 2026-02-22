@@ -1,8 +1,9 @@
 use super::ParserNode;
+use crate::ability_tree::object;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
@@ -13,14 +14,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 terminals::ControlSpecifier::YouControl,
             ))
             .id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::ControlSpecifier(terminals::ControlSpecifier::YouControl))] => {
                     Some(ParserNode::ObjectSpecifier {
-                        specifier: crate::ability_tree::object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl),
+                        specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl),
                     })
                 }
                 _ => None,
@@ -32,16 +30,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 terminals::ControlSpecifier::YouDontControl,
             ))
             .id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::ControlSpecifier(terminals::ControlSpecifier::YouDontControl))] => {
                     Some(ParserNode::ObjectSpecifier {
-                        specifier: crate::ability_tree::object::ObjectSpecifier::Control(
-                            terminals::ControlSpecifier::YouDontControl,
-                        ),
+                        specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouDontControl),
                     })
                 }
                 _ => None,
@@ -54,16 +47,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::You)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::You)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Some(ParserNode::ObjectSpecifier {
-                    specifier: crate::ability_tree::object::ObjectSpecifier::Cast(terminals::CastSpecifier::YouCast),
+                    specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YouCast),
                 }),
                 _ => None,
             },
@@ -74,16 +64,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Some(ParserNode::ObjectSpecifier {
-                    specifier: crate::ability_tree::object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast),
+                    specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast),
                 }),
                 _ => None,
             },
@@ -91,17 +78,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Object specifiers can be regrouped */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id()]),
-            result: ParserNode::ObjectSpecifiers {
-                specifiers: DummyInit::dummy_init(),
-            }
-            .id(),
+            from: super::RuleLhs::new(&[ParserNode::ObjectSpecifier { specifier: dummy() }.id()]),
+            result: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ObjectSpecifier { specifier }] => Some(ParserNode::ObjectSpecifiers {
-                    specifiers: crate::ability_tree::object::ObjectSpecifiers::Single(specifier.clone()),
+                    specifiers: object::ObjectSpecifiers::Single(specifier.clone()),
                 }),
                 _ => None,
             },
@@ -110,20 +91,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Specifier 1 OR specifier 2 */
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Or)).id(),
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectSpecifiers {
-                specifiers: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectSpecifier { specifier: spec1 },
@@ -134,7 +106,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         let mut specifiers = arrayvec::ArrayVec::new_const();
                         specifiers.push(spec1.clone());
                         specifiers.push(spec2.clone());
-                        crate::ability_tree::object::ObjectSpecifiers::Or(specifiers)
+                        object::ObjectSpecifiers::Or(object::SpecifierOrList { specifiers })
                     },
                 }),
                 _ => None,
@@ -144,20 +116,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Specifier 1 AND specifier 2 */
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::And)).id(),
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectSpecifiers {
-                specifiers: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectSpecifier { specifier: spec1 },
@@ -168,7 +131,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         let mut specifiers = arrayvec::ArrayVec::new_const();
                         specifiers.push(spec1.clone());
                         specifiers.push(spec2.clone());
-                        crate::ability_tree::object::ObjectSpecifiers::And(specifiers)
+                        object::ObjectSpecifiers::And(object::SpecifierAndList { specifiers })
                     },
                 }),
                 _ => None,
@@ -178,20 +141,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Or lists can be longer with: A, B, C and/or D. In that case, the separator is a comma */
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
-                ParserNode::ObjectSpecifiers {
-                    specifiers: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectSpecifiers {
-                specifiers: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectSpecifier { specifier },
@@ -200,18 +154,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Some(ParserNode::ObjectSpecifiers {
                     specifiers: {
                         match specifiers {
-                            crate::ability_tree::object::ObjectSpecifiers::Or(specifiers) => {
+                            object::ObjectSpecifiers::Or(specifiers) => {
                                 let mut new_specifiers = specifiers.clone();
-                                new_specifiers.push(specifier.clone());
-                                crate::ability_tree::object::ObjectSpecifiers::Or(new_specifiers)
+                                new_specifiers.specifiers.push(specifier.clone());
+                                object::ObjectSpecifiers::Or(new_specifiers)
                             }
-                            crate::ability_tree::object::ObjectSpecifiers::And(specifiers) => {
+                            object::ObjectSpecifiers::And(specifiers) => {
                                 let mut new_specifiers = specifiers.clone();
-                                new_specifiers.push(specifier.clone());
-                                crate::ability_tree::object::ObjectSpecifiers::And(new_specifiers)
+                                new_specifiers.specifiers.push(specifier.clone());
+                                object::ObjectSpecifiers::And(new_specifiers)
                             }
-                            crate::ability_tree::object::ObjectSpecifiers::Single(_) => return None,
-                            crate::ability_tree::object::ObjectSpecifiers::OrOfAnd(_) => {
+                            object::ObjectSpecifiers::Single(_) => return None,
+                            object::ObjectSpecifiers::OrOfAnd(_) => {
                                 /* Here, it's important to reject the parsing, as we can't tell which specifier were distributed.
                                  * The parser must start by parsing the full comma array, then distribute. */
                                 return None;
@@ -227,19 +181,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
          * If we have a specifier before / after an or specifier, it applies to both in an AndOfOr list */
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
-                ParserNode::ObjectSpecifiers {
-                    specifiers: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectSpecifiers {
-                specifiers: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectSpecifier { specifier },
@@ -254,19 +199,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Same for specifiers after or lists, like in "instant or sorcery card" */
         super::ParserRule {
             from: super::RuleLhs::new(&[
-                ParserNode::ObjectSpecifiers {
-                    specifiers: DummyInit::dummy_init(),
-                }
-                .id(),
-                ParserNode::ObjectSpecifier {
-                    specifier: DummyInit::dummy_init(),
-                }
-                .id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+                ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectSpecifiers {
-                specifiers: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectSpecifiers { specifiers },
@@ -280,16 +216,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
     ];
 
-    let object_kind_to_specifiers = crate::ability_tree::object::ObjectKind::all()
+    let object_kind_to_specifiers = object::ObjectKind::all()
         .map(|object_kind| super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind)).id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind))] => Some(ParserNode::ObjectSpecifier {
-                    specifier: crate::ability_tree::object::ObjectSpecifier::Kind(object_kind.clone()),
+                    specifier: object::ObjectSpecifier::Kind(object_kind.clone()),
                 }),
                 _ => None,
             },
@@ -300,16 +233,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let object_non_kind_to_specifiers = vec![
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonCreature)).id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonCreature))] => {
                     Some(ParserNode::ObjectSpecifier {
-                        specifier: crate::ability_tree::object::ObjectSpecifier::NotOfAKind(
-                            crate::ability_tree::object::ObjectKind::CardType(mtg_data::CardType::Creature),
-                        ),
+                        specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(
+                            mtg_data::CardType::Creature,
+                        )),
                     })
                 }
                 _ => None,
@@ -318,16 +248,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonLand)).id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonLand))] => {
                     Some(ParserNode::ObjectSpecifier {
-                        specifier: crate::ability_tree::object::ObjectSpecifier::NotOfAKind(
-                            crate::ability_tree::object::ObjectKind::CardType(mtg_data::CardType::Land),
-                        ),
+                        specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(mtg_data::CardType::Land)),
                     })
                 }
                 _ => None,
@@ -336,16 +261,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonToken)).id()]),
-            result: ParserNode::ObjectSpecifier {
-                specifier: DummyInit::dummy_init(),
-            }
-            .id(),
+            result: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonToken))] => {
                     Some(ParserNode::ObjectSpecifier {
-                        specifier: crate::ability_tree::object::ObjectSpecifier::NotOfAKind(
-                            crate::ability_tree::object::ObjectKind::Permanent,
-                        ),
+                        specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::Permanent),
                     })
                 }
                 _ => None,

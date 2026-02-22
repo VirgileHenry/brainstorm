@@ -28,20 +28,16 @@ impl super::LayoutImpl for SagaLayout {
     fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
         use std::str::FromStr;
 
-        let ability_tree = match raw_card.oracle_text.as_ref() {
-            Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
-                .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
-            None => crate::AbilityTree::empty(),
-        };
-        let mut chapters = arrayvec::ArrayVec::new_const();
-        for ability in ability_tree.abilities.into_iter() {
-            match ability {
-                crate::ability_tree::ability::Ability::SagaChapter(chapter) => chapters.push(chapter),
-                other => {
-                    return Err(format!("Invalid ability for Saga: expected Chapter, found {other:?}"));
-                }
-            }
-        }
+        // let ability_tree = match raw_card.oracle_text.as_ref() {
+        //     Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
+        //         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
+        //     None => crate::AbilityTree::empty(),
+        // };
+        let chapters = arrayvec::ArrayVec::new_const();
+
+        /* Fixme: the parser shall be able to parse into any target node I think ? That would be cool */
+        /* And then the SagaChapters node shall exist, and for the saga layout we can use this ? */
+
         Ok(SagaLayout {
             mana_cost: match raw_card.mana_cost.as_ref() {
                 Some(mana_cost) => Some(

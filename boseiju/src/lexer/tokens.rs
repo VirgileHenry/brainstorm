@@ -1,8 +1,11 @@
 pub mod non_terminals;
 
+use std::str::FromStr;
+
 use crate::ability_tree::object;
 use crate::ability_tree::terminals;
 use crate::ability_tree::terminals::Terminal;
+use crate::ability_tree::time;
 use crate::ability_tree::zone;
 use crate::lexer::span::Span;
 
@@ -14,7 +17,12 @@ pub struct Token<'src> {
 
 impl<'src> Token<'src> {
     pub fn try_from_str(span: Span<'src>) -> Option<Token<'src>> {
-        if let Some(kind) = terminals::Counter::try_from_str(span.text) {
+        if let Some(kind) = non_terminals::AmbiguousToken::try_from_str(span.text) {
+            Some(Self {
+                kind: TokenKind::AmbiguousToken(kind),
+                span,
+            })
+        } else if let Some(kind) = terminals::Counter::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::Counter(kind),
                 span,
@@ -94,9 +102,19 @@ impl<'src> Token<'src> {
                 kind: TokenKind::SagaChapterNumber { chapter },
                 span,
             })
-        } else if let Some(kind) = terminals::ContinuousEffectDuration::try_from_str(span.text) {
+        } else if let Some(kind) = crate::ability_tree::time::Instant::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::ContinuousEffectDuration(kind),
+                kind: TokenKind::Instant(kind),
+                span,
+            })
+        } else if let Some(kind) = crate::ability_tree::time::ForwardDuration::try_from_str(span.text) {
+            Some(Self {
+                kind: TokenKind::ForwardDuration(kind),
+                span,
+            })
+        } else if let Some(kind) = crate::ability_tree::time::BackwardDuration::try_from_str(span.text) {
+            Some(Self {
+                kind: TokenKind::BackwardDuration(kind),
                 span,
             })
         } else if let Some(kind) = terminals::NamedToken::try_from_str(span.text) {
@@ -104,9 +122,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::NamedToken(kind),
                 span,
             })
-        } else if let Some(kind) = zone::Zone::try_from_str(span.text) {
+        } else if let Some(kind) = zone::OwnableZone::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::Zone(kind),
+                kind: TokenKind::OwnableZone(kind),
                 span,
             })
         } else if let Some(kind) = mtg_data::Color::try_from_str(span.text) {
@@ -119,7 +137,7 @@ impl<'src> Token<'src> {
                 kind: TokenKind::AbilityWord(kind),
                 span,
             })
-        } else if let Some(kind) = mtg_data::KeywordAbility::try_from_str(span.text) {
+        } else if let Some(kind) = mtg_data::KeywordAbility::from_str(span.text).ok() {
             Some(Self {
                 kind: TokenKind::KeywordAbility(kind),
                 span,
@@ -154,7 +172,7 @@ impl<'src> Token<'src> {
                 kind: TokenKind::EnglishKeyword(kind),
                 span,
             })
-        } else if let Some(reference) = non_terminals::SelfReferencing::try_from_str(span.text) {
+        } else if let Some(reference) = object::SelfReferencingObject::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::SelfReferencing { reference },
                 span,
@@ -182,11 +200,6 @@ impl<'src> Token<'src> {
         } else if let Some(kind) = non_terminals::PlayerAction::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::PlayerAction(kind),
-                span,
-            })
-        } else if let Some(_) = non_terminals::ThisTurn::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ThisTurn,
                 span,
             })
         } else if let Some(kind) = non_terminals::NonKind::try_from_str(span.text) {
@@ -249,48 +262,51 @@ impl<'src> Token<'src> {
 #[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TokenKind {
-    Counter(terminals::Counter),
-    CountSpecifier(terminals::CountSpecifier),
-    ControlSpecifier(terminals::ControlSpecifier),
-    OwnerSpecifier(terminals::OwnerSpecifier),
-    Order(terminals::Order),
-    CardActions(terminals::CardActions),
-    PlayerSpecifier(terminals::PlayerSpecifier),
-    PermanentState(terminals::PermanentState),
-    PermanentProperty(terminals::PermanentProperty),
-    SpellProperty(terminals::SpellProperty),
-    Phase(terminals::Phase),
-    Step(terminals::Step),
-    PowerToughness { pt: terminals::PowerToughness },
-    PowerToughnessModifier(terminals::PowerToughnessModifier),
-    PlaneswalkerAbilityCost { cost: terminals::PlaneswalkerAbilityCost },
-    SagaChapterNumber { chapter: terminals::SagaChapterNumber },
-    ContinuousEffectDuration(terminals::ContinuousEffectDuration),
-    NamedToken(terminals::NamedToken),
-    Zone(zone::Zone),
-    Color(mtg_data::Color),
     AbilityWord(mtg_data::AbilityWord),
+    ActionKeyword(non_terminals::ActionKeyword),
+    AmbiguousToken(non_terminals::AmbiguousToken),
+    AnyNumberOfClause { clauses: non_terminals::AnyNumberOfClause },
+    BackwardDuration(time::BackwardDuration),
+    CardActions(terminals::CardActions),
+    Choice(non_terminals::Choice),
+    ChoiceReference(non_terminals::ChoiceReference),
+    Color(mtg_data::Color),
+    ControlFlow(non_terminals::ControlFlow),
+    ControlSpecifier(terminals::ControlSpecifier),
+    CountSpecifier(terminals::CountSpecifier),
+    Counter(terminals::Counter),
+    DamageKind(non_terminals::DamageKind),
+    EnglishKeyword(non_terminals::EnglishKeyword),
+    ForwardDuration(time::ForwardDuration),
+    GlobalZone(non_terminals::GlobalZone),
+    Instant(time::Instant),
     KeywordAbility(mtg_data::KeywordAbility),
     KeywordAction(mtg_data::KeywordAction),
     Mana { mana: mtg_data::Mana },
-    ObjectKind(object::ObjectKind),
-    ControlFlow(non_terminals::ControlFlow),
-    TapUntapCost(non_terminals::TapUntapCost),
-    EnglishKeyword(non_terminals::EnglishKeyword),
-    SelfReferencing { reference: non_terminals::SelfReferencing },
-    Number(non_terminals::Number),
-    NotOfAKind { not: non_terminals::NotOfAKind },
-    ActionKeyword(non_terminals::ActionKeyword),
-    DamageKind(non_terminals::DamageKind),
-    PlayerAction(non_terminals::PlayerAction),
-    ThisTurn,
+    NamedToken(terminals::NamedToken),
     NonKind(non_terminals::NonKind),
-    UnderControl(non_terminals::UnderControl),
-    PlayerProperties(non_terminals::PlayerProperties),
+    NotOfAKind { not: non_terminals::NotOfAKind },
+    Number(non_terminals::Number),
     NumberOfTimes(non_terminals::NumberOfTimes),
-    ChoiceReference(non_terminals::ChoiceReference),
-    Choice(non_terminals::Choice),
-    AnyNumberOfClause { clauses: non_terminals::AnyNumberOfClause },
-    WinLoseClause(non_terminals::WinLoseClause),
+    ObjectKind(object::ObjectKind),
+    Order(terminals::Order),
+    OwnableZone(zone::OwnableZone),
+    OwnerSpecifier(terminals::OwnerSpecifier),
+    PermanentProperty(terminals::PermanentProperty),
+    PermanentState(terminals::PermanentState),
+    Phase(terminals::Phase),
+    PlaneswalkerAbilityCost { cost: terminals::PlaneswalkerAbilityCost },
+    PlayerAction(non_terminals::PlayerAction),
+    PlayerProperties(non_terminals::PlayerProperties),
+    PlayerSpecifier(terminals::PlayerSpecifier),
+    PowerToughness { pt: terminals::PowerToughness },
+    PowerToughnessModifier(terminals::PowerToughnessModifier),
+    SagaChapterNumber { chapter: terminals::SagaChapterNumber },
+    SelfReferencing { reference: object::SelfReferencingObject },
+    SpellProperty(terminals::SpellProperty),
+    Step(terminals::Step),
+    TapUntapCost(non_terminals::TapUntapCost),
+    UnderControl(non_terminals::UnderControl),
     VhyToSortLater(non_terminals::VhyToSortLater),
+    WinLoseClause(non_terminals::WinLoseClause),
 }

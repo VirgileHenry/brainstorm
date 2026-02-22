@@ -1,12 +1,8 @@
 use super::ParserNode;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -16,7 +12,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)).id(),
                 ParserNode::Event { event: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::SpellAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
             result: ParserNode::Ability { ability: dummy() }.id(),
@@ -25,13 +21,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)),
                     ParserNode::Event { event },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
-                    ParserNode::Statement { statement },
+                    ParserNode::SpellAbility { ability },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: event.clone(),
-                            effect: statement.clone(),
+                            effect: ability.clone(),
                         },
                     )),
                 }),
@@ -45,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)).id(),
                 ParserNode::Event { event: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::SpellAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
             result: ParserNode::Ability { ability: dummy() }.id(),
@@ -54,13 +50,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)),
                     ParserNode::Event { event },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
-                    ParserNode::Statement { statement },
+                    ParserNode::SpellAbility { ability },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: event.clone(),
-                            effect: statement.clone(),
+                            effect: ability.clone(),
                         },
                     )),
                 }),

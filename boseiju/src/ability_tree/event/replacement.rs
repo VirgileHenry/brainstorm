@@ -45,3 +45,10 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for EventReplacement {
+    fn dummy_init() -> Self {
+        Self::TokenCreation(crate::utils::dummy())
+    }
+}

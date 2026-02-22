@@ -38,20 +38,27 @@ impl AbilityTreeNode for Instant {
     }
 }
 
-impl std::fmt::Display for Instant {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::AtTheBeginningOfTheNextEndStep => write!(f, "at the beginning of the next endstep"),
-        }
-    }
-}
-
 impl Terminal for Instant {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             /* Fixme  */
             _ => None,
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for Instant {
+    fn dummy_init() -> Self {
+        Self::AtTheBeginningOfTheNextEndStep
+    }
+}
+
+impl std::fmt::Display for Instant {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::AtTheBeginningOfTheNextEndStep => write!(f, "at the beginning of the next endstep"),
         }
     }
 }
@@ -66,6 +73,7 @@ pub enum ForwardDuration {
     ForAsLongAsItsExiled,
     ObjectLifetime,
     UntilEndOfTurn,
+    UntilEndOfYourNextTurn,
 }
 
 impl AbilityTreeNode for ForwardDuration {
@@ -94,22 +102,31 @@ impl AbilityTreeNode for ForwardDuration {
     }
 }
 
+impl Terminal for ForwardDuration {
+    #[cfg(feature = "lexer")]
+    fn try_from_str(source: &str) -> Option<Self> {
+        match source {
+            "until end of turn" => Some(Self::UntilEndOfTurn),
+            "until the end of your next turn" => Some(Self::UntilEndOfYourNextTurn),
+            _ => None,
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ForwardDuration {
+    fn dummy_init() -> Self {
+        Self::UntilEndOfTurn
+    }
+}
+
 impl std::fmt::Display for ForwardDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::ForAsLongAsItsExiled => write!(f, "for as long as it remains exiled"),
             Self::ObjectLifetime => write!(f, "for the object lifetime"),
             Self::UntilEndOfTurn => write!(f, "until end of turn"),
-        }
-    }
-}
-
-impl Terminal for ForwardDuration {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            /* Fixme  */
-            _ => None,
+            Self::UntilEndOfYourNextTurn => write!(f, "until the end of your next turn"),
         }
     }
 }
@@ -150,20 +167,27 @@ impl AbilityTreeNode for BackwardDuration {
     }
 }
 
-impl std::fmt::Display for BackwardDuration {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::ThisTurn => write!(f, "this turn"),
-        }
-    }
-}
-
 impl Terminal for BackwardDuration {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
             /* Fixme  */
             _ => None,
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for BackwardDuration {
+    fn dummy_init() -> Self {
+        Self::ThisTurn
+    }
+}
+
+impl std::fmt::Display for BackwardDuration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ThisTurn => write!(f, "this turn"),
         }
     }
 }

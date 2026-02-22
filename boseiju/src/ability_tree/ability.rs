@@ -117,8 +117,8 @@ impl crate::utils::DummyInit for Ability {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct KeywordAbility {
-    keyword: keyword::ExpandedKeywordAbility,
-    ability: Ability,
+    pub keyword: keyword::ExpandedKeywordAbility,
+    pub ability: Box<Ability>,
 }
 
 impl AbilityTreeNode for KeywordAbility {
@@ -130,7 +130,7 @@ impl AbilityTreeNode for KeywordAbility {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut abilities = arrayvec::ArrayVec::new_const();
         abilities.push(&self.keyword as &dyn AbilityTreeNode);
-        abilities.push(&self.ability as &dyn AbilityTreeNode);
+        abilities.push(self.ability.as_ref() as &dyn AbilityTreeNode);
         abilities
     }
 

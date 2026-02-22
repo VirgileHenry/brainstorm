@@ -2,12 +2,8 @@ use super::ParserNode;
 use crate::ability_tree::number;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let english_to_numbers_rules = vec![
@@ -20,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An))] => {
                     Some(ParserNode::Number {
-                        number: number::Number::Number { num: 1 },
+                        number: number::Number::Number(number::FixedNumber { number: 1 }),
                     })
                 }
                 _ => None,
@@ -35,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A))] => {
                     Some(ParserNode::Number {
-                        number: number::Number::Number { num: 1 },
+                        number: number::Number::Number(number::FixedNumber { number: 1 }),
                     })
                 }
                 _ => None,
@@ -57,8 +53,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(TokenKind::Number(number))] => Some(ParserNode::Number {
                 number: match number {
-                    non_terminals::Number::Number { num } => crate::ability_tree::number::Number::Number { num: *num },
-                    non_terminals::Number::OrMore { num } => crate::ability_tree::number::Number::OrMore { num: *num },
+                    non_terminals::Number::Number { num } => {
+                        crate::ability_tree::number::Number::Number(number::FixedNumber { number: *num })
+                    }
+                    non_terminals::Number::OrMore { num } => {
+                        crate::ability_tree::number::Number::OrMore(number::OrMoreNumber { minimum: *num })
+                    }
                     non_terminals::Number::AnyNumber => crate::ability_tree::number::Number::AnyNumber,
                     _ => return None,
                 },

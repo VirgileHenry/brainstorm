@@ -1,30 +1,26 @@
 use super::ParserNode;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
-use crate::parser::node::DummyInit;
+use crate::utils::dummy;
 use idris::Idris;
-
-fn dummy<T: DummyInit>() -> T {
-    T::dummy_init()
-}
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let duration_to_continuous_effect = [
-        crate::ability_tree::terminals::ContinuousEffectDuration::UntilEndOfTurn,
-        crate::ability_tree::terminals::ContinuousEffectDuration::UntilEndOfNextTurn,
+        crate::ability_tree::time::ForwardDuration::UntilEndOfTurn,
+        crate::ability_tree::time::ForwardDuration::UntilEndOfYourNextTurn,
     ]
     .into_iter()
     .map(|duration| super::ParserRule {
         from: super::RuleLhs::new(&[
             ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)).id(),
+            ParserNode::LexerToken(TokenKind::ForwardDuration(duration)).id(),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
         ]),
         result: ParserNode::ContinuousEffect { effect: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::ContinuousEffectKind { kind },
-                ParserNode::LexerToken(TokenKind::ContinuousEffectDuration(duration)),
+                ParserNode::LexerToken(TokenKind::ForwardDuration(duration)),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
             ] => Some(ParserNode::ContinuousEffect {
                 effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
@@ -55,7 +51,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     use crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
                     Some(ParserNode::ContinuousEffect {
                         effect: ContinuousEffect {
-                            duration: crate::ability_tree::terminals::ContinuousEffectDuration::ObjectStaticAbility,
+                            duration: crate::ability_tree::time::ForwardDuration::ObjectLifetime,
                             effect: kind.clone(),
                         },
                     })

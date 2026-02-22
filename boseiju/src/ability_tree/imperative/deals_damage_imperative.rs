@@ -47,3 +47,14 @@ impl AbilityTreeNode for DealsDamageImperative {
         Ok(())
     }
 }
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for DealsDamageImperative {
+    fn dummy_init() -> Self {
+        Self {
+            dealer: crate::utils::dummy(),
+            amount: crate::utils::dummy(),
+            to: crate::utils::dummy(),
+        }
+    }
+}

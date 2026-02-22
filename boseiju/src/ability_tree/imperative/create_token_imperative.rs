@@ -1,122 +1,112 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
-
-/// Imperative to put counters on objects.
+/// Imperative to create tokens.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct PutCountersImperative {
-    pub object: crate::ability_tree::object::ObjectReference,
-    pub counters: arrayvec::ArrayVec<CounterOnPermanent, MAX_COUNTER_AMOUNT>,
+pub struct CreateTokenImperative {
+    pub tokens: arrayvec::ArrayVec<TokenCreation, MAX_CHILDREN_PER_NODE>,
 }
 
-impl AbilityTreeNode for PutCountersImperative {
+impl AbilityTreeNode for CreateTokenImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::PutCountersImperative.id()
+        crate::ability_tree::NodeKind::DealsDamageImperative.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.object as &dyn AbilityTreeNode);
-        for counter in self.counters.iter() {
-            children.push(counter as &dyn AbilityTreeNode);
+        for child in self.tokens.iter() {
+            children.push(child as &dyn AbilityTreeNode);
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "put counters:")?;
-        out.push_inter_branch()?;
-        write!(out, "on object:")?;
-        out.push_final_branch()?;
-        self.object.display(out)?;
-        out.pop_branch();
-        out.next_final_branch()?;
-        write!(out, "counters:")?;
-        for (i, counter) in self.counters.iter().enumerate() {
-            if i == self.counters.len() - 1 {
+        write!(out, "create tokens:")?;
+        for (i, token) in self.tokens.iter().enumerate() {
+            if i == self.tokens.len() - 1 {
                 out.push_final_branch()?;
             } else {
                 out.push_inter_branch()?;
             }
-            counter.display(out)?;
+            token.display(out)?;
             out.pop_branch();
         }
-        out.pop_branch();
         Ok(())
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for PutCountersImperative {
+impl crate::utils::DummyInit for CreateTokenImperative {
     fn dummy_init() -> Self {
         Self {
-            object: crate::utils::dummy(),
-            counters: crate::utils::dummy(),
+            tokens: crate::utils::dummy(),
         }
     }
 }
 
-/// An amount and a kind of counters to be put on a permanent.
+/// A kind of created token as well as an amount for this token.
+///
+/// This node regroups a group of created tokens, e.g. "3 1/1 red goblins".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CounterOnPermanent {
+pub struct TokenCreation {
     pub amount: crate::ability_tree::number::Number,
-    pub counter: CounterKind,
+    pub token: CreatedTokenKind,
 }
 
-impl crate::ability_tree::AbilityTreeNode for CounterOnPermanent {
+impl AbilityTreeNode for TokenCreation {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CounterOnPermanent.id()
+        crate::ability_tree::NodeKind::TokenCreation.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.amount as &dyn AbilityTreeNode);
-        children.push(&self.counter as &dyn AbilityTreeNode);
+        children.push(&self.token as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "counter on permanent:")?;
+        write!(out, "create token:")?;
         out.push_inter_branch()?;
         write!(out, "amount:")?;
         out.push_final_branch()?;
         self.amount.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
-        write!(out, "of counter:")?;
+        write!(out, "of token:")?;
         out.push_final_branch()?;
-        self.counter.display(out)?;
+        self.token.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
     }
 }
 
-/// Kind of counter that is put on a permanent.
+/// The kind of token that we shall create with a token creation imperative.
 ///
-/// It's either a given kind of counter, e.g. "put a shield counter" or
-/// a previously mentionned kind of counter, e.g. "that many counters on...".
+/// This will either be a given token kind, e.g. "create a 2/2 red warrior token"
+/// or will reference a token previously mentionned in the ability, e.g.
+/// "create twice as many of those tokens instead".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CounterKind {
-    PreviouslyMentionnedCounter,
-    NewCounter(crate::ability_tree::terminals::Counter),
+pub enum CreatedTokenKind {
+    PreviouslyMentionnedToken,
+    NewToken(Box<crate::ability_tree::card_layout::TokenLayout>),
 }
 
-impl AbilityTreeNode for CounterKind {
+impl AbilityTreeNode for CreatedTokenKind {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::ReplacedCounterKind.id()
+        crate::ability_tree::NodeKind::ReplacedTokenKind.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -124,21 +114,21 @@ impl AbilityTreeNode for CounterKind {
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::PreviouslyMentionnedCounter => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::ability_tree::NodeKind::PreviouslyMentionnedCounter.id(),
+            Self::NewToken(child) => children.push(child.as_ref() as &dyn AbilityTreeNode),
+            Self::PreviouslyMentionnedToken => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+                crate::ability_tree::NodeKind::PreviouslyMentionnedToken.id(),
             ) as &dyn AbilityTreeNode),
-            Self::NewCounter(counter) => children.push(counter as &dyn AbilityTreeNode),
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "counter kind:")?;
+        write!(out, "token kind:")?;
         out.push_final_branch()?;
         match self {
-            Self::PreviouslyMentionnedCounter => write!(out, "previously mentionned counter")?,
-            Self::NewCounter(counter) => counter.display(out)?,
+            Self::PreviouslyMentionnedToken => write!(out, "previously mentionned token")?,
+            Self::NewToken(token) => token.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -146,8 +136,8 @@ impl AbilityTreeNode for CounterKind {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CounterKind {
+impl crate::utils::DummyInit for CreatedTokenKind {
     fn dummy_init() -> Self {
-        Self::PreviouslyMentionnedCounter
+        Self::PreviouslyMentionnedToken
     }
 }
