@@ -86,6 +86,9 @@ pub enum ParserNode {
     Statement {
         statement: ability_tree::statement::Statement,
     },
+    WrittenOrKeywordAbilty {
+        ability: Box<ability_tree::ability::WrittenOrKeywordAbilty>,
+    },
     ZoneReference {
         zone: ability_tree::zone::ZoneReference,
     },

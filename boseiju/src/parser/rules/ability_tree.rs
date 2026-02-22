@@ -8,15 +8,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* A single Ability can be turned into an ability tree with a single element */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::Ability { ability: dummy() }.id()]),
+            from: super::RuleLhs::new(&[ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id()]),
             result: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Ability { ability }] => Some(ParserNode::AbilityTree {
+                &[ParserNode::WrittenOrKeywordAbilty { ability }] => Some(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = arrayvec::ArrayVec::new_const();
-                        abilities.push(crate::ability_tree::ability::WrittenOrKeywordAbilty::Written(
-                            *ability.clone(),
-                        ));
+                        abilities.push(*ability.clone());
                         Box::new(crate::AbilityTree { abilities })
                     },
                 }),
@@ -29,20 +27,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             from: super::RuleLhs::new(&[
                 ParserNode::AbilityTree { tree: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
-                ParserNode::Ability { ability: dummy() }.id(),
+                ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id(),
             ]),
             result: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::AbilityTree { tree },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
-                    ParserNode::Ability { ability },
+                    ParserNode::WrittenOrKeywordAbilty { ability },
                 ] => Some(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = tree.abilities.clone();
-                        abilities.push(crate::ability_tree::ability::WrittenOrKeywordAbilty::Written(
-                            *ability.clone(),
-                        ));
+                        abilities.push(*ability.clone());
                         Box::new(crate::AbilityTree { abilities })
                     },
                 }),
