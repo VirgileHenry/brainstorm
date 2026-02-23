@@ -57,6 +57,12 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[ParserNode])>(
         return Ok(crate::AbilityTree::empty());
     }
 
+    /// A bit tricky, but for now the parser is taking way too long
+    /// to fail on cases. So I might want to revisit it, there might be a bug,
+    /// but until then, I'll hard code a limit on the number of backtracking steps allowed.
+    const MAX_BACKTRACK: usize = 64;
+    let mut backtrack_count = 0;
+
     /* Initialize the nodes from the tokens */
     let nodes: Vec<ParserNode> = tokens.iter().cloned().map(ParserNode::from).collect();
     token_precedence_check(&rules, &nodes)?;
@@ -108,6 +114,18 @@ fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[ParserNode])>(
 
                     next_states.push(next_node);
                 }
+            }
+        }
+
+        if next_states.is_empty() {
+            backtrack_count += 1;
+            if backtrack_count >= MAX_BACKTRACK {
+                return Err(match best_error {
+                    Some(error) => error,
+                    None => error::ParserError::UnparsableInput {
+                        nodes: tokens.iter().map(|t| t.kind.clone()).collect(),
+                    },
+                });
             }
         }
 
