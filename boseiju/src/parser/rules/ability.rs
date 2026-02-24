@@ -6,8 +6,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Spell ability to ability */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::SpellAbility { ability: dummy() }.id()]),
-            result: ParserNode::Ability { ability: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::SpellAbility { ability: dummy() }.id()]),
+            merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpellAbility { ability }] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Spell(ability.clone())),
@@ -18,8 +18,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Continuous effects are static abilities */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::ContinuousEffect { effect: dummy() }.id()]),
-            result: ParserNode::Ability { ability: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::ContinuousEffect { effect: dummy() }.id()]),
+            merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ContinuousEffect { effect }] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Static(
@@ -32,11 +32,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Cost reduction effects are static ailities */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::CostModificationEffect {
+            expanded: super::RuleLhs::new(&[ParserNode::CostModificationEffect {
                 cost_modification: dummy(),
             }
             .id()]),
-            result: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::CostModificationEffect { cost_modification }] => Some(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Static(

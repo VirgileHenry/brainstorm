@@ -27,7 +27,6 @@ pub trait Terminal: std::fmt::Display + Sized {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -72,7 +71,6 @@ impl Terminal for CardActions {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -105,7 +103,6 @@ impl Terminal for PermanentProperty {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -150,7 +147,6 @@ impl Terminal for PermanentState {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -180,7 +176,6 @@ impl Terminal for SpellProperty {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -223,7 +218,6 @@ impl Terminal for Phase {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]

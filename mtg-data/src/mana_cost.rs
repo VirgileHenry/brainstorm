@@ -1,5 +1,4 @@
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -88,10 +87,13 @@ pub struct AnyMana {
     pub number: usize,
 }
 
-impl idris::Idris<usize> for AnyMana {
+impl idris::Idris for AnyMana {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "{number}"
     }
 }
 
@@ -109,10 +111,13 @@ pub struct ColoredMana {
     pub color: crate::Color,
 }
 
-impl idris::Idris<usize> for ColoredMana {
+impl idris::Idris for ColoredMana {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "{color}"
     }
 }
 
@@ -131,10 +136,13 @@ pub struct HybridMana {
     pub color_2: crate::Color,
 }
 
-impl idris::Idris<usize> for HybridMana {
+impl idris::Idris for HybridMana {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "{color/color}"
     }
 }
 
@@ -153,10 +161,13 @@ pub struct MonocoloredHybridMana {
     pub number: usize,
 }
 
-impl idris::Idris<usize> for MonocoloredHybridMana {
+impl idris::Idris for MonocoloredHybridMana {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "{number/color}"
     }
 }
 
@@ -174,10 +185,13 @@ pub struct PhyrexianMana {
     pub color: crate::Color,
 }
 
-impl idris::Idris<usize> for PhyrexianMana {
+impl idris::Idris for PhyrexianMana {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "{color/p}"
     }
 }
 
@@ -196,10 +210,13 @@ pub struct HybridPhyrexianMana {
     pub color_2: crate::Color,
 }
 
-impl idris::Idris<usize> for HybridPhyrexianMana {
+impl idris::Idris for HybridPhyrexianMana {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "{color/color/p}"
     }
 }
 

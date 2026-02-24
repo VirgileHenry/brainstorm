@@ -7,7 +7,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// It is mostly made to be an object specifier (e.g. "destroy target creature /
 /// enchantment / permanent").
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]

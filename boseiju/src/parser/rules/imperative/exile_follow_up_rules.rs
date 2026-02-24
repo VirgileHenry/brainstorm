@@ -9,13 +9,13 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Exile follow up that return the card directly */ ParserRule {
-        from: RuleLhs::new(&[
+        expanded: RuleLhs::new(&[
             ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Return)).id(),
             ParserNode::PreviouslyMentionnedObject { object: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
             ParserNode::ZoneReference { zone: dummy() }.id(),
         ]),
-        result: ParserNode::ExileFollowUp { follow_up: dummy() }.id(),
+        merged: ParserNode::ExileFollowUp { follow_up: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Return)),

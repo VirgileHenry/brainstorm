@@ -6,10 +6,11 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_rules = vec![super::ParserRule {
-        from: super::RuleLhs::new(&[
-            ParserNode::LexerToken(TokenKind::GlobalZone(non_terminals::GlobalZone::TheBattlefield)).id(),
-        ]),
-        result: ParserNode::ZoneReference { zone: dummy() }.id(),
+        expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::GlobalZone(
+            non_terminals::GlobalZone::TheBattlefield,
+        ))
+        .id()]),
+        merged: ParserNode::ZoneReference { zone: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(TokenKind::GlobalZone(non_terminals::GlobalZone::TheBattlefield))] => {
                 Some(ParserNode::ZoneReference {
@@ -31,11 +32,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         [terminals::OwnerSpecifier::YouOwn, terminals::OwnerSpecifier::ObjectOwner]
             .into_iter()
             .map(move |owner| super::ParserRule {
-                from: super::RuleLhs::new(&[
+                expanded: super::RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)).id(),
                     ParserNode::LexerToken(TokenKind::OwnableZone(zone)).id(),
                 ]),
-                result: ParserNode::ZoneReference { zone: dummy() }.id(),
+                merged: ParserNode::ZoneReference { zone: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)),

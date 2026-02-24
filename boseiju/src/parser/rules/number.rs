@@ -9,10 +9,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let english_to_numbers_rules = vec![
         /* "An", "A" can be used as a number: "A card" really means "1 card" */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)).id(),
-            ]),
-            result: ParserNode::Number { number: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::EnglishKeyword(
+                non_terminals::EnglishKeyword::An,
+            ))
+            .id()]),
+            merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An))] => {
                     Some(ParserNode::Number {
@@ -24,10 +25,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
             ]),
-            result: ParserNode::Number { number: dummy() }.id(),
+            merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A))] => {
                     Some(ParserNode::Number {
@@ -48,8 +49,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     ]
     .into_iter()
     .map(|number| super::ParserRule {
-        from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Number(number)).id()]),
-        result: ParserNode::Number { number: dummy() }.id(),
+        expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Number(number)).id()]),
+        merged: ParserNode::Number { number: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(TokenKind::Number(number))] => Some(ParserNode::Number {
                 number: match number {

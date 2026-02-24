@@ -4,18 +4,10 @@ const COLOR_RESET: &str = "\x1b[0m";
 const UNDERLINE_ON: &str = "\x1b[4m";
 const UNDERLINE_RESET: &str = "\x1b[24m";
 
-pub fn output_recap(
-    harness: &crate::KrarkHarness,
-    recap: crate::KrarkRecap,
-) -> std::io::Result<()> {
+pub fn output_recap(harness: &crate::KrarkHarness, recap: crate::KrarkRecap) -> std::io::Result<()> {
     let mut output: Box<dyn std::io::Write> = match &harness.test_args.logfile {
         None => Box::new(std::io::stdout()),
-        Some(path) => Box::new(
-            std::fs::OpenOptions::new()
-                .write(true)
-                .truncate(true)
-                .open(path)?,
-        ),
+        Some(path) => Box::new(std::fs::OpenOptions::new().write(true).truncate(true).open(path)?),
     };
     let color: bool = match (&harness.test_args.color, &harness.test_args.logfile) {
         (Some(libtest_mimic::ColorSetting::Always), _) => true,
@@ -29,11 +21,7 @@ pub fn output_recap(
         ("", "", "")
     };
 
-    let (underline_on, underline_reset) = if color {
-        (UNDERLINE_ON, UNDERLINE_RESET)
-    } else {
-        ("", "")
-    };
+    let (underline_on, underline_reset) = if color { (UNDERLINE_ON, UNDERLINE_RESET) } else { ("", "") };
 
     let passed = recap.passed.len();
     let failed = recap.failed.len();
@@ -44,11 +32,7 @@ pub fn output_recap(
     let failed_perc = failed as f32 / total as f32 * 100.0;
     let panicked_perc = panicked as f32 / total as f32 * 100.0;
 
-    let color_passed = if passed == total {
-        color_green
-    } else {
-        color_red
-    };
+    let color_passed = if passed == total { color_green } else { color_red };
     let color_failed = match failed {
         0 => color_green,
         _ => color_red,
@@ -62,24 +46,15 @@ pub fn output_recap(
     let lines = [
         (
             "Passed",
-            format!(
-                "{}{} ({:.1}%){}",
-                color_passed, passed, passed_perc, color_reset
-            ),
+            format!("{}{} ({:.1}%){}", color_passed, passed, passed_perc, color_reset),
         ),
         (
             "Failed",
-            format!(
-                "{}{} ({:.1}%){}",
-                color_failed, failed, failed_perc, color_reset
-            ),
+            format!("{}{} ({:.1}%){}", color_failed, failed, failed_perc, color_reset),
         ),
         (
             "Panicked",
-            format!(
-                "{}{} ({:.1}%){}",
-                color_panicked, panicked, panicked_perc, color_reset
-            ),
+            format!("{}{} ({:.1}%){}", color_panicked, panicked, panicked_perc, color_reset),
         ),
         ("Total", format!("{}{}{}", color_total, total, color_reset)),
     ];
@@ -90,14 +65,9 @@ pub fn output_recap(
         .chain(std::iter::once(terminal_str_len(&harness.name)))
         .max()
         .unwrap_or(0);
-    let result_column_width = lines
-        .iter()
-        .map(|(_, res)| terminal_str_len(res))
-        .max()
-        .unwrap_or(0);
+    let result_column_width = lines.iter().map(|(_, res)| terminal_str_len(res)).max().unwrap_or(0);
 
-    let mut table_display =
-        TableDisplay::new(&mut output, [status_column_width, result_column_width]);
+    let mut table_display = TableDisplay::new(&mut output, [status_column_width, result_column_width]);
 
     table_display.separator_line("┏", &[("━", "━"), ("━", "┓")])?;
     table_display.result_line("┃", &[(&harness.name, " "), ("", "┃")])?;
@@ -120,10 +90,10 @@ pub fn output_recap(
             underline_on, failed, failed_shown, underline_reset
         )?;
         for tc_failed in recap.failed.iter().take(failed_shown) {
-            writeln!(output, "\t{}:", tc_failed.card_name)?;
+            writeln!(output, "\n{}{}{}:", underline_on, tc_failed.card_name, underline_reset)?;
             for check_failed in tc_failed.failed.iter() {
-                writeln!(output, "\t\t{}:", check_failed.check_name)?;
-                writeln!(output, "\t\t{}", check_failed.failure)?;
+                writeln!(output, "{}:", check_failed.check_name)?;
+                writeln!(output, "{}", check_failed.failure)?;
             }
         }
     }
@@ -136,8 +106,8 @@ pub fn output_recap(
             underline_on, panicked, panicked_shown, underline_reset
         )?;
         for tc_panicked in recap.panicked.iter().take(panicked_shown) {
-            writeln!(output, "\t{}:", tc_panicked.card_name)?;
-            writeln!(output, "\t\t{}:", tc_panicked.trace)?;
+            writeln!(output, "\n{}{}{}:", underline_on, tc_panicked.card_name, underline_reset)?;
+            writeln!(output, "{}:", tc_panicked.trace)?;
         }
     }
 
@@ -151,10 +121,7 @@ struct TableDisplay<'out, W: std::io::Write, const N: usize> {
 
 impl<'out, W: std::io::Write, const N: usize> TableDisplay<'out, W, N> {
     fn new(output: &'out mut W, column_sizes: [usize; N]) -> Self {
-        TableDisplay {
-            output,
-            column_sizes,
-        }
+        TableDisplay { output, column_sizes }
     }
 
     fn separator_line(&mut self, first: &str, columns: &[(&str, &str); N]) -> std::io::Result<()> {

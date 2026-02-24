@@ -15,11 +15,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     ]
     .into_iter()
     .map(|count| super::ParserRule {
-        from: super::RuleLhs::new(&[
+        expanded: super::RuleLhs::new(&[
             ParserNode::LexerToken(TokenKind::CountSpecifier(count)).id(),
             ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
         ]),
-        result: ParserNode::ObjectReference { reference: dummy() }.id(),
+        merged: ParserNode::ObjectReference { reference: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(TokenKind::CountSpecifier(count)),
@@ -41,12 +41,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let object_references_rules = vec![
         /* "Another" is a special kind of specifier that is found before the "target" count specifier */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Another)).id(),
                 ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::Target)).id(),
                 ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectReference { reference: dummy() }.id(),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Another)),
@@ -72,8 +72,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* In some cases, there will be no count specifier, there is an implicit "all". */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::ObjectSpecifiers { specifiers: dummy() }.id()]),
-            result: ParserNode::ObjectReference { reference: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::ObjectSpecifiers { specifiers: dummy() }.id()]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ObjectSpecifiers { specifiers }] => Some(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
@@ -89,8 +89,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Self Referencing reference */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::SelfReferencing { reference: dummy() }).id()]),
-            result: ParserNode::ObjectReference { reference: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::SelfReferencing { reference: dummy() }).id()]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::SelfReferencing { reference })] => Some(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::SelfReferencing(reference.clone()),
@@ -101,11 +101,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Up to N + specifiers makes an object reference */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to: 0 })).id(),
                 ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectReference { reference: dummy() }.id(),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to })),
@@ -123,12 +123,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to: 0 })).id(),
                 ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::Target)).id(),
                 ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             ]),
-            result: ParserNode::ObjectReference { reference: dummy() }.id(),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::CountSpecifier(terminals::CountSpecifier::UpTo { up_to })),
@@ -148,8 +148,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Previouslu mentionned objects can be object reference */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::PreviouslyMentionnedObject { object: dummy() }.id()]),
-            result: ParserNode::ObjectReference { reference: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::PreviouslyMentionnedObject { object: dummy() }.id()]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::PreviouslyMentionnedObject { object }] => Some(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::PreviouslyMentionned(object.clone()),
@@ -163,11 +163,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* "That " + an object kind is a reference to previously mentionned object of that kind */
     let that_kind_to_previously_mentionned = crate::ability_tree::object::ObjectKind::all()
         .map(|object_kind| super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::That)).id(),
                 ParserNode::LexerToken(TokenKind::ObjectKind(object_kind)).id(),
             ]),
-            result: ParserNode::PreviouslyMentionnedObject { object: dummy() }.id(),
+            merged: ParserNode::PreviouslyMentionnedObject { object: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::That)),

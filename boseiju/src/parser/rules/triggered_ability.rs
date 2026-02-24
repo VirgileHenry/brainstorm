@@ -8,14 +8,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Whenever, an event, a comma and a statement make the structure for triggered abilities. */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)).id(),
                 ParserNode::Event { event: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
-            result: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)),
@@ -37,14 +37,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* When, an event, a comma and a statement also make a structure for triggered abilities. */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)).id(),
                 ParserNode::Event { event: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
-            result: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)),

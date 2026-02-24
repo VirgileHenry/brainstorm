@@ -10,7 +10,6 @@ use crate::ability_tree::MAX_NODE_DATA_SIZE;
 /// Number can also be "any number" where the player can choose whatever, or
 /// a reference to a previosuly mentionned number in the ability.
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -91,10 +90,13 @@ impl AbilityTreeNode for FixedNumber {
     }
 }
 
-impl idris::Idris<usize> for FixedNumber {
+impl idris::Idris for FixedNumber {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "number"
     }
 }
 
@@ -136,10 +138,13 @@ impl AbilityTreeNode for XNumber {
     }
 }
 
-impl idris::Idris<usize> for XNumber {
+impl idris::Idris for XNumber {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "x"
     }
 }
 
@@ -172,9 +177,12 @@ impl AbilityTreeNode for OrMoreNumber {
     }
 }
 
-impl idris::Idris<usize> for OrMoreNumber {
+impl idris::Idris for OrMoreNumber {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "or more"
     }
 }

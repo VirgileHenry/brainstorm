@@ -9,12 +9,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let backward_duration_to_event_occured_condition = [time::BackwardDuration::ThisTurn]
         .into_iter()
         .map(|duration| super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)).id(),
                 ParserNode::Event { event: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::BackwardDuration(duration)).id(),
             ]),
-            result: ParserNode::IfCondition { condition: dummy() }.id(),
+            merged: ParserNode::IfCondition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),

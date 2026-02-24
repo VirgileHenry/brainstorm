@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             [
                 /* straight up "put a counter on a permanent" */
                 ParserRule {
-                    from: RuleLhs::new(&[
+                    expanded: RuleLhs::new(&[
                         ParserNode::EventSource { source: dummy() }.id(),
                         ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
                         ParserNode::Number { number: dummy() }.id(),
@@ -23,7 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
                         ParserNode::ObjectReference { reference: dummy() }.id(),
                     ]),
-                    result: ParserNode::Event { event: dummy() }.id(),
+                    merged: ParserNode::Event { event: dummy() }.id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
                             ParserNode::EventSource { source },
@@ -49,7 +49,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 },
                 /* Would put counter on permanent */
                 ParserRule {
-                    from: RuleLhs::new(&[
+                    expanded: RuleLhs::new(&[
                         ParserNode::EventSource { source: dummy() }.id(),
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
                         ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
                         ParserNode::ObjectReference { reference: dummy() }.id(),
                     ]),
-                    result: ParserNode::Event { event: dummy() }.id(),
+                    merged: ParserNode::Event { event: dummy() }.id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
                             ParserNode::EventSource { source },
@@ -92,7 +92,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let put_any_counter_events = vec![
         /* straight up "put a counter on a permanent" */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
                 ParserNode::Number { number: dummy() }.id(),
@@ -101,7 +101,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
-            result: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },
@@ -127,7 +127,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Would put counter on permanent */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
                 ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
@@ -137,7 +137,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
-            result: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },

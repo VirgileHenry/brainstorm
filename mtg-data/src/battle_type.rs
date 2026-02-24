@@ -1,5 +1,4 @@
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -33,8 +32,6 @@ impl std::fmt::Display for BattleType {
 
 impl BattleType {
     pub fn all() -> impl Iterator<Item = Self> {
-        [
-            Self::Siege,
-        ].into_iter()
+        [Self::Siege].into_iter()
     }
 }

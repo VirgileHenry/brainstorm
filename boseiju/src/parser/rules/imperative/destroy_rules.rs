@@ -9,12 +9,12 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Destroy any object reference */ ParserRule {
-        from: RuleLhs::new(&[
+        expanded: RuleLhs::new(&[
             ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)).id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
         ]),
-        result: ParserNode::Imperative { imperative: dummy() }.id(),
+        merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Destroy)),

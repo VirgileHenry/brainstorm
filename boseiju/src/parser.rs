@@ -5,207 +5,403 @@ mod rules;
 
 pub use node::ParserNode;
 
-/// The parser state represents a single node in a graph where all nodes are arrays of tokens.
-/// Nodes are connected to each other when a single rule application allows to fuse a sub slice
-/// of the tokens together, creating a smaller array of tokens. For example:
-/// with the rule `B, C -> E`, we have the two nodes `[A, B, C, D] -> [A, E, D]` connected.
-///
-/// The goal is to explore this graph, and find the final node as quickly as possible.
-/// Or if there is no path to a terminal node, fail as fast as possible.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ParserState {
-    nodes: Vec<ParserNode>,
+use std::collections::HashSet;
+use std::sync::Arc;
+
+#[derive(Clone)]
+enum EarleyBackpointer<'r> {
+    Scanned(usize),
+    Complete(Arc<EarleyItem<'r>>),
 }
 
-/// Display implementation thats is use for the petgraph debugging, no real prod use case.
-impl std::fmt::Display for ParserState {
+/// Earley Item.
+///
+/// From the Earley algorithm, an Earley item is an object that contains:
+/// - A rule to match for. This item is responsible for trying to match that rule
+/// on the given input stream, at the given start position.
+/// - A start index, this is where the item started to match the tokens with
+/// the given rule.
+/// - a position index, indicating how many of the rule tokens have been matched already.
+///
+/// The rule is generally noted `(A -> a b . c, 2)` where the dot represent the position index.
+/// In this example, the rule is `A -> a b c`, and we already matched `a b` from the token 2 and 3
+/// of the input stream, and we are expecting a token `c` from the stream.
+///
+/// The debug implementation of the rule display it with this format.
+#[derive(Clone)]
+struct EarleyItem<'r> {
+    pub rule: &'r rules::ParserRule,
+    pub start_index: usize,
+    pub position_index: usize,
+    pub backpointers: Vec<EarleyBackpointer<'r>>,
+}
+
+impl<'r> EarleyItem<'r> {
+    /// Construct a new Earley item with no backpointers.
+    fn new(rule: &'r rules::ParserRule, start_index: usize, position_index: usize) -> Self {
+        Self {
+            rule,
+            start_index,
+            position_index,
+            backpointers: Vec::with_capacity(rule.expanded.length.get()),
+        }
+    }
+
+    /// This function gets the token that this rule is awaiting for progress.
+    ///
+    /// For this item of the form (A -> a . B b, i) get the B token id.
+    fn expecting_token(&self) -> Option<usize> {
+        self.rule.expanded.get(self.position_index).cloned()
+    }
+
+    /// Checks wheteher this item is of the form (A -> a . , i).
+    /// In other terms, whether this rule fully matched the input or not.
+    fn rule_complete(&self) -> bool {
+        self.rule.expanded.length.get() == self.position_index
+    }
+
+    /// Checks whether this Earley Item is complete regarding a given node id.
+    ///
+    /// An item is considered complete if the input token stream is fully matched,
+    /// that means that for a given rule that produces the target node id:
+    /// - The rule result is the required node
+    /// - The rule awaits no tokens, or the position index is at the end of the expanded tokens,
+    /// - the rule starts at 0
+    fn is_complete(&self, target_node_id: usize) -> bool {
+        let is_axiom = self.rule.merged == target_node_id;
+        let rule_complete = self.rule_complete();
+        let start_at_0 = self.start_index == 0;
+        is_axiom && rule_complete && start_at_0
+    }
+
+    /// Use the item rule to reduce the parser nodes.
+    ///
+    /// If the item contains any backpointers, they will be used to recursively
+    /// call the rules required to merge everything together.
+    fn reduce(&self, nodes: &[ParserNode]) -> Option<ParserNode> {
+        let rule_token_count = self.rule.expanded.length.get();
+
+        let mut tokens_for_reduction = Vec::with_capacity(rule_token_count);
+        for backpointer in self.backpointers.iter().take(rule_token_count) {
+            match backpointer {
+                EarleyBackpointer::Scanned(token_index) => tokens_for_reduction.push(nodes[*token_index].clone()),
+                EarleyBackpointer::Complete(backpointer) => tokens_for_reduction.push(backpointer.reduce(nodes)?),
+            }
+        }
+
+        (self.rule.reduction)(&tokens_for_reduction)
+    }
+}
+
+impl<'r> std::fmt::Debug for EarleyItem<'r> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[")?;
-        for node in self.nodes.iter().take(self.nodes.len().saturating_sub(1)) {
-            writeln!(f, "{node:?}")?;
+        use idris::Idris;
+        write!(f, "({} -> ", ParserNode::name_from_id(self.rule.merged))?;
+        for i in 0..self.position_index {
+            write!(f, "{} ", ParserNode::name_from_id(self.rule.expanded[i]))?;
         }
-        if let Some(node) = self.nodes.last() {
-            writeln!(f, "{node:?}")?;
+        write!(f, ".")?;
+        for i in self.position_index..self.rule.expanded.length.get() {
+            write!(f, " {}", ParserNode::name_from_id(self.rule.expanded[i]))?;
         }
-        write!(f, "]")?;
+        write!(f, ", {})", self.start_index)?;
         Ok(())
     }
 }
 
-/// Attempts to parse a sequence of nodes into an ability tree, exploring the graph of [ParserState] as fast as possible.
-///
-/// With our heuristic plugged into the Ord impl of the struct, we can use a BTreeSet.
-/// The core idea is to keep track of every unexplored node, and explore it.
-/// The BTreeSet allows to cheaply pop the node with the smallest heuristic, so the "closer" to completion.
-/// We explore the node, and add every new node to the list of nodes to explore.
-/// Again, the BTreeSet makes the insertion into the sorted list fast.
-///
-/// Furthermore, we can keep track of explored nodes to avoid exploring them again.
-/// It's unlikely the algorithm will loop, but multiple paths can lead to the same nodes.
-fn parse_impl<F: FnMut(&ParserState, &ParserState), G: FnMut(&[ParserNode])>(
-    tokens: &[crate::lexer::tokens::Token],
-    mut on_node_explored: F,
-    mut on_fuse_attempt: G,
-) -> Result<crate::AbilityTree, error::ParserError> {
-    /* Rule map, all our parsing rules in a single struct */
-    lazy_static::lazy_static!(
-        static ref rules: rule_map::RuleMap = rule_map::RuleMap::default().expect("Default Rule Map shall be OK");
-    );
+impl<'r> PartialEq for EarleyItem<'r> {
+    fn eq(&self, other: &Self) -> bool {
+        self.rule == other.rule && self.start_index == other.start_index && self.position_index == other.position_index
+    }
+}
 
-    /* We don't need to do any parsing if there are no tokens */
-    if tokens.is_empty() {
-        return Ok(crate::AbilityTree::empty());
+impl<'r> Eq for EarleyItem<'r> {}
+
+impl<'r> std::hash::Hash for EarleyItem<'r> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.rule.hash(state);
+        self.start_index.hash(state);
+        self.position_index.hash(state);
+    }
+}
+
+/// Earley row.
+///
+/// An Earley row is a set of [`EarleyItem`] that are stored at a single row
+/// in the Early algorithm. That is, any T\[i\] is an Earley row.
+///
+/// The core idea of the algorithm is that in the Earley table at index j,
+/// the Earley row j contains all the rules that are potential matches for the
+/// incoming token stream.
+#[derive(Clone)]
+struct EarleyRow<'r> {
+    pub items: HashSet<Arc<EarleyItem<'r>>>,
+}
+
+impl<'r> EarleyRow<'r> {
+    /// Creates a new, empty row.
+    fn new() -> Self {
+        Self { items: HashSet::new() }
     }
 
-    /// A bit tricky, but for now the parser is taking way too long
-    /// to fail on cases. So I might want to revisit it, there might be a bug,
-    /// but until then, I'll hard code a limit on the number of backtracking steps allowed.
-    const MAX_BACKTRACK: usize = 64;
-    let mut backtrack_count = 0;
+    /// Create the start row of the Earley Table for an algorithm that is targetting
+    /// the Ability Tree node.
+    fn start_row(rules: &'static rule_map::RuleMap) -> EarleyRow<'static> {
+        use crate::utils::dummy;
+        use idris::Idris;
 
-    /* Initialize the nodes from the tokens */
+        let mut start_row = EarleyRow::new();
+
+        let target_node = ParserNode::AbilityTree { tree: dummy() };
+        let node_id = target_node.id();
+
+        for rule in rules.get_rules_for_token(node_id) {
+            start_row.items.insert(Arc::new(EarleyItem::new(rule, 0, 0)));
+        }
+
+        /* We do need a predictor step on the first row */
+        let mut step_predictor = true;
+        while step_predictor {
+            step_predictor = predictor_step(rules, 0, &mut start_row);
+        }
+
+        start_row
+    }
+}
+
+impl<'r> std::fmt::Debug for EarleyRow<'r> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.items.is_empty() {
+            write!(f, "[]")?;
+        } else {
+            writeln!(f, "[")?;
+            for item in self.items.iter() {
+                writeln!(f, "  {item:?}")?;
+            }
+            write!(f, "]")?;
+        }
+        Ok(())
+    }
+}
+
+/// Earley Table.
+///
+/// The Earley table is the object constructed with the Earley parsing algorithm.
+/// It contains as many rows as there are tokens (plus one) and keep track of the rules
+/// that can match the provided input stream.
+#[derive(Clone)]
+struct EarleyTable<'r> {
+    pub table: Vec<EarleyRow<'r>>,
+}
+
+impl<'r> EarleyTable<'r> {
+    pub fn new(node_count: usize, start_row: EarleyRow<'r>) -> Self {
+        let mut table = Vec::with_capacity(node_count + 1);
+        table.push(start_row);
+
+        Self { table }
+    }
+}
+
+impl<'r> std::fmt::Debug for EarleyTable<'r> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for (i, row) in self.table.iter().enumerate() {
+            writeln!(f, "T[{i}] = {row:?}")?;
+        }
+        Ok(())
+    }
+}
+
+impl<'r> std::ops::Deref for EarleyTable<'r> {
+    type Target = [EarleyRow<'r>];
+    fn deref(&self) -> &Self::Target {
+        self.table.as_slice()
+    }
+}
+
+/// Attempts to parse a sequence of nodes into an ability tree, using the Earley parsing algorithm.
+///
+/// The algorithm reference can be found here: https://en.wikipedia.org/wiki/Earley_parser
+/// The algorithm used for the implementation was: https://fr.wikipedia.org/wiki/Analyse_Earley (cocorico)
+fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTree, error::ParserError> {
+    use crate::utils::dummy;
+    use idris::Idris;
+
+    /* Rule map, all our parsing rules in a single struct */
+    lazy_static::lazy_static!(
+        /// The rule map contains all the rules to parse the MTG cards.
+        static ref rules: rule_map::RuleMap = rule_map::RuleMap::default().expect("Default Rule Map shall be OK");
+
+        /// A first row for the earley parsing algorithm with the target of parsing a full ability tree.
+        ///
+        /// Since the row depends only on the rule map, we can create a static instance of
+        /// it and clone it whenever we start a new parsing, instead of rebuilding it each time.
+        ///
+        /// Fixme: I think we can construct it each time it's fine, and it gives us control over the target
+        static ref earley_start_row: EarleyRow<'static> = EarleyRow::start_row(&rules);
+    );
+
+    /* Implementation of the Earley parser */
+    let target_node_id = ParserNode::AbilityTree { tree: dummy() }.id();
     let nodes: Vec<ParserNode> = tokens.iter().cloned().map(ParserNode::from).collect();
-    token_precedence_check(&rules, &nodes)?;
 
-    let mut best_error: Option<error::ParserError> = None;
+    /* First step: init the table row 0 with all rules that can create the final token */
+    let node_count = nodes.len();
+    let mut earley_table = EarleyTable::new(node_count, earley_start_row.clone());
 
-    /* The state to explore starts with the list of provided tokens */
-    let mut states_to_explore = Vec::new();
-    states_to_explore.push(ParserState { nodes });
-    /* And the list of explored states starts empty */
-    let mut states_explored = std::collections::HashSet::new();
+    for (node_index, node) in nodes.iter().enumerate() {
+        use idris::Idris;
+        let node_id = node.id();
+        let j = node_index + 1;
 
-    /* Keep looping until we have nodes that need to be explored */
-    while let Some(to_explore) = states_to_explore.pop() {
-        /* Get all next possible states */
-        let mut next_states = Vec::new();
+        /* Create the next Earley table entry, T[j]  */
+        let mut next_table_row = EarleyRow::new();
 
-        /* At most, we iterate over the biggest number of tokens in any rule */
-        let max_tokens_per_rule = to_explore.nodes.len().min(rules.max_rule_size());
+        /* Scanner step */
+        /* for all items in the previous row, add them to this row if they match the current token */
+        scanner_step(&earley_table.table[node_index], node_id, node_index, &mut next_table_row);
 
-        for token_count in (1..=max_tokens_per_rule).rev() {
-            for (offset, window) in to_explore.nodes.windows(token_count).enumerate() {
-                on_fuse_attempt(window);
-                if let Some(fused) = rules.fuse(window) {
-                    /* Create the concatenated node array */
-                    let mut nodes = Vec::<_>::with_capacity(to_explore.nodes.len());
-                    nodes.extend(to_explore.nodes.iter().take(offset).cloned());
-                    nodes.push(fused);
-                    nodes.extend(to_explore.nodes.iter().skip(offset + token_count).cloned());
-                    let next_node = ParserState { nodes };
+        loop {
+            /* Fixme: queue system instead of looping ? */
 
-                    /* New node explored, call the user function */
-                    on_node_explored(&to_explore, &next_node);
+            let mut row_updated = false;
+            /* Predictor step */
+            /* Add all the rules that can produce the next token in the list */
+            row_updated |= predictor_step(&rules, j, &mut next_table_row);
 
-                    /* Exit condition: there is only a single token, the full tree */
-                    match next_node.nodes.as_slice() {
-                        [ParserNode::AbilityTree { tree }] => return Ok(*tree.clone()),
-                        _ => {}
+            /* Completor step */
+            /* Check if all rules in the current new row can make progress on previous rules */
+            row_updated |= completor_step(&earley_table, &mut next_table_row);
+
+            if !row_updated {
+                break;
+            }
+        }
+
+        earley_table.table.push(next_table_row);
+    }
+
+    /* Look for an item of kind (S -> a . , 0) for parser completion */
+    let completed_items = earley_table.table[node_count]
+        .items
+        .iter()
+        .filter(|item| item.is_complete(target_node_id));
+
+    /* Try all the results ? I wonder why there could be multiple of them, maybe a check would be nice */
+    for complete_item in completed_items.into_iter() {
+        match complete_item.reduce(&nodes) {
+            Some(ParserNode::AbilityTree { tree }) => return Ok(*tree),
+            _ => {}
+        }
+    }
+
+    /* Here, we have been unable to parse the tokens. We create a meaningful error. */
+    Err(error::ParserError::from_earley_table(&earley_table, tokens))
+}
+
+/// Scanner step of the Earley Algorithm.
+///
+/// The goal of this step is to consume a new token from the input token stream,
+/// and feed it to all the rules that are current matches to advance those rules.
+///
+/// All the rules in the row T\[j-1\] that were expecting the token are bumped
+/// into T\[j\] with their position index advanced.
+///
+/// The awaited non terminals are handled in the predictor step.
+fn scanner_step<'r>(prev_row: &EarleyRow<'r>, token: usize, token_index: usize, next_row: &mut EarleyRow<'r>) {
+    for item in prev_row.items.iter() {
+        if item.expecting_token() == Some(token) {
+            use std::ops::Deref;
+
+            let mut new_item: EarleyItem = item.deref().clone();
+            new_item.position_index += 1;
+            new_item.backpointers.push(EarleyBackpointer::Scanned(token_index));
+
+            next_row.items.insert(Arc::new(new_item));
+        }
+    }
+}
+
+/// Predictor step of the Earley Algorithm.
+///
+/// The goal of this step is to satisfy all the rules that are currently awaiting a non terminal token.
+/// Since the scanner step can only feed terminals, for each awaited non terminal in a rule,
+/// we add that rule to the current row, with the start position set at the current index.
+///
+/// Then, the rule completion logic is handled in the completor step.
+///
+/// This function returns whether new items were added to the next row.
+fn predictor_step<'r>(rules: &'r rule_map::RuleMap, j: usize, next_row: &mut EarleyRow<'r>) -> bool {
+    let mut new_items = std::collections::HashSet::new();
+    for item in next_row.items.iter() {
+        let next_token = match item.expecting_token() {
+            Some(token) => token,
+            None => continue,
+        };
+        for rule in rules.get_rules_for_token(next_token) {
+            let item = EarleyItem::new(rule, j, 0);
+            if !next_row.items.contains(&item) && !new_items.contains(&item) {
+                new_items.insert(item);
+            }
+        }
+    }
+
+    if new_items.is_empty() {
+        false
+    } else {
+        for item in new_items.into_iter() {
+            next_row.items.insert(Arc::new(item));
+        }
+        true
+    }
+}
+
+/// Completor step of the Earley Algorithm.
+///
+/// If we complete a rule in the current row, we need to look back to all the rows
+/// that were awaiting this rule to complete to advance it.
+///
+/// For a given rule (A -> a . , i) that is compleated, we can look in T[\i\] (since that
+/// rule started at i) for any rule that was awaiting for an A non terminal, and advance
+/// it in the current row.
+///
+/// This function returns whether new items were added to the next row.
+fn completor_step<'r>(earley_table: &EarleyTable<'r>, next_row: &mut EarleyRow<'r>) -> bool {
+    let mut new_items = std::collections::HashSet::new();
+    /* For each item in the newly created row */
+    for current_row_item in next_row.items.iter() {
+        /* Check whether this item is of the for (A -> a . , i) (is completed) */
+        if current_row_item.rule_complete() {
+            /* If so, check in T[i] for all rules awaiting this item */
+            for awaiting_item in earley_table.table[current_row_item.start_index].items.iter() {
+                if awaiting_item.expecting_token() == Some(current_row_item.rule.merged) {
+                    /* And we can bump these rules up */
+                    use std::ops::Deref;
+                    let mut item: EarleyItem = awaiting_item.deref().clone();
+                    item.position_index += 1;
+                    /* Set the backpointer, since the current row item validated this token */
+                    item.backpointers.push(EarleyBackpointer::Complete(current_row_item.clone()));
+
+                    if !next_row.items.contains(&item) && !new_items.contains(&item) {
+                        new_items.insert(item);
                     }
-
-                    if states_explored.contains(&next_node) {
-                        continue;
-                    }
-
-                    /* If anywhere in the new node, two consecutive tokens are not allowed, stop */
-                    if let Err(error) = token_precedence_check(&rules, &next_node.nodes) {
-                        best_error = Some(error.keep_best_error(best_error))
-                    }
-
-                    next_states.push(next_node);
                 }
             }
         }
-
-        if next_states.is_empty() {
-            backtrack_count += 1;
-            if backtrack_count >= MAX_BACKTRACK {
-                return Err(match best_error {
-                    Some(error) => error,
-                    None => error::ParserError::UnparsableInput {
-                        nodes: tokens.iter().map(|t| t.kind.clone()).collect(),
-                    },
-                });
-            }
-        }
-
-        states_to_explore.append(&mut next_states);
-
-        /* sort the nodes to explore ? We would need a nice heuristic for this */
-        states_to_explore.sort_by(|a, b| b.nodes.len().cmp(&a.nodes.len()));
-
-        /* Anyway, mark the node as explored */
-        states_explored.insert(to_explore);
     }
 
-    Err(match best_error {
-        Some(error) => error,
-        None => error::ParserError::UnparsableInput {
-            nodes: tokens.iter().map(|t| t.kind.clone()).collect(),
-        },
-    })
-}
-
-fn token_precedence_check(rules: &rule_map::RuleMap, nodes: &[ParserNode]) -> Result<(), error::ParserError> {
-    for window in nodes.windows(2) {
-        let [current, next] = window else { unreachable!() };
-        if !rules.can_succeed(current, next) {
-            return Err(error::ParserError::UnexpectedFollowingToken {
-                current: current.clone(),
-                next: next.clone(),
-                current_best: nodes.to_vec(),
-            });
+    if new_items.is_empty() {
+        false
+    } else {
+        for item in new_items.into_iter() {
+            next_row.items.insert(Arc::new(item));
         }
+        true
     }
-    Ok(())
 }
 
 /// Parser function without artifacts, to get the result straight out.
 /// See [parse_impl] for a detailed explanation of the algorithm.
 pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTree, error::ParserError> {
-    parse_impl(tokens, |_, _| {}, |_| {})
-}
-
-pub struct Edge(usize);
-
-impl std::fmt::Display for Edge {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-/// Attemtps to parse a card, but also generates the pentgraph of explored nodes for debbugging.
-pub fn parse_and_generate_graph_vis(tokens: &[crate::lexer::tokens::Token]) -> petgraph::Graph<ParserState, Edge> {
-    /* Initialize the graphs, add first node */
-    let mut graph = petgraph::Graph::new();
-    let nodes: Vec<ParserNode> = tokens.iter().cloned().map(ParserNode::from).collect();
-    graph.add_node(ParserState { nodes: nodes.clone() });
-
-    /* Use a counter to keep track of the order of exploration */
-    let mut exploration_counter = 0;
-
-    /* Call the parser, with a function that will update the graph as it runs */
-    let _ = parse_impl(
-        tokens,
-        |from_node, to_node| {
-            let from_index = graph.node_indices().find(|&i| graph[i].eq(from_node)).unwrap();
-            let to_index = match graph.node_indices().find(|&i| graph[i].eq(to_node)) {
-                Some(index) => index,
-                None => graph.add_node(to_node.clone()),
-            };
-            exploration_counter += 1;
-            graph.add_edge(from_index, to_index, Edge(exploration_counter));
-        },
-        |_| {},
-    );
-
-    graph
-}
-
-/// Parse an ability tree, but counts the number of successeful token fusion performed.
-/// This gives an indicator on how "good" our parsing is: the lesser the better.
-pub fn parse_and_count_iters(tokens: &[crate::lexer::tokens::Token]) -> (Result<crate::AbilityTree, error::ParserError>, usize) {
-    let mut fuse_count = 0;
-    let result = parse_impl(tokens, |_, _| {}, |_| fuse_count += 1);
-    (result, fuse_count)
+    parse_impl(tokens)
 }

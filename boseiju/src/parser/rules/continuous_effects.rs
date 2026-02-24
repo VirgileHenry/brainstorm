@@ -11,12 +11,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     ]
     .into_iter()
     .map(|duration| super::ParserRule {
-        from: super::RuleLhs::new(&[
+        expanded: super::RuleLhs::new(&[
             ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::ForwardDuration(duration)).id(),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
         ]),
-        result: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+        merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::ContinuousEffectKind { kind },
@@ -38,11 +38,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* We can have a continuous effect kind and a terminal dot,
          * it means the continuous effect last as long as the card generating it. */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
-            result: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ContinuousEffectKind { kind },

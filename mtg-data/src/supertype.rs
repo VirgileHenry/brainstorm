@@ -1,5 +1,4 @@
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -59,6 +58,7 @@ impl Supertype {
             Self::Snow,
             Self::Token,
             Self::World,
-        ].into_iter()
+        ]
+        .into_iter()
     }
 }

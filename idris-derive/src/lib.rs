@@ -1,44 +1,6 @@
-/// Arguments for the idris macro.
-struct IdrisArgs {
-    /// Representation of the id and count integers.
-    ///
-    /// Defaults to `usize`.
-    repr: syn::Type,
-}
-
-impl IdrisArgs {
-    fn from_input(input: &syn::DeriveInput) -> syn::Result<Self> {
-        let mut repr: syn::Type = syn::parse_quote!(usize);
-
-        for attr in &input.attrs {
-            if attr.path().is_ident("idris") {
-                attr.parse_nested_meta(|meta| {
-                    if meta.path.is_ident("repr") {
-                        let value: syn::Type = meta.value()?.parse()?;
-                        repr = value;
-                        Ok(())
-                    } else {
-                        Err(syn::Error::new_spanned(
-                            input,
-                            format!("Unknown idris arg: {:?}", meta.path.get_ident()),
-                        ))
-                    }
-                })?;
-            }
-        }
-
-        Ok(Self { repr })
-    }
-}
-
 #[proc_macro_derive(Idris, attributes(idris))]
 pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = syn::parse_macro_input!(stream as syn::DeriveInput);
-    let args = match IdrisArgs::from_input(&input) {
-        Ok(args) => args,
-        Err(error) => return error.into_compile_error().into(),
-    };
-    let repr_ty = &args.repr;
 
     let enum_name = &input.ident;
     let enum_data = match &input.data {
@@ -76,7 +38,9 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
         numeric: 0,
         recursive: Vec::new(),
     };
+
     let mut match_arms = Vec::new();
+    let mut name_match_arms = Vec::new();
 
     for variant in enum_data.variants.iter() {
         let ident = &variant.ident;
@@ -87,16 +51,28 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
             syn::Fields::Unit => {
                 let pat = quote::quote! { Self::#ident };
                 match_arms.push(quote::quote! {
-                    #pat => (#current_offset) as #repr_ty
+                    #pat => (#current_offset)
                 });
                 offset.increment();
+                let name = ident.to_string();
+                name_match_arms.push(quote::quote! {
+                    if id == (#current_offset) {
+                        return #name;
+                    }
+                });
             }
             syn::Fields::Named(_) => {
                 let pat = quote::quote! { Self::#ident { .. } };
                 match_arms.push(quote::quote! {
-                    #pat => (#current_offset) as #repr_ty
+                    #pat => (#current_offset)
                 });
                 offset.increment();
+                let name = ident.to_string();
+                name_match_arms.push(quote::quote! {
+                    if id == (#current_offset) {
+                        return #name;
+                    }
+                });
             }
             syn::Fields::Unnamed(unnamed) => match unnamed.unnamed.first() {
                 Some(field) => {
@@ -104,8 +80,13 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
                     match_arms.push(quote::quote! {
                         Self::#ident ( inner ) => (#current_offset + inner.id())
                     });
+                    name_match_arms.push(quote::quote! {
+                        if (#current_offset) <= id && id < (#current_offset) + < #inner_ty as idris::Idris >::COUNT {
+                            return < #inner_ty as idris::Idris >::name_from_id(id - ( #current_offset ));
+                        }
+                    });
                     offset.add_rec(quote::quote! {
-                        < #inner_ty as idris::Idris<#repr_ty>>::COUNT
+                        < #inner_ty as idris::Idris >::COUNT
                     });
                 }
                 None => {
@@ -123,12 +104,16 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let count = offset.current();
 
     quote::quote! {
-        impl idris::Idris<#repr_ty> for #enum_name {
-            const COUNT: #repr_ty = #count as #repr_ty;
-            fn id(&self) -> #repr_ty {
+        impl idris::Idris for #enum_name {
+            const COUNT: usize = #count;
+            fn id(&self) -> usize {
                 match self {
                     #( #match_arms, )*
                 }
+            }
+            fn name_from_id(id: usize) -> &'static str {
+                #( #name_match_arms )*
+                panic!("Invalid id ({}) for {}", id, stringify!(#enum_name))
             }
         }
     }

@@ -3,7 +3,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]

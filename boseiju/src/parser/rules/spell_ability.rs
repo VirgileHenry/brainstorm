@@ -6,8 +6,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* A Single statement can make a spell ability. */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::Statement { statement: dummy() }.id()]),
-            result: ParserNode::SpellAbility { ability: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::Statement { statement: dummy() }.id()]),
+            merged: ParserNode::SpellAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Statement { statement }] => Some(ParserNode::SpellAbility {
                     ability: {
@@ -24,11 +24,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Spell abilities can have multiple statements, so we can add additionnal statements */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::SpellAbility { ability: dummy() }.id(),
                 ParserNode::Statement { statement: dummy() }.id(),
             ]),
-            result: ParserNode::SpellAbility { ability: dummy() }.id(),
+            merged: ParserNode::SpellAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpellAbility { ability }, ParserNode::Statement { statement }] => Some(ParserNode::SpellAbility {
                     ability: {

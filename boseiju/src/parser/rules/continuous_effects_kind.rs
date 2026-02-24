@@ -57,12 +57,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Fixme: gain indicate we expect a duration, have indicates there will be none. We can parse straight to continuous effects ? */
         /* Object gains abilities is a continuous effect kind */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Gain)).id(),
                 ParserNode::AbilityTree { tree: dummy() }.id(),
             ]),
-            result: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
+            merged: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
@@ -82,12 +82,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Objects have abilities is a continuous effect kind */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)).id(),
                 ParserNode::AbilityTree { tree: dummy() }.id(),
             ]),
-            result: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
+            merged: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },

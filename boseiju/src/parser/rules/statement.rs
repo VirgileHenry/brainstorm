@@ -15,12 +15,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     ]
     .into_iter()
     .map(|player| super::ParserRule {
-        from: super::RuleLhs::new(&[
+        expanded: super::RuleLhs::new(&[
             ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)).id(),
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::May)).id(),
             ParserNode::Imperative { imperative: dummy() }.id(),
         ]),
-        result: ParserNode::Statement { statement: dummy() }.id(),
+        merged: ParserNode::Statement { statement: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)),
@@ -39,8 +39,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     .collect::<Vec<_>>();
 
     let default_statement_rules = vec![super::ParserRule {
-        from: super::RuleLhs::new(&[ParserNode::Imperative { imperative: dummy() }.id()]),
-        result: ParserNode::Statement { statement: dummy() }.id(),
+        expanded: super::RuleLhs::new(&[ParserNode::Imperative { imperative: dummy() }.id()]),
+        merged: ParserNode::Statement { statement: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::Imperative { imperative }] => Some(ParserNode::Statement {
                 statement: crate::ability_tree::statement::Statement::Imperative(imperative.clone()),

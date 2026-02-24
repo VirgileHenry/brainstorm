@@ -21,13 +21,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         [
             /* Present form: "you cast a spell" */
             ParserRule {
-                from: RuleLhs::new(&[
+                expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
                     ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)).id(),
                 ]),
-                result: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
@@ -48,14 +48,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             /* Present form + spell specifiers: "you cast an artifact spell" */
             ParserRule {
-                from: RuleLhs::new(&[
+                expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
                     ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
                     ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)).id(),
                 ]),
-                result: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),

@@ -13,7 +13,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Some references are to zone that are common to all players: exile, the battlefield, etc.
 /// Otherwise, there are "owned zones" such as the players hand, libraries, etc.
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]

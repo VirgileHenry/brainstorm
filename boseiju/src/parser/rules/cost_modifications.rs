@@ -8,13 +8,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Cost reduction */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Less)).id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
-            result: ParserNode::CostModification {
+            merged: ParserNode::CostModification {
                 cost_modification: dummy(),
             }
             .id(),
@@ -37,13 +37,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Cost increment */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::More)).id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
-            result: ParserNode::CostModification {
+            merged: ParserNode::CostModification {
                 cost_modification: dummy(),
             }
             .id(),
@@ -66,12 +66,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Cost set to fixed value */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
-            result: ParserNode::CostModification {
+            merged: ParserNode::CostModification {
                 cost_modification: dummy(),
             }
             .id(),
@@ -93,7 +93,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Apply cost modification to objects */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)).id(),
                 ParserNode::CostModification {
@@ -102,7 +102,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
-            result: ParserNode::CostModificationEffect {
+            merged: ParserNode::CostModificationEffect {
                 cost_modification: dummy(),
             }
             .id(),
@@ -125,7 +125,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Apply cost modification to objects under an if condition */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)).id(),
                 ParserNode::CostModification {
@@ -135,7 +135,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::IfCondition { condition: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
-            result: ParserNode::CostModificationEffect {
+            merged: ParserNode::CostModificationEffect {
                 cost_modification: dummy(),
             }
             .id(),

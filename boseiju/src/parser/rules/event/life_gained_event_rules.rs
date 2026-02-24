@@ -21,12 +21,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         [
             /* Present form: "whenever you gain life" */
             ParserRule {
-                from: RuleLhs::new(&[
+                expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
-                result: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
@@ -44,13 +44,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             /* Past form: "if you have gained life" */
             ParserRule {
-                from: RuleLhs::new(&[
+                expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)).id(),
                     ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
-                result: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
@@ -69,14 +69,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             /* Past form + number requirement: "if you have gained 3 or more life" */
             ParserRule {
-                from: RuleLhs::new(&[
+                expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)).id(),
                     ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
                     ParserNode::Number { number: dummy() }.id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
-                result: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
@@ -96,13 +96,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             /* Conditionnal form: "if you would gain life" */
             ParserRule {
-                from: RuleLhs::new(&[
+                expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
                     ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
-                result: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),

@@ -55,7 +55,7 @@ impl KrarkResult {
         };
     }
 
-    pub fn assert_ok<T, E: std::fmt::Debug>(&mut self, result: Result<T, E>, name: String) {
+    pub fn assert_ok<T, E: std::error::Error>(&mut self, result: Result<T, E>, name: String) {
         match (&mut self.status, result) {
             (KrarkResultStatus::Panicked { .. }, _) => { /*  */ }
             (KrarkResultStatus::Passed(passed), Ok(_)) => passed.passed.push(name),
@@ -65,14 +65,14 @@ impl KrarkResult {
                     passed: std::mem::take(&mut passed.passed),
                     failed: vec![FailedTc {
                         check_name: name,
-                        failure: format!("expected Ok(_), obtained Err: {:?}", err),
+                        failure: format!("expected Ok(_), obtained Err: {}", err),
                     }],
                 });
             }
             (KrarkResultStatus::Failed(failed), Ok(_)) => failed.passed.push(name),
             (KrarkResultStatus::Failed(failed), Err(err)) => failed.failed.push(FailedTc {
                 check_name: name,
-                failure: format!("expected Ok(_), obtained Err: {:?}", err),
+                failure: format!("expected Ok(_), obtained Err: {}", err),
             }),
             (KrarkResultStatus::Skipped, _) => {}
         };

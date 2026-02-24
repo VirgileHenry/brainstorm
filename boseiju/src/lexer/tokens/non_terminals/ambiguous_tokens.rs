@@ -5,7 +5,6 @@
 /// they will be parsed under this token kind, and not
 /// under and ambiguous token kind.
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AmbiguousToken {
     /// Counter can either be a counter that we put on a permanent,

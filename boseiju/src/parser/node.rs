@@ -4,7 +4,6 @@ use crate::ability_tree;
 /// Otherwise, this can easily blow up the stack when attempting to store multiple of them.
 /// Current size is 112 bytes, let's try to keep it around here ?
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ParserNode {
     LexerToken(crate::lexer::tokens::TokenKind),

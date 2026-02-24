@@ -5,14 +5,14 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [super::ParserRule {
-        from: super::RuleLhs::new(&[
+        expanded: super::RuleLhs::new(&[
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)).id(),
             ParserNode::Event { event: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
             ParserNode::EventReplacement { replacement: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Instead)).id(),
         ]),
-        result: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
+        merged: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),

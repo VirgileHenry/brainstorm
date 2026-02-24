@@ -75,10 +75,25 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
 /// if two rules are matching over the same set of tokens.
 #[derive(Debug, Clone)]
 pub struct ParserRule {
-    pub from: RuleLhs,
-    pub result: usize,
+    pub expanded: RuleLhs,
+    pub merged: usize,
     pub reduction: fn(&[ParserNode]) -> Option<ParserNode>,
     pub creation_loc: ParserRuleDeclarationLocation,
+}
+
+impl PartialEq for ParserRule {
+    fn eq(&self, other: &Self) -> bool {
+        self.expanded == other.expanded && self.merged == other.merged
+    }
+}
+
+impl Eq for ParserRule {}
+
+impl std::hash::Hash for ParserRule {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.expanded.hash(state);
+        self.merged.hash(state);
+    }
 }
 
 /// The rule left hand side.
@@ -86,12 +101,12 @@ pub struct ParserRule {
 /// This is basically an non empty array of token ids that are matched by that rule.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RuleLhs {
-    pub tokens: [usize; Self::MAX_TOKENS],
+    tokens: [usize; Self::MAX_TOKENS],
     pub length: std::num::NonZeroUsize,
 }
 
 impl RuleLhs {
-    const MAX_TOKENS: usize = 8;
+    pub const MAX_TOKENS: usize = 8;
 
     pub fn new(tokens: &[usize]) -> Self {
         if tokens.len() > Self::MAX_TOKENS {
@@ -107,21 +122,19 @@ impl RuleLhs {
             length,
         }
     }
+}
 
-    pub fn first(&self) -> usize {
-        self.tokens[0]
-    }
-
-    pub fn last(&self) -> usize {
-        /* SAFETY: safe since self.length is non zero */
-        self.tokens[self.length.get() - 1]
+impl std::ops::Deref for RuleLhs {
+    type Target = [usize];
+    fn deref(&self) -> &Self::Target {
+        &self.tokens[0..self.length.get()]
     }
 }
 
 /// The parser rule declaration location is a debug helper that provides informations
 /// on where the rule has been written. This is only usefull while building the rule set,
 /// if multiple rules have the same left hend side.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ParserRuleDeclarationLocation {
     pub file: &'static str,
     pub line: u32,

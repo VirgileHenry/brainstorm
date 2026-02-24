@@ -7,8 +7,8 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Mana { mana: dummy() }).id()]),
-            result: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Mana { mana: dummy() }).id()]),
+            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::Mana { mana })] => Some(ParserNode::ManaCost {
                     mana_cost: {
@@ -22,11 +22,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::Mana { mana: dummy() }).id(),
             ]),
-            result: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },

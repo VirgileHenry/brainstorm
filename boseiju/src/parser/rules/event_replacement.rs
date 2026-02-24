@@ -8,10 +8,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_event_replacement_rules = vec![
         /* Create source reference: that effect (it), that player, etc */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::It)).id(),
-            ]),
-            result: ParserNode::EventSourceReference { source: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::EnglishKeyword(
+                non_terminals::EnglishKeyword::It,
+            ))
+            .id()]),
+            merged: ParserNode::EventSourceReference { source: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::It))] => {
                     Some(ParserNode::EventSourceReference {
@@ -27,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let token_creation_replacement_rules = vec![
         /* "Of those tokens" is a reference to previously mentionned tokens */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)).id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)).id(),
                 ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
@@ -35,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 )))
                 .id(),
             ]),
-            result: ParserNode::CreatedTokenKind { kind: dummy() }.id(),
+            merged: ParserNode::CreatedTokenKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
@@ -52,13 +53,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* token creation replacement with "twice that many" */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::EventSourceReference { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)).id(),
                 ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
                 ParserNode::CreatedTokenKind { kind: dummy() }.id(),
             ]),
-            result: ParserNode::EventReplacement { replacement: dummy() }.id(),
+            merged: ParserNode::EventReplacement { replacement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSourceReference { source },
@@ -97,12 +98,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let put_counter_on_permanent_replacement_rules = vec![
         /* "Of those counters" is a reference to previously mentionned counters */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)).id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)).id(), /* Fixme */
             ]),
-            result: ParserNode::PutCounterKind { kind: dummy() }.id(),
+            merged: ParserNode::PutCounterKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
@@ -117,7 +118,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* counter replacement with "twice that many" */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::EventSourceReference { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
                 ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
@@ -125,7 +126,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
-            result: ParserNode::EventReplacement { replacement: dummy() }.id(),
+            merged: ParserNode::EventReplacement { replacement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSourceReference { source },

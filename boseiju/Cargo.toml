@@ -28,10 +28,6 @@ parser = ["lexer"]
 ts_export = ["dep:ts-rs", "mtg-data/ts_export", "mtg-cardbase/ts_export"]
 
 [[bin]]
-name = "parser_perf"
-path = "bin/parser_perf.rs"
-
-[[bin]]
 name = "debug_graph"
 path = "bin/debug_graph.rs"
 

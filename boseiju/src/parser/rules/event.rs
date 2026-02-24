@@ -22,8 +22,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     ]
     .into_iter()
     .map(|player_specifier| super::ParserRule {
-        from: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id()]),
-        result: ParserNode::EventSource { source: dummy() }.id(),
+        expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id()]),
+        merged: ParserNode::EventSource { source: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier))] => Some(ParserNode::EventSource {
                 source: crate::ability_tree::event::source::EventSource::Player(*player_specifier),
@@ -37,11 +37,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_event_rules = vec![
         /* "an effect" is a common event source: "if an effect would <event action>" */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)).id(),
                 ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Effect)).id(),
             ]),
-            result: ParserNode::EventSource { source: dummy() }.id(),
+            merged: ParserNode::EventSource { source: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)),

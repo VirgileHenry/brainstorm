@@ -37,7 +37,6 @@ pub use under_control::UnderControl;
 pub use win_lose_clauses::WinLoseClause;
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
     Life,

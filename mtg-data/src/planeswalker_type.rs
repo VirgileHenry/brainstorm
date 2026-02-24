@@ -1,5 +1,4 @@
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -395,6 +394,7 @@ impl PlaneswalkerType {
             Self::Yanggu,
             Self::Yanling,
             Self::Zariel,
-        ].into_iter()
+        ]
+        .into_iter()
     }
 }

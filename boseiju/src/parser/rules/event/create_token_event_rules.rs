@@ -13,7 +13,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Create token with no specifiers */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)).id(),
@@ -23,7 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 )))
                 .id(),
             ]),
-            result: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Create token with special "under your control" specifier */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)).id(),
@@ -55,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::LexerToken(TokenKind::UnderControl(non_terminals::UnderControl::UnderYourControl)).id(),
             ]),
-            result: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },
@@ -79,7 +79,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Create token with specifiers before "token", as in "if you would create a treasure token" */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)).id(),
@@ -90,7 +90,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 )))
                 .id(),
             ]),
-            result: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },

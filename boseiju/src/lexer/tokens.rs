@@ -254,7 +254,7 @@ impl<'src> Token<'src> {
 
     pub const TOKEN_COUNT: usize = 0;
     pub fn token_id(&self) -> usize {
-        <TokenKind as idris::Idris<usize>>::COUNT
+        <TokenKind as idris::Idris>::COUNT
     }
 }
 

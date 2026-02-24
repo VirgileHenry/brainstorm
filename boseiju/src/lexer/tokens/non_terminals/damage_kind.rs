@@ -1,5 +1,4 @@
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DamageKind {
     Damage,

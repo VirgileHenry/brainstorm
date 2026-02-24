@@ -37,10 +37,13 @@ impl AbilityTreeNode for OwnedZone {
     }
 }
 
-impl idris::Idris<usize> for OwnedZone {
+impl idris::Idris for OwnedZone {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "owned zone"
     }
 }
 

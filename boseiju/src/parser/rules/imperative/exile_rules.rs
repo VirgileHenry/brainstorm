@@ -11,12 +11,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Exile object reference */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 /* Fixme: exile is a zone here ? */
                 ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
-            result: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)),
@@ -35,14 +35,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Exile object reference, with a follow up on the exile thing: "then return it..." */
         ParserRule {
-            from: RuleLhs::new(&[
+            expanded: RuleLhs::new(&[
                 /* Fixme: exile is a zone here ? */
                 ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
                 ParserNode::ExileFollowUp { follow_up: dummy() }.id(),
             ]),
-            result: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)),

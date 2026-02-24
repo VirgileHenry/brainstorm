@@ -8,8 +8,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* A single Ability can be turned into an ability tree with a single element */
         super::ParserRule {
-            from: super::RuleLhs::new(&[ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id()]),
-            result: ParserNode::AbilityTree { tree: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id()]),
+            merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::WrittenOrKeywordAbilty { ability }] => Some(ParserNode::AbilityTree {
                     tree: {
@@ -24,12 +24,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Abilities separated by new lines can be merged into a single ability tree */
         super::ParserRule {
-            from: super::RuleLhs::new(&[
+            expanded: super::RuleLhs::new(&[
                 ParserNode::AbilityTree { tree: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
                 ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id(),
             ]),
-            result: ParserNode::AbilityTree { tree: dummy() }.id(),
+            merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::AbilityTree { tree },

@@ -12,7 +12,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// For instance, "Ward" on its own isn't truly a keyword abilty: It's "ward: pay 2 life".
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -296,10 +295,13 @@ impl crate::ability_tree::AbilityTreeNode for WardKeywordAbility {
     }
 }
 
-impl idris::Idris<usize> for WardKeywordAbility {
+impl idris::Idris for WardKeywordAbility {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "ward"
     }
 }
 

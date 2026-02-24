@@ -12,7 +12,6 @@
 /// To do this, we create two variants, an IdMarker variant to give the node an id, and a variant
 /// that use the idris derive to recusrively add the nodes to all child variants.
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NodeKind {
     /// A special "no node" kind.
@@ -103,7 +102,6 @@ pub enum NodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum MtgDataNodeKind {
     Color,
@@ -126,7 +124,6 @@ pub enum MtgDataNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TerminalNodeKind {
     AnotherObjectSpecifier,
@@ -161,7 +158,6 @@ pub enum TerminalNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[idris(repr = usize)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TypeLineNodeKind {
     ArtifactSubtype,
