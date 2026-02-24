@@ -159,10 +159,14 @@ impl<'r> EarleyRow<'r> {
             start_row.items.insert(Arc::new(EarleyItem::new(rule, 0, 0)));
         }
 
-        /* We do need a predictor step on the first row */
-        let mut step_predictor = true;
-        while step_predictor {
-            step_predictor = predictor_step(rules, 0, &mut start_row);
+        let mut queue = start_row.items.iter().cloned().collect::<Vec<_>>();
+
+        while let Some(item) = queue.pop() {
+            for new_item in predictor_step(&rules, 0, &item).into_iter() {
+                if start_row.items.insert(Arc::new(new_item.clone())) {
+                    queue.push(Arc::new(new_item.clone()));
+                }
+            }
         }
 
         start_row
@@ -261,20 +265,24 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
         /* for all items in the previous row, add them to this row if they match the current token */
         scanner_step(&earley_table.table[node_index], node_id, node_index, &mut next_table_row);
 
-        loop {
-            /* Fixme: queue system instead of looping ? */
+        /* The queue allows to process each item once, seeing what other items are added */
+        let mut queue = next_table_row.items.iter().cloned().collect::<Vec<_>>();
 
-            let mut row_updated = false;
+        /* Saturate Predictor + Completor steps */
+        while let Some(item) = queue.pop() {
             /* Predictor step */
-            /* Add all the rules that can produce the next token in the list */
-            row_updated |= predictor_step(&rules, j, &mut next_table_row);
-
+            for new_item in predictor_step(&rules, j, &item).into_iter() {
+                /* Add the new item in the queue for eploring only if it is unknown (not in the row) */
+                if next_table_row.items.insert(Arc::new(new_item.clone())) {
+                    queue.push(Arc::new(new_item.clone()));
+                }
+            }
             /* Completor step */
-            /* Check if all rules in the current new row can make progress on previous rules */
-            row_updated |= completor_step(&earley_table, &mut next_table_row);
-
-            if !row_updated {
-                break;
+            for new_item in completor_step(&earley_table, item).into_iter() {
+                /* Add the new item in the queue for eploring only if it is unknown (not in the row) */
+                if next_table_row.items.insert(Arc::new(new_item.clone())) {
+                    queue.push(Arc::new(new_item.clone()));
+                }
             }
         }
 
@@ -331,29 +339,23 @@ fn scanner_step<'r>(prev_row: &EarleyRow<'r>, token: usize, token_index: usize, 
 /// Then, the rule completion logic is handled in the completor step.
 ///
 /// This function returns whether new items were added to the next row.
-fn predictor_step<'r>(rules: &'r rule_map::RuleMap, j: usize, next_row: &mut EarleyRow<'r>) -> bool {
+fn predictor_step<'r>(
+    rules: &'r rule_map::RuleMap,
+    j: usize,
+    item: &EarleyItem<'r>,
+) -> std::collections::HashSet<EarleyItem<'r>> {
     let mut new_items = std::collections::HashSet::new();
-    for item in next_row.items.iter() {
-        let next_token = match item.expecting_token() {
-            Some(token) => token,
-            None => continue,
-        };
-        for rule in rules.get_rules_for_token(next_token) {
-            let item = EarleyItem::new(rule, j, 0);
-            if !next_row.items.contains(&item) && !new_items.contains(&item) {
-                new_items.insert(item);
-            }
-        }
+    let next_token = match item.expecting_token() {
+        Some(token) => token,
+        None => return new_items,
+    };
+
+    for rule in rules.get_rules_for_token(next_token) {
+        let item = EarleyItem::new(rule, j, 0);
+        new_items.insert(item);
     }
 
-    if new_items.is_empty() {
-        false
-    } else {
-        for item in new_items.into_iter() {
-            next_row.items.insert(Arc::new(item));
-        }
-        true
-    }
+    new_items
 }
 
 /// Completor step of the Earley Algorithm.
@@ -366,38 +368,29 @@ fn predictor_step<'r>(rules: &'r rule_map::RuleMap, j: usize, next_row: &mut Ear
 /// it in the current row.
 ///
 /// This function returns whether new items were added to the next row.
-fn completor_step<'r>(earley_table: &EarleyTable<'r>, next_row: &mut EarleyRow<'r>) -> bool {
+fn completor_step<'r>(
+    earley_table: &EarleyTable<'r>,
+    completed_item: Arc<EarleyItem<'r>>,
+) -> std::collections::HashSet<EarleyItem<'r>> {
     let mut new_items = std::collections::HashSet::new();
-    /* For each item in the newly created row */
-    for current_row_item in next_row.items.iter() {
-        /* Check whether this item is of the for (A -> a . , i) (is completed) */
-        if current_row_item.rule_complete() {
-            /* If so, check in T[i] for all rules awaiting this item */
-            for awaiting_item in earley_table.table[current_row_item.start_index].items.iter() {
-                if awaiting_item.expecting_token() == Some(current_row_item.rule.merged) {
-                    /* And we can bump these rules up */
-                    use std::ops::Deref;
-                    let mut item: EarleyItem = awaiting_item.deref().clone();
-                    item.position_index += 1;
-                    /* Set the backpointer, since the current row item validated this token */
-                    item.backpointers.push(EarleyBackpointer::Complete(current_row_item.clone()));
 
-                    if !next_row.items.contains(&item) && !new_items.contains(&item) {
-                        new_items.insert(item);
-                    }
-                }
+    if completed_item.rule_complete() {
+        /* If so, check in T[i] for all rules awaiting this item */
+        for awaiting_item in earley_table.table[completed_item.start_index].items.iter() {
+            if awaiting_item.expecting_token() == Some(completed_item.rule.merged) {
+                /* And we can bump these rules up */
+                use std::ops::Deref;
+                let mut item: EarleyItem = awaiting_item.deref().clone();
+                item.position_index += 1;
+                /* Set the backpointer, since the current row item validated this token */
+                item.backpointers.push(EarleyBackpointer::Complete(completed_item.clone()));
+
+                new_items.insert(item);
             }
         }
     }
 
-    if new_items.is_empty() {
-        false
-    } else {
-        for item in new_items.into_iter() {
-            next_row.items.insert(Arc::new(item));
-        }
-        true
-    }
+    new_items
 }
 
 /// Parser function without artifacts, to get the result straight out.
