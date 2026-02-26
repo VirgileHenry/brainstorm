@@ -5,6 +5,7 @@ mod create_token_event;
 mod creature_action_event;
 mod enters_the_battlefield_event;
 mod life_gained_event;
+mod player_action_event;
 mod player_cast_spell_event;
 mod put_counter_on_permanent_event;
 
@@ -14,6 +15,9 @@ pub use creature_action_event::CreatureActionEvent;
 pub use creature_action_event::CreatureDealsCombatDamageAction;
 pub use enters_the_battlefield_event::EntersTheBattlefieldEvent;
 pub use life_gained_event::LifeGainedEvent;
+pub use player_action_event::PlayerAction;
+pub use player_action_event::PlayerActionEvent;
+pub use player_action_event::PlayerAttacksAction;
 pub use player_cast_spell_event::PlayerCastsSpellEvent;
 pub use put_counter_on_permanent_event::PutCounterOnPermanentEvent;
 
@@ -37,6 +41,7 @@ pub enum Event {
     CreatureAction(CreatureActionEvent),
     EntersTheBattlefield(EntersTheBattlefieldEvent),
     LifeGained(LifeGainedEvent),
+    PlayerAction(PlayerActionEvent),
     PlayerCastsSpell(PlayerCastsSpellEvent),
     PutCounterOnPermanent(PutCounterOnPermanentEvent),
 }
@@ -54,6 +59,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreatureAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::EntersTheBattlefield(child) => children.push(child as &dyn AbilityTreeNode),
             Self::LifeGained(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PlayerAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PlayerCastsSpell(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounterOnPermanent(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -69,6 +75,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreatureAction(event) => event.display(out)?,
             Self::EntersTheBattlefield(event) => event.display(out)?,
             Self::LifeGained(event) => event.display(out)?,
+            Self::PlayerAction(event) => event.display(out)?,
             Self::PlayerCastsSpell(event) => event.display(out)?,
             Self::PutCounterOnPermanent(event) => event.display(out)?,
         }

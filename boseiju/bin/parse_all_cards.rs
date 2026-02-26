@@ -7,10 +7,8 @@ fn main() {
 
     let cards = mtg_cardbase::AllCardsIter::new();
 
-    use rayon::iter::IntoParallelRefIterator;
-    use rayon::iter::ParallelIterator;
     let results: Vec<_> = cards
-        .par_iter()
+        .iter()
         .filter(|card| filter_cards(card))
         .map(|card| boseiju::Card::try_from(card))
         .collect();

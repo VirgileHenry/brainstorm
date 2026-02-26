@@ -12,13 +12,14 @@
 
 mod ability;
 mod ability_tree;
+mod conditional;
+mod continuous_effect_kind;
 mod continuous_effects;
-mod continuous_effects_kind;
+mod cost;
 mod cost_modifications;
 mod count_specifier;
 mod event;
 mod event_replacement;
-mod if_condition;
 mod imperative;
 mod keyword_to_ability;
 mod mana;
@@ -28,6 +29,7 @@ mod object_specifiers;
 mod replacement_effect;
 mod spell_ability;
 mod statement;
+mod statik;
 mod triggered_ability;
 mod written_or_kw_ability;
 mod zone;
@@ -40,12 +42,13 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(ability::rules()),
         Box::new(ability_tree::rules()),
         Box::new(continuous_effects::rules()),
-        Box::new(continuous_effects_kind::rules()),
+        Box::new(continuous_effect_kind::rules()),
+        Box::new(cost::rules()),
         Box::new(cost_modifications::rules()),
         Box::new(count_specifier::rules()),
         Box::new(event::rules()),
         Box::new(event_replacement::rules()),
-        Box::new(if_condition::rules()),
+        Box::new(conditional::rules()),
         Box::new(imperative::rules()),
         Box::new(keyword_to_ability::rules()),
         Box::new(mana::rules()),
@@ -55,6 +58,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(replacement_effect::rules()),
         Box::new(spell_ability::rules()),
         Box::new(statement::rules()),
+        Box::new(statik::rules()),
         Box::new(triggered_ability::rules()),
         Box::new(written_or_kw_ability::rules()),
         Box::new(zone::rules()),
@@ -108,7 +112,7 @@ pub struct RuleLhs {
 }
 
 impl RuleLhs {
-    pub const MAX_TOKENS: usize = 8;
+    pub const MAX_TOKENS: usize = 16;
 
     pub fn new(tokens: &[usize]) -> Self {
         if tokens.len() > Self::MAX_TOKENS {

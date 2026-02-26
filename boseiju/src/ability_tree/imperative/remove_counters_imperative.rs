@@ -7,12 +7,12 @@ const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct PutCountersImperative {
+pub struct RemoveCountersImperative {
     pub object: crate::ability_tree::object::ObjectReference,
-    pub counters: arrayvec::ArrayVec<CounterOnPermanent, MAX_COUNTER_AMOUNT>,
+    pub counters: arrayvec::ArrayVec<RemovableCounterOnPermanent, MAX_COUNTER_AMOUNT>,
 }
 
-impl AbilityTreeNode for PutCountersImperative {
+impl AbilityTreeNode for RemoveCountersImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::PutCountersImperative.id()
@@ -29,7 +29,7 @@ impl AbilityTreeNode for PutCountersImperative {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "put counters:")?;
+        write!(out, "remove counters:")?;
         out.push_inter_branch()?;
         write!(out, "on object:")?;
         out.push_final_branch()?;
@@ -52,7 +52,7 @@ impl AbilityTreeNode for PutCountersImperative {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for PutCountersImperative {
+impl crate::utils::DummyInit for RemoveCountersImperative {
     fn dummy_init() -> Self {
         Self {
             object: crate::utils::dummy(),
@@ -65,15 +65,15 @@ impl crate::utils::DummyInit for PutCountersImperative {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CounterOnPermanent {
+pub struct RemovableCounterOnPermanent {
     pub amount: crate::ability_tree::number::Number,
-    pub counter: CounterKind,
+    pub counter: RemovableCounterKind,
 }
 
-impl crate::ability_tree::AbilityTreeNode for CounterOnPermanent {
+impl crate::ability_tree::AbilityTreeNode for RemovableCounterOnPermanent {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CounterOnPermanent.id()
+        crate::ability_tree::NodeKind::RemovableCounterOnPermanent.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -108,15 +108,15 @@ impl crate::ability_tree::AbilityTreeNode for CounterOnPermanent {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CounterKind {
-    PreviouslyMentionnedCounter,
+pub enum RemovableCounterKind {
+    AnyCounter,
     NewCounter(crate::ability_tree::terminals::Counter),
 }
 
-impl AbilityTreeNode for CounterKind {
+impl AbilityTreeNode for RemovableCounterKind {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CounterKind.id()
+        crate::ability_tree::NodeKind::RemovableCounterKind.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -124,7 +124,7 @@ impl AbilityTreeNode for CounterKind {
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::PreviouslyMentionnedCounter => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+            Self::AnyCounter => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::PreviouslyMentionnedCounter.id(),
             ) as &dyn AbilityTreeNode),
             Self::NewCounter(counter) => children.push(counter as &dyn AbilityTreeNode),
@@ -137,7 +137,7 @@ impl AbilityTreeNode for CounterKind {
         write!(out, "counter kind:")?;
         out.push_final_branch()?;
         match self {
-            Self::PreviouslyMentionnedCounter => write!(out, "previously mentionned counter")?,
+            Self::AnyCounter => write!(out, "any kind of counter")?,
             Self::NewCounter(counter) => counter.display(out)?,
         }
         out.pop_branch();
@@ -146,8 +146,8 @@ impl AbilityTreeNode for CounterKind {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CounterKind {
+impl crate::utils::DummyInit for RemovableCounterKind {
     fn dummy_init() -> Self {
-        Self::PreviouslyMentionnedCounter
+        Self::AnyCounter
     }
 }

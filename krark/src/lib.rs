@@ -35,10 +35,8 @@ impl KrarkHarness {
         let cards = mtg_cardbase::AllCardsIter::new();
         let mut recap = KrarkRecap::new(cards.len());
 
-        use rayon::iter::IntoParallelRefIterator;
-        use rayon::iter::ParallelIterator;
         let results: Vec<_> = cards
-            .par_iter()
+            .iter()
             .map(
                 |card| match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name.clone()))) {
                     Ok(result) => result,
@@ -68,10 +66,8 @@ impl KrarkHarness {
         let cards = mtg_cardbase::AllCardsIter::new();
         let mut recap = KrarkRecap::new(cards.len());
 
-        use rayon::iter::IntoParallelRefIterator;
-        use rayon::iter::ParallelIterator;
         let results: Vec<_> = cards
-            .par_iter()
+            .iter()
             .filter(|card| filter(card))
             .map(
                 |card| match std::panic::catch_unwind(|| test_func(card, KrarkResult::new(card.name.clone()))) {

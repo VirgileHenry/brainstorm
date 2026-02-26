@@ -76,6 +76,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* "Other" can be another object specifier in some instances */
+        /* Fixme: does this allows weird parsing on some objects ? */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::EnglishKeyword(
+                non_terminals::EnglishKeyword::Other,
+            ))
+            .id()]),
+            merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Other))] => {
+                    Ok(ParserNode::ObjectSpecifier {
+                        specifier: object::ObjectSpecifier::Another(object::AnotherObjectSpecifier),
+                    })
+                }
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
         /* Object specifiers can be regrouped */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::ObjectSpecifier { specifier: dummy() }.id()]),
@@ -216,6 +234,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
     ];
 
+    /* All object kinds are object specifier (this creates a LOT of rules) */
     let object_kind_to_specifiers = object::ObjectKind::all()
         .map(|object_kind| super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind)).id()]),
@@ -230,6 +249,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         })
         .collect::<Vec<_>>();
 
+    /* Objects that are "not" of a kind are also specifiers */
     let object_non_kind_to_specifiers = vec![
         super::ParserRule {
             expanded: super::RuleLhs::new(&[

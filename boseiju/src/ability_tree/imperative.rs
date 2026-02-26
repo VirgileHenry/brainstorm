@@ -2,8 +2,11 @@ mod choose_imperative;
 mod create_token_imperative;
 mod deals_damage_imperative;
 mod destroy_imperative;
+mod discard_imperative;
+mod draw_imperative;
 mod exile_imperative;
 mod put_counters_imperative;
+mod remove_counters_imperative;
 mod return_imperative;
 mod sacrifice_imperative;
 
@@ -13,12 +16,17 @@ pub use create_token_imperative::CreatedTokenKind;
 pub use create_token_imperative::TokenCreation;
 pub use deals_damage_imperative::DealsDamageImperative;
 pub use destroy_imperative::DestroyImperative;
+pub use discard_imperative::DiscardImperative;
+pub use draw_imperative::DrawImperative;
 pub use exile_imperative::ExileFollowUp;
 pub use exile_imperative::ExileFollowUpReturn;
 pub use exile_imperative::ExileImperative;
 pub use put_counters_imperative::CounterKind;
 pub use put_counters_imperative::CounterOnPermanent;
 pub use put_counters_imperative::PutCountersImperative;
+pub use remove_counters_imperative::RemovableCounterKind;
+pub use remove_counters_imperative::RemovableCounterOnPermanent;
+pub use remove_counters_imperative::RemoveCountersImperative;
 pub use return_imperative::ReturnImperative;
 pub use sacrifice_imperative::SacrificeImperative;
 
@@ -39,8 +47,11 @@ pub enum Imperative {
     CreateToken(CreateTokenImperative),
     DealsDamage(DealsDamageImperative),
     Destroy(DestroyImperative),
+    Discard(DiscardImperative),
+    Draw(DrawImperative),
     Exile(ExileImperative),
-    Put(PutCountersImperative),
+    PutCounters(PutCountersImperative),
+    RemoveCounters(RemoveCountersImperative),
     Return(ReturnImperative),
     Sacrifice(SacrificeImperative),
 }
@@ -58,8 +69,11 @@ impl AbilityTreeNode for Imperative {
             Self::CreateToken(child) => children.push(child as &dyn AbilityTreeNode),
             Self::DealsDamage(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Destroy(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Discard(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Draw(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Exile(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Put(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Return(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Sacrifice(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -75,8 +89,11 @@ impl AbilityTreeNode for Imperative {
             Imperative::CreateToken(imperative) => imperative.display(out)?,
             Imperative::DealsDamage(imperative) => imperative.display(out)?,
             Imperative::Destroy(imperative) => imperative.display(out)?,
+            Imperative::Discard(imperative) => imperative.display(out)?,
+            Imperative::Draw(imperative) => imperative.display(out)?,
             Imperative::Exile(imperative) => imperative.display(out)?,
-            Imperative::Put(imperative) => imperative.display(out)?,
+            Imperative::PutCounters(imperative) => imperative.display(out)?,
+            Imperative::RemoveCounters(imperative) => imperative.display(out)?,
             Imperative::Return(imperative) => imperative.display(out)?,
             Imperative::Sacrifice(imperative) => imperative.display(out)?,
         }
@@ -89,5 +106,115 @@ impl AbilityTreeNode for Imperative {
 impl crate::utils::DummyInit for Imperative {
     fn dummy_init() -> Self {
         Self::Destroy(crate::utils::dummy())
+    }
+}
+
+/// A conditionnal imperative is an imperative that must be done unless a specific condition is met.
+///
+/// An example is Chart a Course: "Discard a card unless you attacked this turn".
+///
+/// The condition is optionnal, and a conditional imperative can be used as a standard imperative.
+/// It's an intermediate building block to produce more complex sentencing in abilities.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct ConditionalImperative {
+    pub imperative: Imperative,
+    pub condition: Option<crate::ability_tree::conditional::Conditional>,
+}
+
+impl AbilityTreeNode for ConditionalImperative {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ConditionalImperative.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self.condition.as_ref() {
+            Some(condition) => children.push(condition as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
+        children.push(&self.imperative as &dyn AbilityTreeNode);
+
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "conditional imperative:")?;
+        out.push_inter_branch()?;
+        self.imperative.display(out)?;
+        out.next_final_branch()?;
+        match self.condition.as_ref() {
+            Some(condition) => condition.display(out)?,
+            None => write!(out, "if condition: none")?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ConditionalImperative {
+    fn dummy_init() -> Self {
+        Self {
+            imperative: crate::utils::dummy(),
+            condition: None,
+        }
+    }
+}
+
+/// An imperative list is a list of imperative that should be executed.
+///
+/// The inner item is actually a conditional imperative, since there are list that contains
+/// imperative and conditional ones. For example, Chart a Course states:
+/// "Draw two cards. Then discard a card unless you attacked this turn."
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct ImperativeList {
+    pub imperatives: arrayvec::ArrayVec<ConditionalImperative, MAX_CHILDREN_PER_NODE>,
+}
+
+impl AbilityTreeNode for ImperativeList {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ImperativeList.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        for imperative in self.imperatives.iter() {
+            children.push(imperative as &dyn AbilityTreeNode);
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "imperative list:")?;
+        for imperative in self.imperatives.iter().take(self.imperatives.len().saturating_sub(1)) {
+            out.push_inter_branch()?;
+            imperative.display(out)?;
+            out.pop_branch();
+        }
+        if let Some(imperative) = self.imperatives.last() {
+            out.push_final_branch()?;
+            imperative.display(out)?;
+            out.pop_branch();
+        }
+        Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ImperativeList {
+    fn dummy_init() -> Self {
+        Self {
+            imperatives: arrayvec::ArrayVec::new_const(),
+        }
     }
 }

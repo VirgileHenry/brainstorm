@@ -36,10 +36,12 @@ impl AbilityTreeNode for ContinuousEffectKind {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "continuous effect kind")?;
+        out.push_final_branch()?;
         match self {
             Self::ObjectGainsAbilies(child) => child.display(out)?,
             Self::ReplacementEffect(child) => child.display(out)?,
         }
+        out.pop_branch();
         Ok(())
     }
 }

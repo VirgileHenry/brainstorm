@@ -13,6 +13,12 @@ pub enum ParserNode {
     AbilityTree {
         tree: Box<ability_tree::AbilityTree>,
     },
+    Condition {
+        condition: ability_tree::conditional::Condition,
+    },
+    ConditionalImperative {
+        imperative: ability_tree::imperative::ConditionalImperative,
+    },
     ContinuousEffect {
         effect: ability_tree::ability::statik::continuous_effect::ContinuousEffect,
     },
@@ -20,7 +26,7 @@ pub enum ParserNode {
         kind: ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind,
     },
     Cost {
-        inner: ability_tree::cost::Cost,
+        cost: ability_tree::cost::Cost,
     },
     CostModification {
         cost_modification: ability_tree::ability::statik::cost_modification_effect::CostModification,
@@ -52,11 +58,11 @@ pub enum ParserNode {
     ExileFollowUp {
         follow_up: ability_tree::imperative::ExileFollowUp,
     },
-    IfCondition {
-        condition: ability_tree::if_condition::IfCondition,
-    },
     Imperative {
         imperative: ability_tree::imperative::Imperative,
+    },
+    ImperativeList {
+        imperatives: ability_tree::imperative::ImperativeList,
     },
     ImperativeChoices {
         choices: Box<arrayvec::ArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>>,
@@ -79,6 +85,9 @@ pub enum ParserNode {
     ObjectSpecifiers {
         specifiers: ability_tree::object::ObjectSpecifiers,
     },
+    PlayerAction {
+        action: ability_tree::event::PlayerAction,
+    },
     PreviouslyMentionnedObject {
         object: ability_tree::object::PreviouslyMentionnedObject,
     },
@@ -90,6 +99,9 @@ pub enum ParserNode {
     },
     Statement {
         statement: ability_tree::statement::Statement,
+    },
+    StaticAbilityKind {
+        kind: crate::ability_tree::ability::statik::StaticAbilityKind,
     },
     TriggerCondition {
         condition: ability_tree::ability::triggered::TriggerCondition,

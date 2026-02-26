@@ -100,7 +100,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     cost_modification: dummy(),
                 }
                 .id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
             merged: ParserNode::CostModificationEffect {
                 cost_modification: dummy(),
@@ -111,46 +110,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)),
                     ParserNode::CostModification { cost_modification },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Ok(ParserNode::CostModificationEffect {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
                         applies_to: reference.clone(),
                         modification: cost_modification.clone(),
-                        condition: None,
-                    },
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
-        /* Apply cost modification to objects under an if condition */
-        super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)).id(),
-                ParserNode::CostModification {
-                    cost_modification: dummy(),
-                }
-                .id(),
-                ParserNode::IfCondition { condition: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
-            ]),
-            merged: ParserNode::CostModificationEffect {
-                cost_modification: dummy(),
-            }
-            .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)),
-                    ParserNode::CostModification { cost_modification },
-                    ParserNode::IfCondition { condition },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => Ok(ParserNode::CostModificationEffect {
-                    cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
-                        applies_to: reference.clone(),
-                        modification: cost_modification.clone(),
-                        condition: Some(condition.clone()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

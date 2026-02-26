@@ -94,7 +94,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },
-            /* Conditionnal form: "if you would gain life" */
+            /* Conditional form: "if you would gain life" */
             ParserRule {
                 expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),

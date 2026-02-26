@@ -7,9 +7,9 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct IfConditionThisIsYourTurn;
+pub struct ConditionThisIsYourTurn;
 
-impl crate::ability_tree::AbilityTreeNode for IfConditionThisIsYourTurn {
+impl crate::ability_tree::AbilityTreeNode for ConditionThisIsYourTurn {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::ThisIsYourTurn.id()
@@ -26,7 +26,7 @@ impl crate::ability_tree::AbilityTreeNode for IfConditionThisIsYourTurn {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for IfConditionThisIsYourTurn {
+impl crate::utils::DummyInit for ConditionThisIsYourTurn {
     fn dummy_init() -> Self {
         Self
     }

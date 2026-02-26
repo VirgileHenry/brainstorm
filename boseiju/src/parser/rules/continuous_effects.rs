@@ -1,6 +1,5 @@
 use super::ParserNode;
 use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -14,14 +13,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         expanded: super::RuleLhs::new(&[
             ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::ForwardDuration(duration)).id(),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
         ]),
         merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::ContinuousEffectKind { kind },
                 ParserNode::LexerToken(TokenKind::ForwardDuration(duration)),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
             ] => Ok(ParserNode::ContinuousEffect {
                 effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
                     duration: *duration,
@@ -35,19 +32,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     .collect::<Vec<_>>();
 
     let non_repetitive_rules = vec![
-        /* We can have a continuous effect kind and a terminal dot,
+        /* We can have a continuous effect kind alone,
          * it means the continuous effect last as long as the card generating it. */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
-            ]),
+            expanded: super::RuleLhs::new(&[ParserNode::ContinuousEffectKind { kind: dummy() }.id()]),
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::ContinuousEffectKind { kind },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => {
+                &[ParserNode::ContinuousEffectKind { kind }] => {
                     use crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
                     Ok(ParserNode::ContinuousEffect {
                         effect: ContinuousEffect {

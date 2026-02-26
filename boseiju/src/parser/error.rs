@@ -1,3 +1,5 @@
+use idris::Idris;
+
 use crate::parser::ParserNode;
 
 /// Errors that can be thrown by the parser.
@@ -25,11 +27,13 @@ impl ParserError {
 
         let stuck_on_token = match tokens.get(stuck_index) {
             Some(token) => FoundToken {
+                name: ParserNode::name_from_id(ParserNode::from(*token).id()),
                 position: token.span.start,
                 length: token.span.length,
                 text: token.span.text.to_string(),
             },
             None => FoundToken {
+                name: "EOF",
                 position: match tokens.last() {
                     Some(last) => last.span.start + last.span.length,
                     None => 0,
@@ -70,8 +74,8 @@ impl std::fmt::Display for ParserError {
             Self::UnexpectedToken { found, expecting } => {
                 write!(
                     f,
-                    "Unexpected token at position {}, length {}: \"{}\"",
-                    found.position, found.length, found.text
+                    "Unexpected token \"{}\" at position {}, length {}: \"{}\"",
+                    found.name, found.position, found.length, found.text
                 )?;
                 if !expecting.is_empty() {
                     write!(f, "\nExpecting one of:")?;
@@ -113,6 +117,7 @@ pub struct PossibleExpectedToken {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct FoundToken {
+    name: &'static str,
     position: usize,
     length: usize,
     text: String,

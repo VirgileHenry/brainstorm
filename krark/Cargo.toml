@@ -8,5 +8,4 @@ workspace = ".."
 lazy_static = { workspace = true }
 libtest-mimic = "0.8.1"
 mtg-cardbase = { workspace = true }
-rayon = { workspace = true }
 regex = { workspace = true }

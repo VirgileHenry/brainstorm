@@ -2,8 +2,9 @@ mod create_token_event_rules;
 mod creature_action_event_rules;
 mod enters_the_battlefield_rules;
 mod life_gained_event_rules;
+mod player_action_event_rules;
 mod player_casts_spell_rules;
-mod put_counter_on_permanent_rules;
+mod put_counter_on_permanent_event_rules;
 
 use super::ParserNode;
 use crate::ability_tree::terminals;
@@ -65,8 +66,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         creature_action_event_rules::rules().collect::<Vec<_>>(),
         enters_the_battlefield_rules::rules().collect::<Vec<_>>(),
         life_gained_event_rules::rules().collect::<Vec<_>>(),
+        player_action_event_rules::rules().collect::<Vec<_>>(),
         player_casts_spell_rules::rules().collect::<Vec<_>>(),
-        put_counter_on_permanent_rules::rules().collect::<Vec<_>>(),
+        put_counter_on_permanent_event_rules::rules().collect::<Vec<_>>(),
     ]
     .into_iter()
     .flatten()

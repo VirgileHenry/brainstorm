@@ -8,7 +8,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 pub struct CostModificationEffect {
     pub applies_to: crate::ability_tree::object::ObjectReference,
     pub modification: CostModification,
-    pub condition: Option<crate::ability_tree::if_condition::IfCondition>,
 }
 
 impl crate::ability_tree::AbilityTreeNode for CostModificationEffect {
@@ -21,13 +20,6 @@ impl crate::ability_tree::AbilityTreeNode for CostModificationEffect {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.applies_to as &dyn AbilityTreeNode);
         children.push(&self.modification as &dyn AbilityTreeNode);
-        match self.condition.as_ref() {
-            Some(condition) => children.push(condition as &dyn AbilityTreeNode),
-            None => {
-                let dummy = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::none_node();
-                children.push(dummy as &dyn AbilityTreeNode)
-            }
-        }
         children
     }
 
@@ -52,7 +44,6 @@ impl crate::utils::DummyInit for CostModificationEffect {
         Self {
             applies_to: crate::utils::dummy(),
             modification: crate::utils::dummy(),
-            condition: crate::utils::dummy(),
         }
     }
 }

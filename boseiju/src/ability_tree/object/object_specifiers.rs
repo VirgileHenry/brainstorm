@@ -400,6 +400,6 @@ impl AbilityTreeNode for AnotherObjectSpecifier {
 
 impl std::fmt::Display for AnotherObjectSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "another")
+        write!(f, "others")
     }
 }

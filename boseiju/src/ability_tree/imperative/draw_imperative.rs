@@ -1,40 +1,40 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// Imperative to draw cards or make a player draw cards.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct IfConditionEventOccured {
-    pub event: crate::ability_tree::event::Event,
-    pub timeframe: crate::ability_tree::time::BackwardDuration,
+pub struct DrawImperative {
+    pub player: crate::ability_tree::terminals::PlayerSpecifier,
+    pub amount: crate::ability_tree::number::Number,
 }
 
-impl crate::ability_tree::AbilityTreeNode for IfConditionEventOccured {
+impl crate::ability_tree::AbilityTreeNode for DrawImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::IfConditionEventOccured.id()
+        crate::ability_tree::NodeKind::DestroyImperative.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.event as &dyn AbilityTreeNode);
-        children.push(&self.timeframe as &dyn AbilityTreeNode);
+        children.push(&self.player as &dyn AbilityTreeNode);
+        children.push(&self.amount as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "event occured:")?;
+        write!(out, "draw:")?;
         out.push_inter_branch()?;
-        write!(out, "event:")?;
+        write!(out, "player:")?;
         out.push_final_branch()?;
-        self.event.display(out)?;
+        self.player.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
-        write!(out, "time frame:")?;
+        write!(out, "amount:")?;
         out.push_final_branch()?;
-        self.timeframe.display(out)?;
+        self.amount.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
@@ -42,11 +42,11 @@ impl crate::ability_tree::AbilityTreeNode for IfConditionEventOccured {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for IfConditionEventOccured {
+impl crate::utils::DummyInit for DrawImperative {
     fn dummy_init() -> Self {
         Self {
-            event: crate::utils::dummy(),
-            timeframe: crate::utils::dummy(),
+            player: crate::utils::dummy(),
+            amount: crate::utils::dummy(),
         }
     }
 }

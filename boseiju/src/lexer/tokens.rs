@@ -102,6 +102,11 @@ impl<'src> Token<'src> {
                 kind: TokenKind::SagaChapterNumber { chapter },
                 span,
             })
+        } else if let Some(kind) = non_terminals::InAdditionToPayingItsOtherCost::try_from_str(span.text) {
+            Some(Self {
+                kind: TokenKind::InAdditionToPayingItsOtherCost(kind),
+                span,
+            })
         } else if let Some(kind) = crate::ability_tree::time::Instant::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::Instant(kind),
@@ -279,6 +284,7 @@ pub enum TokenKind {
     EnglishKeyword(non_terminals::EnglishKeyword),
     ForwardDuration(time::ForwardDuration),
     GlobalZone(non_terminals::GlobalZone),
+    InAdditionToPayingItsOtherCost(non_terminals::InAdditionToPayingItsOtherCost),
     Instant(time::Instant),
     KeywordAbility(mtg_data::KeywordAbility),
     KeywordAction(mtg_data::KeywordAction),

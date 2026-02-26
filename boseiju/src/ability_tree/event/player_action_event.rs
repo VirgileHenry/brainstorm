@@ -1,44 +1,41 @@
-mod creature_deals_combat_damage_action;
+mod player_attacks_action;
 
-pub use creature_deals_combat_damage_action::CreatureDealsCombatDamageAction;
+pub use player_attacks_action::PlayerAttacksAction;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Events related to creatures.
+/// Events related to Player foing actions.
 ///
-/// These events are grouped together, but maybe they should not ?
-/// From a human perspective, it makes it easier to classify them this way.
-///
-/// Creature events includes attacking, dealing damages, blocking, etc.
+/// Player events includes attacking, drawing cards, etc.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CreatureActionEvent {
-    pub creatures: crate::ability_tree::object::ObjectReference,
-    pub action: CreatureAction,
+pub struct PlayerActionEvent {
+    pub player: crate::ability_tree::terminals::PlayerSpecifier,
+    pub action: PlayerAction,
 }
 
-impl AbilityTreeNode for CreatureActionEvent {
+impl AbilityTreeNode for PlayerActionEvent {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureActionEvent.id()
+        crate::ability_tree::NodeKind::PlayerActionEvent.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.creatures as &dyn AbilityTreeNode);
+        children.push(&self.player as &dyn AbilityTreeNode);
         children.push(&self.action as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "creature action")?;
+        write!(out, "player action")?;
         out.push_inter_branch()?;
-        write!(out, "creatures:")?;
+        write!(out, "player:")?;
         out.push_final_branch()?;
-        self.creatures.display(out)?;
+        self.player.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "action:")?;
@@ -51,10 +48,10 @@ impl AbilityTreeNode for CreatureActionEvent {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureActionEvent {
+impl crate::utils::DummyInit for PlayerActionEvent {
     fn dummy_init() -> Self {
         Self {
-            creatures: crate::utils::dummy(),
+            player: crate::utils::dummy(),
             action: crate::utils::dummy(),
         }
     }
@@ -63,30 +60,30 @@ impl crate::utils::DummyInit for CreatureActionEvent {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CreatureAction {
-    DealsCombatDamage(CreatureDealsCombatDamageAction),
+pub enum PlayerAction {
+    Attacks(PlayerAttacksAction),
 }
 
-impl AbilityTreeNode for CreatureAction {
+impl AbilityTreeNode for PlayerAction {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureAction.id()
+        crate::ability_tree::NodeKind::PlayerAction.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::DealsCombatDamage(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Attacks(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "creature action")?;
+        write!(out, "player action")?;
         out.push_final_branch()?;
         match self {
-            Self::DealsCombatDamage(action) => action.display(out)?,
+            Self::Attacks(action) => action.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -94,8 +91,8 @@ impl AbilityTreeNode for CreatureAction {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureAction {
+impl crate::utils::DummyInit for PlayerAction {
     fn dummy_init() -> Self {
-        Self::DealsCombatDamage(crate::utils::dummy())
+        Self::Attacks(crate::utils::dummy())
     }
 }

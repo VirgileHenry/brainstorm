@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::Put(
+                    imperative: crate::ability_tree::imperative::Imperative::PutCounters(
                         crate::ability_tree::imperative::PutCountersImperative {
                             object: reference.clone(),
                             counters: {

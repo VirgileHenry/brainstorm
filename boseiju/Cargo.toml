@@ -12,7 +12,6 @@ lazy_static = { workspace = true }
 mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }
 regex = { workspace = true }
-rayon = { workspace = true }
 serde = { workspace = true }
 petgraph = "0.8.3"
 uuid = { version = "1.18.1", features = ["serde"] }

@@ -9,7 +9,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TriggerCondition {
     pub event: crate::ability_tree::event::Event,
-    pub condition: Option<crate::ability_tree::if_condition::IfCondition>,
+    pub condition: Option<crate::ability_tree::conditional::Conditional>,
 }
 
 impl AbilityTreeNode for TriggerCondition {

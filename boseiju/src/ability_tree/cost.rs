@@ -31,21 +31,8 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            Cost::ManaCost(mana_cost) => {
-                write!(out, "mana cost: ")?;
-                for cost in mana_cost.iter().take(mana_cost.len().saturating_sub(1)) {
-                    write!(out, "{cost}, ")?;
-                }
-                if let Some(cost) = mana_cost.last() {
-                    write!(out, "{cost}, ")?;
-                }
-            }
-            Cost::Imperative(cost) => {
-                write!(out, "imperative: ")?;
-                out.push_final_branch()?;
-                cost.display(out)?;
-                out.pop_branch();
-            }
+            Cost::ManaCost(mana_cost) => write!(out, "mana cost: {mana_cost}")?,
+            Cost::Imperative(cost) => cost.display(out)?,
         }
         Ok(())
     }

@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "this spell costs {3} less to cast if you've gained 3 or more life this turn.\nreturn up to two target creature cards from your graveyard to your hand.";
+    let oracle_text = "Draw two cards. Then discard a card unless you attacked this turn.";
     let card_name = "doubling season";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

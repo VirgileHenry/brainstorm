@@ -101,7 +101,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id()]),
             merged: ParserNode::CountSpecifier { count: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::Target))] => {
+                &[ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::AllOthers))] => {
                     Ok(ParserNode::CountSpecifier {
                         count: crate::ability_tree::object::CountSpecifier::AllOthers,
                     })

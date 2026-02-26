@@ -93,7 +93,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)),
                     ParserNode::AbilityTree { tree },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Ok(ParserNode::ContinuousEffectKind {
                     kind: statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies(
                         statik::continuous_effect::continuous_effect_kind::ContinuousEffectObjectGainsAbilies {

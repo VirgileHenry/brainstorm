@@ -6,7 +6,6 @@ pub enum PlayerAction {
     Attack,
     Change,
     Choose,
-    Discard,
     Distribute,
     Draw,
     Gain, /* Fixme: out of place, and need different tense forms */
@@ -30,8 +29,7 @@ impl PlayerAction {
             "attack" | "attacks" | "attacked" => Some(Self::Attack),
             "change" | "changes" => Some(Self::Change),
             "choose" | "chooses" | "choice" => Some(Self::Choose),
-            "discard" | "discards" => Some(Self::Discard),
-            "distribute" => Some(Self::Discard),
+            "distribute" => Some(Self::Distribute),
             "draw" | "draws" => Some(Self::Draw),
             "gain" | "gains" | "gained" => Some(Self::Gain),
             "look at" | "looks at" => Some(Self::LookAt),

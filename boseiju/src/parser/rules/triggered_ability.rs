@@ -81,18 +81,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Event { event: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
-                ParserNode::IfCondition { condition: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)).id(),
+                ParserNode::Condition { condition: dummy() }.id(),
             ]),
             merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Event { event },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
-                    ParserNode::IfCondition { condition },
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),
+                    ParserNode::Condition { condition },
                 ] => Ok(ParserNode::TriggerCondition {
                     condition: crate::ability_tree::ability::triggered::TriggerCondition {
                         event: event.clone(),
-                        condition: Some(condition.clone()),
+                        condition: Some(crate::ability_tree::conditional::Conditional::If(
+                            crate::ability_tree::conditional::ConditionalIf {
+                                condition: condition.clone(),
+                            },
+                        )),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -119,8 +125,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::TriggerCondition {
                     condition: crate::ability_tree::ability::triggered::TriggerCondition {
                         event: event.clone(),
-                        condition: Some(crate::ability_tree::if_condition::IfCondition::ThisIsYourTurn(
-                            crate::ability_tree::if_condition::IfConditionThisIsYourTurn,
+                        condition: Some(crate::ability_tree::conditional::Conditional::If(
+                            crate::ability_tree::conditional::ConditionalIf {
+                                condition: crate::ability_tree::conditional::Condition::ThisIsYourTurn(
+                                    crate::ability_tree::conditional::ConditionThisIsYourTurn,
+                                ),
+                            },
                         )),
                     },
                 }),
