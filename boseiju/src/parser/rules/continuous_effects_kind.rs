@@ -27,7 +27,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::PowerToughnessModifier(modifier)),
             ] => {
                 use statik::characteristic_defining_ability::CharacteristicDefiningAbility;
-                Some(ParserNode::ContinuousEffectKind {
+                Ok(ParserNode::ContinuousEffectKind {
                     kind: statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies(
                         statik::continuous_effect::continuous_effect_kind::ContinuousEffectObjectGainsAbilies {
                             object: reference.clone(),
@@ -46,7 +46,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ),
                 })
             }
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     })
@@ -68,7 +68,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Gain)),
                     ParserNode::AbilityTree { tree },
-                ] => Some(ParserNode::ContinuousEffectKind {
+                ] => Ok(ParserNode::ContinuousEffectKind {
                     kind: statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies(
                         statik::continuous_effect::continuous_effect_kind::ContinuousEffectObjectGainsAbilies {
                             object: reference.clone(),
@@ -76,7 +76,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -94,7 +94,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)),
                     ParserNode::AbilityTree { tree },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => Some(ParserNode::ContinuousEffectKind {
+                ] => Ok(ParserNode::ContinuousEffectKind {
                     kind: statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies(
                         statik::continuous_effect::continuous_effect_kind::ContinuousEffectObjectGainsAbilies {
                             object: reference.clone(),
@@ -102,7 +102,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -137,14 +137,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             ),
                         ),
                     ));
-                    Some(ParserNode::ContinuousEffectKind {
+                    Ok(ParserNode::ContinuousEffectKind {
                         kind: statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies {
                             object: reference.clone(),
                             abilities: Box::new(crate::ability_tree::AbilityTree { abilities }),
                         },
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

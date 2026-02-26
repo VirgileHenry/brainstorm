@@ -7,7 +7,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PreviouslyMentionnedObject {
-    pub kind: ObjectKind,
+    pub kind: Option<ObjectKind>,
 }
 
 impl AbilityTreeNode for PreviouslyMentionnedObject {
@@ -17,17 +17,25 @@ impl AbilityTreeNode for PreviouslyMentionnedObject {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
+
         let mut children = arrayvec::ArrayVec::new();
-        children.push(&self.kind as &dyn AbilityTreeNode);
+        match self.kind.as_ref() {
+            Some(child) => children.push(child as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "previosuly mentionned objects:")?;
+        write!(out, "previously mentionned object:")?;
         out.push_final_branch()?;
         write!(out, "object kind:")?;
-        self.kind.display(out)?;
+        match self.kind.as_ref() {
+            Some(kind) => kind.display(out)?,
+            None => write!(out, "any")?,
+        }
         out.pop_branch();
         Ok(())
     }

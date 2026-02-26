@@ -2,12 +2,16 @@ pub mod replacement;
 pub mod source;
 
 mod create_token_event;
+mod creature_action_event;
 mod enters_the_battlefield_event;
 mod life_gained_event;
 mod player_cast_spell_event;
 mod put_counter_on_permanent_event;
 
 pub use create_token_event::CreateTokensEvent;
+pub use creature_action_event::CreatureAction;
+pub use creature_action_event::CreatureActionEvent;
+pub use creature_action_event::CreatureDealsCombatDamageAction;
 pub use enters_the_battlefield_event::EntersTheBattlefieldEvent;
 pub use life_gained_event::LifeGainedEvent;
 pub use player_cast_spell_event::PlayerCastsSpellEvent;
@@ -30,6 +34,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Event {
     CreateTokens(CreateTokensEvent),
+    CreatureAction(CreatureActionEvent),
     EntersTheBattlefield(EntersTheBattlefieldEvent),
     LifeGained(LifeGainedEvent),
     PlayerCastsSpell(PlayerCastsSpellEvent),
@@ -46,6 +51,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::CreateTokens(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CreatureAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::EntersTheBattlefield(child) => children.push(child as &dyn AbilityTreeNode),
             Self::LifeGained(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PlayerCastsSpell(child) => children.push(child as &dyn AbilityTreeNode),
@@ -60,6 +66,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
         out.push_final_branch()?;
         match self {
             Self::CreateTokens(event) => event.display(out)?,
+            Self::CreatureAction(event) => event.display(out)?,
             Self::EntersTheBattlefield(event) => event.display(out)?,
             Self::LifeGained(event) => event.display(out)?,
             Self::PlayerCastsSpell(event) => event.display(out)?,

@@ -15,6 +15,7 @@ mod ability_tree;
 mod continuous_effects;
 mod continuous_effects_kind;
 mod cost_modifications;
+mod count_specifier;
 mod event;
 mod event_replacement;
 mod if_condition;
@@ -41,6 +42,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(continuous_effects::rules()),
         Box::new(continuous_effects_kind::rules()),
         Box::new(cost_modifications::rules()),
+        Box::new(count_specifier::rules()),
         Box::new(event::rules()),
         Box::new(event_replacement::rules()),
         Box::new(if_condition::rules()),
@@ -77,7 +79,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
 pub struct ParserRule {
     pub expanded: RuleLhs,
     pub merged: usize,
-    pub reduction: fn(&[ParserNode]) -> Option<ParserNode>,
+    pub reduction: fn(&[ParserNode]) -> Result<ParserNode, &'static str>,
     pub creation_loc: ParserRuleDeclarationLocation,
 }
 

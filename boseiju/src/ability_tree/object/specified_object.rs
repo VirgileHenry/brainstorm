@@ -7,7 +7,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifiedObject {
-    pub amount: crate::ability_tree::terminals::CountSpecifier,
+    pub amount: CountSpecifier,
     pub specifiers: ObjectSpecifiers,
 }
 

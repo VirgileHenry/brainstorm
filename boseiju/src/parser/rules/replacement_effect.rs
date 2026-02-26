@@ -22,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Instead)),
             ] => {
                 use crate::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
-                Some(ParserNode::ContinuousEffectKind {
+                Ok(ParserNode::ContinuousEffectKind {
                     kind: continuous_effect_kind::ContinuousEffectKind::ReplacementEffect(
                         continuous_effect_kind::ContinuousEffectReplacementEvent {
                             replaced_event: event.clone(),
@@ -31,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ),
                 })
             }
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     }]

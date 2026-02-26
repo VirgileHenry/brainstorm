@@ -12,6 +12,13 @@ pub enum ObjectSpecifiers {
 }
 
 impl ObjectSpecifiers {
+    /// Shortcut to build the "creature" object specifier.
+    pub fn creature() -> Self {
+        Self::Single(ObjectSpecifier::creature())
+    }
+}
+
+impl ObjectSpecifiers {
     pub fn add_factor_specifier(&self, factor_specifier: ObjectSpecifier) -> Self {
         match self {
             Self::Single(specifier) => Self::And(SpecifierAndList {
@@ -305,6 +312,15 @@ pub enum ObjectSpecifier {
     Kind(crate::ability_tree::object::ObjectKind),
     NotOfAKind(crate::ability_tree::object::ObjectKind),
     Another(AnotherObjectSpecifier),
+}
+
+impl ObjectSpecifier {
+    /// Sortcut to create a kind: creature object specifier
+    pub fn creature() -> Self {
+        ObjectSpecifier::Kind(crate::ability_tree::object::ObjectKind::CardType(
+            mtg_data::CardType::Creature,
+        ))
+    }
 }
 
 impl AbilityTreeNode for ObjectSpecifier {

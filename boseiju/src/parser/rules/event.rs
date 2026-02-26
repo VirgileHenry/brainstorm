@@ -1,4 +1,5 @@
 mod create_token_event_rules;
+mod creature_action_event_rules;
 mod enters_the_battlefield_rules;
 mod life_gained_event_rules;
 mod player_casts_spell_rules;
@@ -25,10 +26,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id()]),
         merged: ParserNode::EventSource { source: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier))] => Some(ParserNode::EventSource {
+            &[ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier))] => Ok(ParserNode::EventSource {
                 source: crate::ability_tree::event::source::EventSource::Player(*player_specifier),
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     })
@@ -46,12 +47,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Effect)),
-                ] => Some(ParserNode::EventSource {
+                ] => Ok(ParserNode::EventSource {
                     source: crate::ability_tree::event::source::EventSource::AnEffect(
                         crate::ability_tree::event::source::EffectEventSource,
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -61,6 +62,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         player_to_event_source,
         default_event_rules,
         create_token_event_rules::rules().collect::<Vec<_>>(),
+        creature_action_event_rules::rules().collect::<Vec<_>>(),
+        enters_the_battlefield_rules::rules().collect::<Vec<_>>(),
         life_gained_event_rules::rules().collect::<Vec<_>>(),
         player_casts_spell_rules::rules().collect::<Vec<_>>(),
         put_counter_on_permanent_rules::rules().collect::<Vec<_>>(),

@@ -2,7 +2,7 @@ use crate::ability_tree::ability::keyword::ExpandedKeywordAbility;
 use crate::ability_tree::ability::spell::SpellAbility;
 use crate::ability_tree::ability::{Ability, KeywordAbility};
 
-pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Option<KeywordAbility> {
+pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Result<KeywordAbility, &'static str> {
     let expended_keyword = match keyword {
         mtg_data::KeywordAbility::Absorb => ExpandedKeywordAbility::Absorb,
         mtg_data::KeywordAbility::Affinity => ExpandedKeywordAbility::Affinity,
@@ -215,9 +215,9 @@ pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Option<Keyword
         mtg_data::KeywordAbility::WebSlinging => ExpandedKeywordAbility::WebSlinging,
         mtg_data::KeywordAbility::Wither => ExpandedKeywordAbility::Wither,
         mtg_data::KeywordAbility::Wizardcycling => ExpandedKeywordAbility::Wizardcycling,
-        _ => return None,
+        _ => return Err("provided keyword is not a valid keyword ability on its own"),
     };
-    Some(KeywordAbility {
+    Ok(KeywordAbility {
         keyword: expended_keyword,
         ability: Box::new(Ability::Spell(SpellAbility {
             effects: Box::new(arrayvec::ArrayVec::new_const()),

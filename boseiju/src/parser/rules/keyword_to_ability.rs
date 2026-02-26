@@ -8,10 +8,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::KeywordAbility(keyword)).id()]),
         merged: ParserNode::KeywordAbility { ability: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] => Some(ParserNode::KeywordAbility {
+            &[ParserNode::LexerToken(TokenKind::KeywordAbility(keyword))] => Ok(ParserNode::KeywordAbility {
                 ability: crate::ability_tree::ability::keyword::keyword_to_abilities(*keyword)?,
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     })

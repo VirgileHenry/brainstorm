@@ -31,14 +31,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(TokenKind::ObjectKind(object::ObjectKind::Supertype(mtg_data::Supertype::Token))),
-                ] => Some(ParserNode::Event {
+                ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: None,
                     }),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Number { number },
                     ParserNode::LexerToken(TokenKind::ObjectKind(object::ObjectKind::Supertype(mtg_data::Supertype::Token))),
                     ParserNode::LexerToken(TokenKind::UnderControl(non_terminals::UnderControl::UnderYourControl)),
-                ] => Some(ParserNode::Event {
+                ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
                         source: source.clone(),
                         quantity: number.clone(),
@@ -73,7 +73,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         )),
                     }),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
@@ -99,14 +99,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Number { number },
                     ParserNode::ObjectSpecifiers { specifiers },
                     ParserNode::LexerToken(TokenKind::ObjectKind(object::ObjectKind::Supertype(mtg_data::Supertype::Token))),
-                ] => Some(ParserNode::Event {
+                ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: Some(specifiers.clone()),
                     }),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },

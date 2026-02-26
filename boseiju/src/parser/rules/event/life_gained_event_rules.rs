@@ -32,13 +32,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
                         ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
-                    ] => Some(ParserNode::Event {
+                    ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                             player: *player_specifier,
                             minimum_amount: None,
                         }),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },
@@ -57,13 +57,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)),
                         ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
-                    ] => Some(ParserNode::Event {
+                    ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                             player: *player_specifier,
                             minimum_amount: None,
                         }),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },
@@ -84,13 +84,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
                         ParserNode::Number { number },
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
-                    ] => Some(ParserNode::Event {
+                    ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                             player: *player_specifier,
                             minimum_amount: Some(number.clone()),
                         }),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },
@@ -109,13 +109,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)),
                         ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
-                    ] => Some(ParserNode::Event {
+                    ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                             player: *player_specifier,
                             minimum_amount: None,
                         }),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },

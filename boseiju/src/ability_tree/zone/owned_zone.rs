@@ -29,7 +29,7 @@ impl AbilityTreeNode for OwnedZone {
         out.push_inter_branch()?;
         write!(out, "zone: ")?;
         self.zone.display(out)?;
-        out.next_inter_branch()?;
+        out.next_final_branch()?;
         write!(out, "owner: ")?;
         self.owner.display(out)?;
         out.pop_branch();

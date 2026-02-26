@@ -1,4 +1,5 @@
 mod attached_to;
+mod object_count;
 mod object_kind;
 mod object_specifiers;
 mod previously_mentionned;
@@ -6,6 +7,7 @@ mod self_referencing;
 mod specified_object;
 
 pub use attached_to::ObjectAttachedTo;
+pub use object_count::CountSpecifier;
 pub use object_kind::ObjectKind;
 pub use object_specifiers::AnotherObjectSpecifier;
 pub use object_specifiers::ObjectSpecifier;

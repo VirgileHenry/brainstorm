@@ -24,14 +24,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Less)),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                ] => Some(ParserNode::CostModification {
+                ] => Ok(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::Less(
                         crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostLess {
                             less: mana_cost.clone(),
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -53,14 +53,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::More)),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                ] => Some(ParserNode::CostModification {
+                ] => Ok(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::More(
                         crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostMore {
                             more: mana_cost.clone(),
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -80,14 +80,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ManaCost { mana_cost },
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                ] => Some(ParserNode::CostModification {
+                ] => Ok(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::Set(
                         crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostSet {
                             set: mana_cost.clone(),
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -112,14 +112,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)),
                     ParserNode::CostModification { cost_modification },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => Some(ParserNode::CostModificationEffect {
+                ] => Ok(ParserNode::CostModificationEffect {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
                         applies_to: reference.clone(),
                         modification: cost_modification.clone(),
                         condition: None,
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -146,14 +146,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::CostModification { cost_modification },
                     ParserNode::IfCondition { condition },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => Some(ParserNode::CostModificationEffect {
+                ] => Ok(ParserNode::CostModificationEffect {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
                         applies_to: reference.clone(),
                         modification: cost_modification.clone(),
                         condition: Some(condition.clone()),
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

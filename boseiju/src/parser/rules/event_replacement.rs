@@ -15,11 +15,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::EventSourceReference { source: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::It))] => {
-                    Some(ParserNode::EventSourceReference {
+                    Ok(ParserNode::EventSourceReference {
                         source: crate::ability_tree::event::replacement::EventSourceReference::ThatEvent,
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -44,10 +44,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
                         mtg_data::Supertype::Token,
                     ))),
-                ] => Some(ParserNode::CreatedTokenKind {
+                ] => Ok(ParserNode::CreatedTokenKind {
                     kind: crate::ability_tree::imperative::CreatedTokenKind::PreviouslyMentionnedToken,
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -69,7 +69,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => {
                     use crate::ability_tree::event::replacement;
                     use crate::ability_tree::number::Number;
-                    Some(ParserNode::EventReplacement {
+                    Ok(ParserNode::EventReplacement {
                         replacement: replacement::EventReplacement::TokenCreation(replacement::TokenCreationReplacement {
                             source_ref: source.clone(),
                             create_tokens: crate::ability_tree::imperative::CreateTokenImperative {
@@ -89,7 +89,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         }),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -109,10 +109,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)),
-                ] => Some(ParserNode::PutCounterKind {
+                ] => Ok(ParserNode::PutCounterKind {
                     kind: crate::ability_tree::imperative::CounterKind::PreviouslyMentionnedCounter,
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -140,7 +140,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => {
                     use crate::ability_tree::event::replacement;
                     use crate::ability_tree::number::Number;
-                    Some(ParserNode::EventReplacement {
+                    Ok(ParserNode::EventReplacement {
                         replacement: replacement::EventReplacement::CounterOnPermanent(
                             replacement::CounterOnPermanentReplacement {
                                 source_ref: source.clone(),
@@ -163,7 +163,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

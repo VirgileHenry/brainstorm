@@ -12,7 +12,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Exile object reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                /* Fixme: exile is a zone here ? */
                 ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)).id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
@@ -21,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)),
                     ParserNode::ObjectReference { reference },
-                ] => Some(ParserNode::Imperative {
+                ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Exile(
                         crate::ability_tree::imperative::ExileImperative {
                             object: reference.clone(),
@@ -29,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
@@ -48,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Exile)),
                     ParserNode::ObjectReference { reference },
                     ParserNode::ExileFollowUp { follow_up },
-                ] => Some(ParserNode::Imperative {
+                ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Exile(
                         crate::ability_tree::imperative::ExileImperative {
                             object: reference.clone(),
@@ -56,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },

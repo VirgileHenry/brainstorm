@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
                             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
                             ParserNode::ObjectReference { reference },
-                        ] => Some(ParserNode::Event {
+                        ] => Ok(ParserNode::Event {
                             event: crate::ability_tree::event::Event::PutCounterOnPermanent(
                                 crate::ability_tree::event::PutCounterOnPermanentEvent {
                                     source: source.clone(),
@@ -43,7 +43,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 },
                             ),
                         }),
-                        _ => None,
+                        _ => Err("Provided tokens do not match rule definition"),
                     },
                     creation_loc: ParserRuleDeclarationLocation::here(),
                 },
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
                             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
                             ParserNode::ObjectReference { reference },
-                        ] => Some(ParserNode::Event {
+                        ] => Ok(ParserNode::Event {
                             event: crate::ability_tree::event::Event::PutCounterOnPermanent(
                                 crate::ability_tree::event::PutCounterOnPermanentEvent {
                                     source: source.clone(),
@@ -80,7 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 },
                             ),
                         }),
-                        _ => None,
+                        _ => Err("Provided tokens do not match rule definition"),
                     },
                     creation_loc: ParserRuleDeclarationLocation::here(),
                 },
@@ -111,7 +111,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
                     ParserNode::ObjectReference { reference },
-                ] => Some(ParserNode::Event {
+                ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::PutCounterOnPermanent(
                         crate::ability_tree::event::PutCounterOnPermanentEvent {
                             source: source.clone(),
@@ -121,7 +121,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
@@ -148,7 +148,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
                     ParserNode::ObjectReference { reference },
-                ] => Some(ParserNode::Event {
+                ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::PutCounterOnPermanent(
                         crate::ability_tree::event::PutCounterOnPermanentEvent {
                             source: source.clone(),
@@ -158,7 +158,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },

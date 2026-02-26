@@ -17,11 +17,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::ControlSpecifier(terminals::ControlSpecifier::YouControl))] => {
-                    Some(ParserNode::ObjectSpecifier {
+                    Ok(ParserNode::ObjectSpecifier {
                         specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -33,11 +33,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::ControlSpecifier(terminals::ControlSpecifier::YouDontControl))] => {
-                    Some(ParserNode::ObjectSpecifier {
+                    Ok(ParserNode::ObjectSpecifier {
                         specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouDontControl),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -52,10 +52,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::You)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                ] => Some(ParserNode::ObjectSpecifier {
+                ] => Ok(ParserNode::ObjectSpecifier {
                     specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YouCast),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -69,10 +69,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                ] => Some(ParserNode::ObjectSpecifier {
+                ] => Ok(ParserNode::ObjectSpecifier {
                     specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -81,10 +81,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[ParserNode::ObjectSpecifier { specifier: dummy() }.id()]),
             merged: ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ObjectSpecifier { specifier }] => Some(ParserNode::ObjectSpecifiers {
+                &[ParserNode::ObjectSpecifier { specifier }] => Ok(ParserNode::ObjectSpecifiers {
                     specifiers: object::ObjectSpecifiers::Single(specifier.clone()),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -101,7 +101,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectSpecifier { specifier: spec1 },
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Or)),
                     ParserNode::ObjectSpecifier { specifier: spec2 },
-                ] => Some(ParserNode::ObjectSpecifiers {
+                ] => Ok(ParserNode::ObjectSpecifiers {
                     specifiers: {
                         let mut specifiers = arrayvec::ArrayVec::new_const();
                         specifiers.push(spec1.clone());
@@ -109,7 +109,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         object::ObjectSpecifiers::Or(object::SpecifierOrList { specifiers })
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -126,7 +126,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectSpecifier { specifier: spec1 },
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::And)),
                     ParserNode::ObjectSpecifier { specifier: spec2 },
-                ] => Some(ParserNode::ObjectSpecifiers {
+                ] => Ok(ParserNode::ObjectSpecifiers {
                     specifiers: {
                         let mut specifiers = arrayvec::ArrayVec::new_const();
                         specifiers.push(spec1.clone());
@@ -134,7 +134,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         object::ObjectSpecifiers::And(object::SpecifierAndList { specifiers })
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -151,7 +151,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectSpecifier { specifier },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
                     ParserNode::ObjectSpecifiers { specifiers },
-                ] => Some(ParserNode::ObjectSpecifiers {
+                ] => Ok(ParserNode::ObjectSpecifiers {
                     specifiers: {
                         match specifiers {
                             object::ObjectSpecifiers::Or(specifiers) => {
@@ -164,16 +164,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 new_specifiers.specifiers.push(specifier.clone());
                                 object::ObjectSpecifiers::And(new_specifiers)
                             }
-                            object::ObjectSpecifiers::Single(_) => return None,
+                            object::ObjectSpecifiers::Single(_) => return Err("Unreachable"),
                             object::ObjectSpecifiers::OrOfAnd(_) => {
                                 /* Here, it's important to reject the parsing, as we can't tell which specifier were distributed.
                                  * The parser must start by parsing the full comma array, then distribute. */
-                                return None;
+                                return Err("Unreachable");
                             }
                         }
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -189,10 +189,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectSpecifier { specifier },
                     ParserNode::ObjectSpecifiers { specifiers },
-                ] => Some(ParserNode::ObjectSpecifiers {
+                ] => Ok(ParserNode::ObjectSpecifiers {
                     specifiers: specifiers.clone().add_factor_specifier(specifier.clone()),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -207,10 +207,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectSpecifiers { specifiers },
                     ParserNode::ObjectSpecifier { specifier },
-                ] => Some(ParserNode::ObjectSpecifiers {
+                ] => Ok(ParserNode::ObjectSpecifiers {
                     specifiers: specifiers.clone().add_factor_specifier(specifier.clone()),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -221,10 +221,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind)).id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind))] => Some(ParserNode::ObjectSpecifier {
+                &[ParserNode::LexerToken(TokenKind::ObjectKind(object_kind))] => Ok(ParserNode::ObjectSpecifier {
                     specifier: object::ObjectSpecifier::Kind(object_kind.clone()),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         })
@@ -238,13 +238,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonCreature))] => {
-                    Some(ParserNode::ObjectSpecifier {
+                    Ok(ParserNode::ObjectSpecifier {
                         specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(
                             mtg_data::CardType::Creature,
                         )),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -253,11 +253,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonLand))] => {
-                    Some(ParserNode::ObjectSpecifier {
+                    Ok(ParserNode::ObjectSpecifier {
                         specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(mtg_data::CardType::Land)),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -266,11 +266,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::NonKind(non_terminals::NonKind::NonToken))] => {
-                    Some(ParserNode::ObjectSpecifier {
+                    Ok(ParserNode::ObjectSpecifier {
                         specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::Permanent),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct EntersTheBattlefieldEvent {
-    object: crate::ability_tree::object::ObjectReference,
+    pub object: crate::ability_tree::object::ObjectReference,
 }
 
 impl crate::ability_tree::AbilityTreeNode for EntersTheBattlefieldEvent {

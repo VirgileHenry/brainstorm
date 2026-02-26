@@ -22,8 +22,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::PreviouslyMentionnedObject { object },
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
                 ParserNode::ZoneReference { zone },
-            ] => None,
-            _ => None,
+            ] => Err("unimplemented"),
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: ParserRuleDeclarationLocation::here(),
     }]

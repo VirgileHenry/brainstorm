@@ -11,14 +11,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id()]),
             merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::WrittenOrKeywordAbilty { ability }] => Some(ParserNode::AbilityTree {
+                &[ParserNode::WrittenOrKeywordAbilty { ability }] => Ok(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = arrayvec::ArrayVec::new_const();
                         abilities.push(*ability.clone());
                         Box::new(crate::AbilityTree { abilities })
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -35,14 +35,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::AbilityTree { tree },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
                     ParserNode::WrittenOrKeywordAbilty { ability },
-                ] => Some(ParserNode::AbilityTree {
+                ] => Ok(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = tree.abilities.clone();
                         abilities.push(*ability.clone());
                         Box::new(crate::AbilityTree { abilities })
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

@@ -16,11 +16,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An))] => {
-                    Some(ParserNode::Number {
+                    Ok(ParserNode::Number {
                         number: number::Number::Number(number::FixedNumber { number: 1 }),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -31,11 +31,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A))] => {
-                    Some(ParserNode::Number {
+                    Ok(ParserNode::Number {
                         number: number::Number::Number(number::FixedNumber { number: 1 }),
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -44,6 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let defined_numbers_rules = [
         non_terminals::Number::Number { num: 0 },
         non_terminals::Number::OrMore { num: 0 },
+        non_terminals::Number::UpTo { num: 0 },
         non_terminals::Number::AnyNumber,
         non_terminals::Number::ThatMany,
     ]
@@ -52,7 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Number(number)).id()]),
         merged: ParserNode::Number { number: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(TokenKind::Number(number))] => Some(ParserNode::Number {
+            &[ParserNode::LexerToken(TokenKind::Number(number))] => Ok(ParserNode::Number {
                 number: match number {
                     non_terminals::Number::Number { num } => {
                         crate::ability_tree::number::Number::Number(number::FixedNumber { number: *num })
@@ -60,11 +61,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     non_terminals::Number::OrMore { num } => {
                         crate::ability_tree::number::Number::OrMore(number::OrMoreNumber { minimum: *num })
                     }
+                    non_terminals::Number::UpTo { num } => {
+                        crate::ability_tree::number::Number::UpTo(number::UpToNumber { maximum: *num })
+                    }
                     non_terminals::Number::AnyNumber => crate::ability_tree::number::Number::AnyNumber,
-                    _ => return None,
+                    non_terminals::Number::ThatMany => crate::ability_tree::number::Number::ThatMany,
+                    _ => return Err("Unreachable in number rule"),
                 },
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     })

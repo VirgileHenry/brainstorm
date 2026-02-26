@@ -1,8 +1,9 @@
-pub mod error;
+mod error;
 mod node;
 mod rule_map;
 mod rules;
 
+pub use error::ParserError;
 pub use node::ParserNode;
 
 use std::collections::HashSet;
@@ -78,7 +79,7 @@ impl<'r> EarleyItem<'r> {
     ///
     /// If the item contains any backpointers, they will be used to recursively
     /// call the rules required to merge everything together.
-    fn reduce(&self, nodes: &[ParserNode]) -> Option<ParserNode> {
+    fn reduce(&self, nodes: &[ParserNode]) -> Result<ParserNode, ParserError> {
         let rule_token_count = self.rule.expanded.length.get();
 
         let mut tokens_for_reduction = Vec::with_capacity(rule_token_count);
@@ -89,7 +90,13 @@ impl<'r> EarleyItem<'r> {
             }
         }
 
-        (self.rule.reduction)(&tokens_for_reduction)
+        match (self.rule.reduction)(&tokens_for_reduction) {
+            Ok(node) => Ok(node),
+            Err(merge_error) => Err(ParserError::FailedToApplyRule {
+                merge_error,
+                for_rule: self.rule.creation_loc.clone(),
+            }),
+        }
     }
 }
 
@@ -293,18 +300,19 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
     let completed_items = earley_table.table[node_count]
         .items
         .iter()
-        .filter(|item| item.is_complete(target_node_id));
+        .filter(|item| item.is_complete(target_node_id))
+        .collect::<Vec<_>>();
 
-    /* Try all the results ? I wonder why there could be multiple of them, maybe a check would be nice */
-    for complete_item in completed_items.into_iter() {
-        match complete_item.reduce(&nodes) {
-            Some(ParserNode::AbilityTree { tree }) => return Ok(*tree),
-            _ => {}
-        }
+    match completed_items.as_slice() {
+        /* No item completed, create a parse error from the earley table */
+        &[] => Err(error::ParserError::from_earley_table(&earley_table, tokens)),
+        /* A single item is complete: we have a condidate for merging */
+        &[complete_item] => match complete_item.reduce(&nodes)? {
+            ParserNode::AbilityTree { tree } => return Ok(*tree),
+            _ => unreachable!(),
+        },
+        _ => Err(ParserError::AmbiguousCandidates),
     }
-
-    /* Here, we have been unable to parse the tokens. We create a meaningful error. */
-    Err(error::ParserError::from_earley_table(&earley_table, tokens))
 }
 
 /// Scanner step of the Earley Algorithm.

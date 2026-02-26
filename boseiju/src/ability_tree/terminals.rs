@@ -1,6 +1,5 @@
 mod cast_specifier;
 mod control_specifier;
-mod count_specifier;
 mod counter;
 mod mana_cost;
 mod mtg_data_as_terminals;
@@ -12,7 +11,6 @@ mod power_toughness_modifier;
 
 pub use cast_specifier::CastSpecifier;
 pub use control_specifier::ControlSpecifier;
-pub use count_specifier::CountSpecifier;
 pub use counter::Counter;
 pub use mana_cost::ManaCost;
 pub use named_tokens::NamedToken;

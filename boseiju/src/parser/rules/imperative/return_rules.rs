@@ -16,7 +16,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ParserNode::ZoneReference { zone: dummy() }.id(),
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
             ParserNode::ZoneReference { zone: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
         ]),
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -27,8 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::ZoneReference { zone: from_zone },
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
                 ParserNode::ZoneReference { zone: to_zone },
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-            ] => Some(ParserNode::Imperative {
+            ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::Return(
                     crate::ability_tree::imperative::ReturnImperative {
                         object: reference.clone(),
@@ -37,7 +35,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     },
                 ),
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: ParserRuleDeclarationLocation::here(),
     }]

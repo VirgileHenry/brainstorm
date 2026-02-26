@@ -22,14 +22,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
                     ParserNode::SpellAbility { ability },
-                ] => Some(ParserNode::ImperativeChoices {
+                ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
                         let mut choices = Box::new(arrayvec::ArrayVec::new_const());
                         choices.push(ability.clone());
                         choices
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
@@ -48,14 +48,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
                     ParserNode::SpellAbility { ability },
-                ] => Some(ParserNode::ImperativeChoices {
+                ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
                         let mut choices = choices.clone();
                         choices.push(ability.clone());
                         choices
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
@@ -74,7 +74,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Number { number },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)),
                     ParserNode::ImperativeChoices { choices },
-                ] => Some(ParserNode::Imperative {
+                ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Choose(
                         crate::ability_tree::imperative::ChooseImperative {
                             choice_count: number.clone(),
@@ -83,7 +83,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },

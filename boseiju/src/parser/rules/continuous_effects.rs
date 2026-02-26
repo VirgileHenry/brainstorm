@@ -22,13 +22,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::ContinuousEffectKind { kind },
                 ParserNode::LexerToken(TokenKind::ForwardDuration(duration)),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-            ] => Some(ParserNode::ContinuousEffect {
+            ] => Ok(ParserNode::ContinuousEffect {
                 effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
                     duration: *duration,
                     effect: kind.clone(),
                 },
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     })
@@ -49,14 +49,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => {
                     use crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
-                    Some(ParserNode::ContinuousEffect {
+                    Ok(ParserNode::ContinuousEffect {
                         effect: ContinuousEffect {
                             duration: crate::ability_tree::time::ForwardDuration::ObjectLifetime,
                             effect: kind.clone(),
                         },
                     })
                 }
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

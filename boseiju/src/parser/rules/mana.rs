@@ -10,14 +10,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Mana { mana: dummy() }).id()]),
             merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(TokenKind::Mana { mana })] => Some(ParserNode::ManaCost {
+                &[ParserNode::LexerToken(TokenKind::Mana { mana })] => Ok(ParserNode::ManaCost {
                     mana_cost: {
                         let mut cost = arrayvec::ArrayVec::new_const();
                         cost.push(mana.clone());
                         terminals::ManaCost { cost }
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -31,18 +31,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ManaCost { mana_cost },
                     ParserNode::LexerToken(TokenKind::Mana { mana }),
-                ] => Some(ParserNode::ManaCost {
+                ] => Ok(ParserNode::ManaCost {
                     mana_cost: {
                         let mut mana_cost = mana_cost.clone();
-                        if mana_cost.cost.len() == mana_cost.cost.capacity() {
-                            /* Safety: avoid the panic if it happens */
-                            return None;
+                        if mana_cost.cost.try_push(mana.clone()).is_err() {
+                            return Err("Too many mana symbols for cost !");
                         }
-                        mana_cost.cost.push(mana.clone());
                         mana_cost
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

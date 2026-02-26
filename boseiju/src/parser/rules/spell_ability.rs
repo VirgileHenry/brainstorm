@@ -9,7 +9,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[ParserNode::Statement { statement: dummy() }.id()]),
             merged: ParserNode::SpellAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Statement { statement }] => Some(ParserNode::SpellAbility {
+                &[ParserNode::Statement { statement }] => Ok(ParserNode::SpellAbility {
                     ability: {
                         let mut statements = arrayvec::ArrayVec::new_const();
                         statements.push(statement.clone());
@@ -18,7 +18,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         }
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -30,14 +30,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ]),
             merged: ParserNode::SpellAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpellAbility { ability }, ParserNode::Statement { statement }] => Some(ParserNode::SpellAbility {
+                &[ParserNode::SpellAbility { ability }, ParserNode::Statement { statement }] => Ok(ParserNode::SpellAbility {
                     ability: {
                         let mut ability = ability.clone();
                         ability.effects.push(statement.clone());
                         ability
                     },
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

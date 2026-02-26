@@ -1,4 +1,5 @@
 use super::ParserNode;
+use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
 use crate::utils::dummy;
@@ -10,28 +11,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)).id(),
-                ParserNode::Event { event: dummy() }.id(),
+                ParserNode::TriggerCondition { condition: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
             merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)),
-                    ParserNode::Event { event },
+                    ParserNode::TriggerCondition { condition },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
                     ParserNode::SpellAbility { ability },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => Some(ParserNode::Ability {
+                ] => Ok(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
-                            condition: event.clone(),
+                            condition: condition.clone(),
                             effect: ability.clone(),
                         },
                     )),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
@@ -39,28 +38,93 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)).id(),
-                ParserNode::Event { event: dummy() }.id(),
+                ParserNode::TriggerCondition { condition: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
             ]),
             merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)),
-                    ParserNode::Event { event },
+                    ParserNode::TriggerCondition { condition },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
                     ParserNode::SpellAbility { ability },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
-                ] => Some(ParserNode::Ability {
+                ] => Ok(ParserNode::Ability {
                     ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
-                            condition: event.clone(),
+                            condition: condition.clone(),
                             effect: ability.clone(),
                         },
                     )),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Event on their own can make trigger conditions */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::Event { event: dummy() }.id()]),
+            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::Event { event }] => Ok(ParserNode::TriggerCondition {
+                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
+                        event: event.clone(),
+                        condition: None,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Event with a comma and a if condition can also make trigger conditions */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::Event { event: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+                ParserNode::IfCondition { condition: dummy() }.id(),
+            ]),
+            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Event { event },
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                    ParserNode::IfCondition { condition },
+                ] => Ok(ParserNode::TriggerCondition {
+                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
+                        event: event.clone(),
+                        condition: Some(condition.clone()),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Special case for the "during your turn" if condition that may not appear behind a comma */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::Event { event: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::During)).id(),
+                /* Fixme: a bit weird for a "your turn" ? Maybe it shall be a single token */
+                ParserNode::LexerToken(TokenKind::OwnerSpecifier(terminals::OwnerSpecifier::YouOwn)).id(),
+                ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Turn)).id(),
+            ]),
+            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Event { event },
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::During)),
+                    /* Fixme: a bit weird for a "your turn" ? Maybe it shall be a single token */
+                    ParserNode::LexerToken(TokenKind::OwnerSpecifier(terminals::OwnerSpecifier::YouOwn)),
+                    ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Turn)),
+                ] => Ok(ParserNode::TriggerCondition {
+                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
+                        event: event.clone(),
+                        condition: Some(crate::ability_tree::if_condition::IfCondition::ThisIsYourTurn(
+                            crate::ability_tree::if_condition::IfConditionThisIsYourTurn,
+                        )),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },

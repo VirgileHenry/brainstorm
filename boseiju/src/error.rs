@@ -1,7 +1,7 @@
 #[derive(Debug, Clone)]
 pub enum BoseijuError {
-    LexerError(crate::lexer::error::LexerError),
-    ParserError(crate::parser::error::ParserError),
+    LexerError(crate::lexer::LexerError),
+    ParserError(crate::parser::ParserError),
 }
 
 impl std::fmt::Display for BoseijuError {
@@ -14,14 +14,14 @@ impl std::fmt::Display for BoseijuError {
     }
 }
 
-impl From<crate::lexer::error::LexerError> for BoseijuError {
-    fn from(e: crate::lexer::error::LexerError) -> BoseijuError {
+impl From<crate::lexer::LexerError> for BoseijuError {
+    fn from(e: crate::lexer::LexerError) -> BoseijuError {
         BoseijuError::LexerError(e)
     }
 }
 
-impl From<crate::parser::error::ParserError> for BoseijuError {
-    fn from(e: crate::parser::error::ParserError) -> BoseijuError {
+impl From<crate::parser::ParserError> for BoseijuError {
+    fn from(e: crate::parser::ParserError) -> BoseijuError {
         BoseijuError::ParserError(e)
     }
 }

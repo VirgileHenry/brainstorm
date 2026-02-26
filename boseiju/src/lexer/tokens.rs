@@ -27,7 +27,7 @@ impl<'src> Token<'src> {
                 kind: TokenKind::Counter(kind),
                 span,
             })
-        } else if let Some(kind) = terminals::CountSpecifier::try_from_str(span.text) {
+        } else if let Some(kind) = non_terminals::CountSpecifier::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::CountSpecifier(kind),
                 span,
@@ -273,7 +273,7 @@ pub enum TokenKind {
     Color(mtg_data::Color),
     ControlFlow(non_terminals::ControlFlow),
     ControlSpecifier(terminals::ControlSpecifier),
-    CountSpecifier(terminals::CountSpecifier),
+    CountSpecifier(non_terminals::CountSpecifier),
     Counter(terminals::Counter),
     DamageKind(non_terminals::DamageKind),
     EnglishKeyword(non_terminals::EnglishKeyword),

@@ -19,6 +19,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)).id(),
             ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::May)).id(),
             ParserNode::Imperative { imperative: dummy() }.id(),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
         ]),
         merged: ParserNode::Statement { statement: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -26,26 +27,33 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)),
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::May)),
                 ParserNode::Imperative { imperative }, // Fixme: there are also "if they don't / if they do" stuff
-            ] => Some(ParserNode::Statement {
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+            ] => Ok(ParserNode::Statement {
                 statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
                     player: *player,
                     action: imperative.clone(),
                 }),
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     })
     .collect::<Vec<_>>();
 
     let default_statement_rules = vec![super::ParserRule {
-        expanded: super::RuleLhs::new(&[ParserNode::Imperative { imperative: dummy() }.id()]),
+        expanded: super::RuleLhs::new(&[
+            ParserNode::Imperative { imperative: dummy() }.id(),
+            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)).id(),
+        ]),
         merged: ParserNode::Statement { statement: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::Imperative { imperative }] => Some(ParserNode::Statement {
+            &[
+                ParserNode::Imperative { imperative },
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
+            ] => Ok(ParserNode::Statement {
                 statement: crate::ability_tree::statement::Statement::Imperative(imperative.clone()),
             }),
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     }];

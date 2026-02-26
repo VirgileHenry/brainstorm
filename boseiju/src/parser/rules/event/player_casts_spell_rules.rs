@@ -34,7 +34,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
                         ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)),
-                    ] => Some(ParserNode::Event {
+                    ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::PlayerCastsSpell(
                             crate::ability_tree::event::PlayerCastsSpellEvent {
                                 player: *player_specifier,
@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         ),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },
@@ -63,7 +63,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
                         ParserNode::ObjectSpecifiers { specifiers },
                         ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)),
-                    ] => Some(ParserNode::Event {
+                    ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::PlayerCastsSpell(
                             crate::ability_tree::event::PlayerCastsSpellEvent {
                                 player: *player_specifier,
@@ -71,7 +71,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         ),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: ParserRuleDeclarationLocation::here(),
             },

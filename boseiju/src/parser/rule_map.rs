@@ -19,16 +19,20 @@ impl RuleMap {
         let rules = rules.into_iter().collect::<Vec<_>>();
 
         /* Accessors maps */
+        /*
         let mut lhs_to_rule: std::collections::HashMap<_, _> = std::collections::HashMap::new();
+        */
         let mut rhs_to_rule: std::collections::HashMap<_, Vec<_>> = std::collections::HashMap::new();
 
         for (rule_index, rule) in rules.iter().enumerate() {
+            /* This check forces the grammar to be unambiguous, maybe we want it later on ?
             if let Some(prev) = lhs_to_rule.insert(rule.expanded, rule_index) {
                 return Err(RuleMapCreationError::DuplicateRule {
                     rule1_loc: rules[prev].creation_loc.clone(),
                     rule2_loc: rule.creation_loc.clone(),
                 });
             }
+            */
             rhs_to_rule.entry(rule.merged).or_default().push(rule_index);
         }
 

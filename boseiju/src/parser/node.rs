@@ -28,8 +28,14 @@ pub enum ParserNode {
     CostModificationEffect {
         cost_modification: ability_tree::ability::statik::cost_modification_effect::CostModificationEffect,
     },
+    CountSpecifier {
+        count: crate::ability_tree::object::CountSpecifier,
+    },
     CreatedTokenKind {
         kind: ability_tree::imperative::CreatedTokenKind,
+    },
+    CreatureAction {
+        action: ability_tree::event::CreatureAction,
     },
     Event {
         event: ability_tree::event::Event,
@@ -84,6 +90,9 @@ pub enum ParserNode {
     },
     Statement {
         statement: ability_tree::statement::Statement,
+    },
+    TriggerCondition {
+        condition: ability_tree::ability::triggered::TriggerCondition,
     },
     WrittenOrKeywordAbilty {
         ability: Box<ability_tree::ability::WrittenOrKeywordAbilty>,

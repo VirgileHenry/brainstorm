@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),
                     ParserNode::Event { event },
                     ParserNode::LexerToken(TokenKind::BackwardDuration(duration)),
-                ] => Some(ParserNode::IfCondition {
+                ] => Ok(ParserNode::IfCondition {
                     condition: crate::ability_tree::if_condition::IfCondition::EventOccured(
                         crate::ability_tree::if_condition::IfConditionEventOccured {
                             timeframe: *duration,
@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                 }),
-                _ => None,
+                _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         })

@@ -17,6 +17,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 pub enum StaticAbility {
     ContinuousEffect(continuous_effect::ContinuousEffect),
     CostModificationEffect(cost_modification_effect::CostModificationEffect),
+    /* Alternative casting permissions ? zone, alternative costs, etc ? */
 }
 
 impl AbilityTreeNode for StaticAbility {

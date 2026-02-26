@@ -13,11 +13,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::ZoneReference { zone: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(TokenKind::GlobalZone(non_terminals::GlobalZone::TheBattlefield))] => {
-                Some(ParserNode::ZoneReference {
+                Ok(ParserNode::ZoneReference {
                     zone: crate::ability_tree::zone::ZoneReference::TheBattlefield,
                 })
             }
-            _ => None,
+            _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
     }];
@@ -41,13 +41,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     &[
                         ParserNode::LexerToken(TokenKind::OwnerSpecifier(owner)),
                         ParserNode::LexerToken(TokenKind::OwnableZone(zone)),
-                    ] => Some(ParserNode::ZoneReference {
+                    ] => Ok(ParserNode::ZoneReference {
                         zone: crate::ability_tree::zone::ZoneReference::OwnedZone(crate::ability_tree::zone::OwnedZone {
                             zone: zone.clone(),
                             owner: owner.clone(),
                         }),
                     }),
-                    _ => None,
+                    _ => Err("Provided tokens do not match rule definition"),
                 },
                 creation_loc: super::ParserRuleDeclarationLocation::here(),
             })
