@@ -74,7 +74,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             source_ref: source.clone(),
                             create_tokens: crate::ability_tree::imperative::CreateTokenImperative {
                                 tokens: {
-                                    let mut tokens = arrayvec::ArrayVec::new_const();
+                                    let mut tokens = crate::utils::HeapArrayVec::new();
                                     tokens.push(crate::ability_tree::imperative::TokenCreation {
                                         amount: Number::ThatMany,
                                         token: kind.clone(),
@@ -147,7 +147,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 put_counters: crate::ability_tree::imperative::PutCountersImperative {
                                     object: permanent_kind.clone(),
                                     counters: {
-                                        let mut counters = arrayvec::ArrayVec::new_const();
+                                        let mut counters = crate::utils::HeapArrayVec::new();
                                         counters.push(crate::ability_tree::imperative::CounterOnPermanent {
                                             amount: Number::ThatMany,
                                             counter: counter_kind.clone(),

@@ -11,36 +11,39 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum WrittenOrKeywordAbilty {
-    Written(Ability),
+pub enum AbilityKind {
+    AbilityWord(AbilityWordAbility),
     Keyword(KeywordAbility),
+    Written(Ability),
 }
 
-impl AbilityTreeNode for WrittenOrKeywordAbilty {
+impl AbilityTreeNode for AbilityKind {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        super::NodeKind::WrittenOrKeywordAbilty.id()
+        super::NodeKind::AbilityKind.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut abilities = arrayvec::ArrayVec::new_const();
         match self {
-            Self::Written(ability) => abilities.push(ability as &dyn AbilityTreeNode),
+            Self::AbilityWord(ability) => abilities.push(ability as &dyn AbilityTreeNode),
             Self::Keyword(ability) => abilities.push(ability as &dyn AbilityTreeNode),
+            Self::Written(ability) => abilities.push(ability as &dyn AbilityTreeNode),
         };
         abilities
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         match self {
-            Self::Written(ability) => ability.display(out),
+            Self::AbilityWord(ability) => ability.display(out),
             Self::Keyword(ability) => ability.display(out),
+            Self::Written(ability) => ability.display(out),
         }
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for WrittenOrKeywordAbilty {
+impl crate::utils::DummyInit for AbilityKind {
     fn dummy_init() -> Self {
         Self::Written(crate::utils::dummy())
     }
@@ -118,7 +121,7 @@ impl crate::utils::DummyInit for Ability {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct KeywordAbility {
     pub keyword: keyword::ExpandedKeywordAbility,
-    pub ability: Box<Ability>,
+    pub ability: Ability,
 }
 
 impl AbilityTreeNode for KeywordAbility {
@@ -130,7 +133,7 @@ impl AbilityTreeNode for KeywordAbility {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut abilities = arrayvec::ArrayVec::new_const();
         abilities.push(&self.keyword as &dyn AbilityTreeNode);
-        abilities.push(self.ability.as_ref() as &dyn AbilityTreeNode);
+        abilities.push(&self.ability as &dyn AbilityTreeNode);
         abilities
     }
 
@@ -153,6 +156,57 @@ impl crate::utils::DummyInit for KeywordAbility {
     fn dummy_init() -> Self {
         Self {
             keyword: crate::utils::dummy(),
+            ability: crate::utils::dummy(),
+        }
+    }
+}
+
+/// A Keyword Ability.
+///
+/// An ability word is a word that thematically groups cards with a common functionality,
+/// but has no special meaning in the Comprehensive Rules.
+///
+/// See also https://mtg.fandom.com/wiki/Ability_word
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct AbilityWordAbility {
+    pub word: mtg_data::AbilityWord,
+    pub ability: Ability,
+}
+
+impl AbilityTreeNode for AbilityWordAbility {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        super::NodeKind::AbilityWordAbility.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut abilities = arrayvec::ArrayVec::new_const();
+        abilities.push(&self.word as &dyn AbilityTreeNode);
+        abilities.push(&self.ability as &dyn AbilityTreeNode);
+        abilities
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "keyword ability:")?;
+        out.push_inter_branch()?;
+        write!(out, "keyword: ")?;
+        self.word.display(out)?;
+        out.next_final_branch()?;
+        write!(out, "expanded ability: ")?;
+        self.ability.display(out)?;
+        out.pop_branch();
+        Ok(())
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for AbilityWordAbility {
+    fn dummy_init() -> Self {
+        Self {
+            word: crate::utils::dummy(),
             ability: crate::utils::dummy(),
         }
     }

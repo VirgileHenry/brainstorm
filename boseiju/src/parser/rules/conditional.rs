@@ -1,6 +1,6 @@
 use super::ParserNode;
 use crate::ability_tree::time;
-use crate::lexer::tokens::TokenKind;
+use crate::lexer::tokens::{TokenKind, non_terminals};
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -31,5 +31,64 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         })
         .collect::<Vec<_>>();
 
-    [backward_duration_to_event_occured_condition].into_iter().flatten()
+    let condition_rules = vec![
+        /* Object match specifiers: "if it is a red card, ..." */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Is)).id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+            ]),
+            merged: ParserNode::Condition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Is)),
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Ok(ParserNode::Condition {
+                    condition: crate::ability_tree::conditional::Condition::ObjectMatchSpecifiers(
+                        crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
+                            object: reference.clone(),
+                            specifiers: specifiers.clone(),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Object match specifiers: "if it is an enchantment card, ..." */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Is)).id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)).id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+            ]),
+            merged: ParserNode::Condition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Is)),
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::An)),
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Ok(ParserNode::Condition {
+                    condition: crate::ability_tree::conditional::Condition::ObjectMatchSpecifiers(
+                        crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
+                            object: reference.clone(),
+                            specifiers: specifiers.clone(),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+    ];
+
+    [backward_duration_to_event_occured_condition, condition_rules]
+        .into_iter()
+        .flatten()
 }

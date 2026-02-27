@@ -306,12 +306,13 @@ impl crate::utils::DummyInit for SpecifierOrOfAndList {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectSpecifier {
+    Another(AnotherObjectSpecifier),
+    Cast(crate::ability_tree::terminals::CastSpecifier),
     Color(mtg_data::Color),
     Control(crate::ability_tree::terminals::ControlSpecifier),
-    Cast(crate::ability_tree::terminals::CastSpecifier),
     Kind(crate::ability_tree::object::ObjectKind),
     NotOfAKind(crate::ability_tree::object::ObjectKind),
-    Another(AnotherObjectSpecifier),
+    NotPreviouslySelected(NotPreviouslySelectedObjectSpecifier),
 }
 
 impl ObjectSpecifier {
@@ -332,12 +333,13 @@ impl AbilityTreeNode for ObjectSpecifier {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::Color(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Control(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Another(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Cast(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Control(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Color(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Kind(child) => children.push(child as &dyn AbilityTreeNode),
             Self::NotOfAKind(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Another(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::NotPreviouslySelected(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -345,21 +347,23 @@ impl AbilityTreeNode for ObjectSpecifier {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
+            ObjectSpecifier::Another(_) => write!(out, "not self specifier:")?,
+            ObjectSpecifier::Cast(_) => write!(out, "cast specifier:")?,
             ObjectSpecifier::Color(_) => write!(out, "color specifier:")?,
+            ObjectSpecifier::Control(_) => write!(out, "control specifier:")?,
             ObjectSpecifier::Kind(_) => write!(out, "kind specifier:")?,
             ObjectSpecifier::NotOfAKind(_) => write!(out, "not of a kind specifier:")?,
-            ObjectSpecifier::Control(_) => write!(out, "control specifier:")?,
-            ObjectSpecifier::Cast(_) => write!(out, "cast specifier:")?,
-            ObjectSpecifier::Another(_) => write!(out, "not self specifier:")?,
+            ObjectSpecifier::NotPreviouslySelected(_) => write!(out, "not previously selected:")?,
         }
         out.push_final_branch()?;
         match self {
+            ObjectSpecifier::Another(another) => another.display(out)?,
+            ObjectSpecifier::Cast(cast) => cast.display(out)?,
             ObjectSpecifier::Color(color) => color.display(out)?,
+            ObjectSpecifier::Control(control) => control.display(out)?,
             ObjectSpecifier::Kind(object) => object.display(out)?,
             ObjectSpecifier::NotOfAKind(object) => object.display(out)?,
-            ObjectSpecifier::Control(control) => control.display(out)?,
-            ObjectSpecifier::Cast(cast) => cast.display(out)?,
-            ObjectSpecifier::Another(another) => another.display(out)?,
+            ObjectSpecifier::NotPreviouslySelected(another) => another.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -389,7 +393,7 @@ impl AbilityTreeNode for AnotherObjectSpecifier {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new_const()
+        arrayvec::ArrayVec::new()
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -401,5 +405,36 @@ impl AbilityTreeNode for AnotherObjectSpecifier {
 impl std::fmt::Display for AnotherObjectSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "others")
+    }
+}
+
+/// Marker struct for the special object specifier "other target",
+/// which means "any target that was not already selected"
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct NotPreviouslySelectedObjectSpecifier;
+
+impl AbilityTreeNode for NotPreviouslySelectedObjectSpecifier {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NotPreviouslySelectedObjectSpecifier).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+}
+
+impl std::fmt::Display for NotPreviouslySelectedObjectSpecifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "not previously selected")
     }
 }

@@ -34,7 +34,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::RemoveCountersImperative {
                             object: reference.clone(),
                             counters: {
-                                let mut counters = arrayvec::ArrayVec::new();
+                                let mut counters = crate::utils::HeapArrayVec::new();
                                 counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::RemovableCounterKind::NewCounter(counter.clone()),
@@ -73,7 +73,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     crate::ability_tree::imperative::RemoveCountersImperative {
                         object: reference.clone(),
                         counters: {
-                            let mut counters = arrayvec::ArrayVec::new();
+                            let mut counters = crate::utils::HeapArrayVec::new();
                             counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
                                 amount: number.clone(),
                                 counter: crate::ability_tree::imperative::RemovableCounterKind::AnyCounter,

@@ -8,14 +8,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* A single Ability can be turned into an ability tree with a single element */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id()]),
+            expanded: super::RuleLhs::new(&[ParserNode::AbilityKind { ability: dummy() }.id()]),
             merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::WrittenOrKeywordAbilty { ability }] => Ok(ParserNode::AbilityTree {
+                &[ParserNode::AbilityKind { ability }] => Ok(ParserNode::AbilityTree {
                     tree: {
-                        let mut abilities = arrayvec::ArrayVec::new_const();
-                        abilities.push(*ability.clone());
-                        Box::new(crate::AbilityTree { abilities })
+                        let mut abilities = crate::utils::HeapArrayVec::new();
+                        abilities.push(ability.clone());
+                        crate::AbilityTree { abilities }
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -27,19 +27,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::AbilityTree { tree: dummy() }.id(),
                 ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
-                ParserNode::WrittenOrKeywordAbilty { ability: dummy() }.id(),
+                ParserNode::AbilityKind { ability: dummy() }.id(),
             ]),
             merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::AbilityTree { tree },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
-                    ParserNode::WrittenOrKeywordAbilty { ability },
+                    ParserNode::AbilityKind { ability },
                 ] => Ok(ParserNode::AbilityTree {
                     tree: {
                         let mut abilities = tree.abilities.clone();
-                        abilities.push(*ability.clone());
-                        Box::new(crate::AbilityTree { abilities })
+                        abilities.push(ability.clone());
+                        crate::AbilityTree { abilities }
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

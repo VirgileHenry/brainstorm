@@ -1,6 +1,10 @@
+mod creature_attacks_action;
 mod creature_deals_combat_damage_action;
+mod creature_dies_action;
 
+pub use creature_attacks_action::CreatureAttacksAction;
 pub use creature_deals_combat_damage_action::CreatureDealsCombatDamageAction;
+pub use creature_dies_action::CreatureDiesAction;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -64,7 +68,9 @@ impl crate::utils::DummyInit for CreatureActionEvent {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CreatureAction {
+    Attacks(CreatureAttacksAction),
     DealsCombatDamage(CreatureDealsCombatDamageAction),
+    Dies(CreatureDiesAction),
 }
 
 impl AbilityTreeNode for CreatureAction {
@@ -76,7 +82,9 @@ impl AbilityTreeNode for CreatureAction {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::Attacks(child) => children.push(child as &dyn AbilityTreeNode),
             Self::DealsCombatDamage(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Dies(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -86,7 +94,9 @@ impl AbilityTreeNode for CreatureAction {
         write!(out, "creature action")?;
         out.push_final_branch()?;
         match self {
+            Self::Attacks(action) => action.display(out)?,
             Self::DealsCombatDamage(action) => action.display(out)?,
+            Self::Dies(action) => action.display(out)?,
         }
         out.pop_branch();
         Ok(())

@@ -1,4 +1,3 @@
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
 use crate::parser::rules::ParserNode;
@@ -14,14 +13,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::CardActions(terminals::CardActions::Enters)).id(),
+                ParserNode::LexerToken(TokenKind::CardActions(non_terminals::CardActions::Enters)).id(),
                 ParserNode::LexerToken(TokenKind::GlobalZone(non_terminals::GlobalZone::TheBattlefield)).id(),
             ]),
             merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(TokenKind::CardActions(terminals::CardActions::Enters)),
+                    ParserNode::LexerToken(TokenKind::CardActions(non_terminals::CardActions::Enters)),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::EntersTheBattlefield(
                         crate::ability_tree::event::EntersTheBattlefieldEvent {
@@ -37,13 +36,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::CardActions(terminals::CardActions::Enters)).id(),
+                ParserNode::LexerToken(TokenKind::CardActions(non_terminals::CardActions::Enters)).id(),
             ]),
             merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(TokenKind::CardActions(terminals::CardActions::Enters)),
+                    ParserNode::LexerToken(TokenKind::CardActions(non_terminals::CardActions::Enters)),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::EntersTheBattlefield(
                         crate::ability_tree::event::EntersTheBattlefieldEvent {

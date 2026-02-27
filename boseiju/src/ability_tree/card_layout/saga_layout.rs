@@ -4,7 +4,7 @@
 pub struct SagaLayout {
     pub mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
     pub card_type: crate::ability_tree::type_line::TypeLine,
-    pub chapters: arrayvec::ArrayVec<SagaChapter, 4>,
+    pub chapters: crate::utils::HeapArrayVec<SagaChapter, 4>,
 }
 
 #[derive(Debug, Clone)]
@@ -33,7 +33,7 @@ impl super::LayoutImpl for SagaLayout {
         //         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
         //     None => crate::AbilityTree::empty(),
         // };
-        let chapters = arrayvec::ArrayVec::new_const();
+        let chapters = crate::utils::HeapArrayVec::new();
 
         /* Fixme: the parser shall be able to parse into any target node I think ? That would be cool */
         /* And then the SagaChapters node shall exist, and for the saga layout we can use this ? */

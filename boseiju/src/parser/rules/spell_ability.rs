@@ -14,11 +14,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Statement { statement }] => Ok(ParserNode::SpellAbility {
                     ability: {
-                        let mut statements = arrayvec::ArrayVec::new_const();
+                        let mut statements = crate::utils::HeapArrayVec::new();
                         statements.push(statement.clone());
-                        crate::ability_tree::ability::spell::SpellAbility {
-                            effects: Box::new(statements),
-                        }
+                        crate::ability_tree::ability::spell::SpellAbility { effects: statements }
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -8,28 +8,39 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CreatureDealsCombatDamageAction;
+pub struct CreatureAttacksAction {
+    pub attacked_player: Option<crate::ability_tree::terminals::PlayerSpecifier>,
+}
 
-impl AbilityTreeNode for CreatureDealsCombatDamageAction {
+impl AbilityTreeNode for CreatureAttacksAction {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureDealsCombatDamageAction.id()
+        crate::ability_tree::NodeKind::CreatureAttacksAction.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new()
+        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self.attacked_player.as_ref() {
+            Some(child) => children.push(child as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
+
+        children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "deals combat damage")?;
+        write!(out, "creature attacks")?;
+
         Ok(())
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureDealsCombatDamageAction {
+impl crate::utils::DummyInit for CreatureAttacksAction {
     fn dummy_init() -> Self {
-        Self {}
+        Self { attacked_player: None }
     }
 }

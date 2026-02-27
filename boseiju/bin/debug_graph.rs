@@ -1,8 +1,9 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Draw two cards. Then discard a card unless you attacked this turn.";
-    let card_name = "doubling season";
+    let oracle_text =
+        "Flying\nWhenever Drakuseth attacks, it deals 4 damage to any target and 3 damage to each of up to two other targets.";
+    let card_name = "Drakuseth";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;

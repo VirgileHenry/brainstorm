@@ -31,6 +31,10 @@ name = "debug_graph"
 path = "bin/debug_graph.rs"
 
 [[bin]]
+name = "debug_fdn"
+path = "bin/debug_fdn.rs"
+
+[[bin]]
 name = "parse_all_cards"
 path = "bin/parse_all_cards.rs"
 

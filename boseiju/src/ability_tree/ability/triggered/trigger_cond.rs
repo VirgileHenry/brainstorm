@@ -19,7 +19,7 @@ impl AbilityTreeNode for TriggerCondition {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let mut children = arrayvec::ArrayVec::new();
+        let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.event as &dyn AbilityTreeNode);
         match self.condition.as_ref() {
             Some(condition) => children.push(condition as &dyn AbilityTreeNode),

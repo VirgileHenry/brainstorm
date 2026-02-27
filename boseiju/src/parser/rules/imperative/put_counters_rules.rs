@@ -32,7 +32,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::PutCountersImperative {
                             object: reference.clone(),
                             counters: {
-                                let mut counters = arrayvec::ArrayVec::new();
+                                let mut counters = crate::utils::HeapArrayVec::new();
                                 counters.push(crate::ability_tree::imperative::CounterOnPermanent {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::CounterKind::NewCounter(counter.clone()),

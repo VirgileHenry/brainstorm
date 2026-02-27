@@ -19,7 +19,7 @@ impl AbilityTreeNode for PreviouslyMentionnedObject {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
 
-        let mut children = arrayvec::ArrayVec::new();
+        let mut children = arrayvec::ArrayVec::new_const();
         match self.kind.as_ref() {
             Some(child) => children.push(child as &dyn AbilityTreeNode),
             None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),

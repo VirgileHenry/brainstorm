@@ -10,6 +10,7 @@ pub use attached_to::ObjectAttachedTo;
 pub use object_count::CountSpecifier;
 pub use object_kind::ObjectKind;
 pub use object_specifiers::AnotherObjectSpecifier;
+pub use object_specifiers::NotPreviouslySelectedObjectSpecifier;
 pub use object_specifiers::ObjectSpecifier;
 pub use object_specifiers::ObjectSpecifiers;
 pub use object_specifiers::SpecifierAndList;
@@ -44,7 +45,7 @@ impl crate::ability_tree::AbilityTreeNode for ObjectReference {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let mut children = arrayvec::ArrayVec::new();
+        let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::SelfReferencing(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ObjectAttachedTo(child) => children.push(child as &dyn AbilityTreeNode),

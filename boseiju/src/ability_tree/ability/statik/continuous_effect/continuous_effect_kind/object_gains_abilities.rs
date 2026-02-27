@@ -7,7 +7,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffectObjectGainsAbilies {
     pub object: crate::ability_tree::object::ObjectReference,
-    pub abilities: Box<crate::AbilityTree>,
+    pub abilities: crate::AbilityTree,
 }
 
 impl AbilityTreeNode for ContinuousEffectObjectGainsAbilies {
@@ -19,7 +19,7 @@ impl AbilityTreeNode for ContinuousEffectObjectGainsAbilies {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.object as &dyn AbilityTreeNode);
-        children.push(self.abilities.as_ref() as &dyn AbilityTreeNode);
+        children.push(&self.abilities as &dyn AbilityTreeNode);
         children
     }
 

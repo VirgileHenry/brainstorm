@@ -24,7 +24,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
-                        let mut choices = Box::new(arrayvec::ArrayVec::new_const());
+                        let mut choices = crate::utils::HeapArrayVec::new();
                         choices.push(ability.clone());
                         choices
                     },

@@ -21,7 +21,65 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
                         crate::ability_tree::object::SpecifiedObject {
                             amount: count.clone(),
-                            specifiers: specifiers.clone(),
+                            specifiers: Some(specifiers.clone()),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "any target" is special, as it has no object specifiers after it. */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Any)).id(),
+                ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::Target)).id(),
+            ]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Any)),
+                    ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::Target)),
+                ] => Ok(ParserNode::ObjectReference {
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: crate::ability_tree::object::CountSpecifier::Target(
+                                crate::ability_tree::number::Number::Number(crate::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                }),
+                            ),
+                            specifiers: None,
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "X other targets" on its own is kinda special, since it means "that has not already been targetted". */
+        /* This must be parsed as an entire object reference, since adding specifiers will make this rule invalid */
+        /* Fixme: this may cause problems later on */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Other)).id(),
+                ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::Target)).id(),
+            ]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Number { number },
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Other)),
+                    ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::Target)),
+                ] => Ok(ParserNode::ObjectReference {
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: crate::ability_tree::object::CountSpecifier::Target(number.clone()),
+                            specifiers: Some(crate::ability_tree::object::ObjectSpecifiers::Single(
+                                crate::ability_tree::object::ObjectSpecifier::NotPreviouslySelected(
+                                    crate::ability_tree::object::NotPreviouslySelectedObjectSpecifier,
+                                ),
+                            )),
                         },
                     ),
                 }),
@@ -55,7 +113,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
                                     crate::ability_tree::object::AnotherObjectSpecifier,
                                 );
-                                new_specifiers.add_factor_specifier(another_specifier)
+                                Some(new_specifiers.add_factor_specifier(another_specifier))
                             },
                         },
                     ),
@@ -90,7 +148,36 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
                                     crate::ability_tree::object::AnotherObjectSpecifier,
                                 );
-                                new_specifiers.add_factor_specifier(another_specifier)
+                                Some(new_specifiers.add_factor_specifier(another_specifier))
+                            },
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "Another <specifiers>" bypasses the count specifier, since it's "a other" */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Another)).id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+            ]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Another)),
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Ok(ParserNode::ObjectReference {
+                    reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
+                        crate::ability_tree::object::SpecifiedObject {
+                            amount: crate::ability_tree::object::CountSpecifier::A,
+                            specifiers: {
+                                let new_specifiers = specifiers.clone();
+                                let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
+                                    crate::ability_tree::object::AnotherObjectSpecifier,
+                                );
+                                Some(new_specifiers.add_factor_specifier(another_specifier))
                             },
                         },
                     ),
@@ -108,7 +195,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
                         crate::ability_tree::object::SpecifiedObject {
                             amount: crate::ability_tree::object::CountSpecifier::All,
-                            specifiers: specifiers.clone(),
+                            specifiers: Some(specifiers.clone()),
                         },
                     ),
                 }),

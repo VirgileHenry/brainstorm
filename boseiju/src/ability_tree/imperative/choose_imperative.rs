@@ -11,7 +11,7 @@ const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
 pub struct ChooseImperative {
     pub choice_count: crate::ability_tree::number::Number,
     pub can_choose_same_mode: bool,
-    pub choices: Box<arrayvec::ArrayVec<crate::ability_tree::ability::spell::SpellAbility, MAX_CHOICES>>,
+    pub choices: crate::utils::HeapArrayVec<crate::ability_tree::ability::spell::SpellAbility, MAX_CHOICES>,
 }
 
 impl AbilityTreeNode for ChooseImperative {

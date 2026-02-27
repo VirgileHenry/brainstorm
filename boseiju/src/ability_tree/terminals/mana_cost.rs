@@ -84,7 +84,7 @@ impl std::ops::DerefMut for ManaCost {
 impl crate::utils::DummyInit for ManaCost {
     fn dummy_init() -> Self {
         Self {
-            cost: arrayvec::ArrayVec::new_const(),
+            cost: crate::utils::dummy(),
         }
     }
 }

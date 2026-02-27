@@ -47,7 +47,7 @@ impl<'src> Token<'src> {
                 kind: TokenKind::Order(kind),
                 span,
             })
-        } else if let Some(kind) = terminals::CardActions::try_from_str(span.text) {
+        } else if let Some(kind) = non_terminals::CardActions::try_from_str(span.text) {
             Some(Self {
                 kind: TokenKind::CardActions(kind),
                 span,
@@ -272,7 +272,7 @@ pub enum TokenKind {
     AmbiguousToken(non_terminals::AmbiguousToken),
     AnyNumberOfClause { clauses: non_terminals::AnyNumberOfClause },
     BackwardDuration(time::BackwardDuration),
-    CardActions(terminals::CardActions),
+    CardActions(non_terminals::CardActions),
     Choice(non_terminals::Choice),
     ChoiceReference(non_terminals::ChoiceReference),
     Color(mtg_data::Color),

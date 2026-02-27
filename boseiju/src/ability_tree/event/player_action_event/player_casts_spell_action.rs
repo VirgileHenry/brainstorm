@@ -7,7 +7,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlayerCastsSpellEvent {
-    pub player: crate::ability_tree::terminals::PlayerSpecifier,
     pub spell_specifiers: Option<crate::ability_tree::object::ObjectSpecifiers>,
 }
 
@@ -19,7 +18,6 @@ impl crate::ability_tree::AbilityTreeNode for PlayerCastsSpellEvent {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.player as &dyn AbilityTreeNode);
         match self.spell_specifiers.as_ref() {
             Some(amount) => children.push(amount as &dyn AbilityTreeNode),
             None => {
@@ -33,8 +31,6 @@ impl crate::ability_tree::AbilityTreeNode for PlayerCastsSpellEvent {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "player casts a spell:")?;
-        out.push_inter_branch()?;
-        write!(out, "player: {}", self.player)?;
         out.next_final_branch()?;
         match self.spell_specifiers.as_ref() {
             Some(specifiers) => {
@@ -53,9 +49,6 @@ impl crate::ability_tree::AbilityTreeNode for PlayerCastsSpellEvent {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for PlayerCastsSpellEvent {
     fn dummy_init() -> Self {
-        Self {
-            player: crate::utils::dummy(),
-            spell_specifiers: crate::utils::dummy(),
-        }
+        Self { spell_specifiers: None }
     }
 }

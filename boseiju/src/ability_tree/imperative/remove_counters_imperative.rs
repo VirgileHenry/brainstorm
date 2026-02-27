@@ -9,7 +9,7 @@ const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct RemoveCountersImperative {
     pub object: crate::ability_tree::object::ObjectReference,
-    pub counters: arrayvec::ArrayVec<RemovableCounterOnPermanent, MAX_COUNTER_AMOUNT>,
+    pub counters: crate::utils::HeapArrayVec<RemovableCounterOnPermanent, MAX_COUNTER_AMOUNT>,
 }
 
 impl AbilityTreeNode for RemoveCountersImperative {

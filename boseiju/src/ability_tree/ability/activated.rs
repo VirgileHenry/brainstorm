@@ -9,7 +9,7 @@ const MAX_COST_COUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ActivatedAbility {
     effect: crate::ability_tree::ability::spell::SpellAbility,
-    costs: arrayvec::ArrayVec<crate::ability_tree::cost::Cost, MAX_COST_COUNT>,
+    costs: crate::utils::HeapArrayVec<crate::ability_tree::cost::Cost, MAX_COST_COUNT>,
 }
 
 impl AbilityTreeNode for ActivatedAbility {

@@ -58,7 +58,7 @@ impl crate::ability_tree::AbilityTreeNode for EffectEventSource {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new_const()
+        arrayvec::ArrayVec::new()
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

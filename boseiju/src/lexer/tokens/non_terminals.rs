@@ -1,6 +1,7 @@
 mod action_keywords;
 mod ambiguous_tokens;
 mod any_number_of_clause;
+mod card_actions;
 mod choice;
 mod choice_reference;
 mod control_flow;
@@ -22,6 +23,7 @@ mod win_lose_clauses;
 pub use action_keywords::ActionKeyword;
 pub use ambiguous_tokens::AmbiguousToken;
 pub use any_number_of_clause::AnyNumberOfClause;
+pub use card_actions::CardActions;
 pub use choice::Choice;
 pub use choice_reference::ChoiceReference;
 pub use control_flow::ControlFlow;

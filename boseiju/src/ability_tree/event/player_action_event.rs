@@ -1,6 +1,8 @@
 mod player_attacks_action;
+mod player_casts_spell_action;
 
 pub use player_attacks_action::PlayerAttacksAction;
+pub use player_casts_spell_action::PlayerCastsSpellEvent;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -62,6 +64,7 @@ impl crate::utils::DummyInit for PlayerActionEvent {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PlayerAction {
     Attacks(PlayerAttacksAction),
+    CastsSpell(PlayerCastsSpellEvent),
 }
 
 impl AbilityTreeNode for PlayerAction {
@@ -74,6 +77,7 @@ impl AbilityTreeNode for PlayerAction {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Attacks(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CastsSpell(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -84,6 +88,7 @@ impl AbilityTreeNode for PlayerAction {
         out.push_final_branch()?;
         match self {
             Self::Attacks(action) => action.display(out)?,
+            Self::CastsSpell(action) => action.display(out)?,
         }
         out.pop_branch();
         Ok(())

@@ -308,7 +308,7 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
         &[] => Err(error::ParserError::from_earley_table(&earley_table, tokens)),
         /* A single item is complete: we have a condidate for merging */
         &[complete_item] => match complete_item.reduce(&nodes)? {
-            ParserNode::AbilityTree { tree } => return Ok(*tree),
+            ParserNode::AbilityTree { tree } => return Ok(tree),
             _ => unreachable!(),
         },
         _ => Err(ParserError::AmbiguousCandidates),

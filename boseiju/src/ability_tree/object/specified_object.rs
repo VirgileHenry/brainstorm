@@ -8,7 +8,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifiedObject {
     pub amount: CountSpecifier,
-    pub specifiers: ObjectSpecifiers,
+    pub specifiers: Option<ObjectSpecifiers>,
 }
 
 impl AbilityTreeNode for SpecifiedObject {
@@ -18,9 +18,14 @@ impl AbilityTreeNode for SpecifiedObject {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let mut children = arrayvec::ArrayVec::new();
+        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
+
+        let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.amount as &dyn AbilityTreeNode);
-        children.push(&self.specifiers as &dyn AbilityTreeNode);
+        match self.specifiers.as_ref() {
+            Some(specifiers) => children.push(specifiers as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
         children
     }
 
@@ -35,7 +40,10 @@ impl AbilityTreeNode for SpecifiedObject {
         out.next_final_branch()?;
         write!(out, "specifier(s):")?;
         out.push_final_branch()?;
-        self.specifiers.display(out)?;
+        match self.specifiers.as_ref() {
+            Some(specifiers) => specifiers.display(out)?,
+            None => write!(out, "none")?,
+        }
         out.pop_branch();
         out.pop_branch();
         Ok(())

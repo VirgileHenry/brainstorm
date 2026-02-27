@@ -39,6 +39,28 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* "Each of up to" is an english formulation for the logical "up to" */
+        /* Fixme: a bit of a shortcut, but is it fine ? */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                /* Fixme: each is parsed as an "all" ? */
+                ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::All)).id(),
+                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)).id(),
+                ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::UpTo { num: 0 })).id(),
+            ]),
+            merged: ParserNode::Number { number: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(TokenKind::CountSpecifier(non_terminals::CountSpecifier::All)),
+                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
+                    ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::UpTo { num })),
+                ] => Ok(ParserNode::Number {
+                    number: crate::ability_tree::number::Number::UpTo(number::UpToNumber { maximum: *num }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
     ];
 
     let defined_numbers_rules = [

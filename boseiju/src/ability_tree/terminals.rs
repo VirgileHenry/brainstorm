@@ -28,50 +28,6 @@ pub trait Terminal: std::fmt::Display + Sized {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum CardActions {
-    Attacks,
-    Becomes, /* Fixme: becomes <state> ? */
-    Blocks,
-    Dies,
-    Enters,
-    Fight,
-    Leave,
-}
-
-impl std::fmt::Display for CardActions {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CardActions::Attacks => write!(f, "attacks"),
-            CardActions::Becomes => write!(f, "becomes"),
-            CardActions::Blocks => write!(f, "blocks"),
-            CardActions::Dies => write!(f, "dies"),
-            CardActions::Enters => write!(f, "enters"),
-            CardActions::Fight => write!(f, "fights"),
-            CardActions::Leave => write!(f, "leaves"),
-        }
-    }
-}
-
-impl Terminal for CardActions {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "attack" | "attacks" => Some(CardActions::Attacks),
-            "become" | "becomes" => Some(CardActions::Becomes),
-            "block" | "blocks" => Some(CardActions::Blocks),
-            "die" | "dies" => Some(CardActions::Dies),
-            "enter" | "enters" => Some(CardActions::Enters),
-            "fight" | "fights" => Some(CardActions::Fight),
-            "leave" | "leaves" => Some(CardActions::Leave),
-            _ => None,
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PermanentProperty {
     Power,
     Tougness,

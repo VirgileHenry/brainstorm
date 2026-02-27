@@ -5,45 +5,42 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct ConditionEventOccured {
-    pub event: crate::ability_tree::event::Event,
-    pub timeframe: crate::ability_tree::time::BackwardDuration,
+pub struct ConditionObjectMatchSpecifiers {
+    pub object: crate::ability_tree::object::ObjectReference,
+    pub specifiers: crate::ability_tree::object::ObjectSpecifiers,
 }
 
-impl crate::ability_tree::AbilityTreeNode for ConditionEventOccured {
+impl crate::ability_tree::AbilityTreeNode for ConditionObjectMatchSpecifiers {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::ConditionEventOccured.id()
+        crate::ability_tree::NodeKind::ConditionObjectMatchSpecifier.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.event as &dyn AbilityTreeNode);
-        children.push(&self.timeframe as &dyn AbilityTreeNode);
+        children.push(&self.object as &dyn AbilityTreeNode);
+        children.push(&self.specifiers as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "event occured:")?;
+        write!(out, "object matches specifiers:")?;
         out.push_inter_branch()?;
-        self.event.display(out)?;
+        self.object.display(out)?;
         out.next_final_branch()?;
-        write!(out, "time frame:")?;
-        out.push_final_branch()?;
-        self.timeframe.display(out)?;
-        out.pop_branch();
+        self.specifiers.display(out)?;
         out.pop_branch();
         Ok(())
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ConditionEventOccured {
+impl crate::utils::DummyInit for ConditionObjectMatchSpecifiers {
     fn dummy_init() -> Self {
         Self {
-            event: crate::utils::dummy(),
-            timeframe: crate::utils::dummy(),
+            object: crate::utils::dummy(),
+            specifiers: crate::utils::dummy(),
         }
     }
 }

@@ -13,7 +13,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpellAbility { ability }] => Ok(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Spell(ability.clone())),
+                    ability: crate::ability_tree::ability::Ability::Spell(ability.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -31,12 +31,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::StaticAbilityKind { kind },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Ok(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Static(
-                        crate::ability_tree::ability::statik::StaticAbility {
-                            kind: kind.clone(),
-                            condition: None,
-                        },
-                    )),
+                    ability: crate::ability_tree::ability::Ability::Static(crate::ability_tree::ability::statik::StaticAbility {
+                        kind: kind.clone(),
+                        condition: None,
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -58,16 +56,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Condition { condition },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Ok(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Static(
-                        crate::ability_tree::ability::statik::StaticAbility {
-                            kind: kind.clone(),
-                            condition: Some(crate::ability_tree::conditional::Conditional::If(
-                                crate::ability_tree::conditional::ConditionalIf {
-                                    condition: condition.clone(),
-                                },
-                            )),
-                        },
-                    )),
+                    ability: crate::ability_tree::ability::Ability::Static(crate::ability_tree::ability::statik::StaticAbility {
+                        kind: kind.clone(),
+                        condition: Some(crate::ability_tree::conditional::Conditional::If(
+                            crate::ability_tree::conditional::ConditionalIf {
+                                condition: condition.clone(),
+                            },
+                        )),
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -91,16 +87,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::StaticAbilityKind { kind },
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Dot)),
                 ] => Ok(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Static(
-                        crate::ability_tree::ability::statik::StaticAbility {
-                            kind: kind.clone(),
-                            condition: Some(crate::ability_tree::conditional::Conditional::If(
-                                crate::ability_tree::conditional::ConditionalIf {
-                                    condition: condition.clone(),
-                                },
-                            )),
-                        },
-                    )),
+                    ability: crate::ability_tree::ability::Ability::Static(crate::ability_tree::ability::statik::StaticAbility {
+                        kind: kind.clone(),
+                        condition: Some(crate::ability_tree::conditional::Conditional::If(
+                            crate::ability_tree::conditional::ConditionalIf {
+                                condition: condition.clone(),
+                            },
+                        )),
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

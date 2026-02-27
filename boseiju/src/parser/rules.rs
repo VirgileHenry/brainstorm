@@ -11,6 +11,7 @@
 //! responsible for creating the rules that can create this ability tree node.
 
 mod ability;
+mod ability_kind;
 mod ability_tree;
 mod conditional;
 mod continuous_effect_kind;
@@ -31,7 +32,6 @@ mod spell_ability;
 mod statement;
 mod statik;
 mod triggered_ability;
-mod written_or_kw_ability;
 mod zone;
 
 use crate::parser::node::ParserNode;
@@ -60,7 +60,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(statement::rules()),
         Box::new(statik::rules()),
         Box::new(triggered_ability::rules()),
-        Box::new(written_or_kw_ability::rules()),
+        Box::new(ability_kind::rules()),
         Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()

@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreateTokenImperative {
-    pub tokens: arrayvec::ArrayVec<TokenCreation, MAX_CHILDREN_PER_NODE>,
+    pub tokens: crate::utils::HeapArrayVec<TokenCreation, MAX_CHILDREN_PER_NODE>,
 }
 
 impl AbilityTreeNode for CreateTokenImperative {
@@ -100,7 +100,7 @@ impl AbilityTreeNode for TokenCreation {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CreatedTokenKind {
     PreviouslyMentionnedToken,
-    NewToken(Box<crate::ability_tree::card_layout::TokenLayout>),
+    NewToken(crate::ability_tree::card_layout::TokenLayout),
 }
 
 impl AbilityTreeNode for CreatedTokenKind {
@@ -114,7 +114,7 @@ impl AbilityTreeNode for CreatedTokenKind {
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::NewToken(child) => children.push(child.as_ref() as &dyn AbilityTreeNode),
+            Self::NewToken(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PreviouslyMentionnedToken => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::PreviouslyMentionnedToken.id(),
             ) as &dyn AbilityTreeNode),

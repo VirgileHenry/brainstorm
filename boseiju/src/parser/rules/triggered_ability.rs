@@ -23,12 +23,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
+                    ability: crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: condition.clone(),
                             effect: ability.clone(),
                         },
-                    )),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -50,12 +50,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::Ability {
-                    ability: Box::new(crate::ability_tree::ability::Ability::Triggered(
+                    ability: crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: condition.clone(),
                             effect: ability.clone(),
                         },
-                    )),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

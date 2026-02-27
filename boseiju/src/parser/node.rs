@@ -8,10 +8,10 @@ use crate::ability_tree;
 pub enum ParserNode {
     LexerToken(crate::lexer::tokens::TokenKind),
     Ability {
-        ability: Box<ability_tree::ability::Ability>,
+        ability: ability_tree::ability::Ability,
     },
     AbilityTree {
-        tree: Box<ability_tree::AbilityTree>,
+        tree: ability_tree::AbilityTree,
     },
     Condition {
         condition: ability_tree::conditional::Condition,
@@ -65,7 +65,7 @@ pub enum ParserNode {
         imperatives: ability_tree::imperative::ImperativeList,
     },
     ImperativeChoices {
-        choices: Box<arrayvec::ArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>>,
+        choices: crate::utils::HeapArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>,
     },
     KeywordAbility {
         ability: ability_tree::ability::KeywordAbility,
@@ -106,8 +106,8 @@ pub enum ParserNode {
     TriggerCondition {
         condition: ability_tree::ability::triggered::TriggerCondition,
     },
-    WrittenOrKeywordAbilty {
-        ability: Box<ability_tree::ability::WrittenOrKeywordAbilty>,
+    AbilityKind {
+        ability: ability_tree::ability::AbilityKind,
     },
     ZoneReference {
         zone: ability_tree::zone::ZoneReference,

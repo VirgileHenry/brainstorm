@@ -7,6 +7,8 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AmbiguousToken {
+    /// Ambiguous between the player action and the creature action.
+    Attack,
     /// Counter can either be a counter that we put on a permanent,
     /// or the action to counter a spell.
     Counter,
@@ -18,6 +20,7 @@ pub enum AmbiguousToken {
 impl AmbiguousToken {
     pub fn try_from_str(source: &str) -> Option<Self> {
         match source {
+            "attack" | "attacks" | "attacked" => Some(Self::Attack),
             "counter" | "counters" => Some(Self::Counter),
             "exile" => Some(Self::Exile),
             _ => None,

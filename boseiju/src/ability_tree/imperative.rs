@@ -14,6 +14,7 @@ pub use choose_imperative::ChooseImperative;
 pub use create_token_imperative::CreateTokenImperative;
 pub use create_token_imperative::CreatedTokenKind;
 pub use create_token_imperative::TokenCreation;
+pub use deals_damage_imperative::DamagesDealt;
 pub use deals_damage_imperative::DealsDamageImperative;
 pub use destroy_imperative::DestroyImperative;
 pub use discard_imperative::DiscardImperative;
@@ -176,7 +177,7 @@ impl crate::utils::DummyInit for ConditionalImperative {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ImperativeList {
-    pub imperatives: arrayvec::ArrayVec<ConditionalImperative, MAX_CHILDREN_PER_NODE>,
+    pub imperatives: crate::utils::HeapArrayVec<ConditionalImperative, MAX_CHILDREN_PER_NODE>,
 }
 
 impl AbilityTreeNode for ImperativeList {
@@ -214,7 +215,7 @@ impl AbilityTreeNode for ImperativeList {
 impl crate::utils::DummyInit for ImperativeList {
     fn dummy_init() -> Self {
         Self {
-            imperatives: arrayvec::ArrayVec::new_const(),
+            imperatives: crate::utils::dummy(),
         }
     }
 }

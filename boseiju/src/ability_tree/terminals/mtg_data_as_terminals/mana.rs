@@ -64,7 +64,7 @@ impl AbilityTreeNode for mtg_data::AnyMana {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new_const()
+        arrayvec::ArrayVec::new()
     }
 
     fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {

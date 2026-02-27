@@ -219,8 +219,8 @@ pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Result<Keyword
     };
     Ok(KeywordAbility {
         keyword: expended_keyword,
-        ability: Box::new(Ability::Spell(SpellAbility {
-            effects: Box::new(arrayvec::ArrayVec::new_const()),
-        })),
+        ability: Ability::Spell(SpellAbility {
+            effects: crate::utils::HeapArrayVec::new(),
+        }),
     })
 }

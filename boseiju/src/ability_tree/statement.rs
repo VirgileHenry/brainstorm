@@ -54,7 +54,8 @@ impl crate::utils::DummyInit for Statement {
 pub struct MayAbility {
     pub player: crate::ability_tree::terminals::PlayerSpecifier,
     pub action: crate::ability_tree::imperative::Imperative,
-    /* Fixme: If they don't / if they do */
+    pub if_it_is_done: Option<Box<Statement>>,
+    pub if_not_done: Option<Box<Statement>>,
 }
 
 impl crate::ability_tree::AbilityTreeNode for MayAbility {
@@ -64,21 +65,44 @@ impl crate::ability_tree::AbilityTreeNode for MayAbility {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let mut abilities = arrayvec::ArrayVec::new_const();
-        abilities.push(&self.player as &dyn AbilityTreeNode);
-        abilities.push(&self.action as &dyn AbilityTreeNode);
-        abilities
+        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.player as &dyn AbilityTreeNode);
+        children.push(&self.action as &dyn AbilityTreeNode);
+        match self.if_it_is_done.as_ref() {
+            Some(child) => children.push(child.as_ref() as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
+        match self.if_not_done.as_ref() {
+            Some(child) => children.push(child.as_ref() as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
+        children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "may ability")?;
         out.push_inter_branch()?;
-        write!(out, "player: ")?;
+        write!(out, "player:")?;
         self.player.display(out)?;
-        out.next_final_branch()?;
-        write!(out, "may: ")?;
+        out.next_inter_branch()?;
+        write!(out, "may:")?;
         self.action.display(out)?;
+        out.next_inter_branch()?;
+        write!(out, "if it is done:")?;
+        match self.if_it_is_done.as_ref() {
+            Some(action) => action.display(out)?,
+            None => write!(out, "none")?,
+        }
+        out.next_final_branch()?;
+        write!(out, "if it is not done:")?;
+        match self.if_not_done.as_ref() {
+            Some(action) => action.display(out)?,
+            None => write!(out, "none")?,
+        }
+        out.pop_branch();
         Ok(())
     }
 }
@@ -89,6 +113,8 @@ impl crate::utils::DummyInit for MayAbility {
         Self {
             player: crate::utils::dummy(),
             action: crate::utils::dummy(),
+            if_it_is_done: None,
+            if_not_done: None,
         }
     }
 }

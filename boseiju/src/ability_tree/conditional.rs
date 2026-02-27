@@ -1,7 +1,9 @@
 mod event_occured;
+mod object_is_of_kind;
 mod this_is_your_turn;
 
 pub use event_occured::ConditionEventOccured;
+pub use object_is_of_kind::ConditionObjectMatchSpecifiers;
 pub use this_is_your_turn::ConditionThisIsYourTurn;
 
 use crate::ability_tree::AbilityTreeNode;
@@ -139,6 +141,7 @@ impl crate::utils::DummyInit for ConditionalUnless {
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Condition {
     EventOccured(ConditionEventOccured),
+    ObjectMatchSpecifiers(ConditionObjectMatchSpecifiers),
     ThisIsYourTurn(ConditionThisIsYourTurn),
 }
 
@@ -152,6 +155,7 @@ impl AbilityTreeNode for Condition {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::EventOccured(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ObjectMatchSpecifiers(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ThisIsYourTurn(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -163,6 +167,7 @@ impl AbilityTreeNode for Condition {
         out.push_final_branch()?;
         match self {
             Self::EventOccured(child) => child.display(out)?,
+            Self::ObjectMatchSpecifiers(child) => child.display(out)?,
             Self::ThisIsYourTurn(child) => child.display(out)?,
         }
         out.pop_branch();

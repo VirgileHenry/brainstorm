@@ -8,28 +8,28 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CreatureDealsCombatDamageAction;
+pub struct CreatureDiesAction;
 
-impl AbilityTreeNode for CreatureDealsCombatDamageAction {
+impl AbilityTreeNode for CreatureDiesAction {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureDealsCombatDamageAction.id()
+        crate::ability_tree::NodeKind::CreatureDiesAction.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new()
+        arrayvec::ArrayVec::new_const()
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "deals combat damage")?;
+        write!(out, "creature dies")?;
         Ok(())
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureDealsCombatDamageAction {
+impl crate::utils::DummyInit for CreatureDiesAction {
     fn dummy_init() -> Self {
-        Self {}
+        Self
     }
 }

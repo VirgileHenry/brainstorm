@@ -3,7 +3,6 @@
 pub enum PlayerAction {
     Add,
     Attach,
-    Attack,
     Change,
     Choose,
     Distribute,
@@ -26,7 +25,6 @@ impl PlayerAction {
         match source {
             "add" | "adds" => Some(Self::Add),
             "attach" | "attaches" => Some(Self::Attach),
-            "attack" | "attacks" | "attacked" => Some(Self::Attack),
             "change" | "changes" => Some(Self::Change),
             "choose" | "chooses" | "choice" => Some(Self::Choose),
             "distribute" => Some(Self::Distribute),
