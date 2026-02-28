@@ -5,6 +5,7 @@ mod discard_rules;
 mod draw_rules;
 mod exile_follow_up_rules;
 mod exile_rules;
+mod gain_life_rules;
 mod put_counters_rules;
 mod remove_counters_rules;
 mod return_rules;
@@ -19,6 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         draw_rules::rules().collect::<Vec<_>>(),
         exile_follow_up_rules::rules().collect::<Vec<_>>(),
         exile_rules::rules().collect::<Vec<_>>(),
+        gain_life_rules::rules().collect::<Vec<_>>(),
         put_counters_rules::rules().collect::<Vec<_>>(),
         remove_counters_rules::rules().collect::<Vec<_>>(),
         return_rules::rules().collect::<Vec<_>>(),

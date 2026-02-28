@@ -5,6 +5,7 @@ mod destroy_imperative;
 mod discard_imperative;
 mod draw_imperative;
 mod exile_imperative;
+mod gain_life;
 mod put_counters_imperative;
 mod remove_counters_imperative;
 mod return_imperative;
@@ -22,6 +23,7 @@ pub use draw_imperative::DrawImperative;
 pub use exile_imperative::ExileFollowUp;
 pub use exile_imperative::ExileFollowUpReturn;
 pub use exile_imperative::ExileImperative;
+pub use gain_life::GainLifeImperative;
 pub use put_counters_imperative::CounterKind;
 pub use put_counters_imperative::CounterOnPermanent;
 pub use put_counters_imperative::PutCountersImperative;
@@ -51,6 +53,7 @@ pub enum Imperative {
     Discard(DiscardImperative),
     Draw(DrawImperative),
     Exile(ExileImperative),
+    GainLife(GainLifeImperative),
     PutCounters(PutCountersImperative),
     RemoveCounters(RemoveCountersImperative),
     Return(ReturnImperative),
@@ -73,6 +76,7 @@ impl AbilityTreeNode for Imperative {
             Self::Discard(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Draw(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Exile(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::GainLife(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Return(child) => children.push(child as &dyn AbilityTreeNode),
@@ -93,6 +97,7 @@ impl AbilityTreeNode for Imperative {
             Imperative::Discard(imperative) => imperative.display(out)?,
             Imperative::Draw(imperative) => imperative.display(out)?,
             Imperative::Exile(imperative) => imperative.display(out)?,
+            Imperative::GainLife(imperative) => imperative.display(out)?,
             Imperative::PutCounters(imperative) => imperative.display(out)?,
             Imperative::RemoveCounters(imperative) => imperative.display(out)?,
             Imperative::Return(imperative) => imperative.display(out)?,

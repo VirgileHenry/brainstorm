@@ -7,7 +7,6 @@ pub enum PlayerAction {
     Choose,
     Distribute,
     Draw,
-    Gain, /* Fixme: out of place, and need different tense forms */
     LookAt,
     Lose,
     Pay,
@@ -29,7 +28,6 @@ impl PlayerAction {
             "choose" | "chooses" | "choice" => Some(Self::Choose),
             "distribute" => Some(Self::Distribute),
             "draw" | "draws" => Some(Self::Draw),
-            "gain" | "gains" | "gained" => Some(Self::Gain),
             "look at" | "looks at" => Some(Self::LookAt),
             "lose" | "loses" => Some(Self::LookAt),
             "pay" | "pays" | "paying" => Some(Self::Pay),

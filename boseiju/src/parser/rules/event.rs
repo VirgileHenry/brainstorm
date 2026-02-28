@@ -15,7 +15,6 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Players can be the source of events: "if a player would <event action>" */
     let player_to_event_source = [
-        terminals::PlayerSpecifier::AnOpponent,
         terminals::PlayerSpecifier::Any,
         terminals::PlayerSpecifier::ToYourLeft,
         terminals::PlayerSpecifier::ToYourRight,

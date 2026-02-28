@@ -59,14 +59,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Gain)).id(),
+                ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)).id(),
                 ParserNode::AbilityTree { tree: dummy() }.id(),
             ]),
             merged: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Gain)),
+                    ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)),
                     ParserNode::AbilityTree { tree },
                 ] => Ok(ParserNode::ContinuousEffectKind {
                     kind: statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind::ObjectGainsAbilies(

@@ -15,6 +15,9 @@ pub enum AmbiguousToken {
     /// Exile can either refer to the exile zone, or to the action
     /// of exiling something.
     Exile,
+    /// Creatures can gain abilities
+    /// Players can gain life, gain control
+    Gain,
 }
 
 impl AmbiguousToken {
@@ -23,6 +26,7 @@ impl AmbiguousToken {
             "attack" | "attacks" | "attacked" => Some(Self::Attack),
             "counter" | "counters" => Some(Self::Counter),
             "exile" => Some(Self::Exile),
+            "gain" | "gains" | "gained" => Some(Self::Gain),
             _ => None,
         }
     }

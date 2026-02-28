@@ -7,7 +7,8 @@ use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    [/* Destroy any object reference */ ParserRule {
+    /* Destroy any object reference */
+    std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Destroy)).id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
@@ -27,6 +28,5 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: ParserRuleDeclarationLocation::here(),
-    }]
-    .into_iter()
+    })
 }

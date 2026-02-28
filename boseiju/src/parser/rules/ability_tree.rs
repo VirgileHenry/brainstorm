@@ -23,6 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         /* Abilities separated by new lines can be merged into a single ability tree */
+        /* Fixme: fixed number of abilities per cards ? */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::AbilityTree { tree: dummy() }.id(),

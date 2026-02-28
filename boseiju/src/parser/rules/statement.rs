@@ -8,10 +8,6 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let may_abilities_from_players = [
         (
-            TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent),
-            TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::They),
-        ),
-        (
             TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::Any),
             TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::They),
         ),

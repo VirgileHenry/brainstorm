@@ -61,13 +61,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)).id(),
+                ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::Any)).id(),
                 ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
             ]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::AnOpponent)),
+                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(terminals::PlayerSpecifier::Any)),
                     ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
                 ] => Ok(ParserNode::ObjectSpecifier {
                     specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast),

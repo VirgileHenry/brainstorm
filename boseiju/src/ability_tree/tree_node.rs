@@ -74,6 +74,7 @@ pub enum NodeKind {
     ExpandedKeywordAbility(crate::ability_tree::ability::keyword::ExpandedKeywordAbility),
     ConditionEventOccured,
     ConditionObjectMatchSpecifier,
+    GainLifeImperative,
     Imperative,
     ImperativeList,
     ImperativeChoices,

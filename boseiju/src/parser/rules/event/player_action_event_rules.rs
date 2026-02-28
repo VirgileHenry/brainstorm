@@ -11,7 +11,6 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let player_attacks_event = [
         terminals::PlayerSpecifier::Any,
-        terminals::PlayerSpecifier::AnOpponent,
         terminals::PlayerSpecifier::ToYourLeft,
         terminals::PlayerSpecifier::ToYourRight,
         terminals::PlayerSpecifier::You,
@@ -43,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     .collect::<Vec<_>>();
 
     let player_casts_spell_events = [
-        terminals::PlayerSpecifier::AnOpponent,
+        terminals::PlayerSpecifier::Any,
         terminals::PlayerSpecifier::TargetOpponent,
         terminals::PlayerSpecifier::ToYourLeft,
         terminals::PlayerSpecifier::ToYourRight,

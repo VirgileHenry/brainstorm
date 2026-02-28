@@ -10,7 +10,7 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        terminals::PlayerSpecifier::AnOpponent,
+        terminals::PlayerSpecifier::Any,
         terminals::PlayerSpecifier::TargetOpponent,
         terminals::PlayerSpecifier::ToYourLeft,
         terminals::PlayerSpecifier::ToYourRight,
@@ -23,14 +23,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ParserRule {
                 expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
-                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
+                    ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)).id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
                 merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
-                        ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
+                        ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)),
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
                     ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
@@ -47,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)).id(),
-                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
+                    ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)).id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
                 merged: ParserNode::Event { event: dummy() }.id(),
@@ -55,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)),
-                        ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
+                        ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)),
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
                     ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
@@ -72,7 +72,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)).id(),
-                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
+                    ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)).id(),
                     ParserNode::Number { number: dummy() }.id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
@@ -81,7 +81,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Have)),
-                        ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
+                        ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)),
                         ParserNode::Number { number },
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
                     ] => Ok(ParserNode::Event {
@@ -99,7 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 expanded: RuleLhs::new(&[
                     ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
                     ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
-                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)).id(),
+                    ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)).id(),
                     ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)).id(),
                 ]),
                 merged: ParserNode::Event { event: dummy() }.id(),
@@ -107,7 +107,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     &[
                         ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
                         ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)),
-                        ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Gain)),
+                        ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Gain)),
                         ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Life)),
                     ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {

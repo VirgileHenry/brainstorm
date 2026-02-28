@@ -8,11 +8,10 @@ use crate::ability_tree::terminals::Terminal;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PlayerSpecifier {
-    AnOpponent,
-    TargetOpponent,
-    EachOpponent,
-    Any,
     All,
+    Any,
+    EachOpponent,
+    TargetOpponent,
     ToYourLeft,
     ToYourRight,
     You,
@@ -49,11 +48,10 @@ impl Terminal for PlayerSpecifier {
     #[cfg(feature = "lexer")]
     fn try_from_str(source: &str) -> Option<Self> {
         match source {
-            "an opponent" => Some(Self::AnOpponent),
-            "target opponent" => Some(Self::TargetOpponent),
-            "each opponent" | "opponents" | "your opponents" => Some(Self::EachOpponent),
-            "a player" => Some(Self::Any),
             "each player" => Some(Self::All),
+            "an opponent" | "a player" => Some(Self::Any),
+            "each opponent" | "opponents" | "your opponents" => Some(Self::EachOpponent),
+            "target opponent" => Some(Self::TargetOpponent),
             "the player to your left" => Some(Self::ToYourLeft),
             "the player to your right" => Some(Self::ToYourRight),
             "you" => Some(Self::You),
@@ -65,11 +63,10 @@ impl Terminal for PlayerSpecifier {
 impl std::fmt::Display for PlayerSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::AnOpponent => write!(f, "an opponent"),
-            Self::TargetOpponent => write!(f, "target opponent"),
-            Self::EachOpponent => write!(f, "each opponent"),
-            Self::Any => write!(f, "a player"),
             Self::All => write!(f, "all players"),
+            Self::Any => write!(f, "a player"),
+            Self::EachOpponent => write!(f, "each opponent"),
+            Self::TargetOpponent => write!(f, "target opponent"),
             Self::ToYourLeft => write!(f, "the player to your left"),
             Self::ToYourRight => write!(f, "the player to your right"),
             Self::You => write!(f, "you"),
