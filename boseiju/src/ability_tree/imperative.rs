@@ -110,64 +110,6 @@ impl crate::utils::DummyInit for Imperative {
     }
 }
 
-/// A conditionnal imperative is an imperative that must be done unless a specific condition is met.
-///
-/// An example is Chart a Course: "Discard a card unless you attacked this turn".
-///
-/// The condition is optionnal, and a conditional imperative can be used as a standard imperative.
-/// It's an intermediate building block to produce more complex sentencing in abilities.
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct ConditionalImperative {
-    pub imperative: Imperative,
-    pub condition: Option<crate::ability_tree::conditional::Conditional>,
-}
-
-impl AbilityTreeNode for ConditionalImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::ability_tree::NodeKind::ConditionalImperative.id()
-    }
-
-    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
-
-        let mut children = arrayvec::ArrayVec::new_const();
-        match self.condition.as_ref() {
-            Some(condition) => children.push(condition as &dyn AbilityTreeNode),
-            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
-        }
-        children.push(&self.imperative as &dyn AbilityTreeNode);
-
-        children
-    }
-
-    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
-        write!(out, "conditional imperative:")?;
-        out.push_inter_branch()?;
-        self.imperative.display(out)?;
-        out.next_final_branch()?;
-        match self.condition.as_ref() {
-            Some(condition) => condition.display(out)?,
-            None => write!(out, "if condition: none")?,
-        }
-        out.pop_branch();
-        Ok(())
-    }
-}
-
-#[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ConditionalImperative {
-    fn dummy_init() -> Self {
-        Self {
-            imperative: crate::utils::dummy(),
-            condition: None,
-        }
-    }
-}
-
 /// An imperative list is a list of imperative that should be executed.
 ///
 /// The inner item is actually a conditional imperative, since there are list that contains
@@ -177,7 +119,9 @@ impl crate::utils::DummyInit for ConditionalImperative {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ImperativeList {
-    pub imperatives: crate::utils::HeapArrayVec<ConditionalImperative, MAX_CHILDREN_PER_NODE>,
+    pub executing_player: crate::ability_tree::terminals::PlayerSpecifier,
+    pub condition: Option<crate::ability_tree::conditional::Conditional>,
+    pub imperatives: crate::utils::HeapArrayVec<Imperative, MAX_CHILDREN_PER_NODE>,
 }
 
 impl AbilityTreeNode for ImperativeList {
@@ -187,7 +131,14 @@ impl AbilityTreeNode for ImperativeList {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
+
         let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.executing_player as &dyn AbilityTreeNode);
+        match self.condition.as_ref() {
+            Some(condition) => children.push(condition as &dyn AbilityTreeNode),
+            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
+        }
         for imperative in self.imperatives.iter() {
             children.push(imperative as &dyn AbilityTreeNode);
         }
@@ -197,6 +148,16 @@ impl AbilityTreeNode for ImperativeList {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "imperative list:")?;
+        out.push_inter_branch()?;
+        write!(out, "executing player:")?;
+        self.executing_player.display(out)?;
+        out.next_inter_branch()?;
+        match self.condition.as_ref() {
+            Some(condition) => condition.display(out)?,
+            None => write!(out, "if condition: none")?,
+        }
+        out.next_final_branch()?;
+        write!(out, "imperatives:")?;
         for imperative in self.imperatives.iter().take(self.imperatives.len().saturating_sub(1)) {
             out.push_inter_branch()?;
             imperative.display(out)?;
@@ -207,6 +168,7 @@ impl AbilityTreeNode for ImperativeList {
             imperative.display(out)?;
             out.pop_branch();
         }
+        out.pop_branch();
         Ok(())
     }
 }
@@ -215,7 +177,9 @@ impl AbilityTreeNode for ImperativeList {
 impl crate::utils::DummyInit for ImperativeList {
     fn dummy_init() -> Self {
         Self {
+            executing_player: crate::utils::dummy(),
             imperatives: crate::utils::dummy(),
+            condition: None,
         }
     }
 }

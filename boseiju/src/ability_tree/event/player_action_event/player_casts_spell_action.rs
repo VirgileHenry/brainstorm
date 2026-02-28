@@ -2,7 +2,6 @@ use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
-/// Fixme: move into player actions ???
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]

@@ -22,6 +22,7 @@ mod count_specifier;
 mod event;
 mod event_replacement;
 mod imperative;
+mod imperative_list;
 mod keyword_to_ability;
 mod mana;
 mod number;
@@ -50,6 +51,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(event_replacement::rules()),
         Box::new(conditional::rules()),
         Box::new(imperative::rules()),
+        Box::new(imperative_list::rules()),
         Box::new(keyword_to_ability::rules()),
         Box::new(mana::rules()),
         Box::new(number::rules()),

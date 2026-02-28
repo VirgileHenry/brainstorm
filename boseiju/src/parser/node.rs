@@ -16,9 +16,6 @@ pub enum ParserNode {
     Condition {
         condition: ability_tree::conditional::Condition,
     },
-    ConditionalImperative {
-        imperative: ability_tree::imperative::ConditionalImperative,
-    },
     ContinuousEffect {
         effect: ability_tree::ability::statik::continuous_effect::ContinuousEffect,
     },

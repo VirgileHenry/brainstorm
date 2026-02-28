@@ -36,8 +36,6 @@ impl RuleMap {
             rhs_to_rule.entry(rule.merged).or_default().push(rule_index);
         }
 
-        println!("Loaded {} rules", rules.len());
-
         Ok(Self {
             rules,
             merged_to_rules: rhs_to_rule,
