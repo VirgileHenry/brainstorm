@@ -33,7 +33,7 @@ pub extern "C" fn parse_oracle_text(
         Err(err) => return rust_string_to_ptr(format!("Invalid UTF-8 for card name: {err}")),
     };
 
-    match boseiju::AbilityTree::from_oracle_text(card_name, oracle_text) {
+    match boseiju::AbilityTree::from_oracle_text(oracle_text, card_name) {
         Ok(tree) => match serde_json::to_string(&tree) {
             Ok(res) => rust_string_to_ptr(res),
             Err(json_err) => rust_string_to_ptr(format!("Failed to convert ability tree to JSON: {json_err}")),
