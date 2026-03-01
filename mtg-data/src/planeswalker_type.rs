@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -97,7 +98,7 @@ pub enum PlaneswalkerType {
 }
 
 impl std::str::FromStr for PlaneswalkerType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "abian" => Ok(Self::Abian),
@@ -191,7 +192,10 @@ impl std::str::FromStr for PlaneswalkerType {
             "yanggu" => Ok(Self::Yanggu),
             "yanling" => Ok(Self::Yanling),
             "zariel" => Ok(Self::Zariel),
-            other => Err(format!("Unknown PlaneswalkerType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "PlaneswalkerType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -394,7 +398,6 @@ impl PlaneswalkerType {
             Self::Yanggu,
             Self::Yanling,
             Self::Zariel,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

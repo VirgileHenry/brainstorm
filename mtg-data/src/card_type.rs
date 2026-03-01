@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -23,7 +24,7 @@ pub enum CardType {
 }
 
 impl std::str::FromStr for CardType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "artifact" => Ok(Self::Artifact),
@@ -43,7 +44,10 @@ impl std::str::FromStr for CardType {
             "scheme" => Ok(Self::Scheme),
             "sorcery" => Ok(Self::Sorcery),
             "vanguard" => Ok(Self::Vanguard),
-            other => Err(format!("Unknown CardType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "CardType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -98,7 +102,6 @@ impl CardType {
             Self::Scheme,
             Self::Sorcery,
             Self::Vanguard,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

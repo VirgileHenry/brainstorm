@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -24,7 +25,7 @@ pub enum LandType {
 }
 
 impl std::str::FromStr for LandType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "cave" => Ok(Self::Cave),
@@ -45,7 +46,10 @@ impl std::str::FromStr for LandType {
             "tower" => Ok(Self::Tower),
             "town" => Ok(Self::Town),
             "urza's" => Ok(Self::Urzas),
-            other => Err(format!("Unknown LandType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "LandType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -102,7 +106,6 @@ impl LandType {
             Self::Tower,
             Self::Town,
             Self::Urzas,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -218,7 +219,7 @@ pub enum KeywordAbility {
 }
 
 impl std::str::FromStr for KeywordAbility {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "absorb" => Ok(Self::Absorb),
@@ -433,7 +434,10 @@ impl std::str::FromStr for KeywordAbility {
             "web-slinging" => Ok(Self::WebSlinging),
             "wither" => Ok(Self::Wither),
             "wizardcycling" => Ok(Self::Wizardcycling),
-            other => Err(format!("Unknown KeywordAbility: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "KeywordAbility",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -878,7 +882,6 @@ impl KeywordAbility {
             Self::WebSlinging,
             Self::Wither,
             Self::Wizardcycling,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

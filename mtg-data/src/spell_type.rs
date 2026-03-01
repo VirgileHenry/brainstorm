@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -12,7 +13,7 @@ pub enum SpellType {
 }
 
 impl std::str::FromStr for SpellType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "adventure" => Ok(Self::Adventure),
@@ -21,7 +22,10 @@ impl std::str::FromStr for SpellType {
             "lesson" => Ok(Self::Lesson),
             "omen" => Ok(Self::Omen),
             "trap" => Ok(Self::Trap),
-            other => Err(format!("Unknown SpellType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "SpellType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -54,7 +58,6 @@ impl SpellType {
             Self::Lesson,
             Self::Omen,
             Self::Trap,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

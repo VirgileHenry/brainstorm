@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -332,7 +333,7 @@ pub enum CreatureType {
 }
 
 impl std::str::FromStr for CreatureType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "advisor" => Ok(Self::Advisor),
@@ -661,7 +662,10 @@ impl std::str::FromStr for CreatureType {
             "yeti" => Ok(Self::Yeti),
             "zombie" => Ok(Self::Zombie),
             "zubera" => Ok(Self::Zubera),
-            other => Err(format!("Unknown CreatureType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "CreatureType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -1334,7 +1338,6 @@ impl CreatureType {
             Self::Yeti,
             Self::Zombie,
             Self::Zubera,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

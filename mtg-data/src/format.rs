@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -26,7 +27,7 @@ pub enum Format {
 }
 
 impl std::str::FromStr for Format {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "alchemy" => Ok(Self::Alchemy),
@@ -49,7 +50,10 @@ impl std::str::FromStr for Format {
             "premodern" => Ok(Self::Premodern),
             "standard" => Ok(Self::Standard),
             "vintage" => Ok(Self::Vintage),
-            other => Err(format!("Unknown Format: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "Format",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -110,7 +114,6 @@ impl Format {
             Self::Premodern,
             Self::Standard,
             Self::Vintage,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

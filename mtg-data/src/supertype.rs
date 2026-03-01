@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -13,7 +14,7 @@ pub enum Supertype {
 }
 
 impl std::str::FromStr for Supertype {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "basic" => Ok(Self::Basic),
@@ -23,7 +24,10 @@ impl std::str::FromStr for Supertype {
             "snow" => Ok(Self::Snow),
             "token" => Ok(Self::Token),
             "world" => Ok(Self::World),
-            other => Err(format!("Unknown Supertype: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "Supertype",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -58,7 +62,6 @@ impl Supertype {
             Self::Snow,
             Self::Token,
             Self::World,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

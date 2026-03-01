@@ -42,12 +42,12 @@ impl RuleMap {
         })
     }
 
-    pub fn get_rules_for_token(&self, node_id: usize) -> Vec<&ParserRule> {
-        let rule_indices = match self.merged_to_rules.get(&node_id) {
-            Some(indices) => indices,
-            None => return Vec::with_capacity(0),
-        };
-
-        rule_indices.iter().map(|rule_index| &self.rules[*rule_index]).collect()
+    pub fn get_rules_for_token(&self, node_id: usize) -> Option<impl Iterator<Item = &ParserRule>> {
+        Some(
+            self.merged_to_rules
+                .get(&node_id)?
+                .iter()
+                .map(|rule_index| &self.rules[*rule_index]),
+        )
     }
 }

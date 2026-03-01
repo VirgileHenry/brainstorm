@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -70,7 +71,7 @@ pub enum AbilityWord {
 }
 
 impl std::str::FromStr for AbilityWord {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "adamant" => Ok(Self::Adamant),
@@ -137,7 +138,10 @@ impl std::str::FromStr for AbilityWord {
             "void" => Ok(Self::Void),
             "will of the planeswalkers" => Ok(Self::WillOfThePlaneswalkers),
             "will of the council" => Ok(Self::WillOfTheCouncil),
-            other => Err(format!("Unknown AbilityWord: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "AbilityWord",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -286,7 +290,6 @@ impl AbilityWord {
             Self::Void,
             Self::WillOfThePlaneswalkers,
             Self::WillOfTheCouncil,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

@@ -6,8 +6,12 @@ mod rules;
 pub use error::ParserError;
 pub use node::ParserNode;
 
-use std::collections::HashSet;
 use std::sync::Arc;
+
+use rapidhash::HashMapExt;
+use rapidhash::HashSetExt;
+type HashSet<V> = rapidhash::RapidHashSet<V>;
+type HashMap<K, V> = rapidhash::RapidHashMap<K, V>;
 
 #[derive(Clone)]
 enum EarleyBackpointer<'r> {
@@ -59,20 +63,6 @@ impl<'r> EarleyItem<'r> {
     /// In other terms, whether this rule fully matched the input or not.
     fn rule_complete(&self) -> bool {
         self.rule.expanded.length.get() == self.position_index
-    }
-
-    /// Checks whether this Earley Item is complete regarding a given node id.
-    ///
-    /// An item is considered complete if the input token stream is fully matched,
-    /// that means that for a given rule that produces the target node id:
-    /// - The rule result is the required node
-    /// - The rule awaits no tokens, or the position index is at the end of the expanded tokens,
-    /// - the rule starts at 0
-    fn is_complete(&self, target_node_id: usize) -> bool {
-        let is_axiom = self.rule.merged == target_node_id;
-        let rule_complete = self.rule_complete();
-        let start_at_0 = self.start_index == 0;
-        is_axiom && rule_complete && start_at_0
     }
 
     /// Use the item rule to reduce the parser nodes.
@@ -142,13 +132,22 @@ impl<'r> std::hash::Hash for EarleyItem<'r> {
 /// incoming token stream.
 #[derive(Clone)]
 struct EarleyRow<'r> {
-    pub items: HashSet<Arc<EarleyItem<'r>>>,
+    /// Storage for all items that are completed.
+    /// That is, there is no awaiting token.
+    /// They are stored separatly for quick access in the algorithm.
+    pub completed_items: HashSet<Arc<EarleyItem<'r>>>,
+    /// Storage for all items awaiting a node. They are stored in a
+    /// HashMap where the awaited node id is the key, for easy access.
+    pub uncompleted_items: HashMap<usize, HashSet<Arc<EarleyItem<'r>>>>,
 }
 
 impl<'r> EarleyRow<'r> {
     /// Creates a new, empty row.
     fn new() -> Self {
-        Self { items: HashSet::new() }
+        Self {
+            completed_items: HashSet::new(),
+            uncompleted_items: HashMap::new(),
+        }
     }
 
     /// Create the start row of the Earley Table for an algorithm that is targetting
@@ -162,32 +161,62 @@ impl<'r> EarleyRow<'r> {
         let target_node = ParserNode::AbilityTree { tree: dummy() };
         let node_id = target_node.id();
 
-        for rule in rules.get_rules_for_token(node_id) {
-            start_row.items.insert(Arc::new(EarleyItem::new(rule, 0, 0)));
+        let mut queue: Vec<Arc<_>> = Vec::new();
+
+        if let Some(rules) = rules.get_rules_for_token(node_id) {
+            for rule in rules {
+                let item = Arc::new(EarleyItem::new(rule, 0, 0));
+                start_row.insert(item.clone());
+                queue.push(item.clone());
+            }
         }
 
-        let mut queue = start_row.items.iter().cloned().collect::<Vec<_>>();
-
         while let Some(item) = queue.pop() {
-            for new_item in predictor_step(&rules, 0, &item).into_iter() {
-                if start_row.items.insert(Arc::new(new_item.clone())) {
-                    queue.push(Arc::new(new_item.clone()));
+            if let Some(new_items) = predictor_step(&rules, 0, &item) {
+                for new_item in new_items {
+                    let item = Arc::new(new_item.clone());
+                    if start_row.insert(item.clone()) {
+                        queue.push(item.clone());
+                    }
                 }
             }
         }
 
         start_row
     }
+
+    fn insert(&mut self, item: Arc<EarleyItem<'r>>) -> bool {
+        match item.expecting_token() {
+            None => {
+                /* if no tokens are expected, the rule is complete */
+                self.completed_items.insert(item)
+            }
+            Some(expecting) => {
+                /* Otherwise, we are expecting a token */
+                let row = self.uncompleted_items.entry(expecting).or_default();
+                row.insert(item)
+            }
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.completed_items.is_empty() && self.uncompleted_items.is_empty()
+    }
 }
 
 impl<'r> std::fmt::Debug for EarleyRow<'r> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.items.is_empty() {
+        if self.is_empty() {
             write!(f, "[]")?;
         } else {
             writeln!(f, "[")?;
-            for item in self.items.iter() {
+            for item in self.completed_items.iter() {
                 writeln!(f, "  {item:?}")?;
+            }
+            for items in self.uncompleted_items.values() {
+                for item in items.iter() {
+                    writeln!(f, "  {item:?}")?;
+                }
             }
             write!(f, "]")?;
         }
@@ -268,27 +297,37 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
         /* Create the next Earley table entry, T[j]  */
         let mut next_table_row = EarleyRow::new();
 
+        /* The queue allows to process each item once, seeing what other items are added */
+        let mut queue = Vec::new();
+
         /* Scanner step */
         /* for all items in the previous row, add them to this row if they match the current token */
-        scanner_step(&earley_table.table[node_index], node_id, node_index, &mut next_table_row);
-
-        /* The queue allows to process each item once, seeing what other items are added */
-        let mut queue = next_table_row.items.iter().cloned().collect::<Vec<_>>();
+        if let Some(new_items) = scanner_step(&earley_table.table[node_index], node_id, node_index) {
+            for new_item in new_items {
+                let new_item = Arc::new(new_item);
+                queue.push(new_item.clone());
+                next_table_row.insert(new_item.clone());
+            }
+        }
 
         /* Saturate Predictor + Completor steps */
         while let Some(item) = queue.pop() {
             /* Predictor step */
-            for new_item in predictor_step(&rules, j, &item).into_iter() {
-                /* Add the new item in the queue for eploring only if it is unknown (not in the row) */
-                if next_table_row.items.insert(Arc::new(new_item.clone())) {
-                    queue.push(Arc::new(new_item.clone()));
+            if let Some(new_items) = predictor_step(&rules, j, &item) {
+                for new_item in new_items {
+                    /* Add the new item in the queue for eploring only if it is unknown (not in the row) */
+                    if next_table_row.insert(Arc::new(new_item.clone())) {
+                        queue.push(Arc::new(new_item.clone()));
+                    }
                 }
             }
             /* Completor step */
-            for new_item in completor_step(&earley_table, item).into_iter() {
-                /* Add the new item in the queue for eploring only if it is unknown (not in the row) */
-                if next_table_row.items.insert(Arc::new(new_item.clone())) {
-                    queue.push(Arc::new(new_item.clone()));
+            if let Some(new_items) = completor_step(&earley_table, item) {
+                for new_item in new_items {
+                    /* Add the new item in the queue for eploring only if it is unknown (not in the row) */
+                    if next_table_row.insert(Arc::new(new_item.clone())) {
+                        queue.push(Arc::new(new_item.clone()));
+                    }
                 }
             }
         }
@@ -298,9 +337,9 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
 
     /* Look for an item of kind (S -> a . , 0) for parser completion */
     let completed_items = earley_table.table[node_count]
-        .items
+        .completed_items
         .iter()
-        .filter(|item| item.is_complete(target_node_id))
+        .filter(|item| item.rule.merged == target_node_id)
         .collect::<Vec<_>>();
 
     match completed_items.as_slice() {
@@ -324,18 +363,16 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
 /// into T\[j\] with their position index advanced.
 ///
 /// The awaited non terminals are handled in the predictor step.
-fn scanner_step<'r>(prev_row: &EarleyRow<'r>, token: usize, token_index: usize, next_row: &mut EarleyRow<'r>) {
-    for item in prev_row.items.iter() {
-        if item.expecting_token() == Some(token) {
-            use std::ops::Deref;
+fn scanner_step<'r>(prev_row: &EarleyRow<'r>, token: usize, token_index: usize) -> Option<impl Iterator<Item = EarleyItem<'r>>> {
+    Some(prev_row.uncompleted_items.get(&token)?.iter().map(move |prev_item| {
+        use std::ops::Deref;
 
-            let mut new_item: EarleyItem = item.deref().clone();
-            new_item.position_index += 1;
-            new_item.backpointers.push(EarleyBackpointer::Scanned(token_index));
+        let mut new_item: EarleyItem = prev_item.deref().clone();
+        new_item.position_index += 1;
+        new_item.backpointers.push(EarleyBackpointer::Scanned(token_index));
 
-            next_row.items.insert(Arc::new(new_item));
-        }
-    }
+        new_item
+    }))
 }
 
 /// Predictor step of the Earley Algorithm.
@@ -351,19 +388,13 @@ fn predictor_step<'r>(
     rules: &'r rule_map::RuleMap,
     j: usize,
     item: &EarleyItem<'r>,
-) -> std::collections::HashSet<EarleyItem<'r>> {
-    let mut new_items = std::collections::HashSet::new();
-    let next_token = match item.expecting_token() {
-        Some(token) => token,
-        None => return new_items,
-    };
-
-    for rule in rules.get_rules_for_token(next_token) {
-        let item = EarleyItem::new(rule, j, 0);
-        new_items.insert(item);
-    }
-
-    new_items
+) -> Option<impl Iterator<Item = EarleyItem<'r>>> {
+    let next_token = item.expecting_token()?;
+    Some(
+        rules
+            .get_rules_for_token(next_token)?
+            .map(move |rule| EarleyItem::new(rule, j, 0)),
+    )
 }
 
 /// Completor step of the Earley Algorithm.
@@ -379,26 +410,27 @@ fn predictor_step<'r>(
 fn completor_step<'r>(
     earley_table: &EarleyTable<'r>,
     completed_item: Arc<EarleyItem<'r>>,
-) -> std::collections::HashSet<EarleyItem<'r>> {
-    let mut new_items = std::collections::HashSet::new();
-
+) -> Option<impl Iterator<Item = EarleyItem<'r>>> {
     if completed_item.rule_complete() {
-        /* If so, check in T[i] for all rules awaiting this item */
-        for awaiting_item in earley_table.table[completed_item.start_index].items.iter() {
-            if awaiting_item.expecting_token() == Some(completed_item.rule.merged) {
-                /* And we can bump these rules up */
-                use std::ops::Deref;
-                let mut item: EarleyItem = awaiting_item.deref().clone();
-                item.position_index += 1;
-                /* Set the backpointer, since the current row item validated this token */
-                item.backpointers.push(EarleyBackpointer::Complete(completed_item.clone()));
+        /* If the itme is completed, check in T[i] for all rules awaiting this item */
+        let awaiting_row = &earley_table.table[completed_item.start_index];
+        let awaiting_items = awaiting_row.uncompleted_items.get(&completed_item.rule.merged)?;
+        Some(awaiting_items.iter().map(move |awaiting_item| {
+            /* And we can bump these rules up */
+            use std::ops::Deref;
 
-                new_items.insert(item);
-            }
-        }
+            let mut new_item: EarleyItem = awaiting_item.deref().clone();
+            new_item.position_index += 1;
+            /* Set the backpointer, since the current row item validated this token */
+            new_item
+                .backpointers
+                .push(EarleyBackpointer::Complete(completed_item.clone()));
+
+            new_item
+        }))
+    } else {
+        None
     }
-
-    new_items
 }
 
 /// Parser function without artifacts, to get the result straight out.

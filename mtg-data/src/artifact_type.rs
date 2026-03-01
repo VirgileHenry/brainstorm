@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -25,7 +26,7 @@ pub enum ArtifactType {
 }
 
 impl std::str::FromStr for ArtifactType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "attraction" => Ok(Self::Attraction),
@@ -47,7 +48,10 @@ impl std::str::FromStr for ArtifactType {
             "terminus" => Ok(Self::Terminus),
             "treasure" => Ok(Self::Treasure),
             "vehicle" => Ok(Self::Vehicle),
-            other => Err(format!("Unknown ArtifactType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "ArtifactType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -106,7 +110,6 @@ impl ArtifactType {
             Self::Terminus,
             Self::Treasure,
             Self::Vehicle,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

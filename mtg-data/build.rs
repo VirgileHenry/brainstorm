@@ -104,6 +104,7 @@ impl<'a> ToGenerateEnum<'a> {
         const S4: &'static str = "    ";
         const S8: &'static str = "        ";
         const S12: &'static str = "            ";
+        const S16: &'static str = "                ";
 
         let source = std::fs::read_to_string(self.source_file)?;
         let mut destination = std::fs::OpenOptions::new()
@@ -139,17 +140,16 @@ impl<'a> ToGenerateEnum<'a> {
         /* write out the parse func */
         writeln!(destination, "")?;
         writeln!(destination, "impl std::str::FromStr for {} {{", self.name)?;
-        writeln!(destination, "{S4}type Err = String;")?;
+        writeln!(destination, "{S4}type Err = crate::ParsingError;")?;
         writeln!(destination, "{S4}fn from_str(s: &str) -> Result<Self, Self::Err> {{")?;
         writeln!(destination, "{S8}match s {{")?;
         for (line, variant) in variants.iter() {
             writeln!(destination, "{S12}\"{}\" => Ok(Self::{}),", line, variant)?;
         }
-        writeln!(
-            destination,
-            "{S12}other => Err(format!(\"Unknown {}: {{}}\", other.to_string())),",
-            self.name
-        )?;
+        writeln!(destination, "{S12}_ => Err(crate::ParsingError {{")?;
+        writeln!(destination, "{S16}item: \"{}\",", self.name)?;
+        writeln!(destination, "{S16}message: \"provided source does not match\",",)?;
+        writeln!(destination, "{S12}}}),")?;
         writeln!(destination, "{S8}}}")?;
         writeln!(destination, "{S4}}}")?;
         writeln!(destination, "}}")?;

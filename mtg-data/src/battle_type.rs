@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -7,11 +8,14 @@ pub enum BattleType {
 }
 
 impl std::str::FromStr for BattleType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "siege" => Ok(Self::Siege),
-            other => Err(format!("Unknown BattleType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "BattleType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -32,6 +36,8 @@ impl std::fmt::Display for BattleType {
 
 impl BattleType {
     pub fn all() -> impl Iterator<Item = Self> {
-        [Self::Siege].into_iter()
+        [
+            Self::Siege,
+        ].into_iter()
     }
 }

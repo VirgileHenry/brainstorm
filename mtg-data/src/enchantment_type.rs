@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -18,7 +19,7 @@ pub enum EnchantmentType {
 }
 
 impl std::str::FromStr for EnchantmentType {
-    type Err = String;
+    type Err = crate::ParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "aura" => Ok(Self::Aura),
@@ -33,7 +34,10 @@ impl std::str::FromStr for EnchantmentType {
             "saga" => Ok(Self::Saga),
             "shard" => Ok(Self::Shard),
             "shrine" => Ok(Self::Shrine),
-            other => Err(format!("Unknown EnchantmentType: {}", other.to_string())),
+            _ => Err(crate::ParsingError {
+                item: "EnchantmentType",
+                message: "provided source does not match",
+            }),
         }
     }
 }
@@ -78,7 +82,6 @@ impl EnchantmentType {
             Self::Saga,
             Self::Shard,
             Self::Shrine,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

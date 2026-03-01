@@ -16,6 +16,7 @@ serde = { workspace = true }
 petgraph = "0.8.3"
 uuid = { version = "1.18.1", features = ["serde"] }
 ts-rs = { workspace = true, optional = true }
+rapidhash = { version = "4.4.1", optional = true }
 
 [dev-dependencies]
 krark = { workspace = true }
@@ -23,7 +24,7 @@ krark = { workspace = true }
 [features]
 default = ["lexer", "parser"]
 lexer = []
-parser = ["lexer"]
+parser = ["lexer", "dep:rapidhash"]
 ts_export = ["dep:ts-rs", "mtg-data/ts_export", "mtg-cardbase/ts_export"]
 
 [[bin]]
