@@ -1,4 +1,6 @@
-pub mod continuous_effect_kind;
+mod continuous_effect_kind;
+
+pub use continuous_effect_kind::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;

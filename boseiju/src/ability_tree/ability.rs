@@ -127,7 +127,7 @@ pub struct KeywordAbility {
 impl AbilityTreeNode for KeywordAbility {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        super::NodeKind::KeywordAbility.id()
+        super::NodeKind::KeywordAbilityIdMarker.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {

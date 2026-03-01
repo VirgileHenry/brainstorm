@@ -20,7 +20,7 @@ pub enum ParserNode {
         effect: ability_tree::ability::statik::continuous_effect::ContinuousEffect,
     },
     ContinuousEffectKind {
-        kind: ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind,
+        kind: ability_tree::ability::statik::continuous_effect::ContinuousEffectKind,
     },
     Cost {
         cost: ability_tree::cost::Cost,

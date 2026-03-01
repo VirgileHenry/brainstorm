@@ -21,10 +21,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::EventReplacement { replacement },
                 ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Instead)),
             ] => {
-                use crate::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
+                use crate::ability_tree::ability::statik::continuous_effect;
                 Ok(ParserNode::ContinuousEffectKind {
-                    kind: continuous_effect_kind::ContinuousEffectKind::ReplacementEffect(
-                        continuous_effect_kind::ContinuousEffectReplacementEvent {
+                    kind: continuous_effect::ContinuousEffectKind::ReplacementEffect(
+                        continuous_effect::ContinuousEffectReplacementEvent {
                             replaced_event: event.clone(),
                             replaced_by: replacement.clone(),
                         },

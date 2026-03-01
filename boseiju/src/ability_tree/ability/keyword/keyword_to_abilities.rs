@@ -64,7 +64,6 @@ pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Result<Keyword
         mtg_data::KeywordAbility::Echo => ExpandedKeywordAbility::Echo,
         mtg_data::KeywordAbility::Embalm => ExpandedKeywordAbility::Embalm,
         mtg_data::KeywordAbility::Emerge => ExpandedKeywordAbility::Emerge,
-        mtg_data::KeywordAbility::Enchant => ExpandedKeywordAbility::Enchant,
         mtg_data::KeywordAbility::Encore => ExpandedKeywordAbility::Encore,
         mtg_data::KeywordAbility::Enlist => ExpandedKeywordAbility::Enlist,
         mtg_data::KeywordAbility::Entwine => ExpandedKeywordAbility::Entwine,

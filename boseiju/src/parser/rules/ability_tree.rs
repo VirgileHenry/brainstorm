@@ -6,6 +6,62 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
+        /* Multiple keyword abilities can be separated by commas instead of newlines */
+        /* 2 keyword abilities */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::KeywordAbility { ability: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+                ParserNode::KeywordAbility { ability: dummy() }.id(),
+            ]),
+            merged: ParserNode::AbilityTree { tree: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::KeywordAbility { ability: ab1 },
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                    ParserNode::KeywordAbility { ability: ab2 },
+                ] => Ok(ParserNode::AbilityTree {
+                    tree: {
+                        let mut abilities = crate::utils::HeapArrayVec::new();
+                        abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab1.clone()));
+                        abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab2.clone()));
+                        crate::AbilityTree { abilities }
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* 3 keyword abilities */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::KeywordAbility { ability: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+                ParserNode::KeywordAbility { ability: dummy() }.id(),
+                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+                ParserNode::KeywordAbility { ability: dummy() }.id(),
+            ]),
+            merged: ParserNode::AbilityTree { tree: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::KeywordAbility { ability: ab1 },
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                    ParserNode::KeywordAbility { ability: ab2 },
+                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                    ParserNode::KeywordAbility { ability: ab3 },
+                ] => Ok(ParserNode::AbilityTree {
+                    tree: {
+                        let mut abilities = crate::utils::HeapArrayVec::new();
+                        abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab1.clone()));
+                        abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab2.clone()));
+                        abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab3.clone()));
+                        crate::AbilityTree { abilities }
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
         /* A single Ability can be turned into an ability tree with a single element */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::AbilityKind { ability: dummy() }.id()]),

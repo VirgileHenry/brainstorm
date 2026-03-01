@@ -1,4 +1,5 @@
 use super::ParserNode;
+use crate::ability_tree::terminals;
 use crate::lexer::tokens::TokenKind;
 use crate::lexer::tokens::non_terminals;
 use crate::utils::dummy;
@@ -246,6 +247,40 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
     ];
 
+    /* Enchanted / equiped objects makes a special object specifier */
+    let attached_objects_rules = [
+        (terminals::PermanentState::Enchanted, mtg_data::CardType::Artifact),
+        (terminals::PermanentState::Enchanted, mtg_data::CardType::Creature),
+        (terminals::PermanentState::Enchanted, mtg_data::CardType::Enchantment),
+        (terminals::PermanentState::Enchanted, mtg_data::CardType::Land),
+        (terminals::PermanentState::Enchanted, mtg_data::CardType::Planeswalker),
+        (terminals::PermanentState::Equipped, mtg_data::CardType::Creature),
+    ]
+    .into_iter()
+    .map(|(state, card_type)| super::ParserRule {
+        expanded: super::RuleLhs::new(&[
+            ParserNode::LexerToken(TokenKind::PermanentState(state)).id(),
+            ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
+                card_type,
+            )))
+            .id(),
+        ]),
+        merged: ParserNode::ObjectReference { reference: dummy() }.id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(TokenKind::PermanentState(_)),
+                ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(_))),
+            ] => Ok(ParserNode::ObjectReference {
+                reference: crate::ability_tree::object::ObjectReference::ObjectAttachedTo(
+                    crate::ability_tree::object::ObjectAttachedTo,
+                ),
+            }),
+            _ => Err("Provided tokens do not match rule definition"),
+        },
+        creation_loc: super::ParserRuleDeclarationLocation::here(),
+    })
+    .collect::<Vec<_>>();
+
     /* "That " + an object kind is a reference to previously mentionned object of that kind */
     let that_kind_to_previously_mentionned = crate::ability_tree::object::ObjectKind::all()
         .map(|object_kind| super::ParserRule {
@@ -269,7 +304,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         })
         .collect::<Vec<_>>();
 
-    [object_references_rules, that_kind_to_previously_mentionned]
-        .into_iter()
-        .flatten()
+    [
+        object_references_rules,
+        attached_objects_rules,
+        that_kind_to_previously_mentionned,
+    ]
+    .into_iter()
+    .flatten()
 }

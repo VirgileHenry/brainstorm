@@ -15,6 +15,12 @@ pub fn parse_num(input: &str) -> Option<u32> {
         "nine" => Some(9),
         "ten" => Some(10),
         "thirteen" => Some(13),
-        other => other.parse::<u32>().ok(),
+        other => {
+            /* Reject numbers with +/- signs, as we want separate tokens for those */
+            if other.starts_with('+') || other.starts_with('-') {
+                return None;
+            }
+            other.parse::<u32>().ok()
+        }
     }
 }

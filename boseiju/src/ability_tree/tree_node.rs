@@ -38,7 +38,7 @@ pub enum NodeKind {
     ConditionalImperative,
     ContinuousEffect,
     ContinuousEffectKind,
-    ContinuousEffectObjectGainsAbilies,
+    ContinuousEffectModifyObject,
     ContinuousEffectReplacementEvent,
     Cost,
     CostModification,
@@ -78,13 +78,17 @@ pub enum NodeKind {
     Imperative,
     ImperativeList,
     ImperativeChoices,
-    KeywordAbility,
+    KeywordAbilityIdMarker,
+    KeywordAbility(KeywordAbilityNodeKind),
     LifeGainedEvent,
     ManaCost,
     MayAbility,
     MtgData(MtgDataNodeKind),
     NumberIdMarker,
     Number(crate::ability_tree::number::Number),
+    ObjectAbilitiesModification,
+    ObjectCharacteristicModification,
+    ObjectGainAbility,
     ObjectReference,
     ObjectSpecifier,
     ObjectSpecifiers,
@@ -93,6 +97,12 @@ pub enum NodeKind {
     PlayerActionEvent,
     PlayerAttacksAction,
     PlayerCastsSpellEvent,
+    PowerToughnessModifiers,
+    PowerToughnessModifiersMinusMinus,
+    PowerToughnessModifiersMinusPlus,
+    PowerToughnessModifiersPlusMinus,
+    PowerToughnessModifiersPlusPlus,
+    PowerToughnessModifiersSet,
     PreviouslyMentionnedCounter,
     PreviouslyMentionnedObject,
     PreviouslyMentionnedToken,
@@ -122,7 +132,6 @@ pub enum NodeKind {
     TypeLineIdMarker,
     TypeLine(TypeLineNodeKind),
     UnlessConditional,
-    WardKeywordAbility,
     ZoneReferenceIdMarker,
     ZoneReference(crate::ability_tree::zone::ZoneReference),
 }
@@ -153,6 +162,13 @@ pub enum MtgDataNodeKind {
 
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum KeywordAbilityNodeKind {
+    Enchant,
+    Ward,
+}
+
+#[derive(idris_derive::Idris)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TerminalNodeKind {
     AnotherObjectSpecifier,
     CastSpecifierIdMarker,
@@ -177,8 +193,6 @@ pub enum TerminalNodeKind {
     OwnerSpecifier(crate::ability_tree::terminals::OwnerSpecifier),
     PlayerSpecifierIdMarker,
     PlayerSpecifier(crate::ability_tree::terminals::PlayerSpecifier),
-    PowerToughnessModifierIdMarker,
-    PowerToughnessModifier(crate::ability_tree::terminals::PowerToughnessModifier),
     SelfReferencing,
     OwnableZoneIdMarker,
     OwnableZone(crate::ability_tree::zone::OwnableZone),

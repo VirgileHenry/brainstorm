@@ -76,7 +76,7 @@ pub enum ExpandedKeywordAbility {
     Echo,
     Embalm,
     Emerge,
-    Enchant,
+    Enchant(EnchantKeywordAbility),
     Encore,
     Enlist,
     Entwine,
@@ -272,13 +272,15 @@ impl crate::utils::DummyInit for ExpandedKeywordAbility {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct WardKeywordAbility {
-    cost: crate::ability_tree::cost::Cost,
+    pub cost: crate::ability_tree::cost::Cost,
 }
 
 impl crate::ability_tree::AbilityTreeNode for WardKeywordAbility {
     fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::KeywordAbilityNodeKind;
         use idris::Idris;
-        crate::ability_tree::NodeKind::WardKeywordAbility.id()
+
+        crate::ability_tree::NodeKind::KeywordAbility(KeywordAbilityNodeKind::Ward).id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -310,6 +312,54 @@ impl crate::utils::DummyInit for WardKeywordAbility {
     fn dummy_init() -> WardKeywordAbility {
         Self {
             cost: crate::utils::dummy(),
+        }
+    }
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct EnchantKeywordAbility {
+    pub enchantable_object: crate::ability_tree::object::ObjectSpecifiers,
+}
+
+impl crate::ability_tree::AbilityTreeNode for EnchantKeywordAbility {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::KeywordAbilityNodeKind;
+        use idris::Idris;
+
+        crate::ability_tree::NodeKind::KeywordAbility(KeywordAbilityNodeKind::Enchant).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.enchantable_object as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "ward—")?;
+        self.enchantable_object.display(out)?;
+        Ok(())
+    }
+}
+
+impl idris::Idris for EnchantKeywordAbility {
+    const COUNT: usize = 1;
+    fn id(&self) -> usize {
+        0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "ward"
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for EnchantKeywordAbility {
+    fn dummy_init() -> Self {
+        Self {
+            enchantable_object: crate::utils::dummy(),
         }
     }
 }

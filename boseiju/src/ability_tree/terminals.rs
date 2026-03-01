@@ -7,7 +7,6 @@ mod named_tokens;
 mod order;
 mod owner_specifier;
 mod player_specifier;
-mod power_toughness_modifier;
 
 pub use cast_specifier::CastSpecifier;
 pub use control_specifier::ControlSpecifier;
@@ -17,7 +16,6 @@ pub use named_tokens::NamedToken;
 pub use order::Order;
 pub use owner_specifier::OwnerSpecifier;
 pub use player_specifier::PlayerSpecifier;
-pub use power_toughness_modifier::PowerToughnessModifier;
 
 pub trait Terminal: std::fmt::Display + Sized {
     #[cfg(feature = "lexer")]
@@ -269,37 +267,6 @@ impl Terminal for PowerToughness {
             power: raw_pow.parse().ok()?,
             toughness: raw_tough.parse().ok()?,
         })
-    }
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct PlaneswalkerAbilityCost(i32);
-
-impl PlaneswalkerAbilityCost {
-    pub const COUNT: usize = 1;
-    pub const fn id(&self) -> usize {
-        0
-    }
-}
-
-impl std::fmt::Display for PlaneswalkerAbilityCost {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:+}", self.0)
-    }
-}
-
-impl Terminal for PlaneswalkerAbilityCost {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        if !source.starts_with(&['+', '-']) {
-            return None;
-        }
-        if !crate::utils::is_digits(&source[1..]) {
-            return None;
-        }
-        Some(PlaneswalkerAbilityCost(source.parse().ok()?))
     }
 }
 

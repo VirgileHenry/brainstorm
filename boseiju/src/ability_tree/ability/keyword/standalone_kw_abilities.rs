@@ -60,7 +60,6 @@ pub fn all_standalone_kw_abilities() -> impl Iterator<Item = mtg_data::KeywordAb
         mtg_data::KeywordAbility::Echo,
         mtg_data::KeywordAbility::Embalm,
         mtg_data::KeywordAbility::Emerge,
-        mtg_data::KeywordAbility::Enchant,
         mtg_data::KeywordAbility::Encore,
         mtg_data::KeywordAbility::Enlist,
         mtg_data::KeywordAbility::Entwine,

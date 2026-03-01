@@ -87,14 +87,9 @@ impl<'src> Token<'src> {
                 kind: TokenKind::PowerToughness { pt },
                 span,
             })
-        } else if let Some(kind) = terminals::PowerToughnessModifier::try_from_str(span.text) {
+        } else if let Some(kind) = non_terminals::PowerToughnessModElements::try_from_str(span.text) {
             Some(Self {
-                kind: TokenKind::PowerToughnessModifier(kind),
-                span,
-            })
-        } else if let Some(cost) = terminals::PlaneswalkerAbilityCost::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PlaneswalkerAbilityCost { cost },
+                kind: TokenKind::PowerToughnessModElements(kind),
                 span,
             })
         } else if let Some(chapter) = terminals::SagaChapterNumber::try_from_str(span.text) {
@@ -301,12 +296,11 @@ pub enum TokenKind {
     PermanentProperty(terminals::PermanentProperty),
     PermanentState(terminals::PermanentState),
     Phase(terminals::Phase),
-    PlaneswalkerAbilityCost { cost: terminals::PlaneswalkerAbilityCost },
     PlayerAction(non_terminals::PlayerAction),
     PlayerProperties(non_terminals::PlayerProperties),
     PlayerSpecifier(terminals::PlayerSpecifier),
+    PowerToughnessModElements(non_terminals::PowerToughnessModElements),
     PowerToughness { pt: terminals::PowerToughness },
-    PowerToughnessModifier(terminals::PowerToughnessModifier),
     SagaChapterNumber { chapter: terminals::SagaChapterNumber },
     SelfReferencing { reference: object::SelfReferencingObject },
     SpellProperty(terminals::SpellProperty),

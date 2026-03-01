@@ -1,8 +1,10 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
 
-/// Fixme: doc
+/// Object reference for the object "attached" to.
+///
+/// This only has meaning when the ability is on a card that can
+/// be attached to objects, and this references those objects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
@@ -21,28 +23,13 @@ impl AbilityTreeNode for ObjectAttachedTo {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "{self}")
+        write!(out, "object attached to")
     }
 }
 
-impl std::fmt::Display for ObjectAttachedTo {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "object attached to")
-    }
-}
-
-impl Terminal for ObjectAttachedTo {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "enchanted permanent" => Some(ObjectAttachedTo),
-            "enchanted creature" => Some(ObjectAttachedTo),
-            "enchanted artifact" => Some(ObjectAttachedTo),
-            "enchanted land" => Some(ObjectAttachedTo),
-            "enchanted planeswalker" => Some(ObjectAttachedTo),
-            /* Fucking spellweaver volute */
-            "enchanted instant card" => Some(ObjectAttachedTo),
-            _ => None,
-        }
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ObjectAttachedTo {
+    fn dummy_init() -> Self {
+        Self
     }
 }
