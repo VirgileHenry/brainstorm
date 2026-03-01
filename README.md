@@ -29,8 +29,8 @@ There are mutiple objectives on the card groups we aim to parse:
 |Foundation set (FDN)|436|300 (68%)|54 (12%)|0 (0%)|
 |Last set (ECL)|267|116 (43%)|16 (5%)|0 (0%)|
 |Standard-legal cards|4168|1854 (44%)|152 (3%)|0 (0%)|
-|Commander-legal cards|30654|14940 (48%)|1772 (5%)|0 (0%)|
-|All (except uncards)|35464|16172 (45%)|2048 (5%)|0 (0%)|
+|Commander-legal cards|30654|14940 (48%)|1771 (5%)|0 (0%)|
+|All (except uncards)|35464|16172 (45%)|2047 (5%)|0 (0%)|
 <!-- END_TEST_RECAP -->
 
 Uncards are not planned to be parsed, as their wording are unique enough that it would almost always require dedicating chunks of the tree representation for them.
