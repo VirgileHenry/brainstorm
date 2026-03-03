@@ -28,6 +28,20 @@ pub enum ControlFlow {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl ControlFlow {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::NewLine { span } => *span,
+            Self::Comma { span } => *span,
+            Self::Dot { span } => *span,
+            Self::Colons { span } => *span,
+            Self::LongDash { span } => *span,
+            Self::Bullet { span } => *span,
+        }
+    }
+}
+
 impl ControlFlow {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

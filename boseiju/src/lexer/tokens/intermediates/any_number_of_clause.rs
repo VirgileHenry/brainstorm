@@ -2,7 +2,7 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct AnyNumberOfClause {
     #[cfg(feature = "spanned_tree")]
-    span: crate::ability_tree::span::TreeSpan,
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AnyNumberOfClause {

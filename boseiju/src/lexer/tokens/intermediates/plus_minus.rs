@@ -16,6 +16,17 @@ pub enum PowerToughnessModElements {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl PowerToughnessModElements {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Plus { span } => *span,
+            Self::Minus { span } => *span,
+            Self::Bar { span } => *span,
+        }
+    }
+}
+
 impl PowerToughnessModElements {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

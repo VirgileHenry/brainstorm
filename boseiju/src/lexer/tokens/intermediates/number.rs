@@ -39,6 +39,22 @@ pub enum Number {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl Number {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AnyNumber { span } => *span,
+            Self::Number { span, .. } => *span,
+            Self::NumberOf { span } => *span,
+            Self::OrMore { span, .. } => *span,
+            Self::ThatMany { span } => *span,
+            Self::TwiceThatMany { span } => *span,
+            Self::UpTo { span, .. } => *span,
+            Self::X { span } => *span,
+        }
+    }
+}
+
 impl Number {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         if let Some(num) = crate::utils::parse_num(span.text) {

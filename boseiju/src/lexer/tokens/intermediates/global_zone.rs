@@ -8,6 +8,15 @@ pub enum GlobalZone {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl GlobalZone {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::TheBattlefield { span } => *span,
+        }
+    }
+}
+
 impl GlobalZone {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

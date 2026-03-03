@@ -24,6 +24,19 @@ pub enum PlayerProperties {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl PlayerProperties {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::HandSize { span } => *span,
+            Self::LifeTotal { span } => *span,
+            Self::MaximumHandSize { span } => *span,
+            Self::StartingLifeTotal { span } => *span,
+            Self::OpeningHand { span } => *span,
+        }
+    }
+}
+
 impl PlayerProperties {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

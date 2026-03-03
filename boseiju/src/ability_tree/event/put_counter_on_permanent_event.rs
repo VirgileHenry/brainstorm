@@ -50,8 +50,8 @@ impl crate::ability_tree::AbilityTreeNode for PutCounterOnPermanentEvent {
         out.pop_branch();
         out.next_inter_branch()?;
         match self.counter_kind.as_ref() {
-            Some(counter) => write!(out, "counter kind: {counter}")?,
-            None => write!(out, "counter kind: any")?,
+            Some(counter) => counter.display(out)?,
+            None => write!(out, "any counter kind")?,
         }
         out.next_final_branch()?;
         write!(out, "on permanent:")?;

@@ -24,6 +24,19 @@ pub enum CardActions {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl CardActions {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Blocks { span } => *span,
+            Self::Dies { span } => *span,
+            Self::Enters { span } => *span,
+            Self::Fight { span } => *span,
+            Self::Leave { span } => *span,
+        }
+    }
+}
+
 impl CardActions {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

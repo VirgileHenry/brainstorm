@@ -1,24 +1,14 @@
+use crate::lexer::IntoToken;
+
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum PlayerAction {
-    Add {
+pub enum Step {
+    Untap {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Attach {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    Change {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    Choose {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    Distribute {
+    Upkeep {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -26,132 +16,132 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    LookAt {
+    BeginningOfCombat {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Lose {
+    DeclareAttackers {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Pay {
+    DeclareBlockers {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Prevent {
+    FirstStrikeDamage {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Put {
+    Damage {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Return {
+    LastStrikeDamage {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Remove {
+    EndOfCombat {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Search {
+    End {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Shuffle {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    Spend {
+    Cleanup {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerAction {
+impl Step {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Add { span } => *span,
-            Self::Attach { span } => *span,
-            Self::Change { span } => *span,
-            Self::Choose { span } => *span,
-            Self::Distribute { span } => *span,
+            Self::Untap { span } => *span,
+            Self::Upkeep { span } => *span,
             Self::Draw { span } => *span,
-            Self::LookAt { span } => *span,
-            Self::Lose { span } => *span,
-            Self::Pay { span } => *span,
-            Self::Prevent { span } => *span,
-            Self::Put { span } => *span,
-            Self::Return { span } => *span,
-            Self::Remove { span } => *span,
-            Self::Search { span } => *span,
-            Self::Shuffle { span } => *span,
-            Self::Spend { span } => *span,
+            Self::BeginningOfCombat { span } => *span,
+            Self::DeclareAttackers { span } => *span,
+            Self::DeclareBlockers { span } => *span,
+            Self::FirstStrikeDamage { span } => *span,
+            Self::Damage { span } => *span,
+            Self::LastStrikeDamage { span } => *span,
+            Self::EndOfCombat { span } => *span,
+            Self::End { span } => *span,
+            Self::Cleanup { span } => *span,
         }
     }
 }
 
-impl PlayerAction {
-    pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+impl std::fmt::Display for Step {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Step::Untap { .. } => write!(f, "untap"),
+            Step::Upkeep { .. } => write!(f, "upkeep"),
+            Step::Draw { .. } => write!(f, "draw"),
+            Step::BeginningOfCombat { .. } => write!(f, "beginning of combat"),
+            Step::DeclareAttackers { .. } => write!(f, "declaration of attackers"),
+            Step::DeclareBlockers { .. } => write!(f, "declaration of blockers"),
+            Step::FirstStrikeDamage { .. } => write!(f, "first strike damage step"),
+            Step::Damage { .. } => write!(f, "damage step"),
+            Step::LastStrikeDamage { .. } => write!(f, "last strike damage step"),
+            Step::EndOfCombat { .. } => write!(f, "end of combat"),
+            Step::End { .. } => write!(f, "end step"),
+            Step::Cleanup { .. } => write!(f, "cleanup"),
+        }
+    }
+}
+
+impl IntoToken for Step {
+    #[cfg(feature = "lexer")]
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "add" | "adds" => Some(Self::Add {
+            "untap step" => Some(Step::Untap {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "attach" | "attaches" => Some(Self::Attach {
+            "upkeep" => Some(Step::Upkeep {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "change" | "changes" => Some(Self::Change {
+            "draw step" => Some(Step::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "choose" | "chooses" | "choice" => Some(Self::Choose {
+            "beginning of combat" => Some(Step::BeginningOfCombat {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "distribute" => Some(Self::Distribute {
+            "declaration of attackers" => Some(Step::DeclareAttackers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "draw" | "draws" => Some(Self::Draw {
+            "declaration of blockers" => Some(Step::DeclareBlockers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "look at" | "looks at" => Some(Self::LookAt {
+            "first strike damage step" => Some(Step::FirstStrikeDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "lose" | "loses" => Some(Self::LookAt {
+            "damage step" => Some(Step::Damage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "pay" | "pays" | "paying" => Some(Self::Pay {
+            "last strike damage step" => Some(Step::LastStrikeDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "prevent" | "prevented" => Some(Self::Prevent {
+            "end of combat" => Some(Step::EndOfCombat {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "return" | "returns" => Some(Self::Return {
+            "end step" => Some(Step::End {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "remove" | "removing" => Some(Self::Remove {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "search" | "searchs" => Some(Self::Search {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "shuffle" | "shuffles" => Some(Self::Shuffle {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "spend" | "spends" => Some(Self::Spend {
+            "cleanup" => Some(Step::Cleanup {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

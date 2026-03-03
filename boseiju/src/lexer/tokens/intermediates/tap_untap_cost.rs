@@ -12,6 +12,16 @@ pub enum TapUntapCost {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl TapUntapCost {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Tap { span } => *span,
+            Self::Untap { span } => *span,
+        }
+    }
+}
+
 impl TapUntapCost {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

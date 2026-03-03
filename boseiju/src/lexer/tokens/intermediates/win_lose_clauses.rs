@@ -12,6 +12,16 @@ pub enum WinLoseClause {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl WinLoseClause {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::WinTheGame { span } => *span,
+            Self::LoseTheGame { span } => *span,
+        }
+    }
+}
+
 impl WinLoseClause {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

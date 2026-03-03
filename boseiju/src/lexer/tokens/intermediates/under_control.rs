@@ -12,6 +12,16 @@ pub enum UnderControl {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl UnderControl {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::UnderItsOwnersControl { span } => *span,
+            Self::UnderYourControl { span } => *span,
+        }
+    }
+}
+
 impl UnderControl {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

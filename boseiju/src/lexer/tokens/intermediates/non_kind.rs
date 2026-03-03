@@ -16,6 +16,17 @@ pub enum NonKind {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl NonKind {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::NonCreature { span } => *span,
+            Self::NonLand { span } => *span,
+            Self::NonToken { span } => *span,
+        }
+    }
+}
+
 impl NonKind {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {

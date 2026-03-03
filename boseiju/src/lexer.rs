@@ -102,7 +102,7 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
             let span = span::Span {
                 start,
                 length: end - start,
-                text: input[start..end].to_string(),
+                text: &input[start..end],
             };
             if let Some(token) = tokens::Token::try_from_span(span) {
                 raw_tokens.drain(0..token_count + 1);

@@ -17,6 +17,16 @@ pub enum Order {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl Order {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::RandomOrder { span } => *span,
+            Self::ChosenOrder { span } => *span,
+        }
+    }
+}
+
 impl AbilityTreeNode for Order {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;

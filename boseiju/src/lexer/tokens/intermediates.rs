@@ -84,6 +84,22 @@ pub enum VhyToSortLater {
     },
 }
 
+#[cfg(feature = "spanned_tree")]
+impl VhyToSortLater {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Life { span } => *span,
+            Self::Source { span } => *span,
+            Self::Cost { span } => *span,
+            Self::Player { span } => *span,
+            Self::Turn { span } => *span,
+            Self::Mana { span } => *span,
+            Self::Ability { span } => *span,
+            Self::Effect { span } => *span,
+        }
+    }
+}
+
 impl VhyToSortLater {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
