@@ -88,6 +88,16 @@ impl crate::ability_tree::AbilityTreeNode for ObjectReference {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::SelfReferencing(child) => child.node_span(),
+            Self::ObjectAttachedTo(child) => child.node_span(),
+            Self::SpecifiedObj(child) => child.node_span(),
+            Self::PreviouslyMentionned(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]

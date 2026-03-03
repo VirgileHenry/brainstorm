@@ -38,6 +38,11 @@ impl AbilityTreeNode for CreateTokenImperative {
         }
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -91,6 +96,11 @@ impl AbilityTreeNode for TokenCreation {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -150,6 +160,14 @@ impl AbilityTreeNode for CreatedTokenKind {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::PreviouslyMentionnedToken { span } => *span,
+            Self::NewToken(child) => child.node_span(),
+        }
     }
 }
 

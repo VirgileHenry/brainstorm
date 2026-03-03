@@ -76,6 +76,18 @@ impl AbilityTreeNode for Number {
         }
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AnyNumber { span } => *span,
+            Self::Number(child) => child.node_span(),
+            Self::OrMore(child) => child.node_span(),
+            Self::UpTo(child) => child.node_span(),
+            Self::ThatMany { span } => *span,
+            Self::X(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -112,6 +124,11 @@ impl AbilityTreeNode for FixedNumber {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.number)
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -163,6 +180,11 @@ impl AbilityTreeNode for OrMoreNumber {
         use std::io::Write;
         write!(out, "{} or more", self.minimum)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl idris::Idris for OrMoreNumber {
@@ -202,6 +224,11 @@ impl AbilityTreeNode for UpToNumber {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "up to {}", self.maximum)
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -244,6 +271,11 @@ impl AbilityTreeNode for XNumber {
         /* Fixme: display x definition */
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

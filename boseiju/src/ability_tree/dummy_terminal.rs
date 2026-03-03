@@ -76,4 +76,9 @@ impl AbilityTreeNode for TreeNodeDummyTerminal {
     fn display(&self, _: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        Default::default()
+    }
 }

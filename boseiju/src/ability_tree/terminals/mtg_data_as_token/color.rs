@@ -33,6 +33,11 @@ impl AbilityTreeNode for Color {
         use std::io::Write;
         write!(out, "{}", self.color)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "lexer")]

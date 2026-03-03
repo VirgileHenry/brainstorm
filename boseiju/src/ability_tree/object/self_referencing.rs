@@ -34,6 +34,11 @@ impl AbilityTreeNode for SelfReferencingObject {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl std::fmt::Display for SelfReferencingObject {

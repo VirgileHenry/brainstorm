@@ -56,6 +56,15 @@ impl AbilityTreeNode for OwnableZone {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Graveyard { span } => *span,
+            Self::Hand { span } => *span,
+            Self::Library { span } => *span,
+        }
+    }
 }
 
 impl std::fmt::Display for OwnableZone {

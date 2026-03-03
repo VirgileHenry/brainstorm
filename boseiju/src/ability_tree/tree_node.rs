@@ -71,7 +71,7 @@ pub enum NodeKind {
     ExileFollowUp,
     ExileFollowUpReturn,
     ExpandedKeywordAbilityIdMarker,
-    ExpandedKeywordAbility(crate::ability_tree::ability::keyword::ExpandedKeywordAbility),
+    ExpandedKeywordAbility(crate::ability_tree::terminals::StandaloneKeywordAbility),
     ConditionEventOccured,
     ConditionObjectMatchSpecifier,
     GainLifeImperative,

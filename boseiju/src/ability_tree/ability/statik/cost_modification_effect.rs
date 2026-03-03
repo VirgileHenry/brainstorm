@@ -37,6 +37,11 @@ impl crate::ability_tree::AbilityTreeNode for CostModificationEffect {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -99,6 +104,15 @@ impl crate::ability_tree::AbilityTreeNode for CostModification {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::More(child) => child.node_span(),
+            Self::Less(child) => child.node_span(),
+            Self::Set(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -135,6 +149,11 @@ impl AbilityTreeNode for CostModificationCostMore {
         self.more.display(out)?;
         write!(out, " more to cast")?;
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -177,6 +196,11 @@ impl AbilityTreeNode for CostModificationCostLess {
         write!(out, " less to cast")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -217,6 +241,11 @@ impl AbilityTreeNode for CostModificationCostSet {
         self.set.display(out)?;
         write!(out, " to cast")?;
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

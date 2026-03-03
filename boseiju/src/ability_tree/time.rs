@@ -46,6 +46,13 @@ impl AbilityTreeNode for Instant {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::TheBeginningOfTheNextEndStep { span } => *span,
+        }
+    }
 }
 
 impl IntoToken for Instant {
@@ -138,6 +145,16 @@ impl AbilityTreeNode for ForwardDuration {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ForAsLongAsItsExiled { span } => *span,
+            Self::ObjectLifetime { span } => *span,
+            Self::UntilEndOfTurn { span } => *span,
+            Self::UntilEndOfYourNextTurn { span } => *span,
+        }
+    }
 }
 
 impl IntoToken for ForwardDuration {
@@ -221,6 +238,13 @@ impl AbilityTreeNode for BackwardDuration {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{self}")
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ThisTurn { span } => *span,
+        }
     }
 }
 

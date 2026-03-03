@@ -42,6 +42,11 @@ impl AbilityTreeNode for PlayerAttacksAction {
 
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]

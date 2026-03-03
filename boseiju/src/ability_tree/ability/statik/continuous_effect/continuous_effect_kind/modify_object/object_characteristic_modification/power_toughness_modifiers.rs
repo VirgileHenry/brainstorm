@@ -58,6 +58,17 @@ impl AbilityTreeNode for PowerToughnessModifiers {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::MinusMinus(child) => child.node_span(),
+            Self::MinusPlus(child) => child.node_span(),
+            Self::PlusMinus(child) => child.node_span(),
+            Self::PlusPlus(child) => child.node_span(),
+            Self::Set(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -106,6 +117,11 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusPlus {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -171,6 +187,11 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusMinus {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -234,6 +255,11 @@ impl AbilityTreeNode for PowerToughnessModifiersMinusMinus {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -299,6 +325,11 @@ impl AbilityTreeNode for PowerToughnessModifiersMinusPlus {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -360,6 +391,11 @@ impl AbilityTreeNode for PowerToughnessModifiersSet {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

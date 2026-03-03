@@ -50,6 +50,11 @@ impl AbilityTreeNode for RemoveCountersImperative {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -102,6 +107,11 @@ impl crate::ability_tree::AbilityTreeNode for RemovableCounterOnPermanent {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -158,6 +168,14 @@ impl AbilityTreeNode for RemovableCounterKind {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AnyCounter { span } => *span,
+            Self::NewCounter(child) => child.node_span(),
+        }
     }
 }
 

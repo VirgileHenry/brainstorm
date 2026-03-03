@@ -47,6 +47,14 @@ impl AbilityTreeNode for Conditional {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::If(child) => child.node_span(),
+            Self::Unless(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -84,6 +92,11 @@ impl AbilityTreeNode for ConditionalIf {
         self.condition.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -126,6 +139,11 @@ impl AbilityTreeNode for ConditionalUnless {
         self.condition.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -187,6 +205,15 @@ impl AbilityTreeNode for Condition {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::EventOccured(child) => child.node_span(),
+            Self::ObjectMatchSpecifiers(child) => child.node_span(),
+            Self::ThisIsYourTurn(child) => child.node_span(),
+        }
     }
 }
 

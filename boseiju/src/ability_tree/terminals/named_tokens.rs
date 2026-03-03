@@ -47,6 +47,13 @@ impl AbilityTreeNode for NamedToken {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::KomasCoil { span } => *span,
+        }
+    }
 }
 
 impl IntoToken for NamedToken {

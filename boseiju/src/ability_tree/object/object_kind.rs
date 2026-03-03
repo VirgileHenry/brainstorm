@@ -157,6 +157,24 @@ impl AbilityTreeNode for ObjectKind {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Card { span } => *span,
+            Self::Permanent { span } => *span,
+            Self::Spell { span } => *span,
+            Self::ArtifactSubtype(child) => child.node_span(),
+            Self::BattleSubtype(child) => child.node_span(),
+            Self::CreatureSubtype(child) => child.node_span(),
+            Self::EnchantmentSubtype(child) => child.node_span(),
+            Self::InstantSorcerySubtype(child) => child.node_span(),
+            Self::LandSubtype(child) => child.node_span(),
+            Self::PlaneswalkerSubtype(child) => child.node_span(),
+            Self::Supertype(child) => child.node_span(),
+            Self::CardType(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "lexer")]

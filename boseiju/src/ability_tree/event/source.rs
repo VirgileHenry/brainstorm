@@ -45,6 +45,14 @@ impl crate::ability_tree::AbilityTreeNode for EventSource {
         }
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AnEffect(child) => child.node_span(),
+            Self::Player(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -75,6 +83,11 @@ impl crate::ability_tree::AbilityTreeNode for EffectEventSource {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "event source: an effect")
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

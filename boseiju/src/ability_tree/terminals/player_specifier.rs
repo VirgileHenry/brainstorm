@@ -77,6 +77,19 @@ impl AbilityTreeNode for PlayerSpecifier {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::All { span } => *span,
+            Self::Any { span } => *span,
+            Self::EachOpponent { span } => *span,
+            Self::TargetOpponent { span } => *span,
+            Self::ToYourLeft { span } => *span,
+            Self::ToYourRight { span } => *span,
+            Self::You { span } => *span,
+        }
+    }
 }
 
 impl IntoToken for PlayerSpecifier {

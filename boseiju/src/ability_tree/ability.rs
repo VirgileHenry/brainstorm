@@ -50,6 +50,15 @@ impl AbilityTreeNode for AbilityKind {
             Self::Written(ability) => ability.display(out),
         }
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AbilityWord(child) => child.node_span(),
+            Self::Keyword(child) => child.node_span(),
+            Self::Written(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -118,6 +127,16 @@ impl AbilityTreeNode for Ability {
         }
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Spell(child) => child.node_span(),
+            Self::Activated(child) => child.node_span(),
+            Self::Triggered(child) => child.node_span(),
+            Self::Static(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -170,6 +189,11 @@ impl AbilityTreeNode for KeywordAbility {
         self.ability.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -224,6 +248,11 @@ impl AbilityTreeNode for AbilityWordAbility {
         self.ability.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

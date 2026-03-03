@@ -40,6 +40,11 @@ impl AbilityTreeNode for BattleSubtype {
         use std::io::Write;
         write!(out, "{}", self.battle_subtype)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl idris::Idris for BattleSubtype {

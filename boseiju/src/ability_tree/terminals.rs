@@ -24,6 +24,7 @@ pub use mtg_data_as_token::color::Color;
 pub use mtg_data_as_token::keywords::AbilityWord;
 pub use mtg_data_as_token::keywords::KeywordAction;
 pub use mtg_data_as_token::mana::Mana;
+pub use mtg_data_as_token::standalone_kw_ab::StandaloneKeywordAbility;
 pub use named_tokens::NamedToken;
 pub use order::Order;
 pub use owner_specifier::OwnerSpecifier;

@@ -55,6 +55,15 @@ impl AbilityTreeNode for OwnerSpecifier {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::YouOwn { span } => *span,
+            Self::YouDontOwn { span } => *span,
+            Self::ObjectOwner { span } => *span,
+        }
+    }
 }
 
 impl std::fmt::Display for OwnerSpecifier {

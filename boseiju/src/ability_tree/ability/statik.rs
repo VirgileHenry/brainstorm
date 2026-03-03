@@ -52,6 +52,11 @@ impl AbilityTreeNode for StaticAbility {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -115,6 +120,15 @@ impl AbilityTreeNode for StaticAbilityKind {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ContinuousEffect(child) => child.node_span(),
+            Self::CostModificationEffect(child) => child.node_span(),
+            Self::AlternativeCastingPermissions(child) => child.node_span(),
+        }
     }
 }
 

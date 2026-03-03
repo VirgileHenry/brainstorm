@@ -63,6 +63,11 @@ impl AbilityTreeNode for AbilityWord {
         use std::io::Write;
         write!(out, "{}", self.ability_word)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl IntoToken for AbilityWord {

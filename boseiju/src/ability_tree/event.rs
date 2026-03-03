@@ -93,6 +93,18 @@ impl crate::ability_tree::AbilityTreeNode for Event {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::CreateTokens(child) => child.node_span(),
+            Self::CreatureAction(child) => child.node_span(),
+            Self::EntersTheBattlefield(child) => child.node_span(),
+            Self::LifeGained(child) => child.node_span(),
+            Self::PlayerAction(child) => child.node_span(),
+            Self::PutCounterOnPermanent(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]

@@ -49,6 +49,15 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Imperatives(child) => child.node_span(),
+            Self::May(child) => child.node_span(),
+            Self::ReplacableImperatives(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -116,6 +125,11 @@ impl crate::ability_tree::AbilityTreeNode for MayAbility {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -180,6 +194,11 @@ impl crate::ability_tree::AbilityTreeNode for ReplacableImperatives {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

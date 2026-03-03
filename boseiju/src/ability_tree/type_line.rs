@@ -16,24 +16,26 @@ const MAX_SUPERTYPES_COUNT: usize = 4;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct TypeLine {
-    supertypes: arrayvec::ArrayVec<crate::ability_tree::object::Supertype, MAX_SUPERTYPES_COUNT>,
-    artifact: Option<ArtifactSubtype>,
-    battle: Option<BattleSubtype>,
-    conspiracy: Option<ConspiracySubtype>,
-    creature: Option<CreatureSubtype>,
-    dungeon: Option<DungeonSubtype>,
-    emblem: Option<EmblemSubtype>,
-    enchantment: Option<EnchantmentSubtype>,
-    hero: Option<HeroSubtype>,
-    instant: Option<InstantSubtype>,
-    kindred: Option<KindredSubtype>,
-    land: Option<LandSubtype>,
-    phenomenon: Option<PhenomenonSubtype>,
-    plane: Option<PlaneSubtype>,
-    planeswalker: Option<PlaneswalkerSubtype>,
-    scheme: Option<SchemeSubtype>,
-    sorcery: Option<SorcerySubtype>,
-    vanguard: Option<VanguardSubtype>,
+    pub supertypes: arrayvec::ArrayVec<crate::ability_tree::object::Supertype, MAX_SUPERTYPES_COUNT>,
+    pub artifact: Option<ArtifactSubtype>,
+    pub battle: Option<BattleSubtype>,
+    pub conspiracy: Option<ConspiracySubtype>,
+    pub creature: Option<CreatureSubtype>,
+    pub dungeon: Option<DungeonSubtype>,
+    pub emblem: Option<EmblemSubtype>,
+    pub enchantment: Option<EnchantmentSubtype>,
+    pub hero: Option<HeroSubtype>,
+    pub instant: Option<InstantSubtype>,
+    pub kindred: Option<KindredSubtype>,
+    pub land: Option<LandSubtype>,
+    pub phenomenon: Option<PhenomenonSubtype>,
+    pub plane: Option<PlaneSubtype>,
+    pub planeswalker: Option<PlaneswalkerSubtype>,
+    pub scheme: Option<SchemeSubtype>,
+    pub sorcery: Option<SorcerySubtype>,
+    pub vanguard: Option<VanguardSubtype>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl TypeLine {
@@ -57,6 +59,8 @@ impl TypeLine {
             scheme: None,
             sorcery: None,
             vanguard: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 
@@ -329,6 +333,11 @@ impl AbilityTreeNode for TypeLine {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl IntoToken for TypeLine {
@@ -340,7 +349,7 @@ impl IntoToken for TypeLine {
                 .expect("Failed to compile the tokens regex");
         );
 
-        let mut tokens = tokens_regex
+        let mut spans = tokens_regex
             .find_iter(span.text)
             .map(|m| crate::lexer::Span {
                 start: span.start + m.start(),
@@ -350,14 +359,14 @@ impl IntoToken for TypeLine {
             .peekable();
 
         /* Parse supertypes first */
-        while let Some(token) = tokens.peek() {
+        while let Some(token) = spans.peek() {
             match crate::ability_tree::object::Supertype::try_from_span(token) {
                 Some(supertype) => {
                     if result.supertypes.contains(&supertype) {
                         return None;
                     } else {
                         result.supertypes.push(supertype);
-                        let _ = tokens.next(); /* Token was peeked, pop it out */
+                        let _ = spans.next(); /* Token was peeked, pop it out */
                     }
                 }
                 None => break,
@@ -365,14 +374,16 @@ impl IntoToken for TypeLine {
         }
 
         /* Parse all types then */
-        while let Some(token) = tokens.peek() {
-            match crate::ability_tree::object::CardType::try_from_span(token) {
+        while let Some(span) = spans.peek() {
+            match crate::ability_tree::object::CardType::try_from_span(span) {
                 Some(card_type) => {
                     match card_type.card_type {
                         mtg_data::CardType::Artifact => match result.artifact {
                             None => {
                                 result.artifact = Some(ArtifactSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -383,6 +394,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.battle = Some(BattleSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -390,7 +403,12 @@ impl IntoToken for TypeLine {
                             }
                         },
                         mtg_data::CardType::Conspiracy => match result.conspiracy {
-                            None => result.conspiracy = Some(ConspiracySubtype),
+                            None => {
+                                result.conspiracy = Some(ConspiracySubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
@@ -399,6 +417,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.creature = Some(CreatureSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -406,13 +426,23 @@ impl IntoToken for TypeLine {
                             }
                         },
                         mtg_data::CardType::Dungeon => match result.dungeon {
-                            None => result.dungeon = Some(DungeonSubtype),
+                            None => {
+                                result.dungeon = Some(DungeonSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
                         },
                         mtg_data::CardType::Emblem => match result.emblem {
-                            None => result.emblem = Some(EmblemSubtype),
+                            None => {
+                                result.emblem = Some(EmblemSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
@@ -421,6 +451,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.enchantment = Some(EnchantmentSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -428,7 +460,12 @@ impl IntoToken for TypeLine {
                             }
                         },
                         mtg_data::CardType::Hero => match result.hero {
-                            None => result.hero = Some(HeroSubtype),
+                            None => {
+                                result.hero = Some(HeroSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
@@ -437,6 +474,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.instant = Some(InstantSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -447,6 +486,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.kindred = Some(KindredSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -457,6 +498,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.land = Some(LandSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -464,13 +507,23 @@ impl IntoToken for TypeLine {
                             }
                         },
                         mtg_data::CardType::Phenomenon => match result.phenomenon {
-                            None => result.phenomenon = Some(PhenomenonSubtype),
+                            None => {
+                                result.phenomenon = Some(PhenomenonSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
                         },
                         mtg_data::CardType::Plane => match result.plane {
-                            None => result.plane = Some(PlaneSubtype),
+                            None => {
+                                result.plane = Some(PlaneSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
@@ -480,6 +533,8 @@ impl IntoToken for TypeLine {
                                 result.planeswalker = Some(PlaneswalkerSubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
                                     loyalty: 0, /* fixme */
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -487,7 +542,12 @@ impl IntoToken for TypeLine {
                             }
                         },
                         mtg_data::CardType::Scheme => match result.scheme {
-                            None => result.scheme = Some(SchemeSubtype),
+                            None => {
+                                result.scheme = Some(SchemeSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
@@ -496,6 +556,8 @@ impl IntoToken for TypeLine {
                             None => {
                                 result.sorcery = Some(SorcerySubtype {
                                     subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
                                 })
                             }
                             Some(_) => {
@@ -503,19 +565,24 @@ impl IntoToken for TypeLine {
                             }
                         },
                         mtg_data::CardType::Vanguard => match result.vanguard {
-                            None => result.vanguard = Some(VanguardSubtype),
+                            None => {
+                                result.vanguard = Some(VanguardSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
                             Some(_) => {
                                 return None;
                             }
                         },
                     }
-                    let _ = tokens.next();
+                    let _ = spans.next();
                 }
                 None => break,
             }
         }
 
-        while let Some(token) = tokens.next() {
+        while let Some(token) = spans.next() {
             if let Some(subtype) = &mut result.artifact {
                 if let Some(new_subtype) = crate::ability_tree::object::ArtifactSubtype::try_from_span(&token) {
                     if subtype.subtypes.contains(&new_subtype) {
@@ -617,7 +684,9 @@ impl IntoToken for TypeLine {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct ArtifactSubtype {
-    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::ArtifactSubtype, MAX_CHILDREN_PER_NODE>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::ArtifactSubtype, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ArtifactSubtype {
@@ -653,12 +722,19 @@ impl AbilityTreeNode for ArtifactSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct BattleSubtype {
-    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::BattleSubtype, MAX_CHILDREN_PER_NODE>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::BattleSubtype, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for BattleSubtype {
@@ -694,11 +770,19 @@ impl AbilityTreeNode for BattleSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct ConspiracySubtype;
+pub struct ConspiracySubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for ConspiracySubtype {
     fn node_id(&self) -> usize {
@@ -717,13 +801,20 @@ impl AbilityTreeNode for ConspiracySubtype {
         write!(out, "conspiracy type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct CreatureSubtype {
     /* Fixme: power / toughness ? */
-    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, MAX_CHILDREN_PER_NODE>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CreatureSubtype {
@@ -760,11 +851,19 @@ impl AbilityTreeNode for CreatureSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct DungeonSubtype;
+pub struct DungeonSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for DungeonSubtype {
     fn node_id(&self) -> usize {
@@ -783,11 +882,19 @@ impl AbilityTreeNode for DungeonSubtype {
         write!(out, "dungeon type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct EmblemSubtype;
+pub struct EmblemSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for EmblemSubtype {
     fn node_id(&self) -> usize {
@@ -806,12 +913,19 @@ impl AbilityTreeNode for EmblemSubtype {
         write!(out, "emblem type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct EnchantmentSubtype {
-    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::EnchantmentSubtype, 4>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::EnchantmentSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for EnchantmentSubtype {
@@ -847,11 +961,19 @@ impl AbilityTreeNode for EnchantmentSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct HeroSubtype;
+pub struct HeroSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for HeroSubtype {
     fn node_id(&self) -> usize {
@@ -870,12 +992,19 @@ impl AbilityTreeNode for HeroSubtype {
         write!(out, "emblem type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct InstantSubtype {
     subtypes: arrayvec::ArrayVec<crate::ability_tree::object::SpellSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for InstantSubtype {
@@ -911,12 +1040,19 @@ impl AbilityTreeNode for InstantSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct KindredSubtype {
     subtypes: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for KindredSubtype {
@@ -952,12 +1088,19 @@ impl AbilityTreeNode for KindredSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct LandSubtype {
     subtypes: arrayvec::ArrayVec<crate::ability_tree::object::LandSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for LandSubtype {
@@ -993,11 +1136,19 @@ impl AbilityTreeNode for LandSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct PhenomenonSubtype;
+pub struct PhenomenonSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for PhenomenonSubtype {
     fn node_id(&self) -> usize {
@@ -1016,11 +1167,19 @@ impl AbilityTreeNode for PhenomenonSubtype {
         write!(out, "phenomenon type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct PlaneSubtype;
+pub struct PlaneSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for PlaneSubtype {
     fn node_id(&self) -> usize {
@@ -1039,13 +1198,20 @@ impl AbilityTreeNode for PlaneSubtype {
         write!(out, "plane type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct PlaneswalkerSubtype {
-    loyalty: u64,
-    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::PlaneswalkerSubtype, 4>,
+    pub loyalty: u64,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::PlaneswalkerSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PlaneswalkerSubtype {
@@ -1086,11 +1252,19 @@ impl AbilityTreeNode for PlaneswalkerSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct SchemeSubtype;
+pub struct SchemeSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for SchemeSubtype {
     fn node_id(&self) -> usize {
@@ -1109,12 +1283,19 @@ impl AbilityTreeNode for SchemeSubtype {
         write!(out, "scheme type")?;
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct SorcerySubtype {
-    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::SpellSubtype, 4>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::SpellSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for SorcerySubtype {
@@ -1150,11 +1331,19 @@ impl AbilityTreeNode for SorcerySubtype {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct VanguardSubtype;
+pub struct VanguardSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for VanguardSubtype {
     fn node_id(&self) -> usize {
@@ -1172,5 +1361,10 @@ impl AbilityTreeNode for VanguardSubtype {
         use std::io::Write;
         write!(out, "vanguard type")?;
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
     }
 }

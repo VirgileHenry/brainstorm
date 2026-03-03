@@ -101,4 +101,11 @@ pub trait AbilityTreeNode {
     ///
     /// This is mostly for debug purpuses, and it is not recommanded to use this in production.
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()>;
+
+    /// Get the span in the original oracle text that built this node.
+    ///
+    /// This is only available under the spanned_tree feature, and is useful for
+    /// visualisation of the tree and debug purpuses.
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> span::TreeSpan;
 }

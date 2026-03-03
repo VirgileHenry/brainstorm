@@ -8,10 +8,10 @@ use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    let standalone_keyword_abilities = crate::ability_tree::ability::keyword::all_standalone_kw_abilities()
+    let standalone_keyword_abilities = crate::ability_tree::terminals::StandaloneKeywordAbility::all()
         .map(|keyword| ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
-                keyword_ability: keyword,
+                keyword_ability: keyword.into(),
                 span: Default::default(),
             }))
             .id()]),

@@ -53,6 +53,14 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::TokenCreation(child) => child.node_span(),
+            Self::CounterOnPermanent(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]

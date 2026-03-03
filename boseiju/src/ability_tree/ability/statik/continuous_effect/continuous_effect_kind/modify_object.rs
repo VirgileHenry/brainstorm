@@ -54,6 +54,11 @@ impl AbilityTreeNode for ContinuousEffectModifyObject {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -112,6 +117,14 @@ impl AbilityTreeNode for ObjectAbilitiesModification {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::CharacteristicModification(child) => child.node_span(),
+            Self::GainAbility(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -149,6 +162,11 @@ impl AbilityTreeNode for ObjectGainAbility {
         self.ability.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

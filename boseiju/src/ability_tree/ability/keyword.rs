@@ -1,8 +1,6 @@
 mod keyword_to_abilities;
-mod standalone_kw_abilities;
 
 pub use keyword_to_abilities::keyword_to_abilities;
-pub use standalone_kw_abilities::all_standalone_kw_abilities;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -15,218 +13,9 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ExpandedKeywordAbility {
-    Absorb,
-    Affinity,
-    Afflict,
-    Afterlife,
-    Aftermath,
-    Amplify,
-    Annihilator,
-    Ascend,
-    Assist,
-    Augment,
-    AuraSwap,
-    Awaken,
-    Backup,
-    Banding,
-    Bargain,
-    BasicLandcycling,
-    BattleCry,
-    Bestow,
-    Blitz,
-    Bloodthirst,
-    Boast,
-    Bushido,
-    Buyback,
-    Cascade,
-    Casualty,
-    Champion,
-    Changeling,
-    ChooseABackground,
-    Cipher,
-    Cleave,
-    CommanderNinjutsu,
-    Companion,
-    Compleated,
-    Conspire,
-    Convoke,
-    Craft,
-    Crew,
-    CumulativeUpkeep,
-    Cycling,
-    Dash,
-    Daybound,
-    Deathtouch,
-    Decayed,
-    Defender,
-    Delve,
-    Demonstrate,
-    Desertwalk,
-    Dethrone,
-    Devoid,
-    Devour,
-    Disguise,
-    Disturb,
-    DoctorsCompanion,
-    DoubleAgenda,
-    DoubleStrike,
-    DoubleTeam,
-    Dredge,
-    Echo,
-    Embalm,
-    Emerge,
     Enchant(EnchantKeywordAbility),
-    Encore,
-    Enlist,
-    Entwine,
-    Epic,
-    Equip,
-    Escalate,
-    Escape,
-    Eternalize,
-    Evoke,
-    Evolve,
-    Exalted,
-    Exhaust,
-    Exploit,
-    Extort,
-    Fabricate,
-    Fading,
-    Fear,
-    FirstStrike,
-    Flanking,
-    Flash,
-    Flashback,
-    Flying,
-    ForMirrodin,
-    Forecast,
-    Forestcycling,
-    Forestwalk,
-    Foretell,
-    Fortify,
-    Freerunning,
-    Frenzy,
-    FriendsForever,
-    Fuse,
-    Gift,
-    Graft,
-    Gravestorm,
-    Harmonize,
-    Haste,
-    Haunt,
-    Hexproof,
-    HexproofFrom,
-    HiddenAgenda,
-    Hideaway,
-    Horsemanship,
-    Impending,
-    Improvise,
-    Indestructible,
-    Infect,
-    Ingest,
-    Intensity,
-    Intimidate,
-    Islandcycling,
-    Islandwalk,
-    JobSelect,
-    JumpStart,
-    Kicker,
-    Landcycling,
-    Landwalk,
-    LegendaryLandwalk,
-    LevelUp,
-    Lifelink,
-    LivingMetal,
-    LivingWeapon,
-    Madness,
-    MaxSpeed,
-    Mayhem,
-    Megamorph,
-    Melee,
-    Menace,
-    Mentor,
-    Miracle,
-    Mobilize,
-    Modular,
-    MoreThanMeetsTheEye,
-    Morph,
-    Mountaincycling,
-    Mountainwalk,
-    Multikicker,
-    Mutate,
-    Myriad,
-    Nightbound,
-    Ninjutsu,
-    NonbasicLandwalk,
-    Offering,
-    Offspring,
-    Outlast,
-    Overload,
-    Partner,
-    PartnerWith,
-    Persist,
-    Phasing,
-    Plainscycling,
-    Plainswalk,
-    Poisonous,
-    Protection,
-    Prototype,
-    Provoke,
-    Prowess,
-    Prowl,
-    Rampage,
-    Ravenous,
-    Reach,
-    ReadAhead,
-    Rebound,
-    Reconfigure,
-    Recover,
-    Reinforce,
-    Renown,
-    Replicate,
-    Retrace,
-    Riot,
-    Ripple,
-    Saddle,
-    Scavenge,
-    Shadow,
-    Shroud,
-    Skulk,
-    Slivercycling,
-    Soulbond,
-    Soulshift,
-    Specialize,
-    Spectacle,
-    Splice,
-    SplitSecond,
-    Spree,
-    Squad,
-    Station,
-    Storm,
-    Sunburst,
-    Surge,
-    Suspend,
-    Swampcycling,
-    Swampwalk,
-    Toxic,
-    Training,
-    Trample,
-    Transfigure,
-    Transmute,
-    Tribute,
-    Typecycling,
-    UmbraArmor,
-    Undaunted,
-    Undying,
-    Unearth,
-    Unleash,
-    Vanishing,
-    Vigilance,
+    Standalone(StandaloneKeywordAbility),
     Ward(WardKeywordAbility),
-    Warp,
-    WebSlinging,
-    Wither,
-    Wizardcycling,
 }
 
 impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
@@ -236,34 +25,98 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
-
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::Ward(ward) => children.push(ward as &dyn AbilityTreeNode),
-            other => {
-                let child_id = crate::ability_tree::NodeKind::ExpandedKeywordAbility(other.clone()).id();
-                let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
-                children.push(child as &dyn AbilityTreeNode);
-            }
+            Self::Ward(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Enchant(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Standalone(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
+        write!(out, "keyword ability:")?;
+        out.push_final_branch()?;
         match self {
-            Self::Ward(ward) => ward.display(out)?,
-            _ => write!(out, "some keyword ability (fixme)")?,
+            Self::Ward(child) => child.display(out)?,
+            Self::Enchant(child) => child.display(out)?,
+            Self::Standalone(child) => child.display(out)?,
         }
+        out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Enchant(child) => child.node_span(),
+            Self::Standalone(child) => child.node_span(),
+            Self::Ward(child) => child.node_span(),
+        }
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ExpandedKeywordAbility {
     fn dummy_init() -> Self {
-        Self::Absorb
+        Self::Standalone(crate::utils::dummy())
+    }
+}
+
+/// Wrapper around the mtg type for the standalone keyword ability.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct StandaloneKeywordAbility {
+    pub keyword_ability: crate::ability_tree::terminals::StandaloneKeywordAbility,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl AbilityTreeNode for StandaloneKeywordAbility {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ExpandedKeywordAbility(self.keyword_ability.clone()).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use idris::Idris;
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = crate::ability_tree::NodeKind::ExpandedKeywordAbility(self.keyword_ability.clone()).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "standalone: {}", self.keyword_ability)
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+impl idris::Idris for StandaloneKeywordAbility {
+    const COUNT: usize = crate::ability_tree::terminals::StandaloneKeywordAbility::COUNT;
+    fn id(&self) -> usize {
+        self.keyword_ability.id()
+    }
+    fn name_from_id(id: usize) -> &'static str {
+        crate::ability_tree::terminals::StandaloneKeywordAbility::name_from_id(id)
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for StandaloneKeywordAbility {
+    fn dummy_init() -> Self {
+        Self {
+            keyword_ability: crate::ability_tree::terminals::StandaloneKeywordAbility::Haste,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
@@ -294,6 +147,11 @@ impl crate::ability_tree::AbilityTreeNode for WardKeywordAbility {
         write!(out, "ward—")?;
         self.cost.display(out)?;
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -345,6 +203,11 @@ impl crate::ability_tree::AbilityTreeNode for EnchantKeywordAbility {
         write!(out, "ward—")?;
         self.enchantable_object.display(out)?;
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

@@ -50,6 +50,14 @@ impl AbilityTreeNode for ControlSpecifier {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::YouControl { span } => *span,
+            Self::YouDontControl { span } => *span,
+        }
+    }
 }
 
 impl std::fmt::Display for ControlSpecifier {

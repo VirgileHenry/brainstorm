@@ -107,6 +107,16 @@ impl crate::ability_tree::AbilityTreeNode for ObjectSpecifiers {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Single(child) => child.node_span(),
+            Self::And(child) => child.node_span(),
+            Self::Or(child) => child.node_span(),
+            Self::OrOfAnd(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -156,6 +166,11 @@ impl AbilityTreeNode for SpecifierAndList {
         }
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -195,6 +210,11 @@ impl SpecifierOrList {
             span: self.span.merge(&factor_specifier.span()),
         }
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl AbilityTreeNode for SpecifierOrList {
@@ -224,6 +244,11 @@ impl AbilityTreeNode for SpecifierOrList {
             out.pop_branch();
         }
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -315,6 +340,11 @@ impl AbilityTreeNode for SpecifierOrOfAndList {
             out.pop_branch();
         }
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -412,6 +442,19 @@ impl AbilityTreeNode for ObjectSpecifier {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Another(child) => child.node_span(),
+            Self::Cast(child) => child.node_span(),
+            Self::Color(child) => child.node_span(),
+            Self::Control(child) => child.node_span(),
+            Self::Kind(child) => child.node_span(),
+            Self::NotOfAKind(child) => child.node_span(),
+            Self::NotPreviouslySelected(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -446,6 +489,11 @@ impl AbilityTreeNode for AnotherObjectSpecifier {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl std::fmt::Display for AnotherObjectSpecifier {
@@ -478,6 +526,11 @@ impl AbilityTreeNode for NotPreviouslySelectedObjectSpecifier {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{self}")
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

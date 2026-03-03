@@ -65,10 +65,20 @@ impl AbilityTreeNode for ZoneReference {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            ZoneReference::Anywhere { .. } => write!(out, "anywhere"),
-            ZoneReference::Exile { .. } => write!(out, "exile"),
-            ZoneReference::OwnedZone(owned) => owned.display(out),
-            ZoneReference::TheBattlefield { .. } => write!(out, "the battlefield"),
+            Self::Anywhere { .. } => write!(out, "anywhere"),
+            Self::Exile { .. } => write!(out, "exile"),
+            Self::OwnedZone(owned) => owned.display(out),
+            Self::TheBattlefield { .. } => write!(out, "the battlefield"),
+        }
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Anywhere { span } => *span,
+            Self::Exile { span } => *span,
+            Self::OwnedZone(child) => child.node_span(),
+            Self::TheBattlefield { span } => *span,
         }
     }
 }

@@ -70,6 +70,16 @@ impl AbilityTreeNode for CountSpecifier {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::A { span } => *span,
+            Self::All { span } => *span,
+            Self::Target(child) => child.node_span(),
+            Self::AllOthers { span } => *span,
+        }
+    }
 }
 
 #[cfg(feature = "parser")]

@@ -40,6 +40,11 @@ impl AbilityTreeNode for SpellSubtype {
         use std::io::Write;
         write!(out, "{}", self.spell_subtype)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl idris::Idris for SpellSubtype {

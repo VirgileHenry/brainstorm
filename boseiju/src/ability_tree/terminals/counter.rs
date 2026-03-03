@@ -44,6 +44,11 @@ impl AbilityTreeNode for Counter {
         use std::io::Write;
         write!(out, "{}", self.kind)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl IntoToken for Counter {

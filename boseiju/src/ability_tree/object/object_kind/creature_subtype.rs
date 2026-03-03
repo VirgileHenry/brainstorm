@@ -40,6 +40,11 @@ impl AbilityTreeNode for CreatureSubtype {
         use std::io::Write;
         write!(out, "{}", self.creature_subtype)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl idris::Idris for CreatureSubtype {

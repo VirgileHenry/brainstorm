@@ -51,6 +51,11 @@ impl crate::ability_tree::AbilityTreeNode for ExileImperative {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -104,6 +109,13 @@ impl AbilityTreeNode for ExileFollowUp {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ReturnIt(child) => child.node_span(),
+        }
     }
 }
 
@@ -161,6 +173,11 @@ impl AbilityTreeNode for ExileFollowUpReturn {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

@@ -125,6 +125,24 @@ impl AbilityTreeNode for Imperative {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Choose(child) => child.node_span(),
+            Self::CreateToken(child) => child.node_span(),
+            Self::DealsDamage(child) => child.node_span(),
+            Self::Destroy(child) => child.node_span(),
+            Self::Discard(child) => child.node_span(),
+            Self::Draw(child) => child.node_span(),
+            Self::Exile(child) => child.node_span(),
+            Self::GainLife(child) => child.node_span(),
+            Self::PutCounters(child) => child.node_span(),
+            Self::RemoveCounters(child) => child.node_span(),
+            Self::Return(child) => child.node_span(),
+            Self::Sacrifice(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -195,6 +213,11 @@ impl AbilityTreeNode for ImperativeList {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 

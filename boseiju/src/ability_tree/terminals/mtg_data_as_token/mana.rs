@@ -88,6 +88,20 @@ impl AbilityTreeNode for Mana {
         }
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::X { span } => *span,
+            Self::Snow { span } => *span,
+            Self::Any(child) => child.node_span(),
+            Self::Colored(child) => child.node_span(),
+            Self::Hybrid(child) => child.node_span(),
+            Self::MonocoloredHybrid(child) => child.node_span(),
+            Self::Phyrexian(child) => child.node_span(),
+            Self::HybridPhyrexian(child) => child.node_span(),
+        }
+    }
 }
 
 impl IntoToken for Mana {
@@ -146,6 +160,11 @@ impl AbilityTreeNode for AnyMana {
         use std::io::Write;
         write!(out, "{}", self.mana)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
@@ -176,6 +195,11 @@ impl AbilityTreeNode for ColoredMana {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.mana)
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -208,6 +232,11 @@ impl AbilityTreeNode for HybridMana {
         use std::io::Write;
         write!(out, "{}", self.mana)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
@@ -238,6 +267,11 @@ impl AbilityTreeNode for MonocoloredHybridMana {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.mana)
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -270,6 +304,11 @@ impl AbilityTreeNode for PhyrexianMana {
         use std::io::Write;
         write!(out, "{}", self.mana)
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
@@ -300,5 +339,10 @@ impl AbilityTreeNode for HybridPhyrexianMana {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.mana)
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }

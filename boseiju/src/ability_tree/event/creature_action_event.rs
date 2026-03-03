@@ -53,6 +53,11 @@ impl AbilityTreeNode for CreatureActionEvent {
         out.pop_branch();
         Ok(())
     }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -113,6 +118,15 @@ impl AbilityTreeNode for CreatureAction {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Attacks(child) => child.node_span(),
+            Self::DealsCombatDamage(child) => child.node_span(),
+            Self::Dies(child) => child.node_span(),
+        }
     }
 }
 
