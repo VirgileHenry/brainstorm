@@ -11,10 +11,19 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// https://mtg.fandom.com/wiki/Continuous_effect
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ContinuousEffectKind {
     ModifyObjectAbilities(ContinuousEffectModifyObject),
     ReplacementEffect(ContinuousEffectReplacementEvent),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ContinuousEffectKind {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ModifyObjectAbilities(child) => child.span,
+            Self::ReplacementEffect(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for ContinuousEffectKind {

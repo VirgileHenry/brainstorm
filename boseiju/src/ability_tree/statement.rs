@@ -4,11 +4,21 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Statement {
     Imperatives(crate::ability_tree::imperative::ImperativeList),
     May(MayAbility),
     ReplacableImperatives(ReplacableImperatives),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Statement {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Imperatives(child) => child.span,
+            Self::May(child) => child.span,
+            Self::ReplacableImperatives(child) => child.span,
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for Statement {
@@ -50,12 +60,13 @@ impl crate::utils::DummyInit for Statement {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct MayAbility {
     pub player: crate::ability_tree::terminals::PlayerSpecifier,
     pub action: crate::ability_tree::imperative::Imperative,
     pub if_it_is_done: Option<Box<Statement>>,
     pub if_not_done: Option<Box<Statement>>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for MayAbility {
@@ -115,6 +126,8 @@ impl crate::utils::DummyInit for MayAbility {
             action: crate::utils::dummy(),
             if_it_is_done: None,
             if_not_done: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -125,11 +138,12 @@ impl crate::utils::DummyInit for MayAbility {
 /// They always take the form: "do X. if Y, do Z instead".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ReplacableImperatives {
     pub first_clause: crate::ability_tree::imperative::ImperativeList,
     pub condition: crate::ability_tree::conditional::Conditional,
     pub replacing_clause: crate::ability_tree::imperative::ImperativeList,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for ReplacableImperatives {
@@ -176,6 +190,8 @@ impl crate::utils::DummyInit for ReplacableImperatives {
             first_clause: crate::utils::dummy(),
             condition: crate::utils::dummy(),
             replacing_clause: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

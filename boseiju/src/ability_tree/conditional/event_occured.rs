@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ConditionEventOccured {
     pub event: crate::ability_tree::event::Event,
     pub timeframe: crate::ability_tree::time::BackwardDuration,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for ConditionEventOccured {
@@ -44,6 +45,8 @@ impl crate::utils::DummyInit for ConditionEventOccured {
         Self {
             event: crate::utils::dummy(),
             timeframe: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

@@ -16,6 +16,9 @@ mod dummy_terminal;
 mod root;
 mod tree_node;
 
+#[cfg(feature = "spanned_tree")]
+pub mod span;
+
 pub use root::AbilityTree;
 pub use tree_node::NodeKind;
 

@@ -4,9 +4,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Imperative to create tokens.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreateTokenImperative {
     pub tokens: crate::utils::HeapArrayVec<TokenCreation, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CreateTokenImperative {
@@ -44,6 +45,8 @@ impl crate::utils::DummyInit for CreateTokenImperative {
     fn dummy_init() -> Self {
         Self {
             tokens: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -53,10 +56,11 @@ impl crate::utils::DummyInit for CreateTokenImperative {
 /// This node regroups a group of created tokens, e.g. "3 1/1 red goblins".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TokenCreation {
     pub amount: crate::ability_tree::number::Number,
     pub token: CreatedTokenKind,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for TokenCreation {
@@ -97,10 +101,22 @@ impl AbilityTreeNode for TokenCreation {
 /// "create twice as many of those tokens instead".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CreatedTokenKind {
-    PreviouslyMentionnedToken,
+    PreviouslyMentionnedToken {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NewToken(crate::ability_tree::card_layout::TokenLayout),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl CreatedTokenKind {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::PreviouslyMentionnedToken { span } => *span,
+            Self::NewToken(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for CreatedTokenKind {
@@ -115,9 +131,11 @@ impl AbilityTreeNode for CreatedTokenKind {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::NewToken(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::PreviouslyMentionnedToken => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::ability_tree::NodeKind::PreviouslyMentionnedToken.id(),
-            ) as &dyn AbilityTreeNode),
+            Self::PreviouslyMentionnedToken { .. } => {
+                children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+                    crate::ability_tree::NodeKind::PreviouslyMentionnedToken.id(),
+                ) as &dyn AbilityTreeNode)
+            }
         }
         children
     }
@@ -127,7 +145,7 @@ impl AbilityTreeNode for CreatedTokenKind {
         write!(out, "token kind:")?;
         out.push_final_branch()?;
         match self {
-            Self::PreviouslyMentionnedToken => write!(out, "previously mentionned token")?,
+            Self::PreviouslyMentionnedToken { .. } => write!(out, "previously mentionned token")?,
             Self::NewToken(token) => token.display(out)?,
         }
         out.pop_branch();
@@ -138,6 +156,9 @@ impl AbilityTreeNode for CreatedTokenKind {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for CreatedTokenKind {
     fn dummy_init() -> Self {
-        Self::PreviouslyMentionnedToken
+        Self::PreviouslyMentionnedToken {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -1,15 +1,30 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
+use crate::lexer::IntoToken;
 
 /// Control specifier for objects.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ControlSpecifier {
-    YouControl,
-    YouDontControl,
+    YouControl {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    YouDontControl {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ControlSpecifier {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::YouControl { span } => *span,
+            Self::YouDontControl { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for ControlSpecifier {
@@ -40,18 +55,24 @@ impl AbilityTreeNode for ControlSpecifier {
 impl std::fmt::Display for ControlSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::YouControl => write!(f, "you control"),
-            Self::YouDontControl => write!(f, "you don't control"),
+            Self::YouControl { .. } => write!(f, "you control"),
+            Self::YouDontControl { .. } => write!(f, "you don't control"),
         }
     }
 }
 
-impl Terminal for ControlSpecifier {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "you control" | "you already control" => Some(Self::YouControl),
-            "you don't control" | "your opponents control" | "an opponent controls" => Some(Self::YouDontControl),
+#[cfg(feature = "lexer")]
+impl IntoToken for ControlSpecifier {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "you control" | "you already control" => Some(Self::YouControl {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "you don't control" | "your opponents control" | "an opponent controls" => Some(Self::YouDontControl {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             _ => None,
         }
     }

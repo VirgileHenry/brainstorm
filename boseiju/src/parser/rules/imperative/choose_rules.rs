@@ -1,5 +1,5 @@
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -10,17 +10,28 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* A single choice is presented with a newline, bullet and imperative. */
+        /* Fixme: hard limit on the number of choices ?  */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)).id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            merged: ParserNode::ImperativeChoices {
+                choices: dummy(),
+                span: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine { span: new_line_span })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
@@ -28,6 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         choices.push(ability.clone());
                         choices
                     },
+                    span: new_line_span.merge(&ability.span),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -36,17 +48,31 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add choices to choices */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeChoices { choices: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)).id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)).id(),
+                ParserNode::ImperativeChoices {
+                    choices: dummy(),
+                    span: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            merged: ParserNode::ImperativeChoices {
+                choices: dummy(),
+                span: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeChoices { choices },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::NewLine)),
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Bullet)),
+                    ParserNode::ImperativeChoices { choices, span },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
@@ -54,6 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         choices.push(ability.clone());
                         choices
                     },
+                    span: span.merge(&ability.span),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -62,24 +89,38 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* From a choose clause and choices, we can make a choose imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Choose)).id(),
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Choose {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)).id(),
-                ParserNode::ImperativeChoices { choices: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ImperativeChoices {
+                    choices: dummy(),
+                    span: Default::default(),
+                }
+                .id(),
             ]),
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Choose)),
+                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Choose { span: choose_span })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)),
-                    ParserNode::ImperativeChoices { choices },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
+                    ParserNode::ImperativeChoices {
+                        choices,
+                        span: choices_span,
+                    },
                 ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Choose(
                         crate::ability_tree::imperative::ChooseImperative {
                             choice_count: number.clone(),
                             can_choose_same_mode: false,
                             choices: choices.clone(),
+                            span: choose_span.merge(&choices_span),
                         },
                     ),
                 }),

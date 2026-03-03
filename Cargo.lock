@@ -85,7 +85,6 @@ dependencies = [
  "rapidhash",
  "regex",
  "serde",
- "ts-rs",
  "uuid",
 ]
 
@@ -94,6 +93,7 @@ name = "boseiju_wasm"
 version = "0.0.1"
 dependencies = [
  "boseiju",
+ "serde",
  "serde_json",
 ]
 

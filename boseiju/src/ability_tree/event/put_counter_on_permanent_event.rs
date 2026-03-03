@@ -5,12 +5,13 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PutCounterOnPermanentEvent {
     pub source: source::EventSource,
     pub quantity: crate::ability_tree::number::Number,
     pub on_permanent: crate::ability_tree::object::ObjectReference,
     pub counter_kind: Option<crate::ability_tree::terminals::Counter>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for PutCounterOnPermanentEvent {
@@ -71,6 +72,8 @@ impl crate::utils::DummyInit for PutCounterOnPermanentEvent {
             quantity: crate::utils::dummy(),
             on_permanent: crate::utils::dummy(),
             counter_kind: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

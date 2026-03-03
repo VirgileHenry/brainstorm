@@ -6,21 +6,35 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
-        <h3>Boseiju - A Magic: The Gathering Oracle text Parser</h3>
+        <header class="site-header">
+            <h1>Boseiju</h1>
+            <p class="subtitle">
+                An experimental Magic: The Gathering oracle text parser. Type a
+                card name and oracle text to inspect preprocessing output.
+            </p>
+        </header>
 
-        <h4>Card name</h4>
-        <input id="card_name_input" type="text" placeholder="Card name..." ></input>
-        <h4>Oracle Text</h4>
-        <textarea
-            id="oracle_text_input"
-            type="text"
-            placeholder="Oracle text..."
-            rows="8"
-        ></textarea>
+        <main class="layout">
+            <h3>Card name</h3>
+            <input
+                id="card_name_input"
+                type="text"
+                placeholder="Card name..."
+            />
 
-        <h4>Output:</h4>
-        <div id="ability_tree_output"></div>
+            <h3>Oracle text</h3>
+            <textarea
+                id="oracle_text_input"
+                placeholder="Oracle text..."
+                rows="4"
+            ></textarea>
 
-        <script src="script.js"></script>
+            <section class="output">
+                <h3>Parsed oracle text</h3>
+                <div id="token_grid" class="token-grid"></div>
+            </section>
+        </main>
+
+        <script src="scripts/boseiju_wasm.js"></script>
     </body>
 </html>

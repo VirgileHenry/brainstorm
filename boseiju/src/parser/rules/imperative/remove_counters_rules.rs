@@ -1,6 +1,6 @@
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -13,21 +13,30 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let remove_counters_rules = terminals::Counter::all()
         .map(|counter| ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Remove)).id(),
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::Counter(counter)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::From)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Among)).id(),
+                ParserNode::LexerToken(Token::Counter(counter)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Remove)),
+                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove { span })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(TokenKind::Counter(counter)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::From)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Among)),
+                    ParserNode::LexerToken(Token::Counter(counter)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::RemoveCounters(
@@ -38,9 +47,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::RemovableCounterKind::NewCounter(counter.clone()),
+                                    span: number.span().merge(&counter.span),
                                 });
                                 counters
                             },
+                            span: span.merge(&reference.span()),
                         },
                     ),
                 }),
@@ -52,21 +63,33 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
 
     let remove_any_counter_rules = vec![ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Remove)).id(),
+            ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Counter)).id(),
-            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::From)).id(),
-            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Among)).id(),
+            ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among {
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
         ]),
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Remove)),
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove { span: remove_span })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Counter)),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::From)),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Among)),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter { span: counter_span })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
                 ParserNode::ObjectReference { reference },
             ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::RemoveCounters(
@@ -76,10 +99,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             let mut counters = crate::utils::HeapArrayVec::new();
                             counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
                                 amount: number.clone(),
-                                counter: crate::ability_tree::imperative::RemovableCounterKind::AnyCounter,
+                                counter: crate::ability_tree::imperative::RemovableCounterKind::AnyCounter {
+                                    span: *counter_span,
+                                },
+                                span: number.span().merge(counter_span),
                             });
                             counters
                         },
+                        span: remove_span.merge(&reference.span()),
                     },
                 ),
             }),

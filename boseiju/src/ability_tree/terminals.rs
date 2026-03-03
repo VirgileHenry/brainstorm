@@ -2,30 +2,33 @@ mod cast_specifier;
 mod control_specifier;
 mod counter;
 mod mana_cost;
-mod mtg_data_as_terminals;
+mod mtg_data_as_token;
 mod named_tokens;
 mod order;
 mod owner_specifier;
+mod permanent_state;
 mod player_specifier;
 
 pub use cast_specifier::CastSpecifier;
 pub use control_specifier::ControlSpecifier;
 pub use counter::Counter;
+pub use counter::CounterKind;
 pub use mana_cost::ManaCost;
+pub use mtg_data_as_token::color::Color;
+pub use mtg_data_as_token::keywords::AbilityWord;
+pub use mtg_data_as_token::keywords::KeywordAction;
+pub use mtg_data_as_token::mana::Mana;
 pub use named_tokens::NamedToken;
 pub use order::Order;
 pub use owner_specifier::OwnerSpecifier;
+pub use permanent_state::PermanentState;
 pub use player_specifier::PlayerSpecifier;
 
-pub trait Terminal: std::fmt::Display + Sized {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self>;
-}
+use crate::lexer::IntoToken;
 
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PermanentProperty {
     Power,
     Tougness,
@@ -42,10 +45,10 @@ impl std::fmt::Display for PermanentProperty {
     }
 }
 
-impl Terminal for PermanentProperty {
+impl IntoToken for PermanentProperty {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
             "power" => Some(PermanentProperty::Power),
             "toughness" => Some(PermanentProperty::Tougness),
             "mana cost" | "mana value" => Some(PermanentProperty::ConvertedManaCost),
@@ -57,51 +60,6 @@ impl Terminal for PermanentProperty {
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum PermanentState {
-    Attacking,
-    Blocking,
-    Blocked,
-    Enchanted,
-    Equipped,
-    Tapped,
-    Untapped,
-}
-
-impl std::fmt::Display for PermanentState {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PermanentState::Attacking => write!(f, "attacking"),
-            PermanentState::Blocking => write!(f, "blocking"),
-            PermanentState::Blocked => write!(f, "blocked"),
-            PermanentState::Enchanted => write!(f, "enchanted"),
-            PermanentState::Equipped => write!(f, "equipped"),
-            PermanentState::Tapped => write!(f, "tapped"),
-            PermanentState::Untapped => write!(f, "untapped"),
-        }
-    }
-}
-
-impl Terminal for PermanentState {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "attacking" => Some(PermanentState::Attacking),
-            "blocking" => Some(PermanentState::Blocking),
-            "blocked" => Some(PermanentState::Blocked),
-            "enchanted" => Some(PermanentState::Enchanted),
-            "equipped" => Some(PermanentState::Equipped),
-            "tapped" => Some(PermanentState::Tapped),
-            "untapped" => Some(PermanentState::Untapped),
-            _ => None,
-        }
-    }
-}
-
-#[derive(idris_derive::Idris)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum SpellProperty {
     Countered,
     Kicked,
@@ -116,10 +74,10 @@ impl std::fmt::Display for SpellProperty {
     }
 }
 
-impl Terminal for SpellProperty {
+impl IntoToken for SpellProperty {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
             "countered" => Some(SpellProperty::Countered),
             "kicked" => Some(SpellProperty::Countered),
             _ => None,
@@ -130,7 +88,6 @@ impl Terminal for SpellProperty {
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Phase {
     Beginning,
     PrecombatMain,
@@ -153,10 +110,10 @@ impl std::fmt::Display for Phase {
     }
 }
 
-impl Terminal for Phase {
+impl IntoToken for Phase {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
             "beginning phase" => Some(Phase::Beginning),
             "precombat main phase" => Some(Phase::PrecombatMain),
             "combat phase" | "combat" => Some(Phase::Combat),
@@ -172,7 +129,6 @@ impl Terminal for Phase {
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Step {
     Untap,
     Upkeep,
@@ -207,10 +163,10 @@ impl std::fmt::Display for Step {
     }
 }
 
-impl Terminal for Step {
+impl IntoToken for Step {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
             "untap step" => Some(Step::Untap),
             "upkeep" => Some(Step::Upkeep),
             "draw step" => Some(Step::Draw),
@@ -230,7 +186,6 @@ impl Terminal for Step {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughness {
     power: u32,
     toughness: u32,
@@ -249,10 +204,10 @@ impl std::fmt::Display for PowerToughness {
     }
 }
 
-impl Terminal for PowerToughness {
+impl IntoToken for PowerToughness {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        let split: Vec<_> = source.split('/').collect();
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        let split: Vec<_> = span.text.split('/').collect();
         let (raw_pow, raw_tough) = match split.as_slice() {
             [pow, tough] => (pow, tough),
             _ => return None,
@@ -272,7 +227,6 @@ impl Terminal for PowerToughness {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SagaChapterNumber(u32);
 
 impl SagaChapterNumber {
@@ -288,10 +242,10 @@ impl std::fmt::Display for SagaChapterNumber {
     }
 }
 
-impl Terminal for SagaChapterNumber {
+impl IntoToken for SagaChapterNumber {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
             "i" => Some(SagaChapterNumber(1)),
             "ii" => Some(SagaChapterNumber(2)),
             "iii" => Some(SagaChapterNumber(3)),

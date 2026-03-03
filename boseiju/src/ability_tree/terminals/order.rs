@@ -1,15 +1,20 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
+use crate::lexer::IntoToken;
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Order {
-    RandomOrder,
-    ChosenOrder,
+    RandomOrder {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ChosenOrder {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 impl AbilityTreeNode for Order {
@@ -40,18 +45,24 @@ impl AbilityTreeNode for Order {
 impl std::fmt::Display for Order {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Order::RandomOrder => write!(f, "a random order"),
-            Order::ChosenOrder => write!(f, "any order"),
+            Order::RandomOrder { .. } => write!(f, "a random order"),
+            Order::ChosenOrder { .. } => write!(f, "any order"),
         }
     }
 }
 
-impl Terminal for Order {
+impl IntoToken for Order {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "a random order" => Some(Order::RandomOrder),
-            "any order" => Some(Order::ChosenOrder),
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "a random order" => Some(Order::RandomOrder {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "any order" => Some(Order::ChosenOrder {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             _ => None,
         }
     }

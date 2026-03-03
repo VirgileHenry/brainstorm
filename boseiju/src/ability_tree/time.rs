@@ -1,14 +1,25 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
+use crate::lexer::IntoToken;
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Instant {
-    TheBeginningOfTheNextEndStep,
+    TheBeginningOfTheNextEndStep {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Instant {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::TheBeginningOfTheNextEndStep { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for Instant {
@@ -37,11 +48,14 @@ impl AbilityTreeNode for Instant {
     }
 }
 
-impl Terminal for Instant {
+impl IntoToken for Instant {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "the beginning of the next end step" => Some(Self::TheBeginningOfTheNextEndStep),
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "the beginning of the next end step" => Some(Self::TheBeginningOfTheNextEndStep {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
             _ => None,
         }
     }
@@ -50,14 +64,17 @@ impl Terminal for Instant {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Instant {
     fn dummy_init() -> Self {
-        Self::TheBeginningOfTheNextEndStep
+        Self::TheBeginningOfTheNextEndStep {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
 impl std::fmt::Display for Instant {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::TheBeginningOfTheNextEndStep => write!(f, "at the beginning of the next endstep"),
+            Self::TheBeginningOfTheNextEndStep { .. } => write!(f, "at the beginning of the next endstep"),
         }
     }
 }
@@ -66,12 +83,35 @@ impl std::fmt::Display for Instant {
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ForwardDuration {
-    ForAsLongAsItsExiled,
-    ObjectLifetime,
-    UntilEndOfTurn,
-    UntilEndOfYourNextTurn,
+    ForAsLongAsItsExiled {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ObjectLifetime {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    UntilEndOfTurn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    UntilEndOfYourNextTurn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ForwardDuration {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ForAsLongAsItsExiled { span } => *span,
+            Self::ObjectLifetime { span } => *span,
+            Self::UntilEndOfTurn { span } => *span,
+            Self::UntilEndOfYourNextTurn { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for ForwardDuration {
@@ -100,12 +140,18 @@ impl AbilityTreeNode for ForwardDuration {
     }
 }
 
-impl Terminal for ForwardDuration {
+impl IntoToken for ForwardDuration {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "until end of turn" => Some(Self::UntilEndOfTurn),
-            "until the end of your next turn" => Some(Self::UntilEndOfYourNextTurn),
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "until end of turn" => Some(Self::UntilEndOfTurn {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
+            "until the end of your next turn" => Some(Self::UntilEndOfYourNextTurn {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
             _ => None,
         }
     }
@@ -114,17 +160,20 @@ impl Terminal for ForwardDuration {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ForwardDuration {
     fn dummy_init() -> Self {
-        Self::UntilEndOfTurn
+        Self::UntilEndOfTurn {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
 impl std::fmt::Display for ForwardDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::ForAsLongAsItsExiled => write!(f, "for as long as it remains exiled"),
-            Self::ObjectLifetime => write!(f, "for the object lifetime"),
-            Self::UntilEndOfTurn => write!(f, "until end of turn"),
-            Self::UntilEndOfYourNextTurn => write!(f, "until the end of your next turn"),
+            Self::ForAsLongAsItsExiled { .. } => write!(f, "for as long as it remains exiled"),
+            Self::ObjectLifetime { .. } => write!(f, "for the object lifetime"),
+            Self::UntilEndOfTurn { .. } => write!(f, "until end of turn"),
+            Self::UntilEndOfYourNextTurn { .. } => write!(f, "until the end of your next turn"),
         }
     }
 }
@@ -133,9 +182,20 @@ impl std::fmt::Display for ForwardDuration {
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum BackwardDuration {
-    ThisTurn,
+    ThisTurn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl BackwardDuration {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ThisTurn { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for BackwardDuration {
@@ -164,11 +224,14 @@ impl AbilityTreeNode for BackwardDuration {
     }
 }
 
-impl Terminal for BackwardDuration {
+impl IntoToken for BackwardDuration {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "this turn" => Some(Self::ThisTurn),
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "this turn" => Some(Self::ThisTurn {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
             _ => None,
         }
     }
@@ -177,14 +240,17 @@ impl Terminal for BackwardDuration {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for BackwardDuration {
     fn dummy_init() -> Self {
-        Self::ThisTurn
+        Self::ThisTurn {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
 impl std::fmt::Display for BackwardDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::ThisTurn => write!(f, "this turn"),
+            Self::ThisTurn { .. } => write!(f, "this turn"),
         }
     }
 }

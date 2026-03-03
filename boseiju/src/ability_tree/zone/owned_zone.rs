@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// A zone that is owned by a player: libraries, hands, graveyards.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct OwnedZone {
     pub zone: crate::ability_tree::zone::OwnableZone,
     pub owner: crate::ability_tree::terminals::OwnerSpecifier,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for OwnedZone {
@@ -53,6 +54,8 @@ impl crate::utils::DummyInit for OwnedZone {
         Self {
             zone: crate::utils::dummy(),
             owner: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

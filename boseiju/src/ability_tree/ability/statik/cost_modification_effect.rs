@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Modification of the cost of objects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationEffect {
     pub applies_to: crate::ability_tree::object::ObjectReference,
     pub modification: CostModification,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for CostModificationEffect {
@@ -44,6 +45,8 @@ impl crate::utils::DummyInit for CostModificationEffect {
         Self {
             applies_to: crate::utils::dummy(),
             modification: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -51,11 +54,21 @@ impl crate::utils::DummyInit for CostModificationEffect {
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CostModification {
     More(CostModificationCostMore),
     Less(CostModificationCostLess),
     Set(CostModificationCostSet),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl CostModification {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::More(child) => child.span,
+            Self::Less(child) => child.span,
+            Self::Set(child) => child.span,
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for CostModification {
@@ -98,9 +111,10 @@ impl crate::utils::DummyInit for CostModification {
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationCostMore {
     pub more: crate::ability_tree::terminals::ManaCost,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CostModificationCostMore {
@@ -117,7 +131,10 @@ impl AbilityTreeNode for CostModificationCostMore {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "cost {} more to cast", self.more)
+        write!(out, "cost ")?;
+        self.more.display(out)?;
+        write!(out, " more to cast")?;
+        Ok(())
     }
 }
 
@@ -126,6 +143,8 @@ impl crate::utils::DummyInit for CostModificationCostMore {
     fn dummy_init() -> Self {
         Self {
             more: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -133,9 +152,10 @@ impl crate::utils::DummyInit for CostModificationCostMore {
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationCostLess {
     pub less: crate::ability_tree::terminals::ManaCost,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CostModificationCostLess {
@@ -152,7 +172,10 @@ impl AbilityTreeNode for CostModificationCostLess {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "cost {} less to cast", self.less)
+        write!(out, "cost ")?;
+        self.less.display(out)?;
+        write!(out, " less to cast")?;
+        Ok(())
     }
 }
 
@@ -161,6 +184,8 @@ impl crate::utils::DummyInit for CostModificationCostLess {
     fn dummy_init() -> Self {
         Self {
             less: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -168,9 +193,10 @@ impl crate::utils::DummyInit for CostModificationCostLess {
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CostModificationCostSet {
     pub set: crate::ability_tree::terminals::ManaCost,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CostModificationCostSet {
@@ -187,7 +213,10 @@ impl AbilityTreeNode for CostModificationCostSet {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "cost {} to cast", self.set)
+        write!(out, "cost ")?;
+        self.set.display(out)?;
+        write!(out, " to cast")?;
+        Ok(())
     }
 }
 
@@ -196,6 +225,8 @@ impl crate::utils::DummyInit for CostModificationCostSet {
     fn dummy_init() -> Self {
         Self {
             set: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

@@ -9,6 +9,7 @@ pkgs.mkShell {
     pkgs.python313
     pkgs.python313Packages.requests
     pkgs.graphviz
+    pkgs.lld_20
   ];
   RUST_BACKTRACE=1;
   TMPDIR="/tmp";

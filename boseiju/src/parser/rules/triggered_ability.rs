@@ -1,7 +1,7 @@
 use super::ParserNode;
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -10,23 +10,32 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Whenever, an event, a comma and a statement make the structure for triggered abilities. */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::TriggerCondition { condition: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
             merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Whenever)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                        span: whenever_span,
+                    })),
                     ParserNode::TriggerCondition { condition },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::Ability {
                     ability: crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: condition.clone(),
                             effect: ability.clone(),
+                            span: whenever_span.merge(&ability.span),
                         },
                     ),
                 }),
@@ -37,23 +46,30 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* When, an event, a comma and a statement also make a structure for triggered abilities. */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::TriggerCondition { condition: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
             merged: ParserNode::Ability { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::When)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When { span: when_span })),
                     ParserNode::TriggerCondition { condition },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::Ability {
                     ability: crate::ability_tree::ability::Ability::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: condition.clone(),
                             effect: ability.clone(),
+                            span: when_span.merge(&ability.span),
                         },
                     ),
                 }),
@@ -70,6 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     condition: crate::ability_tree::ability::triggered::TriggerCondition {
                         event: event.clone(),
                         condition: None,
+                        span: event.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -80,16 +97,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Event { event: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)).id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Condition { condition: dummy() }.id(),
             ]),
             merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { span: if_span })),
                     ParserNode::Condition { condition },
                 ] => Ok(ParserNode::TriggerCondition {
                     condition: crate::ability_tree::ability::triggered::TriggerCondition {
@@ -97,8 +120,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         condition: Some(crate::ability_tree::conditional::Conditional::If(
                             crate::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
+                                span: if_span.merge(&condition.span()),
                             },
                         )),
+                        span: event.span().merge(&condition.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -109,29 +134,42 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Event { event: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::During)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::During {
+                    span: Default::default(),
+                }))
+                .id(),
                 /* Fixme: a bit weird for a "your turn" ? Maybe it shall be a single token */
-                ParserNode::LexerToken(TokenKind::OwnerSpecifier(terminals::OwnerSpecifier::YouOwn)).id(),
-                ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Turn)).id(),
+                ParserNode::LexerToken(Token::OwnerSpecifier(terminals::OwnerSpecifier::YouOwn {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Turn {
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::During)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::During { span: during_span })),
                     /* Fixme: a bit weird for a "your turn" ? Maybe it shall be a single token */
-                    ParserNode::LexerToken(TokenKind::OwnerSpecifier(terminals::OwnerSpecifier::YouOwn)),
-                    ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Turn)),
+                    ParserNode::LexerToken(Token::OwnerSpecifier(terminals::OwnerSpecifier::YouOwn { .. })),
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Turn { span: turn_span })),
                 ] => Ok(ParserNode::TriggerCondition {
                     condition: crate::ability_tree::ability::triggered::TriggerCondition {
                         event: event.clone(),
                         condition: Some(crate::ability_tree::conditional::Conditional::If(
                             crate::ability_tree::conditional::ConditionalIf {
                                 condition: crate::ability_tree::conditional::Condition::ThisIsYourTurn(
-                                    crate::ability_tree::conditional::ConditionThisIsYourTurn,
+                                    crate::ability_tree::conditional::ConditionThisIsYourTurn {
+                                        span: during_span.merge(turn_span),
+                                    },
                                 ),
+                                span: during_span.merge(turn_span),
                             },
                         )),
+                        span: event.span().merge(turn_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -6,7 +6,6 @@ pub mod legalities;
 ///
 /// This is the main data type used and passed around.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Card {
     pub name: String,
     pub scryfall_id: uuid::Uuid,

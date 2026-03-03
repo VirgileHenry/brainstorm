@@ -6,10 +6,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// https://mtg.fandom.com/wiki/Replacement_effect
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffectReplacementEvent {
     pub replaced_event: crate::ability_tree::event::Event,
     pub replaced_by: crate::ability_tree::event::replacement::EventReplacement,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ContinuousEffectReplacementEvent {
@@ -49,6 +50,8 @@ impl crate::utils::DummyInit for ContinuousEffectReplacementEvent {
         Self {
             replaced_event: crate::utils::dummy(),
             replaced_by: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TokenCreationReplacement {
     pub source_ref: super::source_ref::EventSourceReference,
     pub create_tokens: crate::ability_tree::imperative::CreateTokenImperative,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for TokenCreationReplacement {
@@ -47,6 +48,8 @@ impl crate::utils::DummyInit for TokenCreationReplacement {
         Self {
             source_ref: crate::utils::dummy(),
             create_tokens: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

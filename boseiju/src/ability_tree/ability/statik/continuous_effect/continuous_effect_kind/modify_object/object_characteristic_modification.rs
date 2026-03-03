@@ -19,9 +19,17 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// See also https://mtg.fandom.com/wiki/Object
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectCharacteristicModification {
     PowerToughnessModifiers(PowerToughnessModifiers),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ObjectCharacteristicModification {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::PowerToughnessModifiers(child) => child.span(),
+        }
+    }
 }
 
 impl AbilityTreeNode for ObjectCharacteristicModification {

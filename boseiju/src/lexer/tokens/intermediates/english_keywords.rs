@@ -1,0 +1,645 @@
+#[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum EnglishKeyword {
+    A {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Additional {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Already {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    After {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Among {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    An {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    And {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    AndOr {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Another {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Any {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Are {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    As {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    AsThough {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    At {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Back {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Be {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Become {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Beginning {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Bottom {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    By {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Cant {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Copy {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Divided {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    During {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Do {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Dont {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Equal {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Everyting {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Except {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    For {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    From {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Have {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Into {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    If {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    IfAble {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    In {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    InAdditionTo {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Instead {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Is {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    It {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Its {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Kind {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Less {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    May {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Must {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    More {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Named {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Next {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    No {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Of {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    On {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Only {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Onto {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Or {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Other {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Otherwise {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    RatherThan {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Than {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    That {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    The {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Them {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Then {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    There {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    They {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    This {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Those {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    To {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Top {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Types {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Unless {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Until {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Was {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Wasnt {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    When {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Whenever {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Where {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    With {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Without {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Would {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+impl EnglishKeyword {
+    pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "a" => Some(Self::A {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "additional" => Some(Self::Additional {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "already" => Some(Self::Already {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "after" => Some(Self::After {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "among" => Some(Self::Among {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "an" => Some(Self::An {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "and" => Some(Self::And {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "and/or" => Some(Self::AndOr {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "another" => Some(Self::Another {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "any" => Some(Self::Any {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "as" => Some(Self::As {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "as though" => Some(Self::AsThough {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "at" => Some(Self::At {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "are" => Some(Self::Are {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "back" => Some(Self::Back {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "be" => Some(Self::Be {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "become" => Some(Self::Become {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "beginning" => Some(Self::Beginning {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "bottom" => Some(Self::Bottom {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "by" => Some(Self::By {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "can't" => Some(Self::Cant {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "copy" => Some(Self::Copy {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "divided" => Some(Self::Divided {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "during" => Some(Self::During {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "do" => Some(Self::Do {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "don't" => Some(Self::Dont {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "equal" => Some(Self::Equal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "everything" => Some(Self::Everyting {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "except" => Some(Self::Except {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "from" => Some(Self::From {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "for" => Some(Self::For {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "has" | "had" | "have" | "'ve" => Some(Self::Have {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "into" => Some(Self::Into {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "if" => Some(Self::If {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "if able" => Some(Self::IfAble {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "in" => Some(Self::In {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "in addition to" => Some(Self::InAdditionTo {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "instead" => Some(Self::Instead {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "is" | "'s" => Some(Self::Is {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "it" => Some(Self::It {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "its" => Some(Self::Its {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "kind" => Some(Self::Kind {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "less" => Some(Self::Less {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "may" => Some(Self::May {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "must" => Some(Self::Must {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "more" => Some(Self::More {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "named" => Some(Self::Named {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "next" => Some(Self::Next {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "no" => Some(Self::No {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "of" => Some(Self::Of {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "on" => Some(Self::On {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "only" => Some(Self::Only {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "onto" => Some(Self::Onto {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "or" => Some(Self::Or {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "other" => Some(Self::Other {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "otherwise" => Some(Self::Otherwise {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rather than" => Some(Self::RatherThan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "than" => Some(Self::Than {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "that" => Some(Self::That {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the" => Some(Self::The {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "them" => Some(Self::Them {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "then" => Some(Self::Then {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "there" => Some(Self::There {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "they" => Some(Self::They {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "this" => Some(Self::This {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "those" => Some(Self::Those {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "to" => Some(Self::To {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "top" => Some(Self::Top {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "types" => Some(Self::Types {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unless" => Some(Self::Unless {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "until" => Some(Self::Until {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "was" => Some(Self::Was {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "wasn't" => Some(Self::Wasnt {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "when" => Some(Self::When {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "whenever" => Some(Self::Whenever {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "where" => Some(Self::Where {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "with" => Some(Self::With {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "without" => Some(Self::Without {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "would" => Some(Self::Would {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            _ => None,
+        }
+    }
+}

@@ -17,10 +17,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Creature events includes attacking, dealing damages, blocking, etc.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreatureActionEvent {
     pub creatures: crate::ability_tree::object::ObjectReference,
     pub action: CreatureAction,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CreatureActionEvent {
@@ -60,17 +61,29 @@ impl crate::utils::DummyInit for CreatureActionEvent {
         Self {
             creatures: crate::utils::dummy(),
             action: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CreatureAction {
     Attacks(CreatureAttacksAction),
     DealsCombatDamage(CreatureDealsCombatDamageAction),
     Dies(CreatureDiesAction),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl CreatureAction {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Attacks(child) => child.span,
+            Self::DealsCombatDamage(child) => child.span,
+            Self::Dies(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for CreatureAction {

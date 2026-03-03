@@ -7,8 +7,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// be attached to objects, and this references those objects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct ObjectAttachedTo;
+pub struct ObjectAttachedTo {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for ObjectAttachedTo {
     fn node_id(&self) -> usize {
@@ -30,6 +32,9 @@ impl AbilityTreeNode for ObjectAttachedTo {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ObjectAttachedTo {
     fn dummy_init() -> Self {
-        Self
+        Self {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

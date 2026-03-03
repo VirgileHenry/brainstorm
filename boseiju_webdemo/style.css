@@ -1,119 +1,85 @@
-/* General body styling */
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: "Inter", "Helvetica", "Arial", sans-serif;
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    line-height: 1.5;
-    color: #333;
+    margin: 0;
+    padding: 2rem 2.5rem;
+    max-width: 1100px;
+    margin-inline: auto;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Inter",
+        "Segoe UI",
+        sans-serif;
+    color: #222;
     background-color: #fafafa;
 }
 
-/* Headings */
-h3,
-h4 {
-    color: #222;
-    font-weight: 600;
+.site-header {
+    margin-bottom: 2rem;
 }
 
-/* Inputs and textarea */
+.subtitle {
+    max-width: 70ch;
+    color: #666;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
 input[type="text"],
-textarea {
+textarea,
+.output-box {
     width: 100%;
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 1rem;
+    padding: 0.6rem 0.7rem;
+    font-family: inherit;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 6px;
-    box-sizing: border-box;
-    resize: none;
-    transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
+    background: #fff;
 }
 
-input[type="text"]:focus,
-textarea:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-    outline: none;
+textarea {
+    resize: vertical;
 }
 
-/* Tree output */
-#ability_tree_output {
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background-color: #fff;
-    font-family: monospace;
-    white-space: pre-wrap; /* preserves newlines */
+.token-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1ch;
+    grid-template-rows: auto auto;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.05rem;
+    white-space: nowrap;
 }
 
-/* Error styling */
-.error {
-    color: #fff;
-    background-color: #e74c3c;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-weight: 600;
+.char {
+    grid-row: 1;
+    text-align: center;
 }
 
-/* Tree styling */
-.tree {
-    --line: #999;
-    --thick: 2px;
-    --indent: 1.2rem;
-
-    font-family: monospace;
+.char.new-line {
+    background: #eef2f6;
+    color: #4a6fa5;
+    border-radius: 4px;
 }
 
-.tree details {
-    padding-left: var(--indent);
-    position: relative;
-}
-
-/* vertical line */
-.tree details::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: -0.5rem;
-    left: calc(var(--indent) / 2 - var(--thick) / 2);
-    width: var(--thick);
-    background: var(--line);
-    border-radius: 9999px; /* fully rounded */
-}
-
-/* horizontal connector */
-.tree summary {
-    position: relative;
-    padding-left: 0.4rem;
-    cursor: pointer;
-}
-
-.tree summary::before {
-    content: "";
-    position: absolute;
-    height: var(--thick);
-    width: calc(var(--indent) / 2 - 0.4rem);
-    background: var(--line);
-    top: 0.7em; /* aligns with baseline dynamically */
-    left: calc(-1 * (var(--indent) / 2));
-}
-
-/* remove connector for root */
-.tree > details::before,
-.tree > details > summary::before {
-    display: none;
-}
-
-/* nice optional styles */
-.tree summary:hover {
-    color: #2a66c0;
-}
-
-.tree details:last-child::before {
-    bottom: auto;
-    height: 0.7em; /* just enough to reach the elbow */
+.token {
+    grid-row: 2;
+    background: #e8f0ff;
+    border: 1px solid #c7d6ff;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 0.15rem 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

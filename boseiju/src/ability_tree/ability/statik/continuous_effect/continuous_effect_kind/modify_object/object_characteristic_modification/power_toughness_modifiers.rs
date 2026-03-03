@@ -5,13 +5,25 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PowerToughnessModifiers {
     MinusMinus(PowerToughnessModifiersMinusMinus),
     MinusPlus(PowerToughnessModifiersMinusPlus),
     PlusMinus(PowerToughnessModifiersPlusMinus),
     PlusPlus(PowerToughnessModifiersPlusPlus),
     Set(PowerToughnessModifiersSet),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl PowerToughnessModifiers {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::MinusMinus(child) => child.span,
+            Self::MinusPlus(child) => child.span,
+            Self::PlusMinus(child) => child.span,
+            Self::PlusPlus(child) => child.span,
+            Self::Set(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for PowerToughnessModifiers {
@@ -58,10 +70,11 @@ impl crate::utils::DummyInit for PowerToughnessModifiers {
 /// A +X/+X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughnessModifiersPlusPlus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PowerToughnessModifiersPlusPlus {
@@ -102,6 +115,8 @@ impl crate::utils::DummyInit for PowerToughnessModifiersPlusPlus {
         Self {
             power_mod: crate::utils::dummy(),
             toughness_mod: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -119,10 +134,11 @@ impl idris::Idris for PowerToughnessModifiersPlusPlus {
 /// A +X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughnessModifiersPlusMinus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PowerToughnessModifiersPlusMinus {
@@ -163,6 +179,8 @@ impl crate::utils::DummyInit for PowerToughnessModifiersPlusMinus {
         Self {
             power_mod: crate::utils::dummy(),
             toughness_mod: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -180,10 +198,11 @@ impl idris::Idris for PowerToughnessModifiersPlusMinus {
 /// A -X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughnessModifiersMinusMinus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PowerToughnessModifiersMinusMinus {
@@ -224,6 +243,8 @@ impl crate::utils::DummyInit for PowerToughnessModifiersMinusMinus {
         Self {
             power_mod: crate::utils::dummy(),
             toughness_mod: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -241,10 +262,11 @@ impl idris::Idris for PowerToughnessModifiersMinusMinus {
 /// A -X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughnessModifiersMinusPlus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PowerToughnessModifiersMinusPlus {
@@ -285,6 +307,8 @@ impl crate::utils::DummyInit for PowerToughnessModifiersMinusPlus {
         Self {
             power_mod: crate::utils::dummy(),
             toughness_mod: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -302,10 +326,11 @@ impl idris::Idris for PowerToughnessModifiersMinusPlus {
 /// A -X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PowerToughnessModifiersSet {
     pub power: crate::ability_tree::number::Number,
     pub toughness: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PowerToughnessModifiersSet {
@@ -344,6 +369,8 @@ impl crate::utils::DummyInit for PowerToughnessModifiersSet {
         Self {
             power: crate::utils::dummy(),
             toughness: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

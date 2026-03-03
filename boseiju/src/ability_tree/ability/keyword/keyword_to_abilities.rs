@@ -1,9 +1,11 @@
+use crate::ability_tree::ability::Ability;
+use crate::ability_tree::ability::KeywordAbility;
 use crate::ability_tree::ability::keyword::ExpandedKeywordAbility;
 use crate::ability_tree::ability::spell::SpellAbility;
-use crate::ability_tree::ability::{Ability, KeywordAbility};
+use crate::lexer::tokens::intermediates;
 
-pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Result<KeywordAbility, &'static str> {
-    let expended_keyword = match keyword {
+pub fn keyword_to_abilities(keyword: intermediates::KeywordAbility) -> Result<KeywordAbility, &'static str> {
+    let expended_keyword = match keyword.keyword_ability {
         mtg_data::KeywordAbility::Absorb => ExpandedKeywordAbility::Absorb,
         mtg_data::KeywordAbility::Affinity => ExpandedKeywordAbility::Affinity,
         mtg_data::KeywordAbility::Afflict => ExpandedKeywordAbility::Afflict,
@@ -220,6 +222,10 @@ pub fn keyword_to_abilities(keyword: mtg_data::KeywordAbility) -> Result<Keyword
         keyword: expended_keyword,
         ability: Ability::Spell(SpellAbility {
             effects: crate::utils::HeapArrayVec::new(),
+            #[cfg(feature = "spanned_tree")]
+            span: keyword.span,
         }),
+        #[cfg(feature = "spanned_tree")]
+        span: keyword.span,
     })
 }

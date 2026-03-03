@@ -1,13 +1,336 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
+use crate::lexer::IntoToken;
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct Counter {
+    pub kind: CounterKind,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl Counter {
+    pub fn all() -> impl Iterator<Item = Self> {
+        CounterKind::all().map(|kind| Self {
+            kind,
+            span: Default::default(),
+        })
+    }
+}
+
+impl AbilityTreeNode for Counter {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        NodeKind::Terminal(TerminalNodeKind::CounterIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::Counter(self.kind)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{}", self.kind)
+    }
+}
+
+impl IntoToken for Counter {
+    #[cfg(feature = "lexer")]
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        let kind = match span.text {
+            "+1/+1 counter" | "+1/+1 counters" => Some(CounterKind::PlusOnePlusOne),
+            "-1/-1 counter" | "-1/-1 counters" => Some(CounterKind::MinusOneMinusOne),
+            "+0/+1 counter" | "+0/+1 counters" => Some(CounterKind::PlusZeroPlusOne),
+            "+0/+2 counter" | "+0/+2 counters" => Some(CounterKind::PlusZeroPlusTwo),
+            "+1/+0 counter" | "+1/+0 counters" => Some(CounterKind::PlusOnePlusZero),
+            "+1/+2 counter" | "+1/+2 counters" => Some(CounterKind::PlusOnePlusTwo),
+            "+2/+0 counter" | "+2/+0 counters" => Some(CounterKind::PlusTwoPlusZero),
+            "+2/+2 counter" | "+2/+2 counters" => Some(CounterKind::PlusTwoPlusTwo),
+            "-0/-1 counter" | "-0/-1 counters" => Some(CounterKind::MinusZeroMinusOne),
+            "-0/-2 counter" | "-0/-2 counters" => Some(CounterKind::MinusZeroMinusTwo),
+            "-1/-0 counter" | "-1/-0 counters" => Some(CounterKind::MinusOneMinusZero),
+            "-2/-1 counter" | "-2/-1 counters" => Some(CounterKind::MinusTwoMinusOne),
+            "-2/-2 counter" | "-2/-2 counters" => Some(CounterKind::MinusTwoMinusTwo),
+            "charge counter" | "charge counters" => Some(CounterKind::Charge),
+            "defense counter" | "defense counters" => Some(CounterKind::Defense),
+            "energy counter" | "energy counters" => Some(CounterKind::Energy),
+            "finality counter" | "finality counters" => Some(CounterKind::Finality),
+            "lore counter" | "lore counters" => Some(CounterKind::Lore),
+            "loyalty counter" | "loyalty counters" => Some(CounterKind::Loyalty),
+            "oil counter" | "oil counters" => Some(CounterKind::Oil),
+            "poison counter" | "poison counters" => Some(CounterKind::Poison),
+            "stun counter" | "stun counters" => Some(CounterKind::Stun),
+            "time counter" | "time counters" => Some(CounterKind::Time),
+            "deathtouch counter" | "deathtouch counters" => Some(CounterKind::Deathtouch),
+            "double strike counter" | "double strike counters" => Some(CounterKind::DoubleStrike),
+            "first strike counter" | "first strike counters" => Some(CounterKind::FirstStrike),
+            "flying counter" | "flying counters" => Some(CounterKind::Flying),
+            "haste counter" | "haste counters" => Some(CounterKind::Haste),
+            "hexproof counter" | "hexproof counters" => Some(CounterKind::Hexproof),
+            "indestructible counter" | "indestructible counters" => Some(CounterKind::Indestructible),
+            "lifelink counter" | "lifelink counters" => Some(CounterKind::Lifelink),
+            "menace counter" | "menace counters" => Some(CounterKind::Menace),
+            "reach counter" | "reach counters" => Some(CounterKind::Reach),
+            "shadow counter" | "shadow counters" => Some(CounterKind::Shadow),
+            "trample counter" | "trample counters" => Some(CounterKind::Trample),
+            "vigilance counter" | "vigilance counters" => Some(CounterKind::Vigilance),
+            "age counter" | "age counters" => Some(CounterKind::Age),
+            "crank counter" | "crank counters" => Some(CounterKind::Crank),
+            "divinity counter" | "divinity counters" => Some(CounterKind::Divinity),
+            "fade counter" | "fade counters" => Some(CounterKind::Fade),
+            "ki counter" | "ki counters" => Some(CounterKind::Ki),
+            "level counter" | "level counters" => Some(CounterKind::Level),
+            "rad counter" | "rad counters" => Some(CounterKind::Rad),
+            "shield counter" | "shield counters" => Some(CounterKind::Shield),
+            "spore counter" | "spore counters" => Some(CounterKind::Spore),
+            "ticket counter" | "ticket counters" => Some(CounterKind::Ticket),
+            "brick counter" | "brick counters" => Some(CounterKind::Brick),
+            "depletion counter" | "depletion counters" => Some(CounterKind::Depletion),
+            "experience counter" | "experience counters" => Some(CounterKind::Experience),
+            "quest counter" | "quest counters" => Some(CounterKind::Quest),
+            "storage counter" | "storage counters" => Some(CounterKind::Storage),
+            "verse counter" | "verse counters" => Some(CounterKind::Verse),
+            "acorn counter" | "acorn counters" => Some(CounterKind::Acorn),
+            "aim counter" | "aim counters" => Some(CounterKind::Aim),
+            "blaze counter" | "blaze counters" => Some(CounterKind::Blaze),
+            "blood counter" | "blood counters" => Some(CounterKind::Blood),
+            "bounty counter" | "bounty counters" => Some(CounterKind::Bounty),
+            "coin counter" | "coin counters" => Some(CounterKind::Coin),
+            "collection counter" | "collection counters" => Some(CounterKind::Collection),
+            "corpse counter" | "corpse counters" => Some(CounterKind::Corpse),
+            "delay counter" | "delay counters" => Some(CounterKind::Delay),
+            "devotion counter" | "devotion counters" => Some(CounterKind::Devotion),
+            "doom counter" | "doom counters" => Some(CounterKind::Doom),
+            "dream counter" | "dream counters" => Some(CounterKind::Dream),
+            "egg counter" | "egg counters" => Some(CounterKind::Egg),
+            "eon counter" | "eon counters" => Some(CounterKind::Eon),
+            "fate counter" | "fate counters" => Some(CounterKind::Fate),
+            "feather counter" | "feather counters" => Some(CounterKind::Feather),
+            "fetch counter" | "fetch counters" => Some(CounterKind::Fetch),
+            "flame counter" | "flame counters" => Some(CounterKind::Flame),
+            "flood counter" | "flood counters" => Some(CounterKind::Flood),
+            "fungus counter" | "fungus counters" => Some(CounterKind::Fungus),
+            "fuse counter" | "fuse counters" => Some(CounterKind::Fuse),
+            "gold counter" | "gold counters" => Some(CounterKind::Gold),
+            "growth counter" | "growth counters" => Some(CounterKind::Growth),
+            "hatchling counter" | "hatchling counters" => Some(CounterKind::Hatchling),
+            "healing counter" | "healing counters" => Some(CounterKind::Healing),
+            "hit counter" | "hit counters" => Some(CounterKind::Hit),
+            "hour counter" | "hour counters" => Some(CounterKind::Hour),
+            "ice counter" | "ice counters" => Some(CounterKind::Ice),
+            "infection counter" | "infection counters" => Some(CounterKind::Infection),
+            "judgment counter" | "judgment counters" => Some(CounterKind::Judgment),
+            "landmark counter" | "landmark counters" => Some(CounterKind::Landmark),
+            "luck counter" | "luck counters" => Some(CounterKind::Luck),
+            "net counter" | "net counters" => Some(CounterKind::Net),
+            "omen counter" | "omen counters" => Some(CounterKind::Omen),
+            "page counter" | "page counters" => Some(CounterKind::Page),
+            "plague counter" | "plague counters" => Some(CounterKind::Plague),
+            "point counter" | "point counters" => Some(CounterKind::Point),
+            "pressure counter" | "pressure counters" => Some(CounterKind::Pressure),
+            "prey counter" | "prey counters" => Some(CounterKind::Prey),
+            "pupa counter" | "pupa counters" => Some(CounterKind::Pupa),
+            "polyp counter" | "polyp counters" => Some(CounterKind::Polyp),
+            "scream counter" | "scream counters" => Some(CounterKind::Scream),
+            "scroll counter" | "scroll counters" => Some(CounterKind::Scroll),
+            "slime counter" | "slime counters" => Some(CounterKind::Slime),
+            "soul counter" | "soul counters" => Some(CounterKind::Soul),
+            "spark counter" | "spark counters" => Some(CounterKind::Spark),
+            "spite counter" | "spite counters" => Some(CounterKind::Spite),
+            "stash counter" | "stash counters" => Some(CounterKind::Stash),
+            "story counter" | "story counters" => Some(CounterKind::Story),
+            "strife counter" | "strife counters" => Some(CounterKind::Strife),
+            "study counter" | "study counters" => Some(CounterKind::Study),
+            "supply counter" | "supply counters" => Some(CounterKind::Supply),
+            "suspect counter" | "suspect counters" => Some(CounterKind::Suspect),
+            "takeover counter" | "takeover counters" => Some(CounterKind::Takeover),
+            "task counter" | "task counters" => Some(CounterKind::Task),
+            "theft counter" | "theft counters" => Some(CounterKind::Theft),
+            "tide counter" | "tide counters" => Some(CounterKind::Tide),
+            "tower counter" | "tower counters" => Some(CounterKind::Tower),
+            "training counter" | "training counters" => Some(CounterKind::Training),
+            "trap counter" | "trap counters" => Some(CounterKind::Trap),
+            "treasure counter" | "treasure counters" => Some(CounterKind::Treasure),
+            "unity counter" | "unity counters" => Some(CounterKind::Unity),
+            "unlock counter" | "unlock counters" => Some(CounterKind::Unlock),
+            "valor counter" | "valor counters" => Some(CounterKind::Valor),
+            "velocity counter" | "velocity counters" => Some(CounterKind::Velocity),
+            "vow counter" | "vow counters" => Some(CounterKind::Vow),
+            "voyage counter" | "voyage counters" => Some(CounterKind::Voyage),
+            "wage counter" | "wage counters" => Some(CounterKind::Wage),
+            "winch counter" | "winch counters" => Some(CounterKind::Winch),
+            "wind counter" | "wind counters" => Some(CounterKind::Wind),
+            "wish counter" | "wish counters" => Some(CounterKind::Wish),
+            "aegis counter" | "aegis counters" => Some(CounterKind::Aegis),
+            "arrow counter" | "arrow counters" => Some(CounterKind::Arrow),
+            "arrowhead counter" | "arrowhead counters" => Some(CounterKind::Arrowhead),
+            "awakening counter" | "awakening counters" => Some(CounterKind::Awakening),
+            "bait counter" | "bait counters" => Some(CounterKind::Bait),
+            "blessing counter" | "blessing counters" => Some(CounterKind::Blessing),
+            "blight counter" | "blight counters" => Some(CounterKind::Blight),
+            "bloodline counter" | "bloodline counters" => Some(CounterKind::Bloodline),
+            "bloodstain counter" | "bloodstain counters" => Some(CounterKind::Bloodstain),
+            "book counter" | "book counters" => Some(CounterKind::Book),
+            "bore counter" | "bore counters" => Some(CounterKind::Bore),
+            "brain counter" | "brain counters" => Some(CounterKind::Brain),
+            "bribery counter" | "bribery counters" => Some(CounterKind::Bribery),
+            "burden counter" | "burden counters" => Some(CounterKind::Burden),
+            "cage counter" | "cage counters" => Some(CounterKind::Cage),
+            "carrion counter" | "carrion counters" => Some(CounterKind::Carrion),
+            "chip counter" | "chip counters" => Some(CounterKind::Chip),
+            "chorus counter" | "chorus counters" => Some(CounterKind::Chorus),
+            "contested counter" | "contested counters" => Some(CounterKind::Contested),
+            "credit counter" | "credit counters" => Some(CounterKind::Credit),
+            "croak counter" | "croak counters" => Some(CounterKind::Croak),
+            "crystal counter" | "crystal counters" => Some(CounterKind::Crystal),
+            "cube counter" | "cube counters" => Some(CounterKind::Cube),
+            "component counter" | "component counters" => Some(CounterKind::Component),
+            "corruption counter" | "corruption counters" => Some(CounterKind::Corruption),
+            "currency counter" | "currency counters" => Some(CounterKind::Currency),
+            "death counter" | "death counters" => Some(CounterKind::Death),
+            "descent counter" | "descent counters" => Some(CounterKind::Descent),
+            "despair counter" | "despair counters" => Some(CounterKind::Despair),
+            "discovery counter" | "discovery counters" => Some(CounterKind::Discovery),
+            "dread counter" | "dread counters" => Some(CounterKind::Dread),
+            "duty counter" | "duty counters" => Some(CounterKind::Duty),
+            "echo counter" | "echo counters" => Some(CounterKind::Echo),
+            "elixir counter" | "elixir counters" => Some(CounterKind::Elixir),
+            "ember counter" | "ember counters" => Some(CounterKind::Ember),
+            "enlightened counter" | "enlightened counters" => Some(CounterKind::Enlightened),
+            "eruption counter" | "eruption counters" => Some(CounterKind::Eruption),
+            "everything counter" | "everything counters" => Some(CounterKind::Everything),
+            "eyeball counter" | "eyeball counters" => Some(CounterKind::Eyeball),
+            "eyestalk counter" | "eyestalk counters" => Some(CounterKind::Eyestalk),
+            "feeding counter" | "feeding counters" => Some(CounterKind::Feeding),
+            "fellowship counter" | "fellowship counters" => Some(CounterKind::Fellowship),
+            "filibuster counter" | "filibuster counters" => Some(CounterKind::Filibuster),
+            "foreshadow counter" | "foreshadow counters" => Some(CounterKind::Foreshadow),
+            "funk counter" | "funk counters" => Some(CounterKind::Funk),
+            "fury counter" | "fury counters" => Some(CounterKind::Fury),
+            "gem counter" | "gem counters" => Some(CounterKind::Gem),
+            "ghostform counter" | "ghostform counters" => Some(CounterKind::Ghostform),
+            "globe counter" | "globe counters" => Some(CounterKind::Globe),
+            "glyph counter" | "glyph counters" => Some(CounterKind::Glyph),
+            "hack counter" | "hack counters" => Some(CounterKind::Hack),
+            "harmony counter" | "harmony counters" => Some(CounterKind::Harmony),
+            "hatching counter" | "hatching counters" => Some(CounterKind::Hatching),
+            "hone counter" | "hone counters" => Some(CounterKind::Hone),
+            "hoofprint counter" | "hoofprint counters" => Some(CounterKind::Hoofprint),
+            "hope counter" | "hope counters" => Some(CounterKind::Hope),
+            "hourglass counter" | "hourglass counters" => Some(CounterKind::Hourglass),
+            "hunger counter" | "hunger counters" => Some(CounterKind::Hunger),
+            "husk counter" | "husk counters" => Some(CounterKind::Husk),
+            "impostor counter" | "impostor counters" => Some(CounterKind::Impostor),
+            "incarnation counter" | "incarnation counters" => Some(CounterKind::Incarnation),
+            "incubation counter" | "incubation counters" => Some(CounterKind::Incubation),
+            "influence counter" | "influence counters" => Some(CounterKind::Influence),
+            "ingenuity counter" | "ingenuity counters" => Some(CounterKind::Ingenuity),
+            "intel counter" | "intel counters" => Some(CounterKind::Intel),
+            "intervention counter" | "intervention counters" => Some(CounterKind::Intervention),
+            "isolation counter" | "isolation counters" => Some(CounterKind::Isolation),
+            "invitation counter" | "invitation counters" => Some(CounterKind::Invitation),
+            "javelin counter" | "javelin counters" => Some(CounterKind::Javelin),
+            "kick counter" | "kick counters" => Some(CounterKind::Kick),
+            "knickknack counter" | "knickknack counters" => Some(CounterKind::Knickknack),
+            "knowledge counter" | "knowledge counters" => Some(CounterKind::Knowledge),
+            "loot counter" | "loot counters" => Some(CounterKind::Loot),
+            "magnet counter" | "magnet counters" => Some(CounterKind::Magnet),
+            "manifestation counter" | "manifestation counters" => Some(CounterKind::Manifestation),
+            "mannequin counter" | "mannequin counters" => Some(CounterKind::Mannequin),
+            "matrix counter" | "matrix counters" => Some(CounterKind::Matrix),
+            "memory counter" | "memory counters" => Some(CounterKind::Memory),
+            "midway counter" | "midway counters" => Some(CounterKind::Midway),
+            "mine counter" | "mine counters" => Some(CounterKind::Mine),
+            "mining counter" | "mining counters" => Some(CounterKind::Mining),
+            "mire counter" | "mire counters" => Some(CounterKind::Mire),
+            "music counter" | "music counters" => Some(CounterKind::Music),
+            "muster counter" | "muster counters" => Some(CounterKind::Muster),
+            "necrodermis counter" | "necrodermis counters" => Some(CounterKind::Necrodermis),
+            "nest counter" | "nest counters" => Some(CounterKind::Nest),
+            "night counter" | "night counters" => Some(CounterKind::Night),
+            "ore counter" | "ore counters" => Some(CounterKind::Ore),
+            "pain counter" | "pain counters" => Some(CounterKind::Pain),
+            "palliation counter" | "palliation counters" => Some(CounterKind::Palliation),
+            "paralyzation counter" | "paralyzation counters" => Some(CounterKind::Paralyzation),
+            "pause counter" | "pause counters" => Some(CounterKind::Pause),
+            "petal counter" | "petal counters" => Some(CounterKind::Petal),
+            "petrification counter" | "petrification counters" => Some(CounterKind::Petrification),
+            "phyresis counter" | "phyresis counters" => Some(CounterKind::Phyresis),
+            "phylactery counter" | "phylactery counters" => Some(CounterKind::Phylactery),
+            "pin counter" | "pin counters" => Some(CounterKind::Pin),
+            "plot counter" | "plot counters" => Some(CounterKind::Plot),
+            "pop counter" | "pop counters" => Some(CounterKind::Pop),
+            "possession counter" | "possession counters" => Some(CounterKind::Possession),
+            "rejection counter" | "rejection counters" => Some(CounterKind::Rejection),
+            "reprieve counter" | "reprieve counters" => Some(CounterKind::Reprieve),
+            "rev counter" | "rev counters" => Some(CounterKind::Rev),
+            "revival counter" | "revival counters" => Some(CounterKind::Revival),
+            "ribbon counter" | "ribbon counters" => Some(CounterKind::Ribbon),
+            "ritual counter" | "ritual counters" => Some(CounterKind::Ritual),
+            "rope counter" | "rope counters" => Some(CounterKind::Rope),
+            "rust counter" | "rust counters" => Some(CounterKind::Rust),
+            "shell counter" | "shell counters" => Some(CounterKind::Shell),
+            "shoe counter" | "shoe counters" => Some(CounterKind::Shoe),
+            "shred counter" | "shred counters" => Some(CounterKind::Shred),
+            "skewer counter" | "skewer counters" => Some(CounterKind::Skewer),
+            "silver counter" | "silver counters" => Some(CounterKind::Silver),
+            "sleep counter" | "sleep counters" => Some(CounterKind::Sleep),
+            "sleight counter" | "sleight counters" => Some(CounterKind::Sleight),
+            "slumber counter" | "slumber counters" => Some(CounterKind::Slumber),
+            "soot counter" | "soot counters" => Some(CounterKind::Soot),
+            "third-degree-burn counter" | "third-degree-burn counters" => Some(CounterKind::ThirdDegreeBurn),
+            "vitality counter" | "vitality counters" => Some(CounterKind::Vitality),
+            "vortex counter" | "vortex counters" => Some(CounterKind::Vortex),
+            "void counter" | "void counters" => Some(CounterKind::Void),
+            "volatile counter" | "volatile counters" => Some(CounterKind::Volatile),
+            _ => return None,
+        }?;
+        Some(Self {
+            kind,
+            #[cfg(feature = "spanned_tree")]
+            span: span.into(),
+        })
+    }
+}
+
+impl idris::Idris for Counter {
+    const COUNT: usize = CounterKind::COUNT;
+    fn id(&self) -> usize {
+        self.kind.id()
+    }
+    fn name_from_id(id: usize) -> &'static str {
+        CounterKind::name_from_id(id)
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for Counter {
+    fn dummy_init() -> Self {
+        Self {
+            kind: CounterKind::Oil,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum Counter {
+pub enum CounterKind {
     PlusOnePlusOne,
     MinusOneMinusOne,
     PlusZeroPlusOne,
@@ -255,7 +578,7 @@ pub enum Counter {
     Volatile,
 }
 
-impl Counter {
+impl CounterKind {
     pub fn all() -> impl Iterator<Item = Self> {
         [
             Self::PlusOnePlusOne,
@@ -508,288 +831,7 @@ impl Counter {
     }
 }
 
-impl AbilityTreeNode for Counter {
-    fn node_id(&self) -> usize {
-        use crate::ability_tree::NodeKind;
-        use crate::ability_tree::tree_node::TerminalNodeKind;
-        use idris::Idris;
-
-        NodeKind::Terminal(TerminalNodeKind::CounterIdMarker).id()
-    }
-
-    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use crate::ability_tree::NodeKind;
-        use crate::ability_tree::tree_node::TerminalNodeKind;
-        use idris::Idris;
-
-        let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = NodeKind::Terminal(TerminalNodeKind::Counter(*self)).id();
-        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
-        children.push(child as &dyn AbilityTreeNode);
-        children
-    }
-
-    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
-        write!(out, "{self}")
-    }
-}
-
-impl Terminal for Counter {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "+1/+1 counter" | "+1/+1 counters" => Some(Self::PlusOnePlusOne),
-            "-1/-1 counter" | "-1/-1 counters" => Some(Self::MinusOneMinusOne),
-            "+0/+1 counter" | "+0/+1 counters" => Some(Self::PlusZeroPlusOne),
-            "+0/+2 counter" | "+0/+2 counters" => Some(Self::PlusZeroPlusTwo),
-            "+1/+0 counter" | "+1/+0 counters" => Some(Self::PlusOnePlusZero),
-            "+1/+2 counter" | "+1/+2 counters" => Some(Self::PlusOnePlusTwo),
-            "+2/+0 counter" | "+2/+0 counters" => Some(Self::PlusTwoPlusZero),
-            "+2/+2 counter" | "+2/+2 counters" => Some(Self::PlusTwoPlusTwo),
-            "-0/-1 counter" | "-0/-1 counters" => Some(Self::MinusZeroMinusOne),
-            "-0/-2 counter" | "-0/-2 counters" => Some(Self::MinusZeroMinusTwo),
-            "-1/-0 counter" | "-1/-0 counters" => Some(Self::MinusOneMinusZero),
-            "-2/-1 counter" | "-2/-1 counters" => Some(Self::MinusTwoMinusOne),
-            "-2/-2 counter" | "-2/-2 counters" => Some(Self::MinusTwoMinusTwo),
-            "charge counter" | "charge counters" => Some(Self::Charge),
-            "defense counter" | "defense counters" => Some(Self::Defense),
-            "energy counter" | "energy counters" => Some(Self::Energy),
-            "finality counter" | "finality counters" => Some(Self::Finality),
-            "lore counter" | "lore counters" => Some(Self::Lore),
-            "loyalty counter" | "loyalty counters" => Some(Self::Loyalty),
-            "oil counter" | "oil counters" => Some(Self::Oil),
-            "poison counter" | "poison counters" => Some(Self::Poison),
-            "stun counter" | "stun counters" => Some(Self::Stun),
-            "time counter" | "time counters" => Some(Self::Time),
-            "deathtouch counter" | "deathtouch counters" => Some(Self::Deathtouch),
-            "double strike counter" | "double strike counters" => Some(Self::DoubleStrike),
-            "first strike counter" | "first strike counters" => Some(Self::FirstStrike),
-            "flying counter" | "flying counters" => Some(Self::Flying),
-            "haste counter" | "haste counters" => Some(Self::Haste),
-            "hexproof counter" | "hexproof counters" => Some(Self::Hexproof),
-            "indestructible counter" | "indestructible counters" => Some(Self::Indestructible),
-            "lifelink counter" | "lifelink counters" => Some(Self::Lifelink),
-            "menace counter" | "menace counters" => Some(Self::Menace),
-            "reach counter" | "reach counters" => Some(Self::Reach),
-            "shadow counter" | "shadow counters" => Some(Self::Shadow),
-            "trample counter" | "trample counters" => Some(Self::Trample),
-            "vigilance counter" | "vigilance counters" => Some(Self::Vigilance),
-            "age counter" | "age counters" => Some(Self::Age),
-            "crank counter" | "crank counters" => Some(Self::Crank),
-            "divinity counter" | "divinity counters" => Some(Self::Divinity),
-            "fade counter" | "fade counters" => Some(Self::Fade),
-            "ki counter" | "ki counters" => Some(Self::Ki),
-            "level counter" | "level counters" => Some(Self::Level),
-            "rad counter" | "rad counters" => Some(Self::Rad),
-            "shield counter" | "shield counters" => Some(Self::Shield),
-            "spore counter" | "spore counters" => Some(Self::Spore),
-            "ticket counter" | "ticket counters" => Some(Self::Ticket),
-            "brick counter" | "brick counters" => Some(Self::Brick),
-            "depletion counter" | "depletion counters" => Some(Self::Depletion),
-            "experience counter" | "experience counters" => Some(Self::Experience),
-            "quest counter" | "quest counters" => Some(Self::Quest),
-            "storage counter" | "storage counters" => Some(Self::Storage),
-            "verse counter" | "verse counters" => Some(Self::Verse),
-            "acorn counter" | "acorn counters" => Some(Self::Acorn),
-            "aim counter" | "aim counters" => Some(Self::Aim),
-            "blaze counter" | "blaze counters" => Some(Self::Blaze),
-            "blood counter" | "blood counters" => Some(Self::Blood),
-            "bounty counter" | "bounty counters" => Some(Self::Bounty),
-            "coin counter" | "coin counters" => Some(Self::Coin),
-            "collection counter" | "collection counters" => Some(Self::Collection),
-            "corpse counter" | "corpse counters" => Some(Self::Corpse),
-            "delay counter" | "delay counters" => Some(Self::Delay),
-            "devotion counter" | "devotion counters" => Some(Self::Devotion),
-            "doom counter" | "doom counters" => Some(Self::Doom),
-            "dream counter" | "dream counters" => Some(Self::Dream),
-            "egg counter" | "egg counters" => Some(Self::Egg),
-            "eon counter" | "eon counters" => Some(Self::Eon),
-            "fate counter" | "fate counters" => Some(Self::Fate),
-            "feather counter" | "feather counters" => Some(Self::Feather),
-            "fetch counter" | "fetch counters" => Some(Self::Fetch),
-            "flame counter" | "flame counters" => Some(Self::Flame),
-            "flood counter" | "flood counters" => Some(Self::Flood),
-            "fungus counter" | "fungus counters" => Some(Self::Fungus),
-            "fuse counter" | "fuse counters" => Some(Self::Fuse),
-            "gold counter" | "gold counters" => Some(Self::Gold),
-            "growth counter" | "growth counters" => Some(Self::Growth),
-            "hatchling counter" | "hatchling counters" => Some(Self::Hatchling),
-            "healing counter" | "healing counters" => Some(Self::Healing),
-            "hit counter" | "hit counters" => Some(Self::Hit),
-            "hour counter" | "hour counters" => Some(Self::Hour),
-            "ice counter" | "ice counters" => Some(Self::Ice),
-            "infection counter" | "infection counters" => Some(Self::Infection),
-            "judgment counter" | "judgment counters" => Some(Self::Judgment),
-            "landmark counter" | "landmark counters" => Some(Self::Landmark),
-            "luck counter" | "luck counters" => Some(Self::Luck),
-            "net counter" | "net counters" => Some(Self::Net),
-            "omen counter" | "omen counters" => Some(Self::Omen),
-            "page counter" | "page counters" => Some(Self::Page),
-            "plague counter" | "plague counters" => Some(Self::Plague),
-            "point counter" | "point counters" => Some(Self::Point),
-            "pressure counter" | "pressure counters" => Some(Self::Pressure),
-            "prey counter" | "prey counters" => Some(Self::Prey),
-            "pupa counter" | "pupa counters" => Some(Self::Pupa),
-            "polyp counter" | "polyp counters" => Some(Self::Polyp),
-            "scream counter" | "scream counters" => Some(Self::Scream),
-            "scroll counter" | "scroll counters" => Some(Self::Scroll),
-            "slime counter" | "slime counters" => Some(Self::Slime),
-            "soul counter" | "soul counters" => Some(Self::Soul),
-            "spark counter" | "spark counters" => Some(Self::Spark),
-            "spite counter" | "spite counters" => Some(Self::Spite),
-            "stash counter" | "stash counters" => Some(Self::Stash),
-            "story counter" | "story counters" => Some(Self::Story),
-            "strife counter" | "strife counters" => Some(Self::Strife),
-            "study counter" | "study counters" => Some(Self::Study),
-            "supply counter" | "supply counters" => Some(Self::Supply),
-            "suspect counter" | "suspect counters" => Some(Self::Suspect),
-            "takeover counter" | "takeover counters" => Some(Self::Takeover),
-            "task counter" | "task counters" => Some(Self::Task),
-            "theft counter" | "theft counters" => Some(Self::Theft),
-            "tide counter" | "tide counters" => Some(Self::Tide),
-            "tower counter" | "tower counters" => Some(Self::Tower),
-            "training counter" | "training counters" => Some(Self::Training),
-            "trap counter" | "trap counters" => Some(Self::Trap),
-            "treasure counter" | "treasure counters" => Some(Self::Treasure),
-            "unity counter" | "unity counters" => Some(Self::Unity),
-            "unlock counter" | "unlock counters" => Some(Self::Unlock),
-            "valor counter" | "valor counters" => Some(Self::Valor),
-            "velocity counter" | "velocity counters" => Some(Self::Velocity),
-            "vow counter" | "vow counters" => Some(Self::Vow),
-            "voyage counter" | "voyage counters" => Some(Self::Voyage),
-            "wage counter" | "wage counters" => Some(Self::Wage),
-            "winch counter" | "winch counters" => Some(Self::Winch),
-            "wind counter" | "wind counters" => Some(Self::Wind),
-            "wish counter" | "wish counters" => Some(Self::Wish),
-            "aegis counter" | "aegis counters" => Some(Self::Aegis),
-            "arrow counter" | "arrow counters" => Some(Self::Arrow),
-            "arrowhead counter" | "arrowhead counters" => Some(Self::Arrowhead),
-            "awakening counter" | "awakening counters" => Some(Self::Awakening),
-            "bait counter" | "bait counters" => Some(Self::Bait),
-            "blessing counter" | "blessing counters" => Some(Self::Blessing),
-            "blight counter" | "blight counters" => Some(Self::Blight),
-            "bloodline counter" | "bloodline counters" => Some(Self::Bloodline),
-            "bloodstain counter" | "bloodstain counters" => Some(Self::Bloodstain),
-            "book counter" | "book counters" => Some(Self::Book),
-            "bore counter" | "bore counters" => Some(Self::Bore),
-            "brain counter" | "brain counters" => Some(Self::Brain),
-            "bribery counter" | "bribery counters" => Some(Self::Bribery),
-            "burden counter" | "burden counters" => Some(Self::Burden),
-            "cage counter" | "cage counters" => Some(Self::Cage),
-            "carrion counter" | "carrion counters" => Some(Self::Carrion),
-            "chip counter" | "chip counters" => Some(Self::Chip),
-            "chorus counter" | "chorus counters" => Some(Self::Chorus),
-            "contested counter" | "contested counters" => Some(Self::Contested),
-            "credit counter" | "credit counters" => Some(Self::Credit),
-            "croak counter" | "croak counters" => Some(Self::Croak),
-            "crystal counter" | "crystal counters" => Some(Self::Crystal),
-            "cube counter" | "cube counters" => Some(Self::Cube),
-            "component counter" | "component counters" => Some(Self::Component),
-            "corruption counter" | "corruption counters" => Some(Self::Corruption),
-            "currency counter" | "currency counters" => Some(Self::Currency),
-            "death counter" | "death counters" => Some(Self::Death),
-            "descent counter" | "descent counters" => Some(Self::Descent),
-            "despair counter" | "despair counters" => Some(Self::Despair),
-            "discovery counter" | "discovery counters" => Some(Self::Discovery),
-            "dread counter" | "dread counters" => Some(Self::Dread),
-            "duty counter" | "duty counters" => Some(Self::Duty),
-            "echo counter" | "echo counters" => Some(Self::Echo),
-            "elixir counter" | "elixir counters" => Some(Self::Elixir),
-            "ember counter" | "ember counters" => Some(Self::Ember),
-            "enlightened counter" | "enlightened counters" => Some(Self::Enlightened),
-            "eruption counter" | "eruption counters" => Some(Self::Eruption),
-            "everything counter" | "everything counters" => Some(Self::Everything),
-            "eyeball counter" | "eyeball counters" => Some(Self::Eyeball),
-            "eyestalk counter" | "eyestalk counters" => Some(Self::Eyestalk),
-            "feeding counter" | "feeding counters" => Some(Self::Feeding),
-            "fellowship counter" | "fellowship counters" => Some(Self::Fellowship),
-            "filibuster counter" | "filibuster counters" => Some(Self::Filibuster),
-            "foreshadow counter" | "foreshadow counters" => Some(Self::Foreshadow),
-            "funk counter" | "funk counters" => Some(Self::Funk),
-            "fury counter" | "fury counters" => Some(Self::Fury),
-            "gem counter" | "gem counters" => Some(Self::Gem),
-            "ghostform counter" | "ghostform counters" => Some(Self::Ghostform),
-            "globe counter" | "globe counters" => Some(Self::Globe),
-            "glyph counter" | "glyph counters" => Some(Self::Glyph),
-            "hack counter" | "hack counters" => Some(Self::Hack),
-            "harmony counter" | "harmony counters" => Some(Self::Harmony),
-            "hatching counter" | "hatching counters" => Some(Self::Hatching),
-            "hone counter" | "hone counters" => Some(Self::Hone),
-            "hoofprint counter" | "hoofprint counters" => Some(Self::Hoofprint),
-            "hope counter" | "hope counters" => Some(Self::Hope),
-            "hourglass counter" | "hourglass counters" => Some(Self::Hourglass),
-            "hunger counter" | "hunger counters" => Some(Self::Hunger),
-            "husk counter" | "husk counters" => Some(Self::Husk),
-            "impostor counter" | "impostor counters" => Some(Self::Impostor),
-            "incarnation counter" | "incarnation counters" => Some(Self::Incarnation),
-            "incubation counter" | "incubation counters" => Some(Self::Incubation),
-            "influence counter" | "influence counters" => Some(Self::Influence),
-            "ingenuity counter" | "ingenuity counters" => Some(Self::Ingenuity),
-            "intel counter" | "intel counters" => Some(Self::Intel),
-            "intervention counter" | "intervention counters" => Some(Self::Intervention),
-            "isolation counter" | "isolation counters" => Some(Self::Isolation),
-            "invitation counter" | "invitation counters" => Some(Self::Invitation),
-            "javelin counter" | "javelin counters" => Some(Self::Javelin),
-            "kick counter" | "kick counters" => Some(Self::Kick),
-            "knickknack counter" | "knickknack counters" => Some(Self::Knickknack),
-            "knowledge counter" | "knowledge counters" => Some(Self::Knowledge),
-            "loot counter" | "loot counters" => Some(Self::Loot),
-            "magnet counter" | "magnet counters" => Some(Self::Magnet),
-            "manifestation counter" | "manifestation counters" => Some(Self::Manifestation),
-            "mannequin counter" | "mannequin counters" => Some(Self::Mannequin),
-            "matrix counter" | "matrix counters" => Some(Self::Matrix),
-            "memory counter" | "memory counters" => Some(Self::Memory),
-            "midway counter" | "midway counters" => Some(Self::Midway),
-            "mine counter" | "mine counters" => Some(Self::Mine),
-            "mining counter" | "mining counters" => Some(Self::Mining),
-            "mire counter" | "mire counters" => Some(Self::Mire),
-            "music counter" | "music counters" => Some(Self::Music),
-            "muster counter" | "muster counters" => Some(Self::Muster),
-            "necrodermis counter" | "necrodermis counters" => Some(Self::Necrodermis),
-            "nest counter" | "nest counters" => Some(Self::Nest),
-            "night counter" | "night counters" => Some(Self::Night),
-            "ore counter" | "ore counters" => Some(Self::Ore),
-            "pain counter" | "pain counters" => Some(Self::Pain),
-            "palliation counter" | "palliation counters" => Some(Self::Palliation),
-            "paralyzation counter" | "paralyzation counters" => Some(Self::Paralyzation),
-            "pause counter" | "pause counters" => Some(Self::Pause),
-            "petal counter" | "petal counters" => Some(Self::Petal),
-            "petrification counter" | "petrification counters" => Some(Self::Petrification),
-            "phyresis counter" | "phyresis counters" => Some(Self::Phyresis),
-            "phylactery counter" | "phylactery counters" => Some(Self::Phylactery),
-            "pin counter" | "pin counters" => Some(Self::Pin),
-            "plot counter" | "plot counters" => Some(Self::Plot),
-            "pop counter" | "pop counters" => Some(Self::Pop),
-            "possession counter" | "possession counters" => Some(Self::Possession),
-            "rejection counter" | "rejection counters" => Some(Self::Rejection),
-            "reprieve counter" | "reprieve counters" => Some(Self::Reprieve),
-            "rev counter" | "rev counters" => Some(Self::Rev),
-            "revival counter" | "revival counters" => Some(Self::Revival),
-            "ribbon counter" | "ribbon counters" => Some(Self::Ribbon),
-            "ritual counter" | "ritual counters" => Some(Self::Ritual),
-            "rope counter" | "rope counters" => Some(Self::Rope),
-            "rust counter" | "rust counters" => Some(Self::Rust),
-            "shell counter" | "shell counters" => Some(Self::Shell),
-            "shoe counter" | "shoe counters" => Some(Self::Shoe),
-            "shred counter" | "shred counters" => Some(Self::Shred),
-            "skewer counter" | "skewer counters" => Some(Self::Skewer),
-            "silver counter" | "silver counters" => Some(Self::Silver),
-            "sleep counter" | "sleep counters" => Some(Self::Sleep),
-            "sleight counter" | "sleight counters" => Some(Self::Sleight),
-            "slumber counter" | "slumber counters" => Some(Self::Slumber),
-            "soot counter" | "soot counters" => Some(Self::Soot),
-            "third-degree-burn counter" | "third-degree-burn counters" => Some(Self::ThirdDegreeBurn),
-            "vitality counter" | "vitality counters" => Some(Self::Vitality),
-            "vortex counter" | "vortex counters" => Some(Self::Vortex),
-            "void counter" | "void counters" => Some(Self::Void),
-            "volatile counter" | "volatile counters" => Some(Self::Volatile),
-            _ => None,
-        }
-    }
-}
-
-impl std::fmt::Display for Counter {
+impl std::fmt::Display for CounterKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::PlusOnePlusOne => write!(f, "+1/+1 counter"),
@@ -1038,12 +1080,5 @@ impl std::fmt::Display for Counter {
             Self::Void => write!(f, "void counter"),
             Self::Volatile => write!(f, "volatile counter"),
         }
-    }
-}
-
-#[cfg(feature = "parser")]
-impl crate::utils::DummyInit for Counter {
-    fn dummy_init() -> Self {
-        Self::Oil
     }
 }

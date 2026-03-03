@@ -27,19 +27,17 @@ impl ParserError {
 
         let stuck_on_token = match tokens.get(stuck_index) {
             Some(token) => FoundToken {
-                name: ParserNode::name_from_id(ParserNode::from(*token).id()),
-                position: token.span.start,
-                length: token.span.length,
-                text: token.span.text.to_string(),
+                name: ParserNode::name_from_id(ParserNode::from(token.clone()).id()),
+                position: token.span().start,
+                length: token.span().end - token.span().start,
             },
             None => FoundToken {
                 name: "EOF",
                 position: match tokens.last() {
-                    Some(last) => last.span.start + last.span.length,
+                    Some(last) => last.span().end,
                     None => 0,
                 },
                 length: 0,
-                text: "EOI".to_string(),
             },
         };
 
@@ -48,7 +46,7 @@ impl ParserError {
         for (expecting_token, for_nodes) in last_non_empty_row.uncompleted_items.iter() {
             /* Only take in terminal tokens ? */
             use idris::Idris;
-            if *expecting_token < crate::lexer::tokens::TokenKind::COUNT {
+            if *expecting_token < crate::lexer::tokens::Token::COUNT {
                 expecting.insert(PossibleExpectedToken {
                     expected: *expecting_token,
                     for_nodes: for_nodes
@@ -72,8 +70,8 @@ impl std::fmt::Display for ParserError {
             Self::UnexpectedToken { found, expecting } => {
                 write!(
                     f,
-                    "Unexpected token \"{}\" at position {}, length {}: \"{}\"",
-                    found.name, found.position, found.length, found.text
+                    "Unexpected token at position {}, length {}: \"{}\"",
+                    found.position, found.length, found.name,
                 )?;
                 if !expecting.is_empty() {
                     write!(f, "\nExpecting one of:")?;
@@ -120,5 +118,4 @@ pub struct FoundToken {
     name: &'static str,
     position: usize,
     length: usize,
-    text: String,
 }

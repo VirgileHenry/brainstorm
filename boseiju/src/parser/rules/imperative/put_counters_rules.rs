@@ -1,6 +1,6 @@
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -13,19 +13,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let put_counters_rules = terminals::Counter::all()
         .map(|counter| ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
+                ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::Counter(counter)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
+                ParserNode::LexerToken(Token::Counter(counter)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { span })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(TokenKind::Counter(counter)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
+                    ParserNode::LexerToken(Token::Counter(counter)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::PutCounters(
@@ -36,9 +42,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 counters.push(crate::ability_tree::imperative::CounterOnPermanent {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::CounterKind::NewCounter(counter.clone()),
+                                    span: number.span().merge(&counter.span),
                                 });
                                 counters
                             },
+                            span: span.merge(&reference.span()),
                         },
                     ),
                 }),

@@ -4,9 +4,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Imperative to draw cards or make a player draw cards.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct DrawImperative {
     pub amount: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for DrawImperative {
@@ -39,6 +40,8 @@ impl crate::utils::DummyInit for DrawImperative {
     fn dummy_init() -> Self {
         Self {
             amount: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

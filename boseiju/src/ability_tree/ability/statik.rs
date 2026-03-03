@@ -14,10 +14,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// See the MTG wiki: https://mtg.fandom.com/wiki/Static_ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct StaticAbility {
     pub kind: StaticAbilityKind,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for StaticAbility {
@@ -59,6 +60,8 @@ impl crate::utils::DummyInit for StaticAbility {
         Self {
             kind: crate::utils::dummy(),
             condition: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -68,11 +71,21 @@ impl crate::utils::DummyInit for StaticAbility {
 /// All of the different static abilities that there is.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum StaticAbilityKind {
     ContinuousEffect(continuous_effect::ContinuousEffect),
     CostModificationEffect(cost_modification_effect::CostModificationEffect),
     AlternativeCastingPermissions(alterative_casting_permissions::AlternativeCastingPermissions),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl StaticAbilityKind {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ContinuousEffect(child) => child.span,
+            Self::CostModificationEffect(child) => child.span,
+            Self::AlternativeCastingPermissions(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for StaticAbilityKind {

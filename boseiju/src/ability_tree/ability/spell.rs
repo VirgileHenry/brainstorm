@@ -12,9 +12,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Spell abilities are represented as a list of statements that are all of the spell effects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpellAbility {
     pub effects: crate::utils::HeapArrayVec<crate::ability_tree::statement::Statement, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for SpellAbility {
@@ -53,6 +54,8 @@ impl crate::utils::DummyInit for SpellAbility {
     fn dummy_init() -> Self {
         Self {
             effects: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

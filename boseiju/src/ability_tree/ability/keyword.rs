@@ -14,7 +14,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ExpandedKeywordAbility {
     Absorb,
     Affinity,
@@ -270,9 +269,10 @@ impl crate::utils::DummyInit for ExpandedKeywordAbility {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct WardKeywordAbility {
     pub cost: crate::ability_tree::cost::Cost,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for WardKeywordAbility {
@@ -312,15 +312,18 @@ impl crate::utils::DummyInit for WardKeywordAbility {
     fn dummy_init() -> WardKeywordAbility {
         Self {
             cost: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct EnchantKeywordAbility {
     pub enchantable_object: crate::ability_tree::object::ObjectSpecifiers,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for EnchantKeywordAbility {
@@ -360,6 +363,8 @@ impl crate::utils::DummyInit for EnchantKeywordAbility {
     fn dummy_init() -> Self {
         Self {
             enchantable_object: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

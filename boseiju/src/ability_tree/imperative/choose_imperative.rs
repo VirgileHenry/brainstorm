@@ -7,11 +7,12 @@ const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ChooseImperative {
     pub choice_count: crate::ability_tree::number::Number,
     pub can_choose_same_mode: bool,
     pub choices: crate::utils::HeapArrayVec<crate::ability_tree::ability::spell::SpellAbility, MAX_CHOICES>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ChooseImperative {
@@ -69,6 +70,8 @@ impl crate::utils::DummyInit for ChooseImperative {
             choice_count: crate::utils::dummy(),
             can_choose_same_mode: false,
             choices: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

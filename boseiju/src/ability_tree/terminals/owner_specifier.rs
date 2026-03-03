@@ -1,16 +1,35 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
+use crate::lexer::IntoToken;
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum OwnerSpecifier {
-    YouOwn,
-    YouDontOwn,
-    ObjectOwner,
+    YouOwn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    YouDontOwn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ObjectOwner {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl OwnerSpecifier {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::YouOwn { span } => *span,
+            Self::YouDontOwn { span } => *span,
+            Self::ObjectOwner { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for OwnerSpecifier {
@@ -41,20 +60,29 @@ impl AbilityTreeNode for OwnerSpecifier {
 impl std::fmt::Display for OwnerSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OwnerSpecifier::YouOwn => write!(f, "you own"),
-            OwnerSpecifier::YouDontOwn => write!(f, "you don't own"),
-            OwnerSpecifier::ObjectOwner => write!(f, "its owner"),
+            OwnerSpecifier::YouOwn { .. } => write!(f, "you own"),
+            OwnerSpecifier::YouDontOwn { .. } => write!(f, "you don't own"),
+            OwnerSpecifier::ObjectOwner { .. } => write!(f, "its owner"),
         }
     }
 }
 
-impl Terminal for OwnerSpecifier {
+impl IntoToken for OwnerSpecifier {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "you own" | "your" => Some(OwnerSpecifier::YouOwn),
-            "you don't own" => Some(OwnerSpecifier::YouDontOwn),
-            "its owner" => Some(OwnerSpecifier::ObjectOwner),
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "you own" | "your" => Some(OwnerSpecifier::YouOwn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "you don't own" => Some(OwnerSpecifier::YouDontOwn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "its owner" => Some(OwnerSpecifier::ObjectOwner {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             _ => None,
         }
     }
@@ -63,6 +91,9 @@ impl Terminal for OwnerSpecifier {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for OwnerSpecifier {
     fn dummy_init() -> Self {
-        Self::YouOwn
+        Self::YouOwn {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -10,10 +10,11 @@ const MAX_OBJECT_MODIFICATIONS: usize = MAX_CHILDREN_PER_NODE - 1;
 /// A continuous effect that grants abilities to objects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffectModifyObject {
     pub object: crate::ability_tree::object::ObjectReference,
     pub modifications: crate::utils::HeapArrayVec<ObjectAbilitiesModification, MAX_OBJECT_MODIFICATIONS>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ContinuousEffectModifyObject {
@@ -61,6 +62,8 @@ impl crate::utils::DummyInit for ContinuousEffectModifyObject {
         Self {
             object: crate::utils::dummy(),
             modifications: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -68,10 +71,19 @@ impl crate::utils::DummyInit for ContinuousEffectModifyObject {
 /// A modification to an object.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectAbilitiesModification {
     CharacteristicModification(ObjectCharacteristicModification),
     GainAbility(ObjectGainAbility),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ObjectAbilitiesModification {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::CharacteristicModification(child) => child.span(),
+            Self::GainAbility(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for ObjectAbilitiesModification {
@@ -112,9 +124,10 @@ impl crate::utils::DummyInit for ObjectAbilitiesModification {
 /// An object modification that grants a new ability to that object.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ObjectGainAbility {
     pub ability: crate::ability_tree::ability::AbilityKind,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ObjectGainAbility {
@@ -144,6 +157,8 @@ impl crate::utils::DummyInit for ObjectGainAbility {
     fn dummy_init() -> Self {
         Self {
             ability: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

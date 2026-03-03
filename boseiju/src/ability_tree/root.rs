@@ -6,15 +6,18 @@ use crate::ability_tree::*;
 /// and can represent on its own the full text box of a card.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct AbilityTree {
     pub abilities: crate::utils::HeapArrayVec<ability::AbilityKind, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTree {
     pub fn empty() -> AbilityTree {
         AbilityTree {
             abilities: crate::utils::HeapArrayVec::new(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 
@@ -74,6 +77,8 @@ impl crate::utils::DummyInit for AbilityTree {
     fn dummy_init() -> Self {
         Self {
             abilities: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

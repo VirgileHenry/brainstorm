@@ -6,10 +6,11 @@ const MAX_COST_COUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ActivatedAbility {
     effect: crate::ability_tree::ability::spell::SpellAbility,
     costs: crate::utils::HeapArrayVec<crate::ability_tree::cost::Cost, MAX_COST_COUNT>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ActivatedAbility {

@@ -36,7 +36,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// All events here are the ones encountered in triggered abilities / replacement effects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Event {
     CreateTokens(CreateTokensEvent),
     CreatureAction(CreatureActionEvent),
@@ -44,6 +43,20 @@ pub enum Event {
     LifeGained(LifeGainedEvent),
     PlayerAction(PlayerActionEvent),
     PutCounterOnPermanent(PutCounterOnPermanentEvent),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Event {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::CreateTokens(child) => child.span,
+            Self::CreatureAction(child) => child.span,
+            Self::EntersTheBattlefield(child) => child.span,
+            Self::LifeGained(child) => child.span,
+            Self::PlayerAction(child) => child.span,
+            Self::PutCounterOnPermanent(child) => child.span,
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for Event {

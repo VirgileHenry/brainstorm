@@ -4,9 +4,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlayerCastsSpellEvent {
     pub spell_specifiers: Option<crate::ability_tree::object::ObjectSpecifiers>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for PlayerCastsSpellEvent {
@@ -48,6 +49,10 @@ impl crate::ability_tree::AbilityTreeNode for PlayerCastsSpellEvent {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for PlayerCastsSpellEvent {
     fn dummy_init() -> Self {
-        Self { spell_specifiers: None }
+        Self {
+            spell_specifiers: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

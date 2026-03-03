@@ -8,4 +8,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 boseiju = { workspace = true }
+serde = { workspace = true }
 serde_json = { workspace = true }

@@ -1,4 +1,5 @@
-use crate::lexer::tokens::TokenKind;
+use crate::ability_tree::terminals;
+use crate::lexer::tokens::Token;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -10,18 +11,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Destroy any object reference */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Destroy)).id(),
+            ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                keyword_action: mtg_data::KeywordAction::Destroy,
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
         ]),
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Destroy)),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Destroy,
+                    span,
+                })),
                 ParserNode::ObjectReference { reference },
             ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::Destroy(
                     crate::ability_tree::imperative::DestroyImperative {
                         object: reference.clone(),
+                        span: span.merge(&reference.span()),
                     },
                 ),
             }),

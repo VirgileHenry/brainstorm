@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct LifeGainedEvent {
     pub player: crate::ability_tree::terminals::PlayerSpecifier,
     pub minimum_amount: Option<crate::ability_tree::number::Number>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for LifeGainedEvent {
@@ -56,6 +57,8 @@ impl crate::utils::DummyInit for LifeGainedEvent {
         Self {
             player: crate::utils::dummy(),
             minimum_amount: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

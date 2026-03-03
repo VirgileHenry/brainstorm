@@ -1,294 +1,47 @@
-pub mod non_terminals;
-
-use std::str::FromStr;
+pub mod intermediates;
 
 use crate::ability_tree::object;
 use crate::ability_tree::terminals;
-use crate::ability_tree::terminals::Terminal;
 use crate::ability_tree::time;
 use crate::ability_tree::zone;
 use crate::lexer::span::Span;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Token<'src> {
-    pub kind: TokenKind,
-    pub span: crate::lexer::span::Span<'src>,
-}
-
-impl<'src> Token<'src> {
-    pub fn try_from_str(span: Span<'src>) -> Option<Token<'src>> {
-        if let Some(kind) = non_terminals::AmbiguousToken::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::AmbiguousToken(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::Counter::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Counter(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::CountSpecifier::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::CountSpecifier(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::ControlSpecifier::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ControlSpecifier(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::OwnerSpecifier::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::OwnerSpecifier(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::Order::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Order(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::CardActions::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::CardActions(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::PlayerSpecifier::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PlayerSpecifier(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::PermanentState::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PermanentState(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::PermanentProperty::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PermanentProperty(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::SpellProperty::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::SpellProperty(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::Phase::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Phase(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::Step::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Step(kind),
-                span,
-            })
-        } else if let Some(pt) = terminals::PowerToughness::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PowerToughness { pt },
-                span,
-            })
-        } else if let Some(kind) = non_terminals::PowerToughnessModElements::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PowerToughnessModElements(kind),
-                span,
-            })
-        } else if let Some(chapter) = terminals::SagaChapterNumber::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::SagaChapterNumber { chapter },
-                span,
-            })
-        } else if let Some(kind) = non_terminals::InAdditionToPayingItsOtherCost::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::InAdditionToPayingItsOtherCost(kind),
-                span,
-            })
-        } else if let Some(kind) = crate::ability_tree::time::Instant::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Instant(kind),
-                span,
-            })
-        } else if let Some(kind) = crate::ability_tree::time::ForwardDuration::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ForwardDuration(kind),
-                span,
-            })
-        } else if let Some(kind) = crate::ability_tree::time::BackwardDuration::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::BackwardDuration(kind),
-                span,
-            })
-        } else if let Some(kind) = terminals::NamedToken::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::NamedToken(kind),
-                span,
-            })
-        } else if let Some(kind) = zone::OwnableZone::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::OwnableZone(kind),
-                span,
-            })
-        } else if let Some(kind) = mtg_data::Color::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Color(kind),
-                span,
-            })
-        } else if let Some(kind) = mtg_data::AbilityWord::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::AbilityWord(kind),
-                span,
-            })
-        } else if let Some(kind) = mtg_data::KeywordAbility::from_str(span.text).ok() {
-            Some(Self {
-                kind: TokenKind::KeywordAbility(kind),
-                span,
-            })
-        } else if let Some(kind) = mtg_data::KeywordAction::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::KeywordAction(kind),
-                span,
-            })
-        } else if let Some(mana) = mtg_data::Mana::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Mana { mana },
-                span,
-            })
-        } else if let Some(kind) = object::ObjectKind::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ObjectKind(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::ControlFlow::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ControlFlow(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::TapUntapCost::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::TapUntapCost(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::EnglishKeyword::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::EnglishKeyword(kind),
-                span,
-            })
-        } else if let Some(reference) = object::SelfReferencingObject::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::SelfReferencing { reference },
-                span,
-            })
-        } else if let Some(number) = non_terminals::Number::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Number(number),
-                span,
-            })
-        } else if let Some(not) = non_terminals::NotOfAKind::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::NotOfAKind { not },
-                span,
-            })
-        } else if let Some(kind) = non_terminals::ActionKeyword::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ActionKeyword(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::DamageKind::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::DamageKind(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::PlayerAction::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PlayerAction(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::NonKind::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::NonKind(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::UnderControl::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::UnderControl(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::PlayerProperties::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::PlayerProperties(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::NumberOfTimes::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::NumberOfTimes(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::ChoiceReference::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::ChoiceReference(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::Choice::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::Choice(kind),
-                span,
-            })
-        } else if let Some(clauses) = non_terminals::AnyNumberOfClause::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::AnyNumberOfClause { clauses },
-                span,
-            })
-        } else if let Some(kind) = non_terminals::WinLoseClause::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::WinLoseClause(kind),
-                span,
-            })
-        } else if let Some(kind) = non_terminals::VhyToSortLater::try_from_str(span.text) {
-            Some(Self {
-                kind: TokenKind::VhyToSortLater(kind),
-                span,
-            })
-        } else {
-            None
-        }
-    }
-
-    pub const TOKEN_COUNT: usize = 0;
-    pub fn token_id(&self) -> usize {
-        <TokenKind as idris::Idris>::COUNT
-    }
+pub trait IntoToken: Sized {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self>;
 }
 
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum TokenKind {
-    AbilityWord(mtg_data::AbilityWord),
-    ActionKeyword(non_terminals::ActionKeyword),
-    AmbiguousToken(non_terminals::AmbiguousToken),
-    AnyNumberOfClause { clauses: non_terminals::AnyNumberOfClause },
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Token {
+    AbilityWord(terminals::AbilityWord),
+    ActionKeyword(intermediates::ActionKeyword),
+    AmbiguousToken(intermediates::AmbiguousToken),
+    AnyNumberOfClause { clauses: intermediates::AnyNumberOfClause },
     BackwardDuration(time::BackwardDuration),
-    CardActions(non_terminals::CardActions),
-    Choice(non_terminals::Choice),
-    ChoiceReference(non_terminals::ChoiceReference),
-    Color(mtg_data::Color),
-    ControlFlow(non_terminals::ControlFlow),
+    CardActions(intermediates::CardActions),
+    Choice(intermediates::Choice),
+    ChoiceReference(intermediates::ChoiceReference),
+    Color(terminals::Color),
+    ControlFlow(intermediates::ControlFlow),
     ControlSpecifier(terminals::ControlSpecifier),
-    CountSpecifier(non_terminals::CountSpecifier),
+    CountSpecifier(intermediates::CountSpecifier),
     Counter(terminals::Counter),
-    DamageKind(non_terminals::DamageKind),
-    EnglishKeyword(non_terminals::EnglishKeyword),
+    DamageKind(intermediates::DamageKind),
+    EnglishKeyword(intermediates::EnglishKeyword),
     ForwardDuration(time::ForwardDuration),
-    GlobalZone(non_terminals::GlobalZone),
-    InAdditionToPayingItsOtherCost(non_terminals::InAdditionToPayingItsOtherCost),
+    GlobalZone(intermediates::GlobalZone),
+    InAdditionToPayingItsOtherCost(intermediates::InAdditionToPayingItsOtherCost),
     Instant(time::Instant),
-    KeywordAbility(mtg_data::KeywordAbility),
-    KeywordAction(mtg_data::KeywordAction),
-    Mana { mana: mtg_data::Mana },
+    KeywordAbility(intermediates::KeywordAbility),
+    KeywordAction(terminals::KeywordAction),
+    Mana { mana: terminals::Mana },
     NamedToken(terminals::NamedToken),
-    NonKind(non_terminals::NonKind),
-    NotOfAKind { not: non_terminals::NotOfAKind },
-    Number(non_terminals::Number),
-    NumberOfTimes(non_terminals::NumberOfTimes),
+    NonKind(intermediates::NonKind),
+    NotOfAKind { not: intermediates::NotOfAKind },
+    Number(intermediates::Number),
+    NumberOfTimes(intermediates::NumberOfTimes),
     ObjectKind(object::ObjectKind),
     Order(terminals::Order),
     OwnableZone(zone::OwnableZone),
@@ -296,17 +49,169 @@ pub enum TokenKind {
     PermanentProperty(terminals::PermanentProperty),
     PermanentState(terminals::PermanentState),
     Phase(terminals::Phase),
-    PlayerAction(non_terminals::PlayerAction),
-    PlayerProperties(non_terminals::PlayerProperties),
+    PlayerAction(intermediates::PlayerAction),
+    PlayerProperties(intermediates::PlayerProperties),
     PlayerSpecifier(terminals::PlayerSpecifier),
-    PowerToughnessModElements(non_terminals::PowerToughnessModElements),
+    PowerToughnessModElements(intermediates::PowerToughnessModElements),
     PowerToughness { pt: terminals::PowerToughness },
     SagaChapterNumber { chapter: terminals::SagaChapterNumber },
     SelfReferencing { reference: object::SelfReferencingObject },
     SpellProperty(terminals::SpellProperty),
     Step(terminals::Step),
-    TapUntapCost(non_terminals::TapUntapCost),
-    UnderControl(non_terminals::UnderControl),
-    VhyToSortLater(non_terminals::VhyToSortLater),
-    WinLoseClause(non_terminals::WinLoseClause),
+    TapUntapCost(intermediates::TapUntapCost),
+    UnderControl(intermediates::UnderControl),
+    VhyToSortLater(intermediates::VhyToSortLater),
+    WinLoseClause(intermediates::WinLoseClause),
+}
+
+impl Token {
+    pub fn try_from_span(span: Span) -> Option<Token> {
+        if let Some(kind) = intermediates::AmbiguousToken::try_from_span(&span) {
+            Some(Self::AmbiguousToken(kind))
+        } else if let Some(kind) = terminals::Counter::try_from_span(&span) {
+            Some(Self::Counter(kind))
+        } else if let Some(kind) = intermediates::CountSpecifier::try_from_span(&span) {
+            Some(Self::CountSpecifier(kind))
+        } else if let Some(kind) = terminals::ControlSpecifier::try_from_span(&span) {
+            Some(Self::ControlSpecifier(kind))
+        } else if let Some(kind) = terminals::OwnerSpecifier::try_from_span(&span) {
+            Some(Self::OwnerSpecifier(kind))
+        } else if let Some(kind) = terminals::Order::try_from_span(&span) {
+            Some(Self::Order(kind))
+        } else if let Some(kind) = intermediates::CardActions::try_from_span(&span) {
+            Some(Self::CardActions(kind))
+        } else if let Some(kind) = terminals::PlayerSpecifier::try_from_span(&span) {
+            Some(Self::PlayerSpecifier(kind))
+        } else if let Some(kind) = terminals::PermanentState::try_from_span(&span) {
+            Some(Self::PermanentState(kind))
+        } else if let Some(kind) = terminals::PermanentProperty::try_from_span(&span) {
+            Some(Self::PermanentProperty(kind))
+        } else if let Some(kind) = terminals::SpellProperty::try_from_span(&span) {
+            Some(Self::SpellProperty(kind))
+        } else if let Some(kind) = terminals::Phase::try_from_span(&span) {
+            Some(Self::Phase(kind))
+        } else if let Some(kind) = terminals::Step::try_from_span(&span) {
+            Some(Self::Step(kind))
+        } else if let Some(pt) = terminals::PowerToughness::try_from_span(&span) {
+            Some(Self::PowerToughness { pt })
+        } else if let Some(kind) = intermediates::PowerToughnessModElements::try_from_span(&span) {
+            Some(Self::PowerToughnessModElements(kind))
+        } else if let Some(chapter) = terminals::SagaChapterNumber::try_from_span(&span) {
+            Some(Self::SagaChapterNumber { chapter })
+        } else if let Some(kind) = intermediates::InAdditionToPayingItsOtherCost::try_from_span(&span) {
+            Some(Self::InAdditionToPayingItsOtherCost(kind))
+        } else if let Some(kind) = crate::ability_tree::time::Instant::try_from_span(&span) {
+            Some(Self::Instant(kind))
+        } else if let Some(kind) = crate::ability_tree::time::ForwardDuration::try_from_span(&span) {
+            Some(Self::ForwardDuration(kind))
+        } else if let Some(kind) = crate::ability_tree::time::BackwardDuration::try_from_span(&span) {
+            Some(Self::BackwardDuration(kind))
+        } else if let Some(kind) = terminals::NamedToken::try_from_span(&span) {
+            Some(Self::NamedToken(kind))
+        } else if let Some(kind) = zone::OwnableZone::try_from_span(&span) {
+            Some(Self::OwnableZone(kind))
+        } else if let Some(kind) = terminals::Color::try_from_span(&span) {
+            Some(Self::Color(kind))
+        } else if let Some(kind) = terminals::AbilityWord::try_from_span(&span) {
+            Some(Self::AbilityWord(kind))
+        } else if let Some(kind) = intermediates::KeywordAbility::try_from_span(&span) {
+            Some(Self::KeywordAbility(kind))
+        } else if let Some(kind) = terminals::KeywordAction::try_from_span(&span) {
+            Some(Self::KeywordAction(kind))
+        } else if let Some(mana) = terminals::Mana::try_from_span(&span) {
+            Some(Self::Mana { mana })
+        } else if let Some(kind) = object::ObjectKind::try_from_span(&span) {
+            Some(Self::ObjectKind(kind))
+        } else if let Some(kind) = intermediates::ControlFlow::try_from_span(&span) {
+            Some(Self::ControlFlow(kind))
+        } else if let Some(kind) = intermediates::TapUntapCost::try_from_span(&span) {
+            Some(Self::TapUntapCost(kind))
+        } else if let Some(kind) = intermediates::EnglishKeyword::try_from_span(&span) {
+            Some(Self::EnglishKeyword(kind))
+        } else if let Some(reference) = object::SelfReferencingObject::try_from_span(&span) {
+            Some(Self::SelfReferencing { reference })
+        } else if let Some(kind) = intermediates::Number::try_from_span(&span) {
+            Some(Self::Number(kind))
+        } else if let Some(not) = intermediates::NotOfAKind::try_from_span(&span) {
+            Some(Self::NotOfAKind { not })
+        } else if let Some(kind) = intermediates::ActionKeyword::try_from_span(&span) {
+            Some(Self::ActionKeyword(kind))
+        } else if let Some(kind) = intermediates::DamageKind::try_from_span(&span) {
+            Some(Self::DamageKind(kind))
+        } else if let Some(kind) = intermediates::PlayerAction::try_from_span(&span) {
+            Some(Self::PlayerAction(kind))
+        } else if let Some(kind) = intermediates::NonKind::try_from_span(&span) {
+            Some(Self::NonKind(kind))
+        } else if let Some(kind) = intermediates::UnderControl::try_from_span(&span) {
+            Some(Self::UnderControl(kind))
+        } else if let Some(kind) = intermediates::PlayerProperties::try_from_span(&span) {
+            Some(Self::PlayerProperties(kind))
+        } else if let Some(kind) = intermediates::NumberOfTimes::try_from_span(&span) {
+            Some(Self::NumberOfTimes(kind))
+        } else if let Some(kind) = intermediates::ChoiceReference::try_from_span(&span) {
+            Some(Self::ChoiceReference(kind))
+        } else if let Some(kind) = intermediates::Choice::try_from_span(&span) {
+            Some(Self::Choice(kind))
+        } else if let Some(clauses) = intermediates::AnyNumberOfClause::try_from_span(&span) {
+            Some(Self::AnyNumberOfClause { clauses })
+        } else if let Some(kind) = intermediates::WinLoseClause::try_from_span(&span) {
+            Some(Self::WinLoseClause(kind))
+        } else if let Some(kind) = intermediates::VhyToSortLater::try_from_span(&span) {
+            Some(Self::VhyToSortLater(kind))
+        } else {
+            None
+        }
+    }
+
+    pub fn span(&self) -> &crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AbilityWord(child) => &child.span,
+            Self::ActionKeyword(child) => &child.span,
+            Self::AmbiguousToken(child) => &child.span,
+            Self::AnyNumberOfClause { clauses } => &clauses.span,
+            Self::BackwardDuration(child) => &child.span,
+            Self::CardActions(child) => &child.span,
+            Self::Choice(child) => &child.span,
+            Self::ChoiceReference(child) => &child.span,
+            Self::Color(child) => &child.span,
+            Self::ControlFlow(child) => &child.span,
+            Self::ControlSpecifier(child) => &child.span,
+            Self::CountSpecifier(child) => &child.span,
+            Self::Counter(child) => &child.span,
+            Self::DamageKind(child) => &child.span,
+            Self::EnglishKeyword(child) => &child.span,
+            Self::ForwardDuration(child) => &child.span,
+            Self::GlobalZone(child) => &child.span,
+            Self::InAdditionToPayingItsOtherCost(child) => &child.span,
+            Self::Instant(child) => &child.span,
+            Self::KeywordAbility(child) => &child.span,
+            Self::KeywordAction(child) => &child.span,
+            Self::Mana { mana } => &mana.span,
+            Self::NamedToken(child) => &child.span,
+            Self::NonKind(child) => &child.span,
+            Self::NotOfAKind { not } => &not.span,
+            Self::Number(child) => &child.span,
+            Self::NumberOfTimes(child) => &child.span,
+            Self::ObjectKind(child) => &child.span,
+            Self::Order(child) => &child.span,
+            Self::OwnableZone(child) => &child.span,
+            Self::OwnerSpecifier(child) => &child.span,
+            Self::PermanentProperty(child) => &child.span,
+            Self::PermanentState(child) => &child.span,
+            Self::Phase(child) => &child.span,
+            Self::PlayerAction(child) => &child.span,
+            Self::PlayerProperties(child) => &child.span,
+            Self::PlayerSpecifier(child) => &child.span,
+            Self::PowerToughnessModElements(child) => &child.span,
+            Self::PowerToughness { pt } => &pt.span,
+            Self::SagaChapterNumber { chapter } => &chapter.span,
+            Self::SelfReferencing { reference } => &reference.span,
+            Self::SpellProperty(child) => &child.span,
+            Self::Step(child) => &child.span,
+            Self::TapUntapCost(child) => &child.span,
+            Self::UnderControl(child) => &child.span,
+            Self::VhyToSortLater(child) => &child.span,
+            Self::WinLoseClause(child) => &child.span,
+        }
+    }
 }

@@ -1,6 +1,6 @@
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -16,22 +16,31 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserRule {
                     expanded: RuleLhs::new(&[
                         ParserNode::EventSource { source: dummy() }.id(),
-                        ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
+                        ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                            span: Default::default(),
+                        }))
+                        .id(),
                         ParserNode::Number { number: dummy() }.id(),
-                        ParserNode::LexerToken(TokenKind::Counter(counter)).id(),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
+                        ParserNode::LexerToken(Token::Counter(counter.clone())).id(),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                            span: Default::default(),
+                        }))
+                        .id(),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                            span: Default::default(),
+                        }))
+                        .id(),
                         ParserNode::ObjectReference { reference: dummy() }.id(),
                     ]),
                     merged: ParserNode::Event { event: dummy() }.id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
                             ParserNode::EventSource { source },
-                            ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
+                            ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { .. })),
                             ParserNode::Number { number },
-                            ParserNode::LexerToken(TokenKind::Counter(counter)),
-                            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
-                            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
+                            ParserNode::LexerToken(Token::Counter(counter)),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                             ParserNode::ObjectReference { reference },
                         ] => Ok(ParserNode::Event {
                             event: crate::ability_tree::event::Event::PutCounterOnPermanent(
@@ -40,6 +49,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     quantity: number.clone(),
                                     counter_kind: Some(counter.clone()),
                                     on_permanent: reference.clone(),
+                                    span: source.span().merge(&reference.span()),
                                 },
                             ),
                         }),
@@ -51,24 +61,36 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserRule {
                     expanded: RuleLhs::new(&[
                         ParserNode::EventSource { source: dummy() }.id(),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
-                        ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would {
+                            span: Default::default(),
+                        }))
+                        .id(),
+                        ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                            span: Default::default(),
+                        }))
+                        .id(),
                         ParserNode::Number { number: dummy() }.id(),
-                        ParserNode::LexerToken(TokenKind::Counter(counter)).id(),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
+                        ParserNode::LexerToken(Token::Counter(counter.clone())).id(),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                            span: Default::default(),
+                        }))
+                        .id(),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                            span: Default::default(),
+                        }))
+                        .id(),
                         ParserNode::ObjectReference { reference: dummy() }.id(),
                     ]),
                     merged: ParserNode::Event { event: dummy() }.id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
                             ParserNode::EventSource { source },
-                            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)),
-                            ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would { .. })),
+                            ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { .. })),
                             ParserNode::Number { number },
-                            ParserNode::LexerToken(TokenKind::Counter(counter)),
-                            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
-                            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
+                            ParserNode::LexerToken(Token::Counter(counter)),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                             ParserNode::ObjectReference { reference },
                         ] => Ok(ParserNode::Event {
                             event: crate::ability_tree::event::Event::PutCounterOnPermanent(
@@ -77,6 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     quantity: number.clone(),
                                     counter_kind: Some(counter.clone()),
                                     on_permanent: reference.clone(),
+                                    span: source.span().merge(&reference.span()),
                                 },
                             ),
                         }),
@@ -94,22 +117,38 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
+                ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)).id(), /* Fixme: counter is a verb here */
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Counter,
+                    span: Default::default(),
+                }))
+                .id(), /* Fixme: counter is a verb here */
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
             merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },
-                    ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { .. })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Counter,
+                        ..
+                    })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::PutCounterOnPermanent(
@@ -118,6 +157,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             quantity: number.clone(),
                             counter_kind: None,
                             on_permanent: reference.clone(),
+                            span: source.span().merge(&reference.span()),
                         },
                     ),
                 }),
@@ -129,24 +169,43 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)).id(),
-                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Counter,
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
             merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSource { source },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Would)),
-                    ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would { .. })),
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { .. })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Counter,
+                        ..
+                    })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::PutCounterOnPermanent(
@@ -155,6 +214,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             quantity: number.clone(),
                             counter_kind: None,
                             on_permanent: reference.clone(),
+                            span: source.span().merge(&reference.span()),
                         },
                     ),
                 }),

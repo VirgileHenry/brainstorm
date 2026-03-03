@@ -3,7 +3,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectSpecifiers {
     Single(ObjectSpecifier),
     And(SpecifierAndList),
@@ -13,8 +12,21 @@ pub enum ObjectSpecifiers {
 
 impl ObjectSpecifiers {
     /// Shortcut to build the "creature" object specifier.
-    pub fn creature() -> Self {
-        Self::Single(ObjectSpecifier::creature())
+    pub fn creature(#[cfg(feature = "spanned_tree")] span: crate::ability_tree::span::TreeSpan) -> Self {
+        Self::Single(ObjectSpecifier::creature(
+            #[cfg(feature = "spanned_tree")]
+            span,
+        ))
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Single(child) => child.span(),
+            Self::And(child) => child.span,
+            Self::Or(child) => child.span,
+            Self::OrOfAnd(child) => child.span,
+        }
     }
 }
 
@@ -22,6 +34,7 @@ impl ObjectSpecifiers {
     pub fn add_factor_specifier(&self, factor_specifier: ObjectSpecifier) -> Self {
         match self {
             Self::Single(specifier) => Self::And(SpecifierAndList {
+                span: self.span().merge(&factor_specifier.span()),
                 specifiers: {
                     let mut specifiers = arrayvec::ArrayVec::new_const();
                     specifiers.push(specifier.clone());
@@ -29,14 +42,17 @@ impl ObjectSpecifiers {
                     specifiers
                 },
             }),
-            Self::And(specifiers) => Self::And({
-                let mut and_specifiers = specifiers.clone();
-                and_specifiers.specifiers.push(factor_specifier);
-                and_specifiers
+            Self::And(and) => Self::And(SpecifierAndList {
+                span: and.span.merge(&factor_specifier.span()),
+                specifiers: {
+                    let mut and_specifiers = and.specifiers.clone();
+                    and_specifiers.push(factor_specifier);
+                    and_specifiers
+                },
             }),
-            Self::Or(specifiers) => Self::OrOfAnd({
+            Self::Or(or) => Self::OrOfAnd({
                 let mut or_specifiers = arrayvec::ArrayVec::new_const();
-                for specifier in specifiers.specifiers.iter() {
+                for specifier in or.specifiers.iter() {
                     let mut and_specifiers = arrayvec::ArrayVec::new_const();
                     and_specifiers.push(specifier.clone());
                     and_specifiers.push(factor_specifier.clone());
@@ -44,15 +60,17 @@ impl ObjectSpecifiers {
                 }
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
+                    span: or.span.merge(&factor_specifier.span()),
                 }
             }),
-            Self::OrOfAnd(specifiers) => Self::OrOfAnd({
-                let mut or_specifiers = specifiers.specifiers.clone();
+            Self::OrOfAnd(or_of_and) => Self::OrOfAnd({
+                let mut or_specifiers = or_of_and.specifiers.clone();
                 for and_specifiers in or_specifiers.iter_mut() {
                     and_specifiers.push(factor_specifier.clone());
                 }
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
+                    span: or_of_and.span.merge(&factor_specifier.span()),
                 }
             }),
         }
@@ -104,9 +122,10 @@ impl crate::utils::DummyInit for ObjectSpecifiers {
 /// it must match all of them.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifierAndList {
     pub specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for SpecifierAndList {
@@ -144,6 +163,8 @@ impl crate::utils::DummyInit for SpecifierAndList {
     fn dummy_init() -> Self {
         Self {
             specifiers: arrayvec::ArrayVec::new_const(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -154,9 +175,10 @@ impl crate::utils::DummyInit for SpecifierAndList {
 /// it must match any one specifier in the list.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifierOrList {
     pub specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl SpecifierOrList {
@@ -170,6 +192,7 @@ impl SpecifierOrList {
         }
         SpecifierOrOfAndList {
             specifiers: or_specifiers,
+            span: self.span.merge(&factor_specifier.span()),
         }
     }
 }
@@ -209,6 +232,8 @@ impl crate::utils::DummyInit for SpecifierOrList {
     fn dummy_init() -> Self {
         Self {
             specifiers: arrayvec::ArrayVec::new_const(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -228,12 +253,13 @@ const OR_OF_AND_LIST_INNER_ARRAY_LENGTH: usize = MAX_CHILDREN_PER_NODE / OR_OF_A
 /// This structure represent properly this case.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifierOrOfAndList {
     pub specifiers: arrayvec::ArrayVec<
         arrayvec::ArrayVec<ObjectSpecifier, OR_OF_AND_LIST_INNER_ARRAY_LENGTH>,
         OR_OF_AND_LIST_OUTER_ARRAY_LENGTH,
     >,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for SpecifierOrOfAndList {
@@ -297,6 +323,8 @@ impl crate::utils::DummyInit for SpecifierOrOfAndList {
     fn dummy_init() -> Self {
         Self {
             specifiers: arrayvec::ArrayVec::new_const(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -304,11 +332,10 @@ impl crate::utils::DummyInit for SpecifierOrOfAndList {
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectSpecifier {
     Another(AnotherObjectSpecifier),
     Cast(crate::ability_tree::terminals::CastSpecifier),
-    Color(mtg_data::Color),
+    Color(crate::ability_tree::terminals::Color),
     Control(crate::ability_tree::terminals::ControlSpecifier),
     Kind(crate::ability_tree::object::ObjectKind),
     NotOfAKind(crate::ability_tree::object::ObjectKind),
@@ -317,10 +344,27 @@ pub enum ObjectSpecifier {
 
 impl ObjectSpecifier {
     /// Sortcut to create a kind: creature object specifier
-    pub fn creature() -> Self {
+    pub fn creature(#[cfg(feature = "spanned_tree")] span: crate::ability_tree::span::TreeSpan) -> Self {
         ObjectSpecifier::Kind(crate::ability_tree::object::ObjectKind::CardType(
-            mtg_data::CardType::Creature,
+            crate::ability_tree::object::CardType {
+                card_type: mtg_data::CardType::Creature,
+                #[cfg(feature = "spanned_tree")]
+                span,
+            },
         ))
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Another(child) => child.span,
+            Self::Cast(child) => child.span(),
+            Self::Color(child) => child.span,
+            Self::Control(child) => child.span(),
+            Self::Kind(child) => child.span(),
+            Self::NotOfAKind(child) => child.span(),
+            Self::NotPreviouslySelected(child) => child.span,
+        }
     }
 }
 
@@ -381,8 +425,10 @@ impl crate::utils::DummyInit for ObjectSpecifier {
 /// which means "any that is not myself".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct AnotherObjectSpecifier;
+pub struct AnotherObjectSpecifier {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for AnotherObjectSpecifier {
     fn node_id(&self) -> usize {
@@ -412,8 +458,10 @@ impl std::fmt::Display for AnotherObjectSpecifier {
 /// which means "any target that was not already selected"
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct NotPreviouslySelectedObjectSpecifier;
+pub struct NotPreviouslySelectedObjectSpecifier {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for NotPreviouslySelectedObjectSpecifier {
     fn node_id(&self) -> usize {
