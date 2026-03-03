@@ -45,6 +45,10 @@ impl AbilityTreeNode for Counter {
         write!(out, "{}", self.kind)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "counter"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

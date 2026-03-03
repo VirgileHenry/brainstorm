@@ -77,6 +77,10 @@ impl AbilityTreeNode for Number {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "number"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -124,6 +128,10 @@ impl AbilityTreeNode for FixedNumber {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.number)
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "fixed number"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -181,6 +189,10 @@ impl AbilityTreeNode for OrMoreNumber {
         write!(out, "{} or more", self.minimum)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "or more number"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -224,6 +236,10 @@ impl AbilityTreeNode for UpToNumber {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "up to {}", self.maximum)
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "up to number"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -271,6 +287,10 @@ impl AbilityTreeNode for XNumber {
         /* Fixme: display x definition */
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "x number"
     }
 
     #[cfg(feature = "spanned_tree")]

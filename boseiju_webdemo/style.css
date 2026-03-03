@@ -4,8 +4,7 @@
 
 body {
     margin: 0;
-    padding: 2rem 2.5rem;
-    max-width: 1100px;
+    padding: 2rem 5rem;
     margin-inline: auto;
     font-family:
         system-ui,
@@ -20,11 +19,6 @@ body {
 
 .site-header {
     margin-bottom: 2rem;
-}
-
-.subtitle {
-    max-width: 70ch;
-    color: #666;
 }
 
 .layout {
@@ -54,6 +48,7 @@ textarea {
     grid-auto-flow: column;
     grid-auto-columns: 1ch;
     grid-template-rows: auto auto;
+    row-gap: 0.5rem;
     overflow-x: auto;
     padding: 0.5rem 0;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -74,12 +69,47 @@ textarea {
 
 .token {
     grid-row: 2;
-    background: #e8f0ff;
-    border: 1px solid #c7d6ff;
+    background: #7aa6bf;
+    border: 1px solid #5c5c5c;
     border-radius: 4px;
     font-size: 0.7rem;
     text-align: center;
     padding: 0.15rem 0.25rem;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.node {
+    border-radius: 4px;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.35rem;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid #5c5c5c;
+}
+
+.random-btn {
+    margin-top: 0.6rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.9rem;
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.random-btn:hover {
+    background: #eaeaea;
+}
+
+.error-underline {
+    border-bottom: 3px solid #d93025;
+}
+
+.error-message {
+    color: #d93025;
+    font-size: 0.8rem;
+    padding-top: 0.15rem;
+    white-space: pre-wrap;
 }

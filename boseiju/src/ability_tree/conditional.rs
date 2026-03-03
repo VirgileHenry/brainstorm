@@ -48,6 +48,10 @@ impl AbilityTreeNode for Conditional {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "conditional"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -92,6 +96,10 @@ impl AbilityTreeNode for ConditionalIf {
         self.condition.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "if condition"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -139,6 +147,10 @@ impl AbilityTreeNode for ConditionalUnless {
         self.condition.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "unless condition"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -205,6 +217,10 @@ impl AbilityTreeNode for Condition {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "condition"
     }
 
     #[cfg(feature = "spanned_tree")]

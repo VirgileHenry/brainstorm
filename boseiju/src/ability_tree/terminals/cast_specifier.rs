@@ -51,6 +51,10 @@ impl AbilityTreeNode for CastSpecifier {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "cast specifier"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {

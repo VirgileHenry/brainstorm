@@ -102,6 +102,22 @@ pub trait AbilityTreeNode {
     /// This is mostly for debug purpuses, and it is not recommanded to use this in production.
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()>;
 
+    /// The node tag is a simple one word string that indicates what kind of node it is.
+    ///
+    /// It is primarly used for display and debug purpuses.
+    fn node_tag(&self) -> &'static str;
+
+    /// The node name is more advanced version of the tag, and can allocate memory to dynamically
+    /// changed based on the nodes internals.
+    ///
+    /// It is primarly used for display and debug purpuses.
+    ///
+    /// By default, this is the same as the node tag.
+    /// Nodes that need to provide a more interesting description can override this.
+    fn node_description(&self) -> String {
+        format!("the {} node.", self.node_tag())
+    }
+
     /// Get the span in the original oracle text that built this node.
     ///
     /// This is only available under the spanned_tree feature, and is useful for

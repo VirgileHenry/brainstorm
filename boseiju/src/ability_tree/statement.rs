@@ -50,6 +50,10 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "statement"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -126,6 +130,10 @@ impl crate::ability_tree::AbilityTreeNode for MayAbility {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "may ability"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -194,6 +202,10 @@ impl crate::ability_tree::AbilityTreeNode for ReplacableImperatives {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "replacable imperative"
     }
 
     #[cfg(feature = "spanned_tree")]

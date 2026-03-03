@@ -7,34 +7,90 @@
     </head>
     <body>
         <header class="site-header">
-            <h1>Boseiju</h1>
-            <p class="subtitle">
-                An experimental Magic: The Gathering oracle text parser. Type a
-                card name and oracle text to inspect preprocessing output.
+            <h1>Brainstorm</h1>
+            <p>
+                A Magic: The Gathering (MTG) formal grammar and oracle text
+                parser. The goal of this project is to parse human readable MTG
+                abilities into a strongly typed abstract syntax tree (AST).
+            </p>
+            <p>
+                There are many motivations behind such a project, but first,
+                take a look at the live demo ! You can enter a card's oracle
+                text (or go for a random card), and watch the parser create the
+                ability tree for that card. If the card's name is referenced
+                anywhere in the oracle text, you will also need to input it
+                below for the lexer to recognize it.
+            </p>
+            <h3>What am I looking at ?</h3>
+            <p>
+                Below the inputs, you will see the preprocessed oracle text,
+                where all instances of the card's name have been replaced with
+                the special character "~". Below, in blue are the tokens that
+                are built from the oracle text. Then, in orange, are the nodes
+                of the ability tree composing from tokens and each other to
+                create the full ability tree. Each tree node spans horizontally
+                the input that was required to build it. The goal is to build an
+                ability tree node, representing full and valid oracle text's
+                abilities.
             </p>
         </header>
 
         <main class="layout">
-            <h3>Card name</h3>
+            <label for="card_name_input">Card name</label>
             <input
                 id="card_name_input"
                 type="text"
                 placeholder="Card name..."
             />
 
-            <h3>Oracle text</h3>
+            <label for="oracle_text_input">Oracle text</label>
             <textarea
                 id="oracle_text_input"
                 placeholder="Oracle text..."
                 rows="4"
             ></textarea>
 
+            <button id="random_card_btn" class="random-btn">Random Card</button>
+
             <section class="output">
-                <h3>Parsed oracle text</h3>
+                <label for="token_grid">Parsed oracle text</label>
                 <div id="token_grid" class="token-grid"></div>
             </section>
         </main>
 
+        <h3>Motivations</h3>
+        <p>
+            While pure text rulings are nice for humans, it is quite hard for a
+            computer to make sense of the abilities of MTG cards while only
+            reading text. Converting this text into an AST makes this task way
+            easier, since trees are data structures that are easy to work with
+            from a machine standpoint. Generating AST for cards allows for all
+            kind of automation on such cards, like generating code to handle a
+            card's effects, make statistics, or look for subtrees to find cards
+            that synergise well with each other (hello,
+            <a href="https://hexxed.xyz">Hexxed</a>).
+        </p>
+        <h3>Implementation</h3>
+        <p>
+            The project is built in Rust, for it's strong type system and
+            expressiveness that matches well the complexity of MTG abilities.
+            The documentation for the project can be found
+            <a href="https://github.com/VirgileHenry/brainstorm/doc/boseiju"
+                >here</a
+            >.
+        </p>
+        <p>
+            As of me writing this, the entire project is still very much in the
+            prototyping phase, and can currently only handle 2k of the ~37k
+            cards in MTG. The goal is to be able to parse every single card. The
+            coverage is kept up to date on the
+            <a
+                href="https://github.com/VirgileHenry/brainstorm/blob/main/README.md"
+                >README of the project's repo</a
+            >.
+        </p>
+
+        <script src="scripts/example_cards.js"></script>
         <script src="scripts/boseiju_wasm.js"></script>
     </body>
 </html>

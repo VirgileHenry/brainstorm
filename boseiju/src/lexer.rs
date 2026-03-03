@@ -119,6 +119,10 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
     } else {
         let start = raw_tokens[0].start();
         let end = raw_tokens[raw_tokens.len() - 1].end();
-        Err(error::LexerError::NoTokenMatch(input[start..end].to_string()))
+        Err(error::LexerError::NoTokenMatch {
+            start: start,
+            end: end,
+            tokens: input[start..end].to_string(),
+        })
     }
 }

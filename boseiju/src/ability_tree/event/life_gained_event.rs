@@ -50,6 +50,10 @@ impl crate::ability_tree::AbilityTreeNode for LifeGainedEvent {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "player gained life event"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

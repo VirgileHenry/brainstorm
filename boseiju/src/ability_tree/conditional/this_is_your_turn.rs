@@ -26,6 +26,10 @@ impl crate::ability_tree::AbilityTreeNode for ConditionThisIsYourTurn {
         write!(out, "this is your turn")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "condition: this is your turn"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

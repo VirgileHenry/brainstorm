@@ -41,6 +41,10 @@ impl AbilityTreeNode for CardType {
         write!(out, "{}", self.card_type)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "card type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

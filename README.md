@@ -11,6 +11,14 @@ Such trees can than be used to extract what the cards effects are in a easy way 
 
 A quick demo for the oracle text parser [can be found here](https://virgilehenry.github.io/brainstorm).
 
+### Documentation
+
+The documentation for the main crates are available here:
+- [boseiju](https://virgilehenry.github.io/brainstorm/doc/boseiju)
+- [mtg-cardbase](https://virgilehenry.github.io/brainstorm/doc/mtg-cardbase)
+- [mtg-data](https://virgilehenry.github.io/brainstorm/doc/mtg-data)
+- [idris](https://virgilehenry.github.io/brainstorm/doc/idris)
+
 ### Status
 
 We keep track of how much of the cards we can parse here.
@@ -34,11 +42,3 @@ There are mutiple objectives on the card groups we aim to parse:
 <!-- END_TEST_RECAP -->
 
 Uncards are not planned to be parsed, as their wording are unique enough that it would almost always require dedicating chunks of the tree representation for them.
-
-### Structure:
-
-At the time of me writing this, the project contains the following crates:
-- krark: Test framework, allowing to run test on the entire mtg card database (or any subset of it) and provides result visualization.
-- mtg-data: Regroups easy to parse MTG common data, such as card types, sets, etc in the form of Rust Enums.
-- mtg-cardbase: The entire database of MTG cards, as raw, unparsed data fetched from the scryfall API. Currently holds 35k+ cards.
-- boseiju: The MTG parser, able to convert an oracle text into an ability tree built only from MTG data Enums.

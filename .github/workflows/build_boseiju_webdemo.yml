@@ -40,9 +40,16 @@ jobs:
       - name: Add WASM target
         run: rustup target add wasm32-unknown-unknown
       - name: Build Boseiju Wasm
+        run: ./build_webdemo.sh
+      - name: Build Rust Docs
         run: |
-          cargo build --release -p boseiju_wasm --target wasm32-unknown-unknown
-          cp ./target/wasm32-unknown-unknown/release/boseiju_wasm.wasm ./boseiju_webdemo/boseiju.wasm
+          cargo doc --release --no-deps \
+            -p mtg-cardbase \
+            -p mtg-data \
+            -p boseiju \
+            -p idris
+          mkdir -p boseiju_webdemo/doc
+          cp -r target/doc/* boseiju_webdemo/doc/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

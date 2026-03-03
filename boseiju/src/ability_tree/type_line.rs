@@ -334,6 +334,10 @@ impl AbilityTreeNode for TypeLine {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "type line"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -723,6 +727,10 @@ impl AbilityTreeNode for ArtifactSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "artifact type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -771,6 +779,10 @@ impl AbilityTreeNode for BattleSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "battle type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -800,6 +812,10 @@ impl AbilityTreeNode for ConspiracySubtype {
         use std::io::Write;
         write!(out, "conspiracy type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "conspiracy type"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -852,6 +868,10 @@ impl AbilityTreeNode for CreatureSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "creature type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -883,6 +903,10 @@ impl AbilityTreeNode for DungeonSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "dungeon type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -912,6 +936,10 @@ impl AbilityTreeNode for EmblemSubtype {
         use std::io::Write;
         write!(out, "emblem type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "emblem type"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -962,6 +990,10 @@ impl AbilityTreeNode for EnchantmentSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "enchantment type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -991,6 +1023,10 @@ impl AbilityTreeNode for HeroSubtype {
         use std::io::Write;
         write!(out, "emblem type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "hero type"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -1041,6 +1077,10 @@ impl AbilityTreeNode for InstantSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "instant type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -1087,6 +1127,10 @@ impl AbilityTreeNode for KindredSubtype {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "kindred type"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -1137,6 +1181,10 @@ impl AbilityTreeNode for LandSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "land type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -1168,6 +1216,10 @@ impl AbilityTreeNode for PhenomenonSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "phenomenon type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -1197,6 +1249,10 @@ impl AbilityTreeNode for PlaneSubtype {
         use std::io::Write;
         write!(out, "plane type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "plane type"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -1253,6 +1309,10 @@ impl AbilityTreeNode for PlaneswalkerSubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "planeswalker type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -1282,6 +1342,10 @@ impl AbilityTreeNode for SchemeSubtype {
         use std::io::Write;
         write!(out, "scheme type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "scheme type"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -1332,6 +1396,10 @@ impl AbilityTreeNode for SorcerySubtype {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "sorcery type"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> super::span::TreeSpan {
         self.span
@@ -1361,6 +1429,10 @@ impl AbilityTreeNode for VanguardSubtype {
         use std::io::Write;
         write!(out, "vanguard type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "vanguard type"
     }
 
     #[cfg(feature = "spanned_tree")]

@@ -34,6 +34,10 @@ impl crate::ability_tree::AbilityTreeNode for DiscardImperative {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "discard imperative"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

@@ -56,6 +56,10 @@ impl AbilityTreeNode for OwnerSpecifier {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "owner specifier"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {

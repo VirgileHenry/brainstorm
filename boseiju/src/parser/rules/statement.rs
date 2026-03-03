@@ -220,9 +220,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { span: dot_span })),
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::Imperatives(imperatives.clone()),
+                    statement: crate::ability_tree::statement::Statement::Imperatives({
+                        let mut imperatives = imperatives.clone();
+                        imperatives.span = imperatives.span.merge(dot_span);
+                        imperatives
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

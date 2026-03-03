@@ -42,6 +42,10 @@ path = "bin/parse_all_cards.rs"
 name = "card_coverage"
 path = "bin/card_coverage.rs"
 
+[[bin]]
+name = "export_for_webdemo"
+path = "bin/export_for_webdemo.rs"
+
 [[test]]
 name = "lexer"
 path = "tests/lexer.rs"

@@ -35,6 +35,10 @@ impl AbilityTreeNode for SelfReferencingObject {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "self referencing"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

@@ -47,6 +47,10 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "keyword ability"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -91,6 +95,10 @@ impl AbilityTreeNode for StandaloneKeywordAbility {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "standalone: {}", self.keyword_ability)
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "standalone keyword ability"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -149,6 +157,10 @@ impl crate::ability_tree::AbilityTreeNode for WardKeywordAbility {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "ward keyword ability"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -203,6 +215,10 @@ impl crate::ability_tree::AbilityTreeNode for EnchantKeywordAbility {
         write!(out, "ward—")?;
         self.enchantable_object.display(out)?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "enchant keyword ability"
     }
 
     #[cfg(feature = "spanned_tree")]

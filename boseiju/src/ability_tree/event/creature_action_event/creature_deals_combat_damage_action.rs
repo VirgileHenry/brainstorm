@@ -28,6 +28,10 @@ impl AbilityTreeNode for CreatureDealsCombatDamageAction {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "creature action: deals combat damage"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

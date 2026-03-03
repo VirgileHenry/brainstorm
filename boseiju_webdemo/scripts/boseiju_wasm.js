@@ -94,101 +94,40 @@ async function load_wasm() {
       wasm_oracle_text.free();
       wasm_lexed.free();
 
-      console.log(lexed);
       const json_result = JSON.parse(lexed);
       if (json_result.err) throw json_result.err;
 
       return json_result.tokens;
     },
 
-    parse_oracle_text(card_name, oracle_text) {
+    parse(card_name, oracle_text) {
       /* card_name is optional and should not block parsing */
       if (card_name == "") {
         card_name = "~";
       }
 
-      const encoder = new TextEncoder();
-      const card_name_bytes = encoder.encode(card_name);
-      const oracle_text_bytes = encoder.encode(oracle_text);
+      const wasm_card_name = WasmString.fromJS(wasm, card_name);
+      const wasm_oracle_text = WasmString.fromJS(wasm, oracle_text);
 
-      /* Allocate inputs memory */
-      const card_name_len = card_name_bytes.length;
-      const card_name_ptr = wasm.instance.exports.alloc(card_name_len);
-      const card_name_mem = new Uint8Array(
-        wasm.instance.exports.memory.buffer,
-        card_name_ptr,
-        card_name_len,
+      const lexed_ptr = wasm.instance.exports.parse(
+        wasm_card_name.ptr,
+        wasm_card_name.len,
+        wasm_oracle_text.ptr,
+        wasm_oracle_text.len,
       );
-      card_name_mem.set(card_name_bytes);
+      const wasm_parsed = WasmString.fromPtr(wasm, lexed_ptr);
+      const parsed = wasm_parsed.toJS();
 
-      const oracle_text_len = oracle_text_bytes.length;
-      const oracle_text_ptr = wasm.instance.exports.alloc(oracle_text_len);
-      const oracle_text_mem = new Uint8Array(
-        wasm.instance.exports.memory.buffer,
-        oracle_text_ptr,
-        oracle_text_len,
-      );
-      oracle_text_mem.set(oracle_text_bytes);
+      wasm_card_name.free();
+      wasm_oracle_text.free();
+      wasm_parsed.free();
 
-      const result_ptr = wasm.instance.exports.parse_oracle_text(
-        card_name_ptr,
-        card_name_len,
-        oracle_text_ptr,
-        oracle_text_len,
-      );
+      const json_result = JSON.parse(parsed);
+      if (json_result.err) throw json_result.err;
 
-      /* Read back the output (null-terminated) */
-      const full_mem_view = new Uint8Array(wasm.instance.exports.memory.buffer);
-      const result_bytes = [];
-
-      let i = result_ptr;
-      while (full_mem_view[i] !== 0) {
-        result_bytes.push(full_mem_view[i]);
-        i++;
-      }
-
-      /* +1 for null terminating byte */
-      const result_len = result_bytes.length + 1;
-      const result = new TextDecoder().decode(new Uint8Array(result_bytes));
-
-      wasm.instance.exports.free(card_name_ptr, card_name_len);
-      wasm.instance.exports.free(oracle_text_ptr, oracle_text_len);
-      // Fixme?
-      wasm.instance.exports.free(result_ptr, result_len);
-
-      return result;
+      return json_result.nodes;
     },
   };
-}
-
-function create_error_html(error) {
-  return `<p class="error">${error}</p>`;
-}
-
-function render_preprocessed(text) {
-  const NL_ICON = "⏎";
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/\n/g, `<span class="new-line">${NL_ICON}</span>`);
-}
-
-function render_tokens(tokens, total_length) {
-  const row = document.createElement("div");
-  row.className = "token-row";
-
-  // Fill grid with empty cells so spans work
-  row.style.gridTemplateColumns = `repeat(${total_length}, 1ch)`;
-
-  for (const tok of tokens) {
-    const box = document.createElement("div");
-    box.className = "token";
-    box.style.gridColumn = `${tok.span.start + 1} / span ${tok.span.length}`;
-    box.textContent = Object.keys(tok.kind)[0];
-    row.appendChild(box);
-  }
-
-  return row;
 }
 
 function fill_grid_with_preprocessed(grid, preprocessed) {
@@ -206,7 +145,7 @@ function fill_grid_with_preprocessed(grid, preprocessed) {
     cell.dataset.index = i;
 
     const ch = preprocessed[i];
-    if (ch === "\n") {
+    if (ch == "\n") {
       cell.textContent = NL_ICON;
       cell.classList.add("new-line");
     } else {
@@ -218,15 +157,74 @@ function fill_grid_with_preprocessed(grid, preprocessed) {
 }
 
 function fill_grid_with_tokens(grid, tokens) {
+  if (!tokens || tokens.length == 0) return;
+
+  grid.style.gridTemplateRows = `repeat(2, auto)`;
+
   for (const tok of tokens) {
     const box = document.createElement("div");
     box.className = "token";
     box.style.gridRow = 2;
-    box.style.gridColumn = `${tok.span.start + 1} / span ${tok.span.length}`;
+    box.style.gridColumn = `${tok.start + 1} / ${tok.end + 1}`;
+    box.textContent = tok.display_text;
+    box.title = tok.hover_text;
 
-    const [kind, variant] = Object.entries(tok.kind)[0];
-    box.textContent = kind;
-    box.title = `${kind} :: ${variant}`;
+    grid.appendChild(box);
+  }
+}
+
+function add_error_row(grid, layer, error) {
+  const row = layer + 2; // 1 = chars, 2 = layer 0
+
+  const start = error.start;
+  const end = error.end;
+
+  const currentRows = getComputedStyle(grid).gridTemplateRows.split(" ").length;
+  if (row > currentRows) {
+    grid.style.gridTemplateRows = `repeat(${row}, auto)`;
+  }
+
+  // Red underline span
+  const underline = document.createElement("div");
+  underline.className = "error-underline";
+  underline.style.gridRow = row;
+  underline.style.gridColumn = `${start + 1} / ${end + 1}`;
+  grid.appendChild(underline);
+
+  // Error message (row below)
+  const message = document.createElement("div");
+  message.className = "error-message";
+  message.style.gridRow = row + 1;
+  message.style.gridColumn = `1 / -1`;
+  message.textContent = error.message;
+  grid.appendChild(message);
+
+  grid.style.gridTemplateRows = `repeat(${row + 1}, auto)`;
+}
+
+function fill_grid_with_nodes(grid, nodes) {
+  if (!nodes || nodes.length === 0) return;
+
+  const maxLayer = Math.max(...nodes.map((n) => n.layer));
+  const orangeHue = 28;
+  grid.style.gridTemplateRows = `repeat(${1 + maxLayer + 1}, auto)`;
+
+  for (const node of nodes) {
+    // Ignore invalid spans
+    if (node.end <= node.start) continue;
+
+    const box = document.createElement("div");
+    box.className = "node";
+
+    box.style.gridRow = node.layer + 2;
+    box.style.gridColumn = `${node.start + 1} / ${node.end + 1}`;
+    box.textContent = node.display_text;
+    box.title = node.hover_text;
+
+    const t = node.layer / (maxLayer || 1);
+    const lightness = 80 - t * 25; // darker as layers grow
+    box.style.background = `hsl(${orangeHue}, 85%, ${lightness}%)`;
+
     grid.appendChild(box);
   }
 }
@@ -236,22 +234,47 @@ load_wasm().then((wasm_module) => {
   const card_name_input = document.getElementById("card_name_input");
   const oracle_text_input = document.getElementById("oracle_text_input");
   const grid = document.getElementById("token_grid");
+  const random_btn = document.getElementById("random_card_btn");
 
   function update_output() {
-    const preprocessed = wasm_module.preprocess(
-      card_name_input.value,
-      oracle_text_input.value,
-    );
-    const tokens = wasm_module.lex(
-      card_name_input.value,
-      oracle_text_input.value,
-    );
+    const name = card_name_input.value;
+    const oracle = oracle_text_input.value;
 
+    const preprocessed = wasm_module.preprocess(name, oracle);
     fill_grid_with_preprocessed(grid, preprocessed);
+
+    let tokens;
+    try {
+      tokens = wasm_module.lex(name, oracle);
+    } catch (err) {
+      add_error_row(grid, 0, err);
+      return;
+    }
+
     fill_grid_with_tokens(grid, tokens);
+
+    let parsed;
+    try {
+      parsed = wasm_module.parse(name, oracle);
+    } catch (err) {
+      add_error_row(grid, 1, err);
+      return;
+    }
+
+    fill_grid_with_nodes(grid, parsed);
   }
 
-  update_output();
+  function apply_random_card() {
+    const index = Math.floor(Math.random() * EXAMPLE_CARDS.length);
+    const card = EXAMPLE_CARDS[index];
+
+    card_name_input.value = card.name;
+    oracle_text_input.value = card.oracle;
+    update_output();
+  }
+
+  apply_random_card();
   card_name_input.addEventListener("input", update_output);
   oracle_text_input.addEventListener("input", update_output);
+  random_btn.addEventListener("click", apply_random_card);
 });

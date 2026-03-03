@@ -49,6 +49,10 @@ impl AbilityTreeNode for PlayerActionEvent {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "player action event"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -109,6 +113,10 @@ impl AbilityTreeNode for PlayerAction {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "player action"
     }
 
     #[cfg(feature = "spanned_tree")]

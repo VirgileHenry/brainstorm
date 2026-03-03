@@ -41,6 +41,10 @@ impl AbilityTreeNode for PreviouslyMentionnedObject {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "previously mentionned object"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

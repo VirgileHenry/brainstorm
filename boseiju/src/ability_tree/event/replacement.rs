@@ -54,6 +54,10 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "event replacement"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {

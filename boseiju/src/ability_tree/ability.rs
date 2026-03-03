@@ -51,6 +51,10 @@ impl AbilityTreeNode for AbilityKind {
         }
     }
 
+    fn node_tag(&self) -> &'static str {
+        "ability kind"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -128,6 +132,10 @@ impl AbilityTreeNode for Ability {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "text ability"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -191,6 +199,10 @@ impl AbilityTreeNode for KeywordAbility {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "keyword ability"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -248,6 +260,10 @@ impl AbilityTreeNode for AbilityWordAbility {
         self.ability.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "ability word"
     }
 
     #[cfg(feature = "spanned_tree")]

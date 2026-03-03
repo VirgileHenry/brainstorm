@@ -42,6 +42,10 @@ impl AbilityTreeNode for TokenLayout {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "token description"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

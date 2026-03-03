@@ -41,6 +41,10 @@ impl AbilityTreeNode for SpellSubtype {
         write!(out, "{}", self.spell_subtype)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "instant / sorcery subtype"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

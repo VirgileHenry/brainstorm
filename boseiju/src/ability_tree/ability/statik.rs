@@ -53,6 +53,10 @@ impl AbilityTreeNode for StaticAbility {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "static ability"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -120,6 +124,10 @@ impl AbilityTreeNode for StaticAbilityKind {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "static ability kind"
     }
 
     #[cfg(feature = "spanned_tree")]

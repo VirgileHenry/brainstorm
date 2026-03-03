@@ -10,3 +10,4 @@ crate-type = ["cdylib"]
 boseiju = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+idris = { workspace = true }

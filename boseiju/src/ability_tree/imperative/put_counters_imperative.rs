@@ -51,6 +51,10 @@ impl AbilityTreeNode for PutCountersImperative {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "put counters imperative"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -107,6 +111,10 @@ impl crate::ability_tree::AbilityTreeNode for CounterOnPermanent {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "counters on permanent"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -170,6 +178,10 @@ impl AbilityTreeNode for CounterKind {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "counter kind"
     }
 
     #[cfg(feature = "spanned_tree")]

@@ -108,6 +108,10 @@ impl crate::ability_tree::AbilityTreeNode for ObjectSpecifiers {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "object specifiers"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -165,6 +169,10 @@ impl AbilityTreeNode for SpecifierAndList {
             out.pop_branch();
         }
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "specifiers and list"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -244,6 +252,10 @@ impl AbilityTreeNode for SpecifierOrList {
             out.pop_branch();
         }
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "specifiers or list"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -340,6 +352,10 @@ impl AbilityTreeNode for SpecifierOrOfAndList {
             out.pop_branch();
         }
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "specifiers or of and list"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -443,6 +459,10 @@ impl AbilityTreeNode for ObjectSpecifier {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "object specifier"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -490,6 +510,10 @@ impl AbilityTreeNode for AnotherObjectSpecifier {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "another object specifier"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -526,6 +550,10 @@ impl AbilityTreeNode for NotPreviouslySelectedObjectSpecifier {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "not previously selected specifier"
     }
 
     #[cfg(feature = "spanned_tree")]

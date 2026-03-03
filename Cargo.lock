@@ -93,6 +93,7 @@ name = "boseiju_wasm"
 version = "0.0.1"
 dependencies = [
  "boseiju",
+ "idris",
  "serde",
  "serde_json",
 ]

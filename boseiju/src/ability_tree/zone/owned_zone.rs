@@ -37,6 +37,10 @@ impl AbilityTreeNode for OwnedZone {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "owned zone"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

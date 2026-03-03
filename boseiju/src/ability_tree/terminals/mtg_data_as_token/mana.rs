@@ -89,6 +89,10 @@ impl AbilityTreeNode for Mana {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "mana symbol"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -161,6 +165,10 @@ impl AbilityTreeNode for AnyMana {
         write!(out, "{}", self.mana)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "numbered mana"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -195,6 +203,10 @@ impl AbilityTreeNode for ColoredMana {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.mana)
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "colored mana"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -233,6 +245,10 @@ impl AbilityTreeNode for HybridMana {
         write!(out, "{}", self.mana)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "hybrid mana"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -267,6 +283,10 @@ impl AbilityTreeNode for MonocoloredHybridMana {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.mana)
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "monocolored hybrid mana"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -305,6 +325,10 @@ impl AbilityTreeNode for PhyrexianMana {
         write!(out, "{}", self.mana)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "phyrexian mana"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -339,6 +363,10 @@ impl AbilityTreeNode for HybridPhyrexianMana {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{}", self.mana)
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "hybrid phyrexian mana"
     }
 
     #[cfg(feature = "spanned_tree")]

@@ -55,6 +55,10 @@ impl AbilityTreeNode for DealsDamageImperative {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "deal damage imperative"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -114,6 +118,10 @@ impl AbilityTreeNode for DamagesDealt {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "damage dealt"
     }
 
     #[cfg(feature = "spanned_tree")]

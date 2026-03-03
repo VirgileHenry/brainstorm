@@ -55,6 +55,10 @@ impl AbilityTreeNode for ContinuousEffectModifyObject {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "continuous effect: modify object"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -118,6 +122,10 @@ impl AbilityTreeNode for ObjectAbilitiesModification {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "object modification"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -162,6 +170,10 @@ impl AbilityTreeNode for ObjectGainAbility {
         self.ability.display(out)?;
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "object gain ability modification"
     }
 
     #[cfg(feature = "spanned_tree")]

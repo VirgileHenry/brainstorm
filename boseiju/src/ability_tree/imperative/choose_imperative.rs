@@ -62,6 +62,10 @@ impl AbilityTreeNode for ChooseImperative {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "choose imperative"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

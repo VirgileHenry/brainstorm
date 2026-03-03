@@ -54,6 +54,10 @@ impl AbilityTreeNode for CreatureActionEvent {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "creature action event"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -118,6 +122,10 @@ impl AbilityTreeNode for CreatureAction {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "creature action"
     }
 
     #[cfg(feature = "spanned_tree")]

@@ -41,6 +41,10 @@ impl AbilityTreeNode for PlaneswalkerSubtype {
         write!(out, "{}", self.planeswalker_subtype)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "planeswalker subtype"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

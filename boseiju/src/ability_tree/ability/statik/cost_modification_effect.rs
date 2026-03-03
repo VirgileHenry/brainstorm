@@ -38,6 +38,10 @@ impl crate::ability_tree::AbilityTreeNode for CostModificationEffect {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "cost modification effect"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -105,6 +109,10 @@ impl crate::ability_tree::AbilityTreeNode for CostModification {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "cost modification"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -149,6 +157,10 @@ impl AbilityTreeNode for CostModificationCostMore {
         self.more.display(out)?;
         write!(out, " more to cast")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "cost modification: cost more"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -197,6 +209,10 @@ impl AbilityTreeNode for CostModificationCostLess {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "cost modification: cost less"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -241,6 +257,10 @@ impl AbilityTreeNode for CostModificationCostSet {
         self.set.display(out)?;
         write!(out, " to cast")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "cost modification: set cost to"
     }
 
     #[cfg(feature = "spanned_tree")]

@@ -47,6 +47,10 @@ impl AbilityTreeNode for Instant {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "instant"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -139,6 +143,10 @@ impl AbilityTreeNode for ForwardDuration {
         let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn AbilityTreeNode);
         children
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "forward duration"
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -238,6 +246,10 @@ impl AbilityTreeNode for BackwardDuration {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "backward duration"
     }
 
     #[cfg(feature = "spanned_tree")]

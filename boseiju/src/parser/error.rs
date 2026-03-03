@@ -109,13 +109,13 @@ impl std::error::Error for ParserError {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PossibleExpectedToken {
-    expected: usize,
-    for_nodes: Vec<(usize, crate::parser::rules::ParserRuleDeclarationLocation)>,
+    pub expected: usize,
+    pub for_nodes: Vec<(usize, crate::parser::rules::ParserRuleDeclarationLocation)>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct FoundToken {
-    name: &'static str,
-    position: usize,
-    length: usize,
+    pub name: &'static str,
+    pub position: usize,
+    pub length: usize,
 }

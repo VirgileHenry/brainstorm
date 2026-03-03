@@ -31,6 +31,10 @@ impl crate::ability_tree::AbilityTreeNode for EntersTheBattlefieldEvent {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "enters the battlefield event"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

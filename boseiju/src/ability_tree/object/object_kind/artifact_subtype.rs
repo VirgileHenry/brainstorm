@@ -41,6 +41,10 @@ impl AbilityTreeNode for ArtifactSubtype {
         write!(out, "{}", self.artifact_subtype)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "artifact subtype"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

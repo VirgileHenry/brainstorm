@@ -41,6 +41,10 @@ impl AbilityTreeNode for LandSubtype {
         write!(out, "{}", self.land_subtype)
     }
 
+    fn node_tag(&self) -> &'static str {
+        "land subtype"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

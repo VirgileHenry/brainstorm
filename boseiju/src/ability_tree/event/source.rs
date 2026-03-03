@@ -46,6 +46,10 @@ impl crate::ability_tree::AbilityTreeNode for EventSource {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "event source"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
@@ -83,6 +87,10 @@ impl crate::ability_tree::AbilityTreeNode for EffectEventSource {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "event source: an effect")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "effect event source"
     }
 
     #[cfg(feature = "spanned_tree")]

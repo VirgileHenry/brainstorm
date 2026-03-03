@@ -39,6 +39,10 @@ impl AbilityTreeNode for CreateTokenImperative {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "create tokens imperative"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
@@ -96,6 +100,10 @@ impl AbilityTreeNode for TokenCreation {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "token creation"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -160,6 +168,10 @@ impl AbilityTreeNode for CreatedTokenKind {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "token kind"
     }
 
     #[cfg(feature = "spanned_tree")]

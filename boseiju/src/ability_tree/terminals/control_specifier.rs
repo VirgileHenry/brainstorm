@@ -51,6 +51,10 @@ impl AbilityTreeNode for ControlSpecifier {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "control specifier"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {

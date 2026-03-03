@@ -41,6 +41,10 @@ impl AbilityTreeNode for TokenCreationReplacement {
         Ok(())
     }
 
+    fn node_tag(&self) -> &'static str {
+        "token creation replacement"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span

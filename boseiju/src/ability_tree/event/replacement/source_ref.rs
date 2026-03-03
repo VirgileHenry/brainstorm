@@ -43,6 +43,10 @@ impl AbilityTreeNode for EventSourceReference {
         write!(out, "{self}")
     }
 
+    fn node_tag(&self) -> &'static str {
+        "event source reference"
+    }
+
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
