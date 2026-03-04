@@ -12,10 +12,19 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum EventReplacement {
     TokenCreation(TokenCreationReplacement),
     CounterOnPermanent(CounterOnPermanentReplacement),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl EventReplacement {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::TokenCreation(child) => child.span,
+            Self::CounterOnPermanent(child) => child.span,
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for EventReplacement {
@@ -43,6 +52,18 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "event replacement"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::TokenCreation(child) => child.node_span(),
+            Self::CounterOnPermanent(child) => child.node_span(),
+        }
     }
 }
 

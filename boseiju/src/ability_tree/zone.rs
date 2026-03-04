@@ -15,12 +15,32 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ZoneReference {
-    Anywhere,
-    Exile,
+    Anywhere {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Exile {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     OwnedZone(OwnedZone),
-    TheBattlefield,
+    TheBattlefield {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ZoneReference {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Anywhere { span } => *span,
+            Self::Exile { span } => *span,
+            Self::OwnedZone(child) => child.span,
+            Self::TheBattlefield { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for ZoneReference {
@@ -33,7 +53,7 @@ impl AbilityTreeNode for ZoneReference {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::OwnedZone(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Anywhere | Self::Exile | Self::TheBattlefield => {
+            Self::Anywhere { .. } | Self::Exile { .. } | Self::TheBattlefield { .. } => {
                 children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                     crate::ability_tree::NodeKind::ZoneReference(self.clone()).id(),
                 ) as &dyn AbilityTreeNode)
@@ -45,10 +65,24 @@ impl AbilityTreeNode for ZoneReference {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         match self {
-            ZoneReference::Anywhere => write!(out, "anywhere"),
-            ZoneReference::Exile => write!(out, "exile"),
-            ZoneReference::OwnedZone(owned) => owned.display(out),
-            ZoneReference::TheBattlefield => write!(out, "the battlefield"),
+            Self::Anywhere { .. } => write!(out, "anywhere"),
+            Self::Exile { .. } => write!(out, "exile"),
+            Self::OwnedZone(owned) => owned.display(out),
+            Self::TheBattlefield { .. } => write!(out, "the battlefield"),
+        }
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "zone reference type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Anywhere { span } => *span,
+            Self::Exile { span } => *span,
+            Self::OwnedZone(child) => child.node_span(),
+            Self::TheBattlefield { span } => *span,
         }
     }
 }
@@ -56,6 +90,9 @@ impl AbilityTreeNode for ZoneReference {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ZoneReference {
     fn dummy_init() -> Self {
-        Self::Anywhere
+        Self::Anywhere {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

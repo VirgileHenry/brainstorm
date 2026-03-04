@@ -1,25 +1,40 @@
 use super::ParserNode;
-use crate::lexer::tokens::{TokenKind, non_terminals};
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [super::ParserRule {
         expanded: super::RuleLhs::new(&[
-            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)).id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::Event { event: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)).id(),
+            ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::EventReplacement { replacement: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Instead)).id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
         ]),
         merged: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::If)),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    #[cfg(feature = "spanned_tree")] span: if_span })),
                 ParserNode::Event { event },
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::Comma)),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                 ParserNode::EventReplacement { replacement },
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Instead)),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead {
+                    #[cfg(feature = "spanned_tree")]span: instead_span })),
             ] => {
                 use crate::ability_tree::ability::statik::continuous_effect;
                 Ok(ParserNode::ContinuousEffectKind {
@@ -27,6 +42,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         continuous_effect::ContinuousEffectReplacementEvent {
                             replaced_event: event.clone(),
                             replaced_by: replacement.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: if_span.merge(instead_span),
                         },
                     ),
                 })

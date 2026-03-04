@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ExileImperative {
     pub object: crate::ability_tree::object::ObjectReference,
     pub follow_up: Option<ExileFollowUp>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for ExileImperative {
@@ -50,6 +51,15 @@ impl crate::ability_tree::AbilityTreeNode for ExileImperative {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "exile imperative"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -58,6 +68,8 @@ impl crate::utils::DummyInit for ExileImperative {
         Self {
             object: crate::utils::dummy(),
             follow_up: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -65,9 +77,17 @@ impl crate::utils::DummyInit for ExileImperative {
 /// List of things that can happen after exiling stuff
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ExileFollowUp {
     ReturnIt(ExileFollowUpReturn),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl ExileFollowUp {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ReturnIt(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for ExileFollowUp {
@@ -94,6 +114,17 @@ impl AbilityTreeNode for ExileFollowUp {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "exile follow up"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ReturnIt(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -106,10 +137,11 @@ impl crate::utils::DummyInit for ExileFollowUp {
 /// Follow up to return an object after exiling it.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ExileFollowUpReturn {
     pub return_imperative: crate::ability_tree::imperative::ReturnImperative,
     pub at: Option<crate::ability_tree::time::Instant>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ExileFollowUpReturn {
@@ -150,6 +182,15 @@ impl AbilityTreeNode for ExileFollowUpReturn {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "exile follow up: return"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -158,6 +199,8 @@ impl crate::utils::DummyInit for ExileFollowUpReturn {
         Self {
             return_imperative: crate::utils::dummy(),
             at: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

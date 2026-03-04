@@ -4,9 +4,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Imperative to draw cards or make a player draw cards.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct GainLifeImperative {
     pub amount: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for GainLifeImperative {
@@ -32,6 +33,15 @@ impl crate::ability_tree::AbilityTreeNode for GainLifeImperative {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "gain life imperative"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -39,6 +49,8 @@ impl crate::utils::DummyInit for GainLifeImperative {
     fn dummy_init() -> Self {
         Self {
             amount: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

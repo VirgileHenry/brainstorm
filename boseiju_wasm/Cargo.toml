@@ -1,0 +1,13 @@
+[package]
+name = "boseiju_wasm"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+boseiju = { workspace = true, features=["spanned_tree"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+idris = { workspace = true }

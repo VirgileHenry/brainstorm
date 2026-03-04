@@ -1,10 +1,11 @@
 #[derive(Debug, Clone)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct NormalLayout {
     pub mana_cost: Option<crate::ability_tree::terminals::ManaCost>,
     pub card_type: crate::ability_tree::type_line::TypeLine,
     pub abilities: crate::AbilityTree,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl super::LayoutImpl for NormalLayout {
@@ -18,35 +19,44 @@ impl super::LayoutImpl for NormalLayout {
 
     #[cfg(feature = "parser")]
     fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
-        use std::str::FromStr;
+        use crate::lexer::IntoToken;
+
+        let type_line_span = crate::lexer::Span {
+            start: 0,
+            length: raw_card.type_line.len(),
+            text: raw_card.type_line.as_str(),
+        };
 
         Ok(NormalLayout {
             mana_cost: match raw_card.mana_cost.as_ref() {
-                Some(mana_cost) => Some(
-                    crate::ability_tree::terminals::ManaCost::from_str(mana_cost)
-                        .map_err(|e| format!("Failed to parse mana cost: {e}"))?,
-                ),
+                Some(mana_cost) => {
+                    use crate::lexer::IntoToken;
+
+                    let mana_cost_span = crate::lexer::Span {
+                        start: 0,
+                        length: mana_cost.len(),
+                        text: mana_cost,
+                    };
+                    Some(
+                        crate::ability_tree::terminals::ManaCost::try_from_span(&mana_cost_span)
+                            .ok_or_else(|| format!("Failed to parse mana cost from: {mana_cost}"))?,
+                    )
+                }
                 None => None,
             },
-            card_type: crate::ability_tree::type_line::TypeLine::parse(&raw_card.type_line, raw_card)
-                .map_err(|e| format!("Failed to parse card type: {e}"))?,
+            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span)
+                .ok_or_else(|| format!("Failed to parse card type: {}", raw_card.type_line))?,
             abilities: match raw_card.oracle_text.as_ref() {
                 Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
                     .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                 None => crate::AbilityTree::empty(),
             },
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         })
     }
 
-    fn layout_debug_display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
-        writeln!(output, "│ ╰─ Normal:")?;
-        if let Some(mana_cost) = self.mana_cost.as_ref() {
-            writeln!(output, "│    ├─ Mana Cost: {mana_cost}")?;
-        }
-        writeln!(output, "│    ├─ Type Line: {}", self.card_type)?;
-        write!(output, "│    ╰─ Abilities: ")?;
-        self.abilities.display_from_root(output, "│       ")?;
-        writeln!(output, "")?;
-        Ok(())
+    fn layout_debug_display<W: std::io::Write>(&self, _output: &mut W) -> std::io::Result<()> {
+        unimplemented!()
     }
 }

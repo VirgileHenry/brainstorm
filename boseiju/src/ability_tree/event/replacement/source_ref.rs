@@ -5,9 +5,20 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum EventSourceReference {
-    ThatEvent,
+    ThatEvent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl EventSourceReference {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ThatEvent { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for EventSourceReference {
@@ -31,12 +42,23 @@ impl AbilityTreeNode for EventSourceReference {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    fn node_tag(&self) -> &'static str {
+        "event source reference"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ThatEvent { span } => *span,
+        }
+    }
 }
 
 impl std::fmt::Display for EventSourceReference {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::ThatEvent => write!(f, "replaced event"),
+            Self::ThatEvent { .. } => write!(f, "replaced event"),
         }
     }
 }
@@ -44,6 +66,9 @@ impl std::fmt::Display for EventSourceReference {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for EventSourceReference {
     fn dummy_init() -> Self {
-        Self::ThatEvent
+        Self::ThatEvent {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -3,7 +3,6 @@ use crate::ability_tree::card_layout::*;
 /// All the layouts of Magic: The Gathering for playable cards.
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Layout {
     Normal { layout: NormalLayout },
     Split {},

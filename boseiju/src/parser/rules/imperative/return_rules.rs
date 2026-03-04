@@ -1,5 +1,5 @@
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -10,21 +10,34 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Return any object from a zone to another */ ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Return)).id(),
+            ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::From)).id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::ZoneReference { zone: dummy() }.id(),
-            ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
             ParserNode::ZoneReference { zone: dummy() }.id(),
         ]),
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(TokenKind::PlayerAction(non_terminals::PlayerAction::Return)),
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                    #[cfg(feature = "spanned_tree")]span: start_span })),
                 ParserNode::ObjectReference { reference },
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::From)),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                 ParserNode::ZoneReference { zone: from_zone },
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                 ParserNode::ZoneReference { zone: to_zone },
             ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::Return(
@@ -32,6 +45,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         object: reference.clone(),
                         from: from_zone.clone(),
                         to: to_zone.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: start_span.merge(&to_zone.span()),
                     },
                 ),
             }),

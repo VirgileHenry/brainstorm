@@ -6,10 +6,11 @@ const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 /// Imperative to put counters on objects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct RemoveCountersImperative {
     pub object: crate::ability_tree::object::ObjectReference,
     pub counters: crate::utils::HeapArrayVec<RemovableCounterOnPermanent, MAX_COUNTER_AMOUNT>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for RemoveCountersImperative {
@@ -49,6 +50,15 @@ impl AbilityTreeNode for RemoveCountersImperative {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "remove counters imperative"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -57,6 +67,8 @@ impl crate::utils::DummyInit for RemoveCountersImperative {
         Self {
             object: crate::utils::dummy(),
             counters: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -64,10 +76,11 @@ impl crate::utils::DummyInit for RemoveCountersImperative {
 /// An amount and a kind of counters to be put on a permanent.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct RemovableCounterOnPermanent {
     pub amount: crate::ability_tree::number::Number,
     pub counter: RemovableCounterKind,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for RemovableCounterOnPermanent {
@@ -99,6 +112,15 @@ impl crate::ability_tree::AbilityTreeNode for RemovableCounterOnPermanent {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "removable counter from permanent"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 /// Kind of counter that is put on a permanent.
@@ -107,10 +129,22 @@ impl crate::ability_tree::AbilityTreeNode for RemovableCounterOnPermanent {
 /// a previously mentionned kind of counter, e.g. "that many counters on...".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum RemovableCounterKind {
-    AnyCounter,
+    AnyCounter {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NewCounter(crate::ability_tree::terminals::Counter),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl RemovableCounterKind {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AnyCounter { span } => *span,
+            Self::NewCounter(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for RemovableCounterKind {
@@ -124,7 +158,7 @@ impl AbilityTreeNode for RemovableCounterKind {
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::AnyCounter => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+            Self::AnyCounter { .. } => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::PreviouslyMentionnedCounter.id(),
             ) as &dyn AbilityTreeNode),
             Self::NewCounter(counter) => children.push(counter as &dyn AbilityTreeNode),
@@ -137,17 +171,32 @@ impl AbilityTreeNode for RemovableCounterKind {
         write!(out, "counter kind:")?;
         out.push_final_branch()?;
         match self {
-            Self::AnyCounter => write!(out, "any kind of counter")?,
+            Self::AnyCounter { .. } => write!(out, "any kind of counter")?,
             Self::NewCounter(counter) => counter.display(out)?,
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "removable counter kind"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AnyCounter { span } => *span,
+            Self::NewCounter(child) => child.node_span(),
+        }
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for RemovableCounterKind {
     fn dummy_init() -> Self {
-        Self::AnyCounter
+        Self::AnyCounter {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -4,10 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CounterOnPermanentReplacement {
     pub source_ref: super::EventSourceReference,
     pub put_counters: crate::ability_tree::imperative::PutCountersImperative,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CounterOnPermanentReplacement {
@@ -39,6 +40,15 @@ impl AbilityTreeNode for CounterOnPermanentReplacement {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "counter on permanent replacement"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -47,6 +57,8 @@ impl crate::utils::DummyInit for CounterOnPermanentReplacement {
         Self {
             source_ref: crate::utils::dummy(),
             put_counters: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

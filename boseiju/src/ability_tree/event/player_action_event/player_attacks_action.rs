@@ -7,10 +7,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// they fight each other, or when they attack a player.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlayerAttacksAction {
     pub attacked_player: Option<crate::ability_tree::terminals::PlayerSpecifier>,
     pub with: Option<crate::ability_tree::object::ObjectReference>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PlayerAttacksAction {
@@ -41,6 +42,15 @@ impl AbilityTreeNode for PlayerAttacksAction {
 
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "player action: attack"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -49,6 +59,8 @@ impl crate::utils::DummyInit for PlayerAttacksAction {
         Self {
             attacked_player: None,
             with: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

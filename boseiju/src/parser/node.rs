@@ -6,7 +6,7 @@ use crate::ability_tree;
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ParserNode {
-    LexerToken(crate::lexer::tokens::TokenKind),
+    LexerToken(crate::lexer::tokens::Token),
     Ability {
         ability: ability_tree::ability::Ability,
     },
@@ -63,6 +63,8 @@ pub enum ParserNode {
     },
     ImperativeChoices {
         choices: crate::utils::HeapArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>,
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
     },
     KeywordAbility {
         ability: ability_tree::ability::KeywordAbility,
@@ -111,8 +113,8 @@ pub enum ParserNode {
     },
 }
 
-impl<'src> From<crate::lexer::tokens::Token<'src>> for ParserNode {
-    fn from(token: crate::lexer::tokens::Token<'src>) -> Self {
-        ParserNode::LexerToken(token.kind)
+impl From<crate::lexer::tokens::Token> for ParserNode {
+    fn from(token: crate::lexer::tokens::Token) -> Self {
+        ParserNode::LexerToken(token)
     }
 }

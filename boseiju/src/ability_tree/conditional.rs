@@ -16,7 +16,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// and an "unless" that requires that the condition has not been met.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Conditional {
     If(ConditionalIf),
     Unless(ConditionalUnless),
@@ -48,6 +47,18 @@ impl AbilityTreeNode for Conditional {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "conditional"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::If(child) => child.node_span(),
+            Self::Unless(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -60,9 +71,10 @@ impl crate::utils::DummyInit for Conditional {
 /// "If" variant of the [`Conditional`].
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ConditionalIf {
     pub condition: Condition,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ConditionalIf {
@@ -85,6 +97,15 @@ impl AbilityTreeNode for ConditionalIf {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "if condition"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -92,6 +113,8 @@ impl crate::utils::DummyInit for ConditionalIf {
     fn dummy_init() -> Self {
         Self {
             condition: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -99,9 +122,10 @@ impl crate::utils::DummyInit for ConditionalIf {
 /// "Unless" variant of the [`Conditional`].
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ConditionalUnless {
     pub condition: Condition,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ConditionalUnless {
@@ -124,6 +148,15 @@ impl AbilityTreeNode for ConditionalUnless {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "unless condition"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -131,6 +164,8 @@ impl crate::utils::DummyInit for ConditionalUnless {
     fn dummy_init() -> Self {
         Self {
             condition: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -138,11 +173,21 @@ impl crate::utils::DummyInit for ConditionalUnless {
 /// A condition regroups what can be used as conditions for conditinals.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Condition {
     EventOccured(ConditionEventOccured),
     ObjectMatchSpecifiers(ConditionObjectMatchSpecifiers),
     ThisIsYourTurn(ConditionThisIsYourTurn),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Condition {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::EventOccured(child) => child.span,
+            Self::ObjectMatchSpecifiers(child) => child.span,
+            Self::ThisIsYourTurn(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for Condition {
@@ -172,6 +217,19 @@ impl AbilityTreeNode for Condition {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "condition"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::EventOccured(child) => child.node_span(),
+            Self::ObjectMatchSpecifiers(child) => child.node_span(),
+            Self::ThisIsYourTurn(child) => child.node_span(),
+        }
     }
 }
 

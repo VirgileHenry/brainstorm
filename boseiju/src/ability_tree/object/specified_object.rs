@@ -5,10 +5,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SpecifiedObject {
     pub amount: CountSpecifier,
     pub specifiers: Option<ObjectSpecifiers>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for SpecifiedObject {
@@ -47,5 +48,14 @@ impl AbilityTreeNode for SpecifiedObject {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "specified object"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }

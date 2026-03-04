@@ -1,16 +1,35 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::terminals::Terminal;
+use crate::lexer::IntoToken;
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum OwnableZone {
-    Graveyard,
-    Hand,
-    Library,
+    Graveyard {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Hand {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Library {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl OwnableZone {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Graveyard { span } => *span,
+            Self::Hand { span } => *span,
+            Self::Library { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for OwnableZone {
@@ -37,25 +56,47 @@ impl AbilityTreeNode for OwnableZone {
         use std::io::Write;
         write!(out, "{self}")
     }
+
+    fn node_tag(&self) -> &'static str {
+        "zone"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Graveyard { span } => *span,
+            Self::Hand { span } => *span,
+            Self::Library { span } => *span,
+        }
+    }
 }
 
 impl std::fmt::Display for OwnableZone {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OwnableZone::Graveyard => write!(f, "graveyard"),
-            OwnableZone::Hand => write!(f, "hand"),
-            OwnableZone::Library => write!(f, "library"),
+            OwnableZone::Graveyard { .. } => write!(f, "graveyard"),
+            OwnableZone::Hand { .. } => write!(f, "hand"),
+            OwnableZone::Library { .. } => write!(f, "library"),
         }
     }
 }
 
-impl Terminal for OwnableZone {
+impl IntoToken for OwnableZone {
     #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        match source {
-            "graveyard" => Some(OwnableZone::Graveyard),
-            "hand" => Some(OwnableZone::Hand),
-            "library" => Some(OwnableZone::Library),
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "graveyard" => Some(OwnableZone::Graveyard {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "hand" => Some(OwnableZone::Hand {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "library" => Some(OwnableZone::Library {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             _ => None,
         }
     }
@@ -64,6 +105,9 @@ impl Terminal for OwnableZone {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for OwnableZone {
     fn dummy_init() -> Self {
-        Self::Library
+        Self::Library {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

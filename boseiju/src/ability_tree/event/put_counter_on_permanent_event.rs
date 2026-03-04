@@ -5,12 +5,13 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PutCounterOnPermanentEvent {
     pub source: source::EventSource,
     pub quantity: crate::ability_tree::number::Number,
     pub on_permanent: crate::ability_tree::object::ObjectReference,
     pub counter_kind: Option<crate::ability_tree::terminals::Counter>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for PutCounterOnPermanentEvent {
@@ -49,8 +50,8 @@ impl crate::ability_tree::AbilityTreeNode for PutCounterOnPermanentEvent {
         out.pop_branch();
         out.next_inter_branch()?;
         match self.counter_kind.as_ref() {
-            Some(counter) => write!(out, "counter kind: {counter}")?,
-            None => write!(out, "counter kind: any")?,
+            Some(counter) => counter.display(out)?,
+            None => write!(out, "any counter kind")?,
         }
         out.next_final_branch()?;
         write!(out, "on permanent:")?;
@@ -60,6 +61,15 @@ impl crate::ability_tree::AbilityTreeNode for PutCounterOnPermanentEvent {
         out.pop_branch();
 
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "put counters on permanent event"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }
 
@@ -71,6 +81,8 @@ impl crate::utils::DummyInit for PutCounterOnPermanentEvent {
             quantity: crate::utils::dummy(),
             on_permanent: crate::utils::dummy(),
             counter_kind: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

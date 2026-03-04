@@ -6,10 +6,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// This is always an event, and can optionnaly have conditions for the event to happen.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TriggerCondition {
     pub event: crate::ability_tree::event::Event,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for TriggerCondition {
@@ -43,6 +44,15 @@ impl AbilityTreeNode for TriggerCondition {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "trigger condition"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -51,6 +61,8 @@ impl crate::utils::DummyInit for TriggerCondition {
         Self {
             event: crate::utils::dummy(),
             condition: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

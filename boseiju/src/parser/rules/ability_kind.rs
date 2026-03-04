@@ -1,8 +1,8 @@
 use super::ParserNode;
-use crate::{
-    lexer::tokens::{TokenKind, non_terminals},
-    utils::dummy,
-};
+use crate::ability_tree::terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
+use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
@@ -37,21 +37,32 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let ability_word_to_ability = mtg_data::AbilityWord::all()
         .map(|ab_word| super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::AbilityWord(ab_word)).id(),
-                ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)).id(),
+                ParserNode::LexerToken(Token::AbilityWord(terminals::AbilityWord {
+                    ability_word: ab_word,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::Ability { ability: dummy() }.id(),
             ]),
             merged: ParserNode::AbilityKind { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::AbilityWord(ab_word)),
-                    ParserNode::LexerToken(TokenKind::ControlFlow(non_terminals::ControlFlow::LongDash)),
+                    ParserNode::LexerToken(Token::AbilityWord(ab_word)),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
                     ParserNode::Ability { ability },
                 ] => Ok(ParserNode::AbilityKind {
                     ability: crate::ability_tree::ability::AbilityKind::AbilityWord(
                         crate::ability_tree::ability::AbilityWordAbility {
                             word: ab_word.clone(),
                             ability: ability.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: ab_word.span.merge(&ability.span()),
                         },
                     ),
                 }),

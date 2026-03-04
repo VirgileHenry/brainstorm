@@ -1,6 +1,8 @@
 use super::ParserNode;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::ability_tree::object;
+use crate::ability_tree::terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -8,15 +10,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_event_replacement_rules = vec![
         /* Create source reference: that effect (it), that player, etc */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::EnglishKeyword(
-                non_terminals::EnglishKeyword::It,
-            ))
-            .id()]),
+            expanded: super::RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
             merged: ParserNode::EventSourceReference { source: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::It))] => {
+                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                    #[cfg(feature = "spanned_tree")]span }))] => {
                     Ok(ParserNode::EventSourceReference {
-                        source: crate::ability_tree::event::replacement::EventSourceReference::ThatEvent,
+                        source: crate::ability_tree::event::replacement::EventSourceReference::ThatEvent {
+                            #[cfg(feature = "spanned_tree")]span: *span },
                     })
                 }
                 _ => Err("Provided tokens do not match rule definition"),
@@ -29,23 +36,39 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "Of those tokens" is a reference to previously mentionned tokens */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)).id(),
-                ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
-                    mtg_data::Supertype::Token,
-                )))
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Those {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(object::Supertype {
+                    supertype: mtg_data::Supertype::Token,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                })))
                 .id(),
             ]),
             merged: ParserNode::CreatedTokenKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)),
-                    ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
-                        mtg_data::Supertype::Token,
-                    ))),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of {
+                        #[cfg(feature = "spanned_tree")] span: start_span })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Those { .. })),
+                    ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(object::Supertype {
+                        supertype: mtg_data::Supertype::Token,
+                        #[cfg(feature = "spanned_tree")]
+                        span: end_span,
+                    }))),
                 ] => Ok(ParserNode::CreatedTokenKind {
-                    kind: crate::ability_tree::imperative::CreatedTokenKind::PreviouslyMentionnedToken,
+                    kind: crate::ability_tree::imperative::CreatedTokenKind::PreviouslyMentionnedToken {
+                        #[cfg(feature = "spanned_tree")]
+                        span: start_span.merge(end_span),
+                    },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -55,17 +78,32 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::EventSourceReference { source: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)).id(),
-                ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Create,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::Number(intermediates::Number::TwiceThatMany {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::CreatedTokenKind { kind: dummy() }.id(),
             ]),
             merged: ParserNode::EventReplacement { replacement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSourceReference { source },
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Create)),
-                    ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Create,
+                        #[cfg(feature = "spanned_tree")]
+                        span: create_span,
+                    })),
+                    ParserNode::LexerToken(Token::Number(intermediates::Number::TwiceThatMany {
+                        #[cfg(feature = "spanned_tree")]span: num_span })),
                     ParserNode::CreatedTokenKind { kind },
+                    /* Fixme: "instead" can be here ? */
                 ] => {
                     use crate::ability_tree::event::replacement;
                     use crate::ability_tree::number::Number;
@@ -76,16 +114,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 tokens: {
                                     let mut tokens = crate::utils::HeapArrayVec::new();
                                     tokens.push(crate::ability_tree::imperative::TokenCreation {
-                                        amount: Number::ThatMany,
+                                        amount: Number::ThatMany {
+                                            #[cfg(feature = "spanned_tree")]span: *num_span },
                                         token: kind.clone(),
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: num_span.merge(&kind.span()),
                                     });
                                     tokens.push(crate::ability_tree::imperative::TokenCreation {
-                                        amount: Number::ThatMany,
+                                        amount: Number::ThatMany {
+                                            #[cfg(feature = "spanned_tree")] span: *num_span },
                                         token: kind.clone(),
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: num_span.merge(&kind.span()),
                                     });
                                     tokens
                                 },
+                                #[cfg(feature = "spanned_tree")]
+                                span: create_span.merge(&kind.span()),
                             },
+                            #[cfg(feature = "spanned_tree")]
+                            span: source.span().merge(&kind.span()),
                         }),
                     })
                 }
@@ -99,18 +147,39 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "Of those counters" is a reference to previously mentionned counters */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)).id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)).id(), /* Fixme */
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Those {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Counter,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(), /* Fixme */
             ]),
             merged: ParserNode::PutCounterKind { kind: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Of)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Those)),
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Counter)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of {
+                        #[cfg(feature = "spanned_tree")]span: start_span })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Those { .. })),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Counter,
+                        #[cfg(feature = "spanned_tree")]
+                        span: end_span,
+                    })),
                 ] => Ok(ParserNode::PutCounterKind {
-                    kind: crate::ability_tree::imperative::CounterKind::PreviouslyMentionnedCounter,
+                    kind: crate::ability_tree::imperative::CounterKind::PreviouslyMentionnedCounter {
+                        #[cfg(feature = "spanned_tree")]
+                        span: start_span.merge(end_span),
+                    },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -120,20 +189,34 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::EventSourceReference { source: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)).id(),
-                ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)).id(),
+                ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::Number(intermediates::Number::TwiceThatMany {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::PutCounterKind { kind: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
             merged: ParserNode::EventReplacement { replacement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSourceReference { source },
-                    ParserNode::LexerToken(TokenKind::ActionKeyword(non_terminals::ActionKeyword::Put)),
-                    ParserNode::LexerToken(TokenKind::Number(non_terminals::Number::TwiceThatMany)),
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                        #[cfg(feature = "spanned_tree")] span: put_span })),
+                    ParserNode::LexerToken(Token::Number(intermediates::Number::TwiceThatMany {
+                        #[cfg(feature = "spanned_tree")]span: num_span })),
                     ParserNode::PutCounterKind { kind: counter_kind },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::On)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
                     ParserNode::ObjectReference {
                         reference: permanent_kind,
                     },
@@ -149,16 +232,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     counters: {
                                         let mut counters = crate::utils::HeapArrayVec::new();
                                         counters.push(crate::ability_tree::imperative::CounterOnPermanent {
-                                            amount: Number::ThatMany,
+                                            amount: Number::ThatMany {
+                                                #[cfg(feature = "spanned_tree")]span: *num_span },
                                             counter: counter_kind.clone(),
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: num_span.merge(&counter_kind.span()),
                                         });
                                         counters.push(crate::ability_tree::imperative::CounterOnPermanent {
-                                            amount: Number::ThatMany,
+                                            amount: Number::ThatMany {
+                                                #[cfg(feature = "spanned_tree")]span: *num_span },
                                             counter: counter_kind.clone(),
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: num_span.merge(&counter_kind.span()),
                                         });
                                         counters
                                     },
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: put_span.merge(&permanent_kind.span()),
                                 },
+                                #[cfg(feature = "spanned_tree")]
+                                span: source.span().merge(&permanent_kind.span()),
                             },
                         ),
                     })

@@ -27,19 +27,21 @@ impl ParserError {
 
         let stuck_on_token = match tokens.get(stuck_index) {
             Some(token) => FoundToken {
-                name: ParserNode::name_from_id(ParserNode::from(*token).id()),
-                position: token.span.start,
-                length: token.span.length,
-                text: token.span.text.to_string(),
+                name: ParserNode::name_from_id(ParserNode::from(token.clone()).id()),
+                #[cfg(feature = "spanned_tree")]
+                position: token.span().start,
+                #[cfg(feature = "spanned_tree")]
+                length: token.span().end - token.span().start,
             },
             None => FoundToken {
                 name: "EOF",
+                #[cfg(feature = "spanned_tree")]
                 position: match tokens.last() {
-                    Some(last) => last.span.start + last.span.length,
+                    Some(last) => last.span().end,
                     None => 0,
                 },
+                #[cfg(feature = "spanned_tree")]
                 length: 0,
-                text: "EOI".to_string(),
             },
         };
 
@@ -48,7 +50,7 @@ impl ParserError {
         for (expecting_token, for_nodes) in last_non_empty_row.uncompleted_items.iter() {
             /* Only take in terminal tokens ? */
             use idris::Idris;
-            if *expecting_token < crate::lexer::tokens::TokenKind::COUNT {
+            if *expecting_token < crate::lexer::tokens::Token::COUNT {
                 expecting.insert(PossibleExpectedToken {
                     expected: *expecting_token,
                     for_nodes: for_nodes
@@ -70,11 +72,14 @@ impl std::fmt::Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnexpectedToken { found, expecting } => {
+                #[cfg(feature = "spanned_tree")]
                 write!(
                     f,
-                    "Unexpected token \"{}\" at position {}, length {}: \"{}\"",
-                    found.name, found.position, found.length, found.text
+                    "Unexpected token at position {}, length {}: \"{}\"",
+                    found.position, found.length, found.name,
                 )?;
+                #[cfg(not(feature = "spanned_tree"))]
+                write!(f, "Unexpected token: \"{}\"", found.name,)?;
                 if !expecting.is_empty() {
                     write!(f, "\nExpecting one of:")?;
                     for expecting in expecting.iter().take(10) {
@@ -111,14 +116,15 @@ impl std::error::Error for ParserError {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PossibleExpectedToken {
-    expected: usize,
-    for_nodes: Vec<(usize, crate::parser::rules::ParserRuleDeclarationLocation)>,
+    pub expected: usize,
+    pub for_nodes: Vec<(usize, crate::parser::rules::ParserRuleDeclarationLocation)>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct FoundToken {
-    name: &'static str,
-    position: usize,
-    length: usize,
-    text: String,
+    pub name: &'static str,
+    #[cfg(feature = "spanned_tree")]
+    pub position: usize,
+    #[cfg(feature = "spanned_tree")]
+    pub length: usize,
 }

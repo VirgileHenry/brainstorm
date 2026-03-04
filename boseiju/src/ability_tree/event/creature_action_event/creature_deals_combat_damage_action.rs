@@ -7,8 +7,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// they fight each other, or when they attack a player.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct CreatureDealsCombatDamageAction;
+pub struct CreatureDealsCombatDamageAction {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for CreatureDealsCombatDamageAction {
     fn node_id(&self) -> usize {
@@ -25,11 +27,23 @@ impl AbilityTreeNode for CreatureDealsCombatDamageAction {
         write!(out, "deals combat damage")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "creature action: deals combat damage"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for CreatureDealsCombatDamageAction {
     fn dummy_init() -> Self {
-        Self {}
+        Self {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

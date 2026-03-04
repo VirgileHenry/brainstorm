@@ -2,7 +2,6 @@ use std::fmt::Write;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct Colors {
     pub white: bool,
     pub blue: bool,

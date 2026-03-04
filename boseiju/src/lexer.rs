@@ -1,8 +1,10 @@
 mod error;
-pub mod span;
+mod span;
 pub mod tokens;
 
 pub use error::LexerError;
+pub use span::Span;
+pub use tokens::IntoToken;
 
 /// Preprocess a card oracle text to properly lex it.
 pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
@@ -75,7 +77,7 @@ fn replace_name(card_name: &str, lowercase_oracle_text: &str) -> String {
 }
 
 /// Create a vec of Terminals from a string. Can fail, and will return an error if it does.
-pub fn lex<'src>(input: &'src str) -> Result<Vec<tokens::Token<'src>>, error::LexerError> {
+pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
     lazy_static::lazy_static!(
         static ref raw_token_regex: regex::Regex = {
             /* List of non words token we also want to match */
@@ -102,7 +104,7 @@ pub fn lex<'src>(input: &'src str) -> Result<Vec<tokens::Token<'src>>, error::Le
                 length: end - start,
                 text: &input[start..end],
             };
-            if let Some(token) = tokens::Token::try_from_str(span) {
+            if let Some(token) = tokens::Token::try_from_span(span) {
                 raw_tokens.drain(0..token_count + 1);
                 result.push(token);
                 continue 'outer;
@@ -117,6 +119,10 @@ pub fn lex<'src>(input: &'src str) -> Result<Vec<tokens::Token<'src>>, error::Le
     } else {
         let start = raw_tokens[0].start();
         let end = raw_tokens[raw_tokens.len() - 1].end();
-        Err(error::LexerError::NoTokenMatch(input[start..end].to_string()))
+        Err(error::LexerError::NoTokenMatch {
+            start: start,
+            end: end,
+            tokens: input[start..end].to_string(),
+        })
     }
 }

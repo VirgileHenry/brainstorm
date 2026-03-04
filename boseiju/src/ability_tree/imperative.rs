@@ -44,7 +44,6 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// destroy things, move cards around, etc.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Imperative {
     Choose(ChooseImperative),
     CreateToken(CreateTokenImperative),
@@ -58,6 +57,26 @@ pub enum Imperative {
     RemoveCounters(RemoveCountersImperative),
     Return(ReturnImperative),
     Sacrifice(SacrificeImperative),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Imperative {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Choose(child) => child.span,
+            Self::CreateToken(child) => child.span,
+            Self::DealsDamage(child) => child.span,
+            Self::Destroy(child) => child.span,
+            Self::Discard(child) => child.span,
+            Self::Draw(child) => child.span,
+            Self::Exile(child) => child.span,
+            Self::GainLife(child) => child.span,
+            Self::PutCounters(child) => child.span,
+            Self::RemoveCounters(child) => child.span,
+            Self::Return(child) => child.span,
+            Self::Sacrifice(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for Imperative {
@@ -106,6 +125,28 @@ impl AbilityTreeNode for Imperative {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "imperative"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Choose(child) => child.node_span(),
+            Self::CreateToken(child) => child.node_span(),
+            Self::DealsDamage(child) => child.node_span(),
+            Self::Destroy(child) => child.node_span(),
+            Self::Discard(child) => child.node_span(),
+            Self::Draw(child) => child.node_span(),
+            Self::Exile(child) => child.node_span(),
+            Self::GainLife(child) => child.node_span(),
+            Self::PutCounters(child) => child.node_span(),
+            Self::RemoveCounters(child) => child.node_span(),
+            Self::Return(child) => child.node_span(),
+            Self::Sacrifice(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -122,11 +163,12 @@ impl crate::utils::DummyInit for Imperative {
 /// "Draw two cards. Then discard a card unless you attacked this turn."
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ImperativeList {
     pub executing_player: crate::ability_tree::terminals::PlayerSpecifier,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,
     pub imperatives: crate::utils::HeapArrayVec<Imperative, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ImperativeList {
@@ -176,6 +218,15 @@ impl AbilityTreeNode for ImperativeList {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "imperative list"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -185,6 +236,8 @@ impl crate::utils::DummyInit for ImperativeList {
             executing_player: crate::utils::dummy(),
             imperatives: crate::utils::dummy(),
             condition: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

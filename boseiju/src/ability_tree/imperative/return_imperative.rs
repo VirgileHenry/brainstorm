@@ -4,11 +4,12 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ReturnImperative {
     pub object: crate::ability_tree::object::ObjectReference,
     pub from: crate::ability_tree::zone::ZoneReference,
     pub to: crate::ability_tree::zone::ZoneReference,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ReturnImperative {
@@ -46,6 +47,15 @@ impl AbilityTreeNode for ReturnImperative {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "return imperative"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -55,6 +65,8 @@ impl crate::utils::DummyInit for ReturnImperative {
             object: crate::utils::dummy(),
             from: crate::utils::dummy(),
             to: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

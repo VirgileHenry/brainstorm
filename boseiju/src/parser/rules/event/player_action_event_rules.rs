@@ -1,6 +1,6 @@
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -10,29 +10,50 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let player_attacks_event = [
-        terminals::PlayerSpecifier::Any,
-        terminals::PlayerSpecifier::ToYourLeft,
-        terminals::PlayerSpecifier::ToYourRight,
-        terminals::PlayerSpecifier::You,
+        terminals::PlayerSpecifier::Any {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::ToYourLeft {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::ToYourRight {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::You {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
     ]
     .into_iter()
     .map(|player| ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)).id(),
-            ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Attack)).id(),
+            ParserNode::LexerToken(Token::PlayerSpecifier(player)).id(),
+            ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
         ]),
         merged: ParserNode::Event { event: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(TokenKind::PlayerSpecifier(player)),
-                ParserNode::LexerToken(TokenKind::AmbiguousToken(non_terminals::AmbiguousToken::Attack)),
+                ParserNode::LexerToken(Token::PlayerSpecifier(player)),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
+                    #[cfg(feature = "spanned_tree")]span })),
             ] => Ok(ParserNode::Event {
                 event: crate::ability_tree::event::Event::PlayerAction(crate::ability_tree::event::PlayerActionEvent {
                     player: player.clone(),
                     action: crate::ability_tree::event::PlayerAction::Attacks(crate::ability_tree::event::PlayerAttacksAction {
                         attacked_player: None,
                         with: None,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
                     }),
+                    #[cfg(feature = "spanned_tree")]
+                    span: player.span().merge(span),
                 }),
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -42,11 +63,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     .collect::<Vec<_>>();
 
     let player_casts_spell_events = [
-        terminals::PlayerSpecifier::Any,
-        terminals::PlayerSpecifier::TargetOpponent,
-        terminals::PlayerSpecifier::ToYourLeft,
-        terminals::PlayerSpecifier::ToYourRight,
-        terminals::PlayerSpecifier::You,
+        terminals::PlayerSpecifier::Any {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::TargetOpponent {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::ToYourLeft {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::ToYourRight {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
+        terminals::PlayerSpecifier::You {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        },
     ]
     .into_iter()
     .map(|player_specifier| {
@@ -54,24 +90,48 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             /* Present form: "you cast a spell" */
             ParserRule {
                 expanded: RuleLhs::new(&[
-                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
-                    ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)).id(),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(player_specifier)).id(),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Cast,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Spell {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
                 ]),
                 merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
-                        ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
-                        ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)),
+                        ParserNode::LexerToken(Token::PlayerSpecifier(player_specifier)),
+                        ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                            keyword_action: mtg_data::KeywordAction::Cast,
+                            #[cfg(feature = "spanned_tree")]
+                            span: sp1,
+                        })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
+                        ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Spell {
+                            #[cfg(feature = "spanned_tree")] span: sp2 })),
                     ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::PlayerAction(crate::ability_tree::event::PlayerActionEvent {
                             player: player_specifier.clone(),
                             action: crate::ability_tree::event::PlayerAction::CastsSpell(
-                                crate::ability_tree::event::PlayerCastsSpellEvent { spell_specifiers: None },
+                                crate::ability_tree::event::PlayerCastsSpellEvent {
+                                    spell_specifiers: None,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: sp1.merge(sp2),
+                                },
                             ),
+                            #[cfg(feature = "spanned_tree")]
+                            span: player_specifier.span().merge(sp2),
                         }),
                     }),
                     _ => Err("Provided tokens do not match rule definition"),
@@ -81,28 +141,50 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             /* Present form + spell specifiers: "you cast an artifact spell" */
             ParserRule {
                 expanded: RuleLhs::new(&[
-                    ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)).id(),
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)).id(),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(player_specifier)).id(),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Cast,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
                     ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
-                    ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)).id(),
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Spell {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
                 ]),
                 merged: ParserNode::Event { event: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::LexerToken(TokenKind::PlayerSpecifier(player_specifier)),
-                        ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
-                        ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::A)),
+                        ParserNode::LexerToken(Token::PlayerSpecifier(player_specifier)),
+                        ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                            keyword_action: mtg_data::KeywordAction::Cast,
+                            #[cfg(feature = "spanned_tree")]
+                            span: sp1,
+                        })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                         ParserNode::ObjectSpecifiers { specifiers },
-                        ParserNode::LexerToken(TokenKind::ObjectKind(crate::ability_tree::object::ObjectKind::Spell)),
+                        ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Spell {
+                            #[cfg(feature = "spanned_tree")]span: sp2 })),
                     ] => Ok(ParserNode::Event {
                         event: crate::ability_tree::event::Event::PlayerAction(crate::ability_tree::event::PlayerActionEvent {
                             player: player_specifier.clone(),
                             action: crate::ability_tree::event::PlayerAction::CastsSpell(
                                 crate::ability_tree::event::PlayerCastsSpellEvent {
                                     spell_specifiers: Some(specifiers.clone()),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: sp1.merge(sp2),
                                 },
                             ),
+                            #[cfg(feature = "spanned_tree")]
+                            span: player_specifier.span().merge(sp2),
                         }),
                     }),
                     _ => Err("Provided tokens do not match rule definition"),

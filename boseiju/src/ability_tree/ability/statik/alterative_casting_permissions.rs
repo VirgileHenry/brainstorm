@@ -7,12 +7,13 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// For example, gravecrawler says: "You may cast this card from your graveyard".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct AlternativeCastingPermissions {
     pub player: crate::ability_tree::terminals::PlayerSpecifier,
     pub object: crate::ability_tree::object::ObjectReference,
     pub from_zone: crate::ability_tree::zone::ZoneReference,
     pub additional_cost: Option<crate::ability_tree::cost::Cost>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for AlternativeCastingPermissions {
@@ -64,6 +65,15 @@ impl crate::ability_tree::AbilityTreeNode for AlternativeCastingPermissions {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "alternative casting permissions"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -74,6 +84,8 @@ impl crate::utils::DummyInit for AlternativeCastingPermissions {
             object: crate::utils::dummy(),
             from_zone: crate::utils::dummy(),
             additional_cost: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

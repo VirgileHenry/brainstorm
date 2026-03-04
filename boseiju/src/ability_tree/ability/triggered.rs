@@ -16,10 +16,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// See also: https://mtg.fandom.com/wiki/Triggered_ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TriggeredAbility {
     pub condition: TriggerCondition,
     pub effect: crate::ability_tree::ability::spell::SpellAbility,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for TriggeredAbility {
@@ -50,5 +51,14 @@ impl AbilityTreeNode for TriggeredAbility {
         out.pop_branch();
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "triggered ability"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
     }
 }

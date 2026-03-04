@@ -1,6 +1,7 @@
 use super::ParserNode;
-use crate::lexer::tokens::TokenKind;
-use crate::lexer::tokens::non_terminals;
+use crate::ability_tree::terminals;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -10,9 +11,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Less)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Less {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Cast,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::CostModification {
                 cost_modification: dummy(),
@@ -21,13 +35,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::Less)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Less { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Cast,
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
+                    })),
                 ] => Ok(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::Less(
                         crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostLess {
                             less: mana_cost.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: mana_cost.span.merge(end_span),
                         },
                     ),
                 }),
@@ -39,9 +59,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::More)).id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::More {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Cast,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::CostModification {
                 cost_modification: dummy(),
@@ -50,13 +83,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::More)),
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::More { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Cast,
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
+                    })),
                 ] => Ok(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::More(
                         crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostMore {
                             more: mana_cost.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: mana_cost.span.merge(end_span),
                         },
                     ),
                 }),
@@ -68,8 +107,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)).id(),
-                ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)).id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Cast,
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::CostModification {
                 cost_modification: dummy(),
@@ -78,12 +126,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(TokenKind::EnglishKeyword(non_terminals::EnglishKeyword::To)),
-                    ParserNode::LexerToken(TokenKind::KeywordAction(mtg_data::KeywordAction::Cast)),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                        keyword_action: mtg_data::KeywordAction::Cast,
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
+                    })),
                 ] => Ok(ParserNode::CostModification {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModification::Set(
                         crate::ability_tree::ability::statik::cost_modification_effect::CostModificationCostSet {
                             set: mana_cost.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: mana_cost.span.merge(end_span),
                         },
                     ),
                 }),
@@ -95,7 +149,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)).id(),
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Cost {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
                 ParserNode::CostModification {
                     cost_modification: dummy(),
                 }
@@ -108,12 +166,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(TokenKind::VhyToSortLater(non_terminals::VhyToSortLater::Cost)),
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Cost { .. })),
                     ParserNode::CostModification { cost_modification },
                 ] => Ok(ParserNode::CostModificationEffect {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
                         applies_to: reference.clone(),
                         modification: cost_modification.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: reference.span().merge(&cost_modification.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

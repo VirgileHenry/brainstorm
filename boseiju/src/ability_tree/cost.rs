@@ -7,10 +7,19 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// the player to do something (discard a card, sacrifice a creature...)
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Cost {
     ManaCost(crate::ability_tree::terminals::ManaCost),
     Imperative(crate::ability_tree::imperative::Imperative),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Cost {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ManaCost(child) => child.span,
+            Self::Imperative(child) => child.span(),
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for Cost {
@@ -29,12 +38,23 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
         match self {
-            Cost::ManaCost(mana_cost) => write!(out, "mana cost: {mana_cost}")?,
+            Cost::ManaCost(mana_cost) => mana_cost.display(out)?,
             Cost::Imperative(cost) => cost.display(out)?,
         }
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "cost"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::ManaCost(child) => child.node_span(),
+            Self::Imperative(child) => child.node_span(),
+        }
     }
 }
 

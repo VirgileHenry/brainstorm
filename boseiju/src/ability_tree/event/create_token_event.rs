@@ -5,11 +5,12 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreateTokensEvent {
     pub source: source::EventSource,
     pub quantity: crate::ability_tree::number::Number,
     pub token_specifiers: Option<crate::ability_tree::object::ObjectSpecifiers>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CreateTokensEvent {
@@ -56,6 +57,15 @@ impl AbilityTreeNode for CreateTokensEvent {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "create token event"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -65,6 +75,8 @@ impl crate::utils::DummyInit for CreateTokensEvent {
             source: crate::utils::dummy(),
             quantity: crate::utils::dummy(),
             token_specifiers: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

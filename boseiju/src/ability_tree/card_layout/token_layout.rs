@@ -4,11 +4,12 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Layout of a token
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TokenLayout {
     pub name: String,
     pub card_type: crate::ability_tree::type_line::TypeLine,
     pub abilities: crate::AbilityTree,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for TokenLayout {
@@ -40,6 +41,15 @@ impl AbilityTreeNode for TokenLayout {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "token description"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 impl super::LayoutImpl for TokenLayout {
@@ -53,24 +63,29 @@ impl super::LayoutImpl for TokenLayout {
 
     #[cfg(feature = "parser")]
     fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
+        use crate::lexer::IntoToken;
+
+        let type_line_span = crate::lexer::Span {
+            start: 0,
+            length: raw_card.type_line.len(),
+            text: raw_card.type_line.as_str(),
+        };
+
         Ok(TokenLayout {
             name: raw_card.name.clone(),
-            card_type: crate::ability_tree::type_line::TypeLine::parse(&raw_card.type_line, raw_card)
-                .map_err(|e| format!("Failed to parse card type: {e}"))?,
+            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span)
+                .ok_or_else(|| format!("Failed to parse card type: {}", raw_card.type_line))?,
             abilities: match raw_card.oracle_text.as_ref() {
                 Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
                     .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
                 None => crate::AbilityTree::empty(),
             },
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         })
     }
 
-    fn layout_debug_display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
-        writeln!(output, "│ ╰─ Token:")?;
-        writeln!(output, "│    ├─ Type Line: {}", self.card_type)?;
-        write!(output, "│    ╰─ Abilities: ")?;
-        self.abilities.display_from_root(output, "│       ")?;
-        writeln!(output, "")?;
-        Ok(())
+    fn layout_debug_display<W: std::io::Write>(&self, _output: &mut W) -> std::io::Result<()> {
+        unimplemented!()
     }
 }

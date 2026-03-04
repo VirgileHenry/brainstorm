@@ -1,3 +1,23 @@
+mod artifact_subtype;
+mod battle_subtype;
+mod card_type;
+mod creature_subtype;
+mod enchantment_subtype;
+mod instant_sorcery_subtype;
+mod land_subtype;
+mod planeswalker_subtype;
+mod supertype;
+
+pub use artifact_subtype::ArtifactSubtype;
+pub use battle_subtype::BattleSubtype;
+pub use card_type::CardType;
+pub use creature_subtype::CreatureSubtype;
+pub use enchantment_subtype::EnchantmentSubtype;
+pub use instant_sorcery_subtype::SpellSubtype;
+pub use land_subtype::LandSubtype;
+pub use planeswalker_subtype::PlaneswalkerSubtype;
+pub use supertype::Supertype;
+
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
@@ -9,35 +29,74 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum ObjectKind {
-    ArtifactSubtype(mtg_data::ArtifactType),
-    BattleSubtype(mtg_data::BattleType),
-    Card,
-    CreatureSubtype(mtg_data::CreatureType),
-    EnchantmentSubtype(mtg_data::EnchantmentType),
-    InstantSorcerySubtype(mtg_data::SpellType),
-    LandSubtype(mtg_data::LandType),
-    Permanent,
-    PlaneswalkerSubtype(mtg_data::PlaneswalkerType),
-    Spell,
-    Supertype(mtg_data::Supertype),
-    CardType(mtg_data::CardType),
+    ArtifactSubtype(ArtifactSubtype),
+    BattleSubtype(BattleSubtype),
+    Card {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    CreatureSubtype(CreatureSubtype),
+    EnchantmentSubtype(EnchantmentSubtype),
+    InstantSorcerySubtype(SpellSubtype),
+    LandSubtype(LandSubtype),
+    Permanent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    PlaneswalkerSubtype(PlaneswalkerSubtype),
+    Spell {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Supertype(Supertype),
+    CardType(CardType),
 }
 
 impl ObjectKind {
     pub fn all() -> impl Iterator<Item = Self> {
-        [Self::Card, Self::Permanent, Self::Spell]
-            .into_iter()
-            .chain(mtg_data::ArtifactType::all().map(Self::ArtifactSubtype))
-            .chain(mtg_data::BattleType::all().map(Self::BattleSubtype))
-            .chain(mtg_data::CreatureType::all().map(Self::CreatureSubtype))
-            .chain(mtg_data::EnchantmentType::all().map(Self::EnchantmentSubtype))
-            .chain(mtg_data::SpellType::all().map(Self::InstantSorcerySubtype))
-            .chain(mtg_data::LandType::all().map(Self::LandSubtype))
-            .chain(mtg_data::PlaneswalkerType::all().map(Self::PlaneswalkerSubtype))
-            .chain(mtg_data::Supertype::all().map(Self::Supertype))
-            .chain(mtg_data::CardType::all().map(Self::CardType))
+        [
+            Self::Card {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Permanent {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Spell {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+        ]
+        .into_iter()
+        .chain(ArtifactSubtype::all().map(Self::ArtifactSubtype))
+        .chain(BattleSubtype::all().map(Self::BattleSubtype))
+        .chain(CardType::all().map(Self::CardType))
+        .chain(CreatureSubtype::all().map(Self::CreatureSubtype))
+        .chain(EnchantmentSubtype::all().map(Self::EnchantmentSubtype))
+        .chain(SpellSubtype::all().map(Self::InstantSorcerySubtype))
+        .chain(LandSubtype::all().map(Self::LandSubtype))
+        .chain(PlaneswalkerSubtype::all().map(Self::PlaneswalkerSubtype))
+        .chain(Supertype::all().map(Self::Supertype))
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Card { span } => *span,
+            Self::Permanent { span } => *span,
+            Self::Spell { span } => *span,
+            Self::ArtifactSubtype(child) => child.span,
+            Self::BattleSubtype(child) => child.span,
+            Self::CreatureSubtype(child) => child.span,
+            Self::EnchantmentSubtype(child) => child.span,
+            Self::InstantSorcerySubtype(child) => child.span,
+            Self::LandSubtype(child) => child.span,
+            Self::PlaneswalkerSubtype(child) => child.span,
+            Self::Supertype(child) => child.span,
+            Self::CardType(child) => child.span,
+        }
     }
 }
 
@@ -55,13 +114,13 @@ impl AbilityTreeNode for ObjectKind {
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::Card => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+            Self::Card { .. } => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::MtgData(MtgDataNodeKind::CardIdMarker).id(),
             ) as &dyn AbilityTreeNode),
-            Self::Permanent => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+            Self::Permanent { .. } => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::MtgData(MtgDataNodeKind::PermanentIdMarker).id(),
             ) as &dyn AbilityTreeNode),
-            Self::Spell => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+            Self::Spell { .. } => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::MtgData(MtgDataNodeKind::SpellIdMarker).id(),
             ) as &dyn AbilityTreeNode),
             Self::ArtifactSubtype(child) => children.push(child as &dyn AbilityTreeNode),
@@ -79,55 +138,84 @@ impl AbilityTreeNode for ObjectKind {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "{self}")
-    }
-}
-
-impl std::fmt::Display for ObjectKind {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(out, "object kind")?;
+        out.push_final_branch()?;
         match self {
-            Self::ArtifactSubtype(subtype) => subtype.fmt(f),
-            Self::BattleSubtype(subtype) => subtype.fmt(f),
-            Self::Card => write!(f, "card"),
-            Self::CreatureSubtype(subtype) => subtype.fmt(f),
-            Self::EnchantmentSubtype(subtype) => subtype.fmt(f),
-            Self::InstantSorcerySubtype(subtype) => subtype.fmt(f),
-            Self::LandSubtype(subtype) => subtype.fmt(f),
-            Self::Permanent => write!(f, "permanent"),
-            Self::PlaneswalkerSubtype(subtype) => subtype.fmt(f),
-            Self::Spell => write!(f, "spell"),
-            Self::Supertype(supertype) => supertype.fmt(f),
-            Self::CardType(ty) => ty.fmt(f),
+            Self::Card { .. } => write!(out, "card")?,
+            Self::Permanent { .. } => write!(out, "permanent")?,
+            Self::Spell { .. } => write!(out, "spell")?,
+            Self::ArtifactSubtype(child) => child.display(out)?,
+            Self::BattleSubtype(child) => child.display(out)?,
+            Self::CreatureSubtype(child) => child.display(out)?,
+            Self::EnchantmentSubtype(child) => child.display(out)?,
+            Self::InstantSorcerySubtype(child) => child.display(out)?,
+            Self::LandSubtype(child) => child.display(out)?,
+            Self::PlaneswalkerSubtype(child) => child.display(out)?,
+            Self::Supertype(child) => child.display(out)?,
+            Self::CardType(child) => child.display(out)?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "object kind"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Card { span } => *span,
+            Self::Permanent { span } => *span,
+            Self::Spell { span } => *span,
+            Self::ArtifactSubtype(child) => child.node_span(),
+            Self::BattleSubtype(child) => child.node_span(),
+            Self::CreatureSubtype(child) => child.node_span(),
+            Self::EnchantmentSubtype(child) => child.node_span(),
+            Self::InstantSorcerySubtype(child) => child.node_span(),
+            Self::LandSubtype(child) => child.node_span(),
+            Self::PlaneswalkerSubtype(child) => child.node_span(),
+            Self::Supertype(child) => child.node_span(),
+            Self::CardType(child) => child.node_span(),
         }
     }
 }
 
-impl crate::ability_tree::terminals::Terminal for ObjectKind {
-    #[cfg(feature = "lexer")]
-    fn try_from_str(source: &str) -> Option<Self> {
-        if let Some(subtype) = mtg_data::ArtifactType::try_from_str(source) {
+#[cfg(feature = "lexer")]
+impl crate::lexer::IntoToken for ObjectKind {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        if let Some(subtype) = ArtifactSubtype::try_from_span(span) {
             return Some(Self::ArtifactSubtype(subtype));
-        } else if let Some(subtype) = mtg_data::BattleType::try_from_str(source) {
+        } else if let Some(subtype) = BattleSubtype::try_from_span(span) {
             return Some(Self::BattleSubtype(subtype));
-        } else if let Some(subtype) = mtg_data::CreatureType::try_from_str(source) {
-            return Some(Self::CreatureSubtype(subtype));
-        } else if let Some(subtype) = mtg_data::EnchantmentType::try_from_str(source) {
-            return Some(Self::EnchantmentSubtype(subtype));
-        } else if let Some(subtype) = mtg_data::SpellType::try_from_str(source) {
-            return Some(Self::InstantSorcerySubtype(subtype));
-        } else if let Some(subtype) = mtg_data::LandType::try_from_str(source) {
-            return Some(Self::LandSubtype(subtype));
-        } else if let Some(subtype) = mtg_data::PlaneswalkerType::try_from_str(source) {
-            return Some(Self::PlaneswalkerSubtype(subtype));
-        } else if let Some(subtype) = mtg_data::Supertype::try_from_str(source) {
-            return Some(Self::Supertype(subtype));
-        } else if let Some(subtype) = mtg_data::CardType::try_from_str(source) {
+        } else if let Some(subtype) = CardType::try_from_span(span) {
             return Some(Self::CardType(subtype));
+        } else if let Some(subtype) = CreatureSubtype::try_from_span(span) {
+            return Some(Self::CreatureSubtype(subtype));
+        } else if let Some(subtype) = EnchantmentSubtype::try_from_span(span) {
+            return Some(Self::EnchantmentSubtype(subtype));
+        } else if let Some(subtype) = SpellSubtype::try_from_span(span) {
+            return Some(Self::InstantSorcerySubtype(subtype));
+        } else if let Some(subtype) = LandSubtype::try_from_span(span) {
+            return Some(Self::LandSubtype(subtype));
+        } else if let Some(subtype) = PlaneswalkerSubtype::try_from_span(span) {
+            return Some(Self::PlaneswalkerSubtype(subtype));
+        } else if let Some(subtype) = Supertype::try_from_span(span) {
+            return Some(Self::Supertype(subtype));
         } else {
-            match source {
-                "card" | "cards" => Some(Self::Card),
-                "permanent" | "permanents" => Some(Self::Permanent),
-                "spell" | "spells" => Some(Self::Spell),
+            match span.text {
+                "card" | "cards" => Some(Self::Card {
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "permanent" | "permanents" => Some(Self::Permanent {
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "spell" | "spells" => Some(Self::Spell {
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 _ => None,
             }
         }
@@ -137,6 +225,9 @@ impl crate::ability_tree::terminals::Terminal for ObjectKind {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ObjectKind {
     fn dummy_init() -> Self {
-        Self::Card
+        Self::Card {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 2rem 5rem;
+    margin-inline: auto;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Inter",
+        "Segoe UI",
+        sans-serif;
+    color: #222;
+    background-color: #fafafa;
+}
+
+.site-header {
+    margin-bottom: 2rem;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+input[type="text"],
+textarea,
+.output-box {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    font-family: inherit;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.token-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1ch;
+    grid-template-rows: auto auto;
+    row-gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.05rem;
+    white-space: nowrap;
+}
+
+.char {
+    grid-row: 1;
+    text-align: center;
+}
+
+.char.new-line {
+    background: #eef2f6;
+    color: #4a6fa5;
+    border-radius: 4px;
+}
+
+.token {
+    grid-row: 2;
+    background: #7aa6bf;
+    border: 1px solid #5c5c5c;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 0.15rem 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.node {
+    border-radius: 4px;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.35rem;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid #5c5c5c;
+}
+
+.random-btn {
+    margin-top: 0.6rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.9rem;
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.random-btn:hover {
+    background: #eaeaea;
+}
+
+.error-underline {
+    border-bottom: 3px solid #d93025;
+}
+
+.error-message {
+    color: #d93025;
+    font-size: 0.8rem;
+    padding-top: 0.15rem;
+    white-space: pre-wrap;
+}

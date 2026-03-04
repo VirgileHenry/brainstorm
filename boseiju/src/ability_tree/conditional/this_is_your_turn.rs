@@ -6,8 +6,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// This condition will mostly appear silently with sentences like "when X during your turn".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct ConditionThisIsYourTurn;
+pub struct ConditionThisIsYourTurn {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl crate::ability_tree::AbilityTreeNode for ConditionThisIsYourTurn {
     fn node_id(&self) -> usize {
@@ -23,11 +25,23 @@ impl crate::ability_tree::AbilityTreeNode for ConditionThisIsYourTurn {
         use std::io::Write;
         write!(out, "this is your turn")
     }
+
+    fn node_tag(&self) -> &'static str {
+        "condition: this is your turn"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ConditionThisIsYourTurn {
     fn dummy_init() -> Self {
-        Self
+        Self {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

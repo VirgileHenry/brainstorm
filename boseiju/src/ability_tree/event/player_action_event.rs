@@ -12,10 +12,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Player events includes attacking, drawing cards, etc.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlayerActionEvent {
     pub player: crate::ability_tree::terminals::PlayerSpecifier,
     pub action: PlayerAction,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PlayerActionEvent {
@@ -47,6 +48,15 @@ impl AbilityTreeNode for PlayerActionEvent {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "player action event"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -55,16 +65,27 @@ impl crate::utils::DummyInit for PlayerActionEvent {
         Self {
             player: crate::utils::dummy(),
             action: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum PlayerAction {
     Attacks(PlayerAttacksAction),
     CastsSpell(PlayerCastsSpellEvent),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl PlayerAction {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Attacks(child) => child.span,
+            Self::CastsSpell(child) => child.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for PlayerAction {
@@ -92,6 +113,18 @@ impl AbilityTreeNode for PlayerAction {
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "player action"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Attacks(child) => child.node_span(),
+            Self::CastsSpell(child) => child.node_span(),
+        }
     }
 }
 

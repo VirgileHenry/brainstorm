@@ -1,6 +1,7 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::MAX_NODE_DATA_SIZE;
+use crate::lexer::IntoToken;
 
 const MAX_SUPERTYPES_COUNT: usize = 4;
 
@@ -14,26 +15,27 @@ const MAX_SUPERTYPES_COUNT: usize = 4;
 /// See also: https://mtg.fandom.com/wiki/Type_line
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct TypeLine {
-    supertypes: arrayvec::ArrayVec<mtg_data::Supertype, MAX_SUPERTYPES_COUNT>,
-    artifact: Option<ArtifactSubtype>,
-    battle: Option<BattleSubtype>,
-    conspiracy: Option<ConspiracySubtype>,
-    creature: Option<CreatureSubtype>,
-    dungeon: Option<DungeonSubtype>,
-    emblem: Option<EmblemSubtype>,
-    enchantment: Option<EnchantmentSubtype>,
-    hero: Option<HeroSubtype>,
-    instant: Option<InstantSubtype>,
-    kindred: Option<KindredSubtype>,
-    land: Option<LandSubtype>,
-    phenomenon: Option<PhenomenonSubtype>,
-    plane: Option<PlaneSubtype>,
-    planeswalker: Option<PlaneswalkerSubtype>,
-    scheme: Option<SchemeSubtype>,
-    sorcery: Option<SorcerySubtype>,
-    vanguard: Option<VanguardSubtype>,
+    pub supertypes: arrayvec::ArrayVec<crate::ability_tree::object::Supertype, MAX_SUPERTYPES_COUNT>,
+    pub artifact: Option<ArtifactSubtype>,
+    pub battle: Option<BattleSubtype>,
+    pub conspiracy: Option<ConspiracySubtype>,
+    pub creature: Option<CreatureSubtype>,
+    pub dungeon: Option<DungeonSubtype>,
+    pub emblem: Option<EmblemSubtype>,
+    pub enchantment: Option<EnchantmentSubtype>,
+    pub hero: Option<HeroSubtype>,
+    pub instant: Option<InstantSubtype>,
+    pub kindred: Option<KindredSubtype>,
+    pub land: Option<LandSubtype>,
+    pub phenomenon: Option<PhenomenonSubtype>,
+    pub plane: Option<PlaneSubtype>,
+    pub planeswalker: Option<PlaneswalkerSubtype>,
+    pub scheme: Option<SchemeSubtype>,
+    pub sorcery: Option<SorcerySubtype>,
+    pub vanguard: Option<VanguardSubtype>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl TypeLine {
@@ -57,289 +59,9 @@ impl TypeLine {
             scheme: None,
             sorcery: None,
             vanguard: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
-    }
-
-    pub fn parse(type_line: &str, raw_card: &mtg_cardbase::Card) -> Result<Self, String /* Fixme */> {
-        use std::str::FromStr;
-
-        let mut result = Self::empty();
-
-        lazy_static::lazy_static!(
-            static ref tokens_regex: regex::Regex = regex::Regex::new(r"\b\w+\b")
-                .expect("Failed to compile the tokens regex");
-        );
-
-        let mut tokens = tokens_regex.find_iter(type_line).map(|m| m.as_str()).peekable();
-
-        /* Parse supertypes first */
-        while let Some(token) = tokens.peek() {
-            match mtg_data::Supertype::from_str(token) {
-                Ok(supertype) => {
-                    if result.supertypes.contains(&supertype) {
-                        return Err(format!("Duplicate super type {supertype}"));
-                    } else {
-                        result.supertypes.push(supertype);
-                        let _ = tokens.next(); /* Token was peeked, pop it out */
-                    }
-                }
-                Err(_) => break,
-            }
-        }
-
-        /* Parse all types then */
-        while let Some(token) = tokens.peek() {
-            match mtg_data::CardType::from_str(token) {
-                Ok(card_type) => {
-                    match card_type {
-                        mtg_data::CardType::Artifact => match result.artifact {
-                            None => {
-                                result.artifact = Some(ArtifactSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Artifact type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Battle => match result.battle {
-                            None => {
-                                result.battle = Some(BattleSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Battle type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Conspiracy => match result.conspiracy {
-                            None => result.conspiracy = Some(ConspiracySubtype),
-                            Some(_) => {
-                                return Err(format!("Consiparacy type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Creature => match result.creature {
-                            None => {
-                                result.creature = Some(CreatureSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Creature type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Dungeon => match result.dungeon {
-                            None => result.dungeon = Some(DungeonSubtype),
-                            Some(_) => {
-                                return Err(format!("Dungeon type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Emblem => match result.emblem {
-                            None => result.emblem = Some(EmblemSubtype),
-                            Some(_) => {
-                                return Err(format!("Emblem type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Enchantment => match result.enchantment {
-                            None => {
-                                result.enchantment = Some(EnchantmentSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Enchantment type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Hero => match result.hero {
-                            None => result.hero = Some(HeroSubtype),
-                            Some(_) => {
-                                return Err(format!("Hero type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Instant => match result.instant {
-                            None => {
-                                result.instant = Some(InstantSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Instant type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Kindred => match result.kindred {
-                            None => {
-                                result.kindred = Some(KindredSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Kindred type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Land => match result.land {
-                            None => {
-                                result.land = Some(LandSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Land type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Phenomenon => match result.phenomenon {
-                            None => result.phenomenon = Some(PhenomenonSubtype),
-                            Some(_) => {
-                                return Err(format!("Phenomenon type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Plane => match result.plane {
-                            None => result.plane = Some(PlaneSubtype),
-                            Some(_) => {
-                                return Err(format!("Plane type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Planeswalker => match result.planeswalker {
-                            None => {
-                                let loyalty = raw_card
-                                    .loyalty
-                                    .as_ref()
-                                    .ok_or_else(|| format!("No loyalty field on card with planeswalker type!"))?;
-                                result.planeswalker = Some(PlaneswalkerSubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                    loyalty: loyalty
-                                        .parse()
-                                        .map_err(|e| format!("Failed to parse loyalty \"{loyalty}\": {e}"))?,
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Planeswalker type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Scheme => match result.scheme {
-                            None => result.scheme = Some(SchemeSubtype),
-                            Some(_) => {
-                                return Err(format!("Scheme type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Sorcery => match result.sorcery {
-                            None => {
-                                result.sorcery = Some(SorcerySubtype {
-                                    subtypes: arrayvec::ArrayVec::new_const(),
-                                })
-                            }
-                            Some(_) => {
-                                return Err(format!("Sorcery type present twice in card type!"));
-                            }
-                        },
-                        mtg_data::CardType::Vanguard => match result.vanguard {
-                            None => result.vanguard = Some(VanguardSubtype),
-                            Some(_) => {
-                                return Err(format!("Vanguard type present twice in card type!"));
-                            }
-                        },
-                    }
-                    let _ = tokens.next();
-                }
-                Err(_) => break,
-            }
-        }
-
-        while let Some(token) = tokens.next() {
-            if let Some(subtype) = &mut result.artifact {
-                if let Ok(new_subtype) = mtg_data::ArtifactType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.battle {
-                if let Ok(new_subtype) = mtg_data::BattleType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.creature {
-                if let Ok(new_subtype) = mtg_data::CreatureType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.enchantment {
-                if let Ok(new_subtype) = mtg_data::EnchantmentType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.instant {
-                if let Ok(new_subtype) = mtg_data::SpellType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.kindred {
-                if let Ok(new_subtype) = mtg_data::CreatureType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.land {
-                if let Ok(new_subtype) = mtg_data::LandType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.planeswalker {
-                if let Ok(new_subtype) = mtg_data::PlaneswalkerType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            if let Some(subtype) = &mut result.sorcery {
-                if let Ok(new_subtype) = mtg_data::SpellType::from_str(token) {
-                    if subtype.subtypes.contains(&new_subtype) {
-                        return Err(format!("Subtype {new_subtype} present twice in card type!"));
-                    } else {
-                        subtype.subtypes.push(new_subtype);
-                        continue;
-                    }
-                }
-            }
-            /* If we arrive here, no type managed to validated the given subtype, that's an error! */
-            return Err(format!("subtype {token} does not fit any card types!"));
-        }
-
-        Ok(result)
     }
 
     pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
@@ -503,127 +225,472 @@ impl AbilityTreeNode for TypeLine {
         use std::io::Write;
         write!(out, "type line:")?;
         out.push_final_branch()?;
-        write!(out, "{self}")?;
-        out.pop_branch();
-        Ok(())
-    }
-}
 
-impl std::fmt::Display for TypeLine {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for supertype in self.supertypes.iter() {
-            write!(f, "{supertype} ")?;
+            supertype.display(out)?;
         }
 
         if self.artifact.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Artifact)?;
+            write!(out, "{} ", mtg_data::CardType::Artifact)?;
         }
         if self.battle.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Battle)?;
+            write!(out, "{} ", mtg_data::CardType::Battle)?;
         }
         if self.conspiracy.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Conspiracy)?;
+            write!(out, "{} ", mtg_data::CardType::Conspiracy)?;
         }
         if self.creature.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Creature)?;
+            write!(out, "{} ", mtg_data::CardType::Creature)?;
         }
         if self.dungeon.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Dungeon)?;
+            write!(out, "{} ", mtg_data::CardType::Dungeon)?;
         }
         if self.emblem.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Emblem)?;
+            write!(out, "{} ", mtg_data::CardType::Emblem)?;
         }
         if self.enchantment.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Enchantment)?;
+            write!(out, "{} ", mtg_data::CardType::Enchantment)?;
         }
         if self.hero.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Hero)?;
+            write!(out, "{} ", mtg_data::CardType::Hero)?;
         }
         if self.instant.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Instant)?;
+            write!(out, "{} ", mtg_data::CardType::Instant)?;
         }
         if self.kindred.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Kindred)?;
+            write!(out, "{} ", mtg_data::CardType::Kindred)?;
         }
         if self.land.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Land)?;
+            write!(out, "{} ", mtg_data::CardType::Land)?;
         }
         if self.phenomenon.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Phenomenon)?;
+            write!(out, "{} ", mtg_data::CardType::Phenomenon)?;
         }
         if self.plane.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Plane)?;
+            write!(out, "{} ", mtg_data::CardType::Plane)?;
         }
         if self.planeswalker.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Planeswalker)?;
+            write!(out, "{} ", mtg_data::CardType::Planeswalker)?;
         }
         if self.scheme.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Scheme)?;
+            write!(out, "{} ", mtg_data::CardType::Scheme)?;
         }
         if self.sorcery.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Sorcery)?;
+            write!(out, "{} ", mtg_data::CardType::Sorcery)?;
         }
         if self.vanguard.is_some() {
-            write!(f, "{} ", mtg_data::CardType::Vanguard)?;
+            write!(out, "{} ", mtg_data::CardType::Vanguard)?;
         }
 
-        write!(f, "— ")?;
+        write!(out, "— ")?;
 
         if let Some(subtype) = &self.artifact {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.battle {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.creature {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.enchantment {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.instant {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.kindred {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.land {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.planeswalker {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
         if let Some(subtype) = &self.sorcery {
             for subtype in subtype.subtypes.iter() {
-                write!(f, "{subtype} ")?;
+                subtype.display(out)?;
             }
         }
 
+        out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "type line"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+impl IntoToken for TypeLine {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        let mut result = Self::empty();
+
+        lazy_static::lazy_static!(
+            static ref tokens_regex: regex::Regex = regex::Regex::new(r"\b\w+\b")
+                .expect("Failed to compile the tokens regex");
+        );
+
+        let mut spans = tokens_regex
+            .find_iter(span.text)
+            .map(|m| crate::lexer::Span {
+                start: span.start + m.start(),
+                length: m.len(),
+                text: m.as_str(),
+            })
+            .peekable();
+
+        /* Parse supertypes first */
+        while let Some(token) = spans.peek() {
+            match crate::ability_tree::object::Supertype::try_from_span(token) {
+                Some(supertype) => {
+                    if result.supertypes.contains(&supertype) {
+                        return None;
+                    } else {
+                        result.supertypes.push(supertype);
+                        let _ = spans.next(); /* Token was peeked, pop it out */
+                    }
+                }
+                None => break,
+            }
+        }
+
+        /* Parse all types then */
+        while let Some(span) = spans.peek() {
+            match crate::ability_tree::object::CardType::try_from_span(span) {
+                Some(card_type) => {
+                    match card_type.card_type {
+                        mtg_data::CardType::Artifact => match result.artifact {
+                            None => {
+                                result.artifact = Some(ArtifactSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Battle => match result.battle {
+                            None => {
+                                result.battle = Some(BattleSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Conspiracy => match result.conspiracy {
+                            None => {
+                                result.conspiracy = Some(ConspiracySubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Creature => match result.creature {
+                            None => {
+                                result.creature = Some(CreatureSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Dungeon => match result.dungeon {
+                            None => {
+                                result.dungeon = Some(DungeonSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Emblem => match result.emblem {
+                            None => {
+                                result.emblem = Some(EmblemSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Enchantment => match result.enchantment {
+                            None => {
+                                result.enchantment = Some(EnchantmentSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Hero => match result.hero {
+                            None => {
+                                result.hero = Some(HeroSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Instant => match result.instant {
+                            None => {
+                                result.instant = Some(InstantSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Kindred => match result.kindred {
+                            None => {
+                                result.kindred = Some(KindredSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Land => match result.land {
+                            None => {
+                                result.land = Some(LandSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Phenomenon => match result.phenomenon {
+                            None => {
+                                result.phenomenon = Some(PhenomenonSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Plane => match result.plane {
+                            None => {
+                                result.plane = Some(PlaneSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Planeswalker => match result.planeswalker {
+                            None => {
+                                result.planeswalker = Some(PlaneswalkerSubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    loyalty: 0, /* fixme */
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Scheme => match result.scheme {
+                            None => {
+                                result.scheme = Some(SchemeSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Sorcery => match result.sorcery {
+                            None => {
+                                result.sorcery = Some(SorcerySubtype {
+                                    subtypes: arrayvec::ArrayVec::new_const(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                        mtg_data::CardType::Vanguard => match result.vanguard {
+                            None => {
+                                result.vanguard = Some(VanguardSubtype {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.into(),
+                                })
+                            }
+                            Some(_) => {
+                                return None;
+                            }
+                        },
+                    }
+                    let _ = spans.next();
+                }
+                None => break,
+            }
+        }
+
+        while let Some(token) = spans.next() {
+            if let Some(subtype) = &mut result.artifact {
+                if let Some(new_subtype) = crate::ability_tree::object::ArtifactSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.battle {
+                if let Some(new_subtype) = crate::ability_tree::object::BattleSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.creature {
+                if let Some(new_subtype) = crate::ability_tree::object::CreatureSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.enchantment {
+                if let Some(new_subtype) = crate::ability_tree::object::EnchantmentSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.instant {
+                if let Some(new_subtype) = crate::ability_tree::object::SpellSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.kindred {
+                if let Some(new_subtype) = crate::ability_tree::object::CreatureSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.land {
+                if let Some(new_subtype) = crate::ability_tree::object::LandSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.planeswalker {
+                if let Some(new_subtype) = crate::ability_tree::object::PlaneswalkerSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            if let Some(subtype) = &mut result.sorcery {
+                if let Some(new_subtype) = crate::ability_tree::object::SpellSubtype::try_from_span(&token) {
+                    if subtype.subtypes.contains(&new_subtype) {
+                        return None;
+                    } else {
+                        subtype.subtypes.push(new_subtype);
+                        continue;
+                    }
+                }
+            }
+            /* If we arrive here, no type managed to validated the given subtype, that's an error! */
+            return None;
+        }
+
+        Some(result)
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ArtifactSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::ArtifactType, MAX_CHILDREN_PER_NODE>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::ArtifactSubtype, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for ArtifactSubtype {
@@ -659,13 +726,23 @@ impl AbilityTreeNode for ArtifactSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "artifact type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct BattleSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::BattleType, MAX_CHILDREN_PER_NODE>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::BattleSubtype, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for BattleSubtype {
@@ -701,12 +778,23 @@ impl AbilityTreeNode for BattleSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "battle type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct ConspiracySubtype;
+pub struct ConspiracySubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for ConspiracySubtype {
     fn node_id(&self) -> usize {
@@ -725,14 +813,24 @@ impl AbilityTreeNode for ConspiracySubtype {
         write!(out, "conspiracy type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "conspiracy type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct CreatureSubtype {
     /* Fixme: power / toughness ? */
-    subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, MAX_CHILDREN_PER_NODE>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for CreatureSubtype {
@@ -769,12 +867,23 @@ impl AbilityTreeNode for CreatureSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "creature type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct DungeonSubtype;
+pub struct DungeonSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for DungeonSubtype {
     fn node_id(&self) -> usize {
@@ -793,12 +902,23 @@ impl AbilityTreeNode for DungeonSubtype {
         write!(out, "dungeon type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "dungeon type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct EmblemSubtype;
+pub struct EmblemSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for EmblemSubtype {
     fn node_id(&self) -> usize {
@@ -817,13 +937,23 @@ impl AbilityTreeNode for EmblemSubtype {
         write!(out, "emblem type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "emblem type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct EnchantmentSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::EnchantmentType, 4>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::EnchantmentSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for EnchantmentSubtype {
@@ -859,12 +989,23 @@ impl AbilityTreeNode for EnchantmentSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "enchantment type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct HeroSubtype;
+pub struct HeroSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for HeroSubtype {
     fn node_id(&self) -> usize {
@@ -883,13 +1024,23 @@ impl AbilityTreeNode for HeroSubtype {
         write!(out, "emblem type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "hero type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct InstantSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
+    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::SpellSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for InstantSubtype {
@@ -925,13 +1076,23 @@ impl AbilityTreeNode for InstantSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "instant type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct KindredSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::CreatureType, 4>,
+    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for KindredSubtype {
@@ -967,13 +1128,23 @@ impl AbilityTreeNode for KindredSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "kindred type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct LandSubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::LandType, 4>,
+    subtypes: arrayvec::ArrayVec<crate::ability_tree::object::LandSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for LandSubtype {
@@ -1009,12 +1180,23 @@ impl AbilityTreeNode for LandSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "land type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct PhenomenonSubtype;
+pub struct PhenomenonSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for PhenomenonSubtype {
     fn node_id(&self) -> usize {
@@ -1033,12 +1215,23 @@ impl AbilityTreeNode for PhenomenonSubtype {
         write!(out, "phenomenon type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "phenomenon type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct PlaneSubtype;
+pub struct PlaneSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for PlaneSubtype {
     fn node_id(&self) -> usize {
@@ -1057,14 +1250,24 @@ impl AbilityTreeNode for PlaneSubtype {
         write!(out, "plane type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "plane type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct PlaneswalkerSubtype {
-    loyalty: u64,
-    subtypes: arrayvec::ArrayVec<mtg_data::PlaneswalkerType, 4>,
+    pub loyalty: u64,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::PlaneswalkerSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for PlaneswalkerSubtype {
@@ -1105,12 +1308,23 @@ impl AbilityTreeNode for PlaneswalkerSubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "planeswalker type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct SchemeSubtype;
+pub struct SchemeSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for SchemeSubtype {
     fn node_id(&self) -> usize {
@@ -1129,13 +1343,23 @@ impl AbilityTreeNode for SchemeSubtype {
         write!(out, "scheme type")?;
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "scheme type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct SorcerySubtype {
-    subtypes: arrayvec::ArrayVec<mtg_data::SpellType, 4>,
+    pub subtypes: arrayvec::ArrayVec<crate::ability_tree::object::SpellSubtype, 4>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for SorcerySubtype {
@@ -1171,12 +1395,23 @@ impl AbilityTreeNode for SorcerySubtype {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "sorcery type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub struct VanguardSubtype;
+pub struct VanguardSubtype {
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
 
 impl AbilityTreeNode for VanguardSubtype {
     fn node_id(&self) -> usize {
@@ -1194,5 +1429,14 @@ impl AbilityTreeNode for VanguardSubtype {
         use std::io::Write;
         write!(out, "vanguard type")?;
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "vanguard type"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
     }
 }

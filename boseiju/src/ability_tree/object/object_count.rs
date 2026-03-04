@@ -5,12 +5,32 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum CountSpecifier {
-    A,
-    All,
+    A {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    All {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Target(crate::ability_tree::number::Number),
-    AllOthers,
+    AllOthers {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+#[cfg(feature = "spanned_tree")]
+impl CountSpecifier {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::A { span } => *span,
+            Self::All { span } => *span,
+            Self::Target(child) => child.span(),
+            Self::AllOthers { span } => *span,
+        }
+    }
 }
 
 impl AbilityTreeNode for CountSpecifier {
@@ -37,24 +57,41 @@ impl AbilityTreeNode for CountSpecifier {
         write!(out, "count specifier:")?;
         out.push_final_branch()?;
         match self {
-            Self::A => write!(out, "a")?,
-            Self::All => write!(out, "all")?,
+            Self::A { .. } => write!(out, "a")?,
+            Self::All { .. } => write!(out, "all")?,
             Self::Target(num) => {
                 write!(out, "target")?;
                 out.push_final_branch()?;
                 num.display(out)?;
                 out.pop_branch();
             }
-            Self::AllOthers => write!(out, "all others")?,
+            Self::AllOthers { .. } => write!(out, "all others")?,
         }
         out.pop_branch();
         Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "object count"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::A { span } => *span,
+            Self::All { span } => *span,
+            Self::Target(child) => child.node_span(),
+            Self::AllOthers { span } => *span,
+        }
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for CountSpecifier {
     fn dummy_init() -> Self {
-        Self::All
+        Self::All {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -1,20 +1,21 @@
 use super::ParserNode;
 use crate::ability_tree::terminals;
-use crate::lexer::tokens::TokenKind;
+use crate::lexer::tokens::Token;
 use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(TokenKind::Mana { mana: dummy() }).id()]),
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::Mana { mana: dummy() }).id()]),
             merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(TokenKind::Mana { mana })] => Ok(ParserNode::ManaCost {
+                &[ParserNode::LexerToken(Token::Mana { mana })] => Ok(ParserNode::ManaCost {
                     mana_cost: {
                         let mut cost = arrayvec::ArrayVec::new_const();
                         cost.push(mana.clone());
-                        terminals::ManaCost { cost }
+                        terminals::ManaCost { cost,
+                            #[cfg(feature = "spanned_tree")] span: mana.span() }
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -24,13 +25,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
-                ParserNode::LexerToken(TokenKind::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
             ]),
             merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(TokenKind::Mana { mana }),
+                    ParserNode::LexerToken(Token::Mana { mana }),
                 ] => Ok(ParserNode::ManaCost {
                     mana_cost: {
                         let mut mana_cost = mana_cost.clone();

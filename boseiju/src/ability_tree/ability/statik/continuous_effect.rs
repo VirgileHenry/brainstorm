@@ -14,10 +14,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// See https://mtg.fandom.com/wiki/Continuous_effect.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct ContinuousEffect {
     pub effect: continuous_effect_kind::ContinuousEffectKind,
     pub duration: crate::ability_tree::time::ForwardDuration,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for ContinuousEffect {
@@ -46,6 +47,15 @@ impl crate::ability_tree::AbilityTreeNode for ContinuousEffect {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "continuous effect"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -54,6 +64,8 @@ impl crate::utils::DummyInit for ContinuousEffect {
         Self {
             effect: crate::utils::dummy(),
             duration: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

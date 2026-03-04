@@ -10,10 +10,11 @@ const MAX_DAMAGES_DEALT: usize = MAX_CHILDREN_PER_NODE - 1;
 /// target and 3 damage to each of up to two other targets."
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct DealsDamageImperative {
     pub dealer: crate::ability_tree::object::ObjectReference,
     pub damages: crate::utils::HeapArrayVec<DamagesDealt, MAX_DAMAGES_DEALT>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for DealsDamageImperative {
@@ -53,6 +54,15 @@ impl AbilityTreeNode for DealsDamageImperative {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "deal damage imperative"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -61,6 +71,8 @@ impl crate::utils::DummyInit for DealsDamageImperative {
         Self {
             dealer: crate::utils::dummy(),
             damages: crate::utils::HeapArrayVec::new(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -71,10 +83,11 @@ impl crate::utils::DummyInit for DealsDamageImperative {
 /// or anything that was mentionned in a single damage dealing action.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct DamagesDealt {
     pub to: crate::ability_tree::object::ObjectReference,
     pub amount: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for DamagesDealt {
@@ -106,6 +119,15 @@ impl AbilityTreeNode for DamagesDealt {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "damage dealt"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -114,6 +136,8 @@ impl crate::utils::DummyInit for DamagesDealt {
         Self {
             to: crate::utils::dummy(),
             amount: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

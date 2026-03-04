@@ -10,11 +10,21 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum AbilityKind {
     AbilityWord(AbilityWordAbility),
     Keyword(KeywordAbility),
     Written(Ability),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl AbilityKind {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AbilityWord(ability) => ability.span,
+            Self::Keyword(ability) => ability.span,
+            Self::Written(ability) => ability.span(),
+        }
+    }
 }
 
 impl AbilityTreeNode for AbilityKind {
@@ -40,6 +50,19 @@ impl AbilityTreeNode for AbilityKind {
             Self::Written(ability) => ability.display(out),
         }
     }
+
+    fn node_tag(&self) -> &'static str {
+        "ability kind"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::AbilityWord(child) => child.node_span(),
+            Self::Keyword(child) => child.node_span(),
+            Self::Written(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -59,7 +82,6 @@ impl crate::utils::DummyInit for AbilityKind {
 /// See also https://mtg.fandom.com/wiki/Ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub enum Ability {
     /// A spell abilty, [CR 113.3a]
     Spell(spell::SpellAbility),
@@ -69,6 +91,18 @@ pub enum Ability {
     Triggered(triggered::TriggeredAbility),
     /// A static abilty, [CR 113.3d]
     Static(statik::StaticAbility),
+}
+
+#[cfg(feature = "spanned_tree")]
+impl Ability {
+    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Spell(ability) => ability.span,
+            Self::Activated(ability) => ability.span,
+            Self::Triggered(ability) => ability.span,
+            Self::Static(ability) => ability.span,
+        }
+    }
 }
 
 impl AbilityTreeNode for Ability {
@@ -97,6 +131,20 @@ impl AbilityTreeNode for Ability {
         }
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "text ability"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Spell(child) => child.node_span(),
+            Self::Activated(child) => child.node_span(),
+            Self::Triggered(child) => child.node_span(),
+            Self::Static(child) => child.node_span(),
+        }
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -118,10 +166,11 @@ impl crate::utils::DummyInit for Ability {
 /// See also https://mtg.fandom.com/wiki/Keyword_ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct KeywordAbility {
     pub keyword: keyword::ExpandedKeywordAbility,
     pub ability: Ability,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for KeywordAbility {
@@ -149,6 +198,15 @@ impl AbilityTreeNode for KeywordAbility {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "keyword ability"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -157,6 +215,8 @@ impl crate::utils::DummyInit for KeywordAbility {
         Self {
             keyword: crate::utils::dummy(),
             ability: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
@@ -169,10 +229,11 @@ impl crate::utils::DummyInit for KeywordAbility {
 /// See also https://mtg.fandom.com/wiki/Ability_word
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
 pub struct AbilityWordAbility {
-    pub word: mtg_data::AbilityWord,
+    pub word: crate::ability_tree::terminals::AbilityWord,
     pub ability: Ability,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for AbilityWordAbility {
@@ -200,6 +261,15 @@ impl AbilityTreeNode for AbilityWordAbility {
         out.pop_branch();
         Ok(())
     }
+
+    fn node_tag(&self) -> &'static str {
+        "ability word"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
 }
 
 #[cfg(feature = "parser")]
@@ -208,6 +278,8 @@ impl crate::utils::DummyInit for AbilityWordAbility {
         Self {
             word: crate::utils::dummy(),
             ability: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }
