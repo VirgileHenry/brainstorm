@@ -14,16 +14,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         .map(|counter| ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::Number { number: dummy() }.id(),
                 ParserNode::LexerToken(Token::Counter(counter)).id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -32,7 +35,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove { span })),
+                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+                        #[cfg(feature = "spanned_tree")] span })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::Counter(counter)),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
@@ -47,10 +51,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::RemovableCounterKind::NewCounter(counter.clone()),
+                                    #[cfg(feature = "spanned_tree")]
                                     span: number.span().merge(&counter.span),
                                 });
                                 counters
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: span.merge(&reference.span()),
                         },
                     ),
@@ -64,19 +70,23 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let remove_any_counter_rules = vec![ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::Number { number: dummy() }.id(),
             ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
@@ -85,9 +95,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove { span: remove_span })),
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+                    #[cfg(feature = "spanned_tree")]span: remove_span })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter { span: counter_span })),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
+                    #[cfg(feature = "spanned_tree")]span: counter_span })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
                 ParserNode::ObjectReference { reference },
@@ -100,12 +112,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
                                 amount: number.clone(),
                                 counter: crate::ability_tree::imperative::RemovableCounterKind::AnyCounter {
+                                    #[cfg(feature = "spanned_tree")]
                                     span: *counter_span,
                                 },
+                                #[cfg(feature = "spanned_tree")]
                                 span: number.span().merge(counter_span),
                             });
                             counters
                         },
+                        #[cfg(feature = "spanned_tree")]
                         span: remove_span.merge(&reference.span()),
                     },
                 ),

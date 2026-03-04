@@ -12,17 +12,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::ControlSpecifier(
                 terminals::ControlSpecifier::YouControl {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::ControlSpecifier(terminals::ControlSpecifier::YouControl { span }))] => {
-                    Ok(ParserNode::ObjectSpecifier {
-                        specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl { span: *span }),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::ControlSpecifier(terminals::ControlSpecifier::YouControl {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -30,17 +37,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::ControlSpecifier(
                 terminals::ControlSpecifier::YouDontControl {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::ControlSpecifier(terminals::ControlSpecifier::YouDontControl { span }))] => {
-                    Ok(ParserNode::ObjectSpecifier {
-                        specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouDontControl { span: *span }),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::ControlSpecifier(terminals::ControlSpecifier::YouDontControl {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouDontControl {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -49,11 +63,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PlayerSpecifier(terminals::PlayerSpecifier::You {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Cast,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -61,13 +77,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(terminals::PlayerSpecifier::You { span: start_span })),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(terminals::PlayerSpecifier::You {
+                        #[cfg(feature = "spanned_tree")]
+                            span: start_span,
+                    })),
                     ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
-                        span: end_span,
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
                     })),
                 ] => Ok(ParserNode::ObjectSpecifier {
                     specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YouCast {
+                        #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
                     }),
                 }),
@@ -78,11 +99,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PlayerSpecifier(terminals::PlayerSpecifier::Any {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Cast,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -90,13 +113,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(terminals::PlayerSpecifier::Any { span: start_span })),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(terminals::PlayerSpecifier::Any {
+                        #[cfg(feature = "spanned_tree")]
+                            span: start_span,
+                    })),
                     ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
-                        span: end_span,
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
                     })),
                 ] => Ok(ParserNode::ObjectSpecifier {
                     specifier: object::ObjectSpecifier::Cast(terminals::CastSpecifier::YourOpponentsCast {
+                        #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
                     }),
                 }),
@@ -109,17 +137,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::EnglishKeyword(
                 intermediates::EnglishKeyword::Other {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Other { span }))] => {
-                    Ok(ParserNode::ObjectSpecifier {
-                        specifier: object::ObjectSpecifier::Another(object::AnotherObjectSpecifier { span: *span }),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Other {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::Another(object::AnotherObjectSpecifier {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -141,6 +176,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -159,6 +195,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         specifiers.push(spec2.clone());
                         object::ObjectSpecifiers::Or(object::SpecifierOrList {
                             specifiers,
+                            #[cfg(feature = "spanned_tree")]
                             span: spec1.span().merge(&spec2.span()),
                         })
                     },
@@ -172,6 +209,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -190,6 +228,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         specifiers.push(spec2.clone());
                         object::ObjectSpecifiers::And(object::SpecifierAndList {
                             specifiers,
+                            #[cfg(feature = "spanned_tree")]
                             span: spec1.span().merge(&spec2.span()),
                         })
                     },
@@ -203,6 +242,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -298,57 +338,72 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let object_non_kind_to_specifiers = vec![
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonCreature {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonCreature { span }))] => {
-                    Ok(ParserNode::ObjectSpecifier {
-                        specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(object::CardType {
-                            card_type: mtg_data::CardType::Creature,
-                            span: *span,
-                        })),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonCreature {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(object::CardType {
+                        card_type: mtg_data::CardType::Creature,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    })),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonLand {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonLand { span }))] => {
-                    Ok(ParserNode::ObjectSpecifier {
-                        specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(object::CardType {
-                            card_type: mtg_data::CardType::Land,
-                            span: *span,
-                        })),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonLand {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::CardType(object::CardType {
+                        card_type: mtg_data::CardType::Land,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    })),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonToken {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
             merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonToken { span }))] => {
-                    Ok(ParserNode::ObjectSpecifier {
-                        specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::Supertype(object::Supertype {
-                            supertype: mtg_data::Supertype::Token,
-                            span: *span,
-                        })),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::NonKind(intermediates::NonKind::NonToken {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::NotOfAKind(object::ObjectKind::Supertype(object::Supertype {
+                        supertype: mtg_data::Supertype::Token,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    })),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),

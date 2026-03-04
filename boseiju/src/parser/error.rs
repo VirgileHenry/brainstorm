@@ -28,15 +28,19 @@ impl ParserError {
         let stuck_on_token = match tokens.get(stuck_index) {
             Some(token) => FoundToken {
                 name: ParserNode::name_from_id(ParserNode::from(token.clone()).id()),
+                #[cfg(feature = "spanned_tree")]
                 position: token.span().start,
+                #[cfg(feature = "spanned_tree")]
                 length: token.span().end - token.span().start,
             },
             None => FoundToken {
                 name: "EOF",
+                #[cfg(feature = "spanned_tree")]
                 position: match tokens.last() {
                     Some(last) => last.span().end,
                     None => 0,
                 },
+                #[cfg(feature = "spanned_tree")]
                 length: 0,
             },
         };
@@ -68,11 +72,14 @@ impl std::fmt::Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnexpectedToken { found, expecting } => {
+                #[cfg(feature = "spanned_tree")]
                 write!(
                     f,
                     "Unexpected token at position {}, length {}: \"{}\"",
                     found.position, found.length, found.name,
                 )?;
+                #[cfg(not(feature = "spanned_tree"))]
+                write!(f, "Unexpected token: \"{}\"", found.name,)?;
                 if !expecting.is_empty() {
                     write!(f, "\nExpecting one of:")?;
                     for expecting in expecting.iter().take(10) {
@@ -116,6 +123,8 @@ pub struct PossibleExpectedToken {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct FoundToken {
     pub name: &'static str,
+    #[cfg(feature = "spanned_tree")]
     pub position: usize,
+    #[cfg(feature = "spanned_tree")]
     pub length: usize,
 }

@@ -15,10 +15,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::DamageKind(intermediates::DamageKind::CombatDamage {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -27,14 +29,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals { span: sp1 })),
-                    ParserNode::LexerToken(Token::DamageKind(intermediates::DamageKind::CombatDamage { span: sp2 })),
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals {
+                        #[cfg(feature = "spanned_tree")] span: sp1 })),
+                    ParserNode::LexerToken(Token::DamageKind(intermediates::DamageKind::CombatDamage {
+                        #[cfg(feature = "spanned_tree")]span: sp2 })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreatureAction(crate::ability_tree::event::CreatureActionEvent {
                         creatures: reference.clone(),
                         action: crate::ability_tree::event::CreatureAction::DealsCombatDamage(
-                            crate::ability_tree::event::CreatureDealsCombatDamageAction { span: sp1.merge(sp2) },
+                            crate::ability_tree::event::CreatureDealsCombatDamageAction {
+                                #[cfg(feature = "spanned_tree")] span: sp1.merge(sp2) },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.span().merge(sp2),
                     }),
                 }),
@@ -47,6 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -55,16 +62,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack { span })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
+                        #[cfg(feature = "spanned_tree")]span })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreatureAction(crate::ability_tree::event::CreatureActionEvent {
                         creatures: reference.clone(),
                         action: crate::ability_tree::event::CreatureAction::Attacks(
                             crate::ability_tree::event::CreatureAttacksAction {
                                 attacked_player: None,
+                                #[cfg(feature = "spanned_tree")]
                                 span: *span,
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.span().merge(span),
                     }),
                 }),
@@ -77,6 +87,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Dies {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -85,13 +96,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Dies { span })),
+                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Dies {
+                        #[cfg(feature = "spanned_tree")]span })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreatureAction(crate::ability_tree::event::CreatureActionEvent {
                         creatures: reference.clone(),
                         action: crate::ability_tree::event::CreatureAction::Dies(
-                            crate::ability_tree::event::CreatureDiesAction { span: *span },
+                            crate::ability_tree::event::CreatureDiesAction {
+                                #[cfg(feature = "spanned_tree")]span: *span },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.span().merge(span),
                     }),
                 }),

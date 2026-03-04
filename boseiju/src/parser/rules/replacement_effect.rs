@@ -8,16 +8,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [super::ParserRule {
         expanded: super::RuleLhs::new(&[
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::Event { event: dummy() }.id(),
             ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::EventReplacement { replacement: dummy() }.id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
@@ -25,11 +28,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::ContinuousEffectKind { kind: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { span: if_span })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    #[cfg(feature = "spanned_tree")] span: if_span })),
                 ParserNode::Event { event },
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                 ParserNode::EventReplacement { replacement },
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead { span: instead_span })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead {
+                    #[cfg(feature = "spanned_tree")]span: instead_span })),
             ] => {
                 use crate::ability_tree::ability::statik::continuous_effect;
                 Ok(ParserNode::ContinuousEffectKind {
@@ -37,6 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         continuous_effect::ContinuousEffectReplacementEvent {
                             replaced_event: event.clone(),
                             replaced_by: replacement.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: if_span.merge(instead_span),
                         },
                     ),

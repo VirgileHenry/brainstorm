@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for PlaneswalkerSubtype {
         use std::str::FromStr;
         Some(Self {
             planeswalker_subtype: mtg_data::PlaneswalkerType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

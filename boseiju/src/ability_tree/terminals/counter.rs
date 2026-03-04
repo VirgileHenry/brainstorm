@@ -14,6 +14,7 @@ impl Counter {
     pub fn all() -> impl Iterator<Item = Self> {
         CounterKind::all().map(|kind| Self {
             kind,
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
     }

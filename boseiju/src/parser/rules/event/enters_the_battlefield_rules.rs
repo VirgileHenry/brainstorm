@@ -14,10 +14,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -26,11 +28,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters { span })),
+                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                        #[cfg(feature = "spanned_tree")] span })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::EntersTheBattlefield(
                         crate::ability_tree::event::EntersTheBattlefieldEvent {
                             object: reference.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: reference.span().merge(span),
                         },
                     ),
@@ -44,6 +48,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -52,11 +57,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters { span })),
+                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                        #[cfg(feature = "spanned_tree")]span })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::EntersTheBattlefield(
                         crate::ability_tree::event::EntersTheBattlefieldEvent {
                             object: reference.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: reference.span().merge(span),
                         },
                     ),

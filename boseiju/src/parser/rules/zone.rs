@@ -9,15 +9,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_rules = vec![super::ParserRule {
         expanded: super::RuleLhs::new(&[
             ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
         ]),
         merged: ParserNode::ZoneReference { zone: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield { span }))] => {
+            &[ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield {
+                #[cfg(feature = "spanned_tree")] span }))] => {
                 Ok(ParserNode::ZoneReference {
-                    zone: crate::ability_tree::zone::ZoneReference::TheBattlefield { span: *span },
+                    zone: crate::ability_tree::zone::ZoneReference::TheBattlefield {
+                        #[cfg(feature = "spanned_tree")] span: *span },
                 })
             }
             _ => Err("Provided tokens do not match rule definition"),

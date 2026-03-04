@@ -11,17 +11,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
             merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An { span }))] => {
-                    Ok(ParserNode::Number {
-                        number: number::Number::Number(number::FixedNumber { number: 1, span: *span }),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Number {
+                    number: number::Number::Number(number::FixedNumber {
+                        number: 1,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -29,17 +37,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
             merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { span }))] => {
-                    Ok(ParserNode::Number {
-                        number: number::Number::Number(number::FixedNumber { number: 1, span: *span }),
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Number {
+                    number: number::Number::Number(number::FixedNumber {
+                        number: 1,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -50,15 +66,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 /* Fixme: each is parsed as an "all" ? */
                 ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::All {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::Number(intermediates::Number::UpTo {
                     num: 0,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -66,12 +85,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::All { span: all_span })),
+                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::All {
+                        #[cfg(feature = "spanned_tree")]
+                            span: all_span,
+                    })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of { .. })),
-                    ParserNode::LexerToken(Token::Number(intermediates::Number::UpTo { num, span })),
+                    ParserNode::LexerToken(Token::Number(intermediates::Number::UpTo {
+                        num,
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Number {
                     number: crate::ability_tree::number::Number::UpTo(number::UpToNumber {
                         maximum: *num,
+                        #[cfg(feature = "spanned_tree")]
                         span: all_span.merge(span),
                     }),
                 }),
@@ -84,20 +111,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let defined_numbers_rules = [
         intermediates::Number::Number {
             num: 0,
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         intermediates::Number::OrMore {
             num: 0,
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         intermediates::Number::UpTo {
             num: 0,
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         intermediates::Number::AnyNumber {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         intermediates::Number::ThatMany {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
     ]
@@ -108,24 +140,47 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(Token::Number(number))] => Ok(ParserNode::Number {
                 number: match number {
-                    intermediates::Number::Number { num, span } => {
-                        crate::ability_tree::number::Number::Number(number::FixedNumber {
-                            number: *num,
-                            span: *span,
-                        })
-                    }
-                    intermediates::Number::OrMore { num, span } => {
-                        crate::ability_tree::number::Number::OrMore(number::OrMoreNumber {
-                            minimum: *num,
-                            span: *span,
-                        })
-                    }
-                    intermediates::Number::UpTo { num, span } => crate::ability_tree::number::Number::UpTo(number::UpToNumber {
-                        maximum: *num,
+                    intermediates::Number::Number {
+                        num,
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    } => crate::ability_tree::number::Number::Number(number::FixedNumber {
+                        number: *num,
+                        #[cfg(feature = "spanned_tree")]
                         span: *span,
                     }),
-                    intermediates::Number::AnyNumber { span } => crate::ability_tree::number::Number::AnyNumber { span: *span },
-                    intermediates::Number::ThatMany { span } => crate::ability_tree::number::Number::ThatMany { span: *span },
+                    intermediates::Number::OrMore {
+                        num,
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    } => crate::ability_tree::number::Number::OrMore(number::OrMoreNumber {
+                        minimum: *num,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                    intermediates::Number::UpTo {
+                        num,
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    } => crate::ability_tree::number::Number::UpTo(number::UpToNumber {
+                        maximum: *num,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                    intermediates::Number::AnyNumber {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    } => crate::ability_tree::number::Number::AnyNumber {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                    intermediates::Number::ThatMany {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    } => crate::ability_tree::number::Number::ThatMany {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
                     _ => return Err("Unreachable in number rule"),
                 },
             }),

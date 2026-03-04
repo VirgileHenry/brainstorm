@@ -12,11 +12,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::Number { number: dummy() }.id(),
             ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
@@ -24,13 +26,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain { span: start_span })),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                    #[cfg(feature = "spanned_tree")] span: start_span })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life { span: end_span })),
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
+                    #[cfg(feature = "spanned_tree")] span: end_span })),
             ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::GainLife(
                     crate::ability_tree::imperative::GainLifeImperative {
                         amount: number.clone(),
+                        #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
                     },
                 ),

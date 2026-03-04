@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for Supertype {
         use std::str::FromStr;
         Some(Self {
             supertype: mtg_data::Supertype::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

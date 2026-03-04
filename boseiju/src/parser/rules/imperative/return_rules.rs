@@ -11,16 +11,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Return any object from a zone to another */ ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::ZoneReference { zone: dummy() }.id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
@@ -29,7 +32,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return { span: start_span })),
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                    #[cfg(feature = "spanned_tree")]span: start_span })),
                 ParserNode::ObjectReference { reference },
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                 ParserNode::ZoneReference { zone: from_zone },
@@ -41,6 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         object: reference.clone(),
                         from: from_zone.clone(),
                         to: to_zone.clone(),
+                        #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(&to_zone.span()),
                     },
                 ),

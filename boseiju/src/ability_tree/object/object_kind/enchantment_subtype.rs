@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for EnchantmentSubtype {
         use std::str::FromStr;
         Some(Self {
             enchantment_subtype: mtg_data::EnchantmentType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

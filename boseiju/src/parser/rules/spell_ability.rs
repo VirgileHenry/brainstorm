@@ -17,6 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         statements.push(statement.clone());
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
+                            #[cfg(feature = "spanned_tree")]
                             span: statement.span(),
                         }
                     },
@@ -44,6 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         statements.push(s2.clone());
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
+                            #[cfg(feature = "spanned_tree")]
                             span: s1.span().merge(&s2.span()),
                         }
                     },
@@ -57,6 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Statement { statement: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -75,6 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         statements.push(s2.clone());
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
+                            #[cfg(feature = "spanned_tree")]
                             span: s1.span().merge(&s2.span()),
                         }
                     },

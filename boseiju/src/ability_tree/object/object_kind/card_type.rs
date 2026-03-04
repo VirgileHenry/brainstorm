@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for CardType {
         use std::str::FromStr;
         Some(Self {
             card_type: mtg_data::CardType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

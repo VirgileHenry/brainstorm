@@ -163,6 +163,7 @@ impl Token {
         }
     }
 
+    #[cfg(feature = "spanned_tree")]
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AbilityWord(child) => child.span,

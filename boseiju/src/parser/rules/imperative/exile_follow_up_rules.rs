@@ -11,11 +11,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Exile follow up that return the card directly */ ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::PreviouslyMentionnedObject { object: dummy() }.id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),

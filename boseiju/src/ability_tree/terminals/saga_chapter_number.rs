@@ -27,26 +27,32 @@ impl IntoToken for SagaChapterNumber {
         match span.text {
             "i" => Some(SagaChapterNumber {
                 chapter: 1,
+                #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "ii" => Some(SagaChapterNumber {
                 chapter: 2,
+                #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "iii" => Some(SagaChapterNumber {
                 chapter: 3,
+                #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "iv" => Some(SagaChapterNumber {
                 chapter: 4,
+                #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "v" => Some(SagaChapterNumber {
                 chapter: 5,
+                #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "vi" => Some(SagaChapterNumber {
                 chapter: 6,
+                #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             _ => None,

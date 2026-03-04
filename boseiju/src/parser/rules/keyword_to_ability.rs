@@ -12,6 +12,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         .map(|keyword| ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                 keyword_ability: keyword.into(),
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
@@ -32,6 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Enchant,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -42,6 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                         keyword_ability: mtg_data::KeywordAbility::Enchant,
+                        #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                     ParserNode::ObjectSpecifiers { specifiers },
@@ -50,6 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword: crate::ability_tree::ability::keyword::ExpandedKeywordAbility::Enchant(
                             crate::ability_tree::ability::keyword::EnchantKeywordAbility {
                                 enchantable_object: specifiers.clone(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: span.merge(&specifiers.span()),
                             },
                         ),
@@ -57,9 +61,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ability: crate::ability_tree::ability::Ability::Spell(
                             crate::ability_tree::ability::spell::SpellAbility {
                                 effects: crate::utils::HeapArrayVec::new(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: span.merge(&specifiers.span()),
                     },
                 }),
@@ -72,6 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Ward,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -82,6 +89,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                         keyword_ability: mtg_data::KeywordAbility::Ward,
+                        #[cfg(feature = "spanned_tree")]
                         span: ward_span,
                     })),
                     ParserNode::ManaCost { mana_cost },
@@ -90,6 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword: crate::ability_tree::ability::keyword::ExpandedKeywordAbility::Ward(
                             crate::ability_tree::ability::keyword::WardKeywordAbility {
                                 cost: crate::ability_tree::cost::Cost::ManaCost(mana_cost.clone()),
+                                #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&mana_cost.span),
                             },
                         ),
@@ -97,9 +106,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ability: crate::ability_tree::ability::Ability::Spell(
                             crate::ability_tree::ability::spell::SpellAbility {
                                 effects: crate::utils::HeapArrayVec::new(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: ward_span.merge(&mana_cost.span),
                     },
                 }),
@@ -112,10 +123,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Ward,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -126,6 +139,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
                         keyword_ability: mtg_data::KeywordAbility::Ward,
+                        #[cfg(feature = "spanned_tree")]
                         span: ward_span,
                     })),
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
@@ -135,6 +149,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword: crate::ability_tree::ability::keyword::ExpandedKeywordAbility::Ward(
                             crate::ability_tree::ability::keyword::WardKeywordAbility {
                                 cost: cost.clone(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&cost.span()),
                             },
                         ),
@@ -142,9 +157,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ability: crate::ability_tree::ability::Ability::Spell(
                             crate::ability_tree::ability::spell::SpellAbility {
                                 effects: crate::utils::HeapArrayVec::new(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: ward_span.merge(&cost.span()),
                     },
                 }),

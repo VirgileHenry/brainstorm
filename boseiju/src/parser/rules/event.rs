@@ -16,15 +16,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Players can be the source of events: "if a player would <event action>" */
     let player_to_event_source = [
         terminals::PlayerSpecifier::Any {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::ToYourLeft {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::ToYourRight {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::You {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
     ]
@@ -47,10 +51,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Effect {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -58,11 +64,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::EventSource { source: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An { span: start_span })),
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Effect { span: end_span })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                        #[cfg(feature = "spanned_tree")] span: start_span })),
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Effect {
+                        #[cfg(feature = "spanned_tree")] span: end_span })),
                 ] => Ok(ParserNode::EventSource {
                     source: crate::ability_tree::event::source::EventSource::AnEffect(
                         crate::ability_tree::event::source::EffectEventSource {
+                            #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(end_span),
                         },
                     ),

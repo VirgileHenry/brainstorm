@@ -21,7 +21,7 @@ rapidhash = { version = "4.4.1", optional = true }
 krark = { workspace = true }
 
 [features]
-default = ["lexer", "parser", "spanned_tree"]
+default = ["lexer", "parser"]
 lexer = []
 parser = ["lexer", "dep:rapidhash"]
 spanned_tree = ["lexer"]

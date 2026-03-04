@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for BattleSubtype {
         use std::str::FromStr;
         Some(Self {
             battle_subtype: mtg_data::BattleType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

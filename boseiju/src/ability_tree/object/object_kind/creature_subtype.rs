@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for CreatureSubtype {
         use std::str::FromStr;
         Some(Self {
             creature_subtype: mtg_data::CreatureType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

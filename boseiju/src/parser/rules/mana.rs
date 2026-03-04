@@ -14,7 +14,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     mana_cost: {
                         let mut cost = arrayvec::ArrayVec::new_const();
                         cost.push(mana.clone());
-                        terminals::ManaCost { cost, span: mana.span() }
+                        terminals::ManaCost { cost,
+                            #[cfg(feature = "spanned_tree")] span: mana.span() }
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

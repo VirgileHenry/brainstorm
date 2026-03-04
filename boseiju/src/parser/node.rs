@@ -63,6 +63,7 @@ pub enum ParserNode {
     },
     ImperativeChoices {
         choices: crate::utils::HeapArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>,
+        #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     KeywordAbility {

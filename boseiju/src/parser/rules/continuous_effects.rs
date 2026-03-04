@@ -6,9 +6,11 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let duration_to_continuous_effect = [
         crate::ability_tree::time::ForwardDuration::UntilEndOfTurn {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         crate::ability_tree::time::ForwardDuration::UntilEndOfYourNextTurn {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
     ]
@@ -27,6 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 effect: crate::ability_tree::ability::statik::continuous_effect::ContinuousEffect {
                     duration: *duration,
                     effect: kind.clone(),
+                    #[cfg(feature = "spanned_tree")]
                     span: kind.span().merge(&duration.span()),
                 },
             }),
@@ -48,9 +51,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     Ok(ParserNode::ContinuousEffect {
                         effect: ContinuousEffect {
                             duration: crate::ability_tree::time::ForwardDuration::ObjectLifetime {
+                                #[cfg(feature = "spanned_tree")]
                                 span: kind.span().empty_at_end(),
                             },
                             effect: kind.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: kind.span(),
                         },
                     })

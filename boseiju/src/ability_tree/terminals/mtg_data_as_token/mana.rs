@@ -113,14 +113,44 @@ impl IntoToken for Mana {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         use std::str::FromStr;
         Some(match mtg_data::Mana::from_str(&span.text).ok()? {
-            mtg_data::Mana::X => Self::X { span: span.into() },
-            mtg_data::Mana::Any(mana) => Self::Any(AnyMana { mana, span: span.into() }),
-            mtg_data::Mana::Colored(mana) => Self::Colored(ColoredMana { mana, span: span.into() }),
-            mtg_data::Mana::Hybrid(mana) => Self::Hybrid(HybridMana { mana, span: span.into() }),
-            mtg_data::Mana::MonocoloredHybrid(mana) => Self::MonocoloredHybrid(MonocoloredHybridMana { mana, span: span.into() }),
-            mtg_data::Mana::Phyrexian(mana) => Self::Phyrexian(PhyrexianMana { mana, span: span.into() }),
-            mtg_data::Mana::HybridPhyrexian(mana) => Self::HybridPhyrexian(HybridPhyrexianMana { mana, span: span.into() }),
-            mtg_data::Mana::Snow => Self::Snow { span: span.into() },
+            mtg_data::Mana::X => Self::X {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            },
+            mtg_data::Mana::Any(mana) => Self::Any(AnyMana {
+                mana,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            mtg_data::Mana::Colored(mana) => Self::Colored(ColoredMana {
+                mana,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            mtg_data::Mana::Hybrid(mana) => Self::Hybrid(HybridMana {
+                mana,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            mtg_data::Mana::MonocoloredHybrid(mana) => Self::MonocoloredHybrid(MonocoloredHybridMana {
+                mana,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            mtg_data::Mana::Phyrexian(mana) => Self::Phyrexian(PhyrexianMana {
+                mana,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            mtg_data::Mana::HybridPhyrexian(mana) => Self::HybridPhyrexian(HybridPhyrexianMana {
+                mana,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            mtg_data::Mana::Snow => Self::Snow {#[cfg(feature = "spanned_tree")]
+                span:
+
+               span.into() },
         })
     }
 }

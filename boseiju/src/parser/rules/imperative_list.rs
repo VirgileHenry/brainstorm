@@ -23,9 +23,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             imperatives
                         },
                         executing_player: crate::ability_tree::terminals::PlayerSpecifier::You {
+                            #[cfg(feature = "spanned_tree")]
                             span: imperative.span().empty_at_start(),
                         },
                         condition: None,
+                        #[cfg(feature = "spanned_tree")]
                         span: imperative.span(),
                     },
                 }),
@@ -38,6 +40,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Imperative { imperative: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -58,9 +61,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             imperatives
                         },
                         executing_player: crate::ability_tree::terminals::PlayerSpecifier::You {
-                            span: imp1.span().empty_at_start(),
+
+                            #[cfg(feature = "spanned_tree")]span: imp1.span().empty_at_start(),
                         },
                         condition: None,
+                        #[cfg(feature = "spanned_tree")]
                         span: imp1.span().merge(&imp2.span()),
                     },
                 }),
@@ -73,6 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Imperative { imperative: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Unless {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -92,14 +98,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             imperatives
                         },
                         executing_player: crate::ability_tree::terminals::PlayerSpecifier::You {
+                            #[cfg(feature = "spanned_tree")]
                             span: imperative.span().empty_at_start(),
                         },
                         condition: Some(crate::ability_tree::conditional::Conditional::Unless(
                             crate::ability_tree::conditional::ConditionalUnless {
                                 condition: condition.clone(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: imperative.span().merge(&condition.span()),
                             },
                         )),
+                        #[cfg(feature = "spanned_tree")]
                         span: imperative.span().merge(&condition.span()),
                     },
                 }),
@@ -111,11 +120,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::Condition { condition: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -124,7 +135,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { span: if_span })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                        #[cfg(feature = "spanned_tree")] span: if_span })),
                     ParserNode::Condition { condition },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::Imperative { imperative },
@@ -136,14 +148,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             imperatives
                         },
                         executing_player: crate::ability_tree::terminals::PlayerSpecifier::You {
+                            #[cfg(feature = "spanned_tree")]
                             span: imperative.span().empty_at_start(),
                         },
                         condition: Some(crate::ability_tree::conditional::Conditional::If(
                             crate::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
+                                #[cfg(feature = "spanned_tree")]
                                 span: if_span.merge(&imperative.span()),
                             },
                         )),
+                        #[cfg(feature = "spanned_tree")]
                         span: if_span.merge(&imperative.span()),
                     },
                 }),
@@ -155,21 +170,27 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
 
     let imperative_list_with_executing_player = [
         terminals::PlayerSpecifier::All {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::EachOpponent {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::TargetOpponent {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::ToYourLeft {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::ToYourRight {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
         terminals::PlayerSpecifier::You {
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         },
     ]
@@ -196,6 +217,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                             executing_player: player.clone(),
                             condition: None,
+                            #[cfg(feature = "spanned_tree")]
                             span: player.span().merge(&imperative.span()),
                         },
                     }),
@@ -209,6 +231,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::PlayerSpecifier(player)).id(),
                     ParserNode::Imperative { imperative: dummy() }.id(),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
+                        #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
@@ -231,6 +254,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                             executing_player: player.clone(),
                             condition: None,
+                            #[cfg(feature = "spanned_tree")]
                             span: player.span().merge(&imp2.span()),
                         },
                     }),
@@ -244,6 +268,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::PlayerSpecifier(player)).id(),
                     ParserNode::Imperative { imperative: dummy() }.id(),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Unless {
+                        #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
@@ -255,6 +280,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ParserNode::LexerToken(Token::PlayerSpecifier(player)),
                         ParserNode::Imperative { imperative },
                         ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Unless {
+                            #[cfg(feature = "spanned_tree")]
                             span: unless_span,
                         })),
                         ParserNode::Condition { condition },
@@ -269,9 +295,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             condition: Some(crate::ability_tree::conditional::Conditional::Unless(
                                 crate::ability_tree::conditional::ConditionalUnless {
                                     condition: condition.clone(),
+                                    #[cfg(feature = "spanned_tree")]
                                     span: unless_span.merge(&condition.span()),
                                 },
                             )),
+                            #[cfg(feature = "spanned_tree")]
                             span: player.span().merge(&condition.span()),
                         },
                     }),
@@ -283,11 +311,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ParserRule {
                 expanded: super::RuleLhs::new(&[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                        #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
                     ParserNode::Condition { condition: dummy() }.id(),
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                        #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
@@ -297,7 +327,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { span: if_span })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                            #[cfg(feature = "spanned_tree")] span: if_span })),
                         ParserNode::Condition { condition },
                         ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                         ParserNode::LexerToken(Token::PlayerSpecifier(player)),
@@ -313,9 +344,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             condition: Some(crate::ability_tree::conditional::Conditional::If(
                                 crate::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
+                                    #[cfg(feature = "spanned_tree")]
                                     span: if_span.merge(&condition.span()),
                                 },
                             )),
+                            #[cfg(feature = "spanned_tree")]
                             span: if_span.merge(&imperative.span()),
                         },
                     }),

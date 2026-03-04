@@ -34,6 +34,7 @@ impl ObjectSpecifiers {
     pub fn add_factor_specifier(&self, factor_specifier: ObjectSpecifier) -> Self {
         match self {
             Self::Single(specifier) => Self::And(SpecifierAndList {
+                #[cfg(feature = "spanned_tree")]
                 span: self.span().merge(&factor_specifier.span()),
                 specifiers: {
                     let mut specifiers = arrayvec::ArrayVec::new_const();
@@ -43,6 +44,7 @@ impl ObjectSpecifiers {
                 },
             }),
             Self::And(and) => Self::And(SpecifierAndList {
+                #[cfg(feature = "spanned_tree")]
                 span: and.span.merge(&factor_specifier.span()),
                 specifiers: {
                     let mut and_specifiers = and.specifiers.clone();
@@ -60,6 +62,7 @@ impl ObjectSpecifiers {
                 }
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
+                    #[cfg(feature = "spanned_tree")]
                     span: or.span.merge(&factor_specifier.span()),
                 }
             }),
@@ -70,6 +73,7 @@ impl ObjectSpecifiers {
                 }
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
+                    #[cfg(feature = "spanned_tree")]
                     span: or_of_and.span.merge(&factor_specifier.span()),
                 }
             }),
@@ -215,6 +219,7 @@ impl SpecifierOrList {
         }
         SpecifierOrOfAndList {
             specifiers: or_specifiers,
+            #[cfg(feature = "spanned_tree")]
             span: self.span.merge(&factor_specifier.span()),
         }
     }

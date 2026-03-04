@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for SpellSubtype {
         use std::str::FromStr;
         Some(Self {
             spell_subtype: mtg_data::SpellType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

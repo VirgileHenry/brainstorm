@@ -13,6 +13,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -21,13 +22,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile { span })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
+                        #[cfg(feature = "spanned_tree")]span })),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Exile(
                         crate::ability_tree::imperative::ExileImperative {
                             object: reference.clone(),
                             follow_up: None,
+                            #[cfg(feature = "spanned_tree")]
                             span: span.merge(&reference.span()),
                         },
                     ),
@@ -40,11 +43,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -53,7 +58,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile { span })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
+                        #[cfg(feature = "spanned_tree")]span })),
                     ParserNode::ObjectReference { reference },
                     ParserNode::ExileFollowUp { follow_up },
                 ] => Ok(ParserNode::Imperative {
@@ -61,6 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::ExileImperative {
                             object: reference.clone(),
                             follow_up: Some(follow_up.clone()),
+                            #[cfg(feature = "spanned_tree")]
                             span: span.merge(&follow_up.span()),
                         },
                     ),

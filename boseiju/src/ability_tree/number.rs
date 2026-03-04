@@ -155,6 +155,7 @@ impl crate::utils::DummyInit for FixedNumber {
     fn dummy_init() -> Self {
         Self {
             number: 0,
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
     }

@@ -12,6 +12,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                 keyword_action: mtg_data::KeywordAction::Sacrifice,
+                #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
@@ -22,6 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Sacrifice,
+                    #[cfg(feature = "spanned_tree")]
                     span,
                 })),
                 ParserNode::ObjectReference { reference },
@@ -29,6 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 imperative: crate::ability_tree::imperative::Imperative::Sacrifice(
                     crate::ability_tree::imperative::SacrificeImperative {
                         object: reference.clone(),
+                        #[cfg(feature = "spanned_tree")]
                         span: span.merge(&reference.span()),
                     },
                 ),

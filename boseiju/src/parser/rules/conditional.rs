@@ -7,6 +7,7 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let backward_duration_to_event_occured_condition = [time::BackwardDuration::ThisTurn {
+        #[cfg(feature = "spanned_tree")]
         span: Default::default(),
     }]
     .into_iter()
@@ -25,6 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     crate::ability_tree::conditional::ConditionEventOccured {
                         timeframe: *duration,
                         event: event.clone(),
+                        #[cfg(feature = "spanned_tree")]
                         span: event.span().merge(&duration.span()),
                     },
                 ),
@@ -41,10 +43,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Is {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -62,6 +66,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
                             object: reference.clone(),
                             specifiers: specifiers.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: reference.span().merge(&specifiers.span()),
                         },
                     ),
@@ -75,10 +80,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Is {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -96,6 +103,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
                             object: reference.clone(),
                             specifiers: specifiers.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: reference.span().merge(&specifiers.span()),
                         },
                     ),

@@ -14,12 +14,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         .map(|counter| ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::Number { number: dummy() }.id(),
                 ParserNode::LexerToken(Token::Counter(counter)).id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -28,7 +30,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { span })),
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
+                        #[cfg(feature = "spanned_tree")] span })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::Counter(counter)),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
@@ -42,10 +45,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 counters.push(crate::ability_tree::imperative::CounterOnPermanent {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::CounterKind::NewCounter(counter.clone()),
+                                    #[cfg(feature = "spanned_tree")]
                                     span: number.span().merge(&counter.span),
                                 });
                                 counters
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: span.merge(&reference.span()),
                         },
                     ),

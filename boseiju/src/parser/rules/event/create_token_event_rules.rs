@@ -16,17 +16,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::Number { number: dummy() }.id(),
                 ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(object::Supertype {
                     supertype: mtg_data::Supertype::Token,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 })))
                 .id(),
@@ -47,6 +50,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: None,
+                        #[cfg(feature = "spanned_tree")]
                         span: source.span().merge(&supertype.span),
                     }),
                 }),
@@ -59,21 +63,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::Number { number: dummy() }.id(),
                 ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(object::Supertype {
                     supertype: mtg_data::Supertype::Token,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 })))
                 .id(),
                 ParserNode::LexerToken(Token::UnderControl(intermediates::UnderControl::UnderYourControl {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -92,16 +100,21 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         supertype: mtg_data::Supertype::Token,
                         ..
                     }))),
-                    ParserNode::LexerToken(Token::UnderControl(intermediates::UnderControl::UnderYourControl { span })),
+                    ParserNode::LexerToken(Token::UnderControl(intermediates::UnderControl::UnderYourControl {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: Some(crate::ability_tree::object::ObjectSpecifiers::Single(
                             crate::ability_tree::object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl {
+                                #[cfg(feature = "spanned_tree")]
                                 span: *span,
                             }),
                         )),
+                        #[cfg(feature = "spanned_tree")]
                         span: source.span().merge(span),
                     }),
                 }),
@@ -114,11 +127,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::EventSource { source: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -126,6 +141,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
                 ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(object::Supertype {
                     supertype: mtg_data::Supertype::Token,
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 })))
                 .id(),
@@ -147,6 +163,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: Some(specifiers.clone()),
+                        #[cfg(feature = "spanned_tree")]
                         span: source.span().merge(&supertype.span),
                     }),
                 }),

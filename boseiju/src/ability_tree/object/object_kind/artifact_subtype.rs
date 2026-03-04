@@ -67,6 +67,7 @@ impl crate::lexer::IntoToken for ArtifactSubtype {
         use std::str::FromStr;
         Some(Self {
             artifact_subtype: mtg_data::ArtifactType::from_str(&span.text).ok()?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

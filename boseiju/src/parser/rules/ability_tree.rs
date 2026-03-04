@@ -12,6 +12,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::KeywordAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -30,6 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab2.clone()));
                         crate::AbilityTree {
                             abilities,
+                            #[cfg(feature = "spanned_tree")]
                             span: ab1.span.merge(&ab2.span),
                         }
                     },
@@ -43,11 +45,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::KeywordAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::KeywordAbility { ability: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -69,6 +73,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ab3.clone()));
                         crate::AbilityTree {
                             abilities,
+                            #[cfg(feature = "spanned_tree")]
                             span: ab1.span.merge(&ab3.span),
                         }
                     },
@@ -88,6 +93,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         abilities.push(ability.clone());
                         crate::AbilityTree {
                             abilities,
+                            #[cfg(feature = "spanned_tree")]
                             span: ability.span(),
                         }
                     },
@@ -102,6 +108,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::AbilityTree { tree: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -119,6 +126,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         abilities.push(ability.clone());
                         crate::AbilityTree {
                             abilities,
+                            #[cfg(feature = "spanned_tree")]
                             span: tree.span.merge(&ability.span()),
                         }
                     },
