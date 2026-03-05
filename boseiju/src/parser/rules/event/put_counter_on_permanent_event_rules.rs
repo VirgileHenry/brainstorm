@@ -8,6 +8,8 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let put_specific_counter_events = terminals::Counter::all()
         .map(|counter| {
@@ -53,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     counter_kind: Some(counter.clone()),
                                     on_permanent: reference.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: source.span().merge(&reference.span()),
+                                    span: source.node_span().merge(&reference.node_span()),
                                 },
                             ),
                         }),
@@ -108,7 +110,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     counter_kind: Some(counter.clone()),
                                     on_permanent: reference.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: source.span().merge(&reference.span()),
+                                    span: source.node_span().merge(&reference.node_span()),
                                 },
                             ),
                         }),
@@ -171,7 +173,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             counter_kind: None,
                             on_permanent: reference.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: source.span().merge(&reference.span()),
+                            span: source.node_span().merge(&reference.node_span()),
                         },
                     ),
                 }),
@@ -234,7 +236,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             counter_kind: None,
                             on_permanent: reference.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: source.span().merge(&reference.span()),
+                            span: source.node_span().merge(&reference.node_span()),
                         },
                     ),
                 }),

@@ -17,7 +17,7 @@ impl Cost {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::ManaCost(child) => child.span,
-            Self::Imperative(child) => child.span(),
+            Self::Imperative(child) => child.node_span(),
         }
     }
 }

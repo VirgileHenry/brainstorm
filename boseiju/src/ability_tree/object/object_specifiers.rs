@@ -1,3 +1,9 @@
+mod cast_specifier;
+mod control_specifier;
+
+pub use cast_specifier::CastSpecifier;
+pub use control_specifier::ControlSpecifier;
+
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
@@ -22,7 +28,7 @@ impl ObjectSpecifiers {
     #[cfg(feature = "spanned_tree")]
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Single(child) => child.span(),
+            Self::Single(child) => child.node_span(),
             Self::And(child) => child.span,
             Self::Or(child) => child.span,
             Self::OrOfAnd(child) => child.span,
@@ -35,7 +41,7 @@ impl ObjectSpecifiers {
         match self {
             Self::Single(specifier) => Self::And(SpecifierAndList {
                 #[cfg(feature = "spanned_tree")]
-                span: self.span().merge(&factor_specifier.span()),
+                span: self.node_span().merge(&factor_specifier.node_span()),
                 specifiers: {
                     let mut specifiers = arrayvec::ArrayVec::new_const();
                     specifiers.push(specifier.clone());
@@ -45,7 +51,7 @@ impl ObjectSpecifiers {
             }),
             Self::And(and) => Self::And(SpecifierAndList {
                 #[cfg(feature = "spanned_tree")]
-                span: and.span.merge(&factor_specifier.span()),
+                span: and.span.merge(&factor_specifier.node_span()),
                 specifiers: {
                     let mut and_specifiers = and.specifiers.clone();
                     and_specifiers.push(factor_specifier);
@@ -63,7 +69,7 @@ impl ObjectSpecifiers {
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
                     #[cfg(feature = "spanned_tree")]
-                    span: or.span.merge(&factor_specifier.span()),
+                    span: or.span.merge(&factor_specifier.node_span()),
                 }
             }),
             Self::OrOfAnd(or_of_and) => Self::OrOfAnd({
@@ -74,7 +80,7 @@ impl ObjectSpecifiers {
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
                     #[cfg(feature = "spanned_tree")]
-                    span: or_of_and.span.merge(&factor_specifier.span()),
+                    span: or_of_and.span.merge(&factor_specifier.node_span()),
                 }
             }),
         }
@@ -220,7 +226,7 @@ impl SpecifierOrList {
         SpecifierOrOfAndList {
             specifiers: or_specifiers,
             #[cfg(feature = "spanned_tree")]
-            span: self.span.merge(&factor_specifier.span()),
+            span: self.span.merge(&factor_specifier.node_span()),
         }
     }
 
@@ -385,9 +391,9 @@ impl crate::utils::DummyInit for SpecifierOrOfAndList {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ObjectSpecifier {
     Another(AnotherObjectSpecifier),
-    Cast(crate::ability_tree::terminals::CastSpecifier),
+    Cast(CastSpecifier),
     Color(crate::ability_tree::terminals::Color),
-    Control(crate::ability_tree::terminals::ControlSpecifier),
+    Control(ControlSpecifier),
     Kind(crate::ability_tree::object::ObjectKind),
     NotOfAKind(crate::ability_tree::object::ObjectKind),
     NotPreviouslySelected(NotPreviouslySelectedObjectSpecifier),
@@ -403,19 +409,6 @@ impl ObjectSpecifier {
                 span,
             },
         ))
-    }
-
-    #[cfg(feature = "spanned_tree")]
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Another(child) => child.span,
-            Self::Cast(child) => child.span(),
-            Self::Color(child) => child.span,
-            Self::Control(child) => child.span(),
-            Self::Kind(child) => child.span(),
-            Self::NotOfAKind(child) => child.span(),
-            Self::NotPreviouslySelected(child) => child.span,
-        }
     }
 }
 

@@ -64,9 +64,17 @@ impl idris::Idris for CreatureSubtype {
 #[cfg(feature = "lexer")]
 impl crate::lexer::IntoToken for CreatureSubtype {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            creature_subtype: mtg_data::CreatureType::from_str(&span.text).ok()?,
+            creature_subtype: {
+                if let Some(subtype) = crate::utils::from_str_singular_or_plural(&span.text) {
+                    Some(subtype)
+                } else if span.text == "elves" {
+                    /* Weird special case with the plural of elf being elves */
+                    Some(mtg_data::CreatureType::Elf)
+                } else {
+                    None
+                }
+            }?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

@@ -64,9 +64,8 @@ impl idris::Idris for LandSubtype {
 #[cfg(feature = "lexer")]
 impl crate::lexer::IntoToken for LandSubtype {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            land_subtype: mtg_data::LandType::from_str(&span.text).ok()?,
+            land_subtype: crate::utils::from_str_singular_or_plural(&span.text)?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

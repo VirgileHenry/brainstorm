@@ -94,7 +94,7 @@ impl Number {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
-                "that many" => Some(Self::ThatMany {
+                "that many" | "that much" => Some(Self::ThatMany {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
@@ -102,7 +102,7 @@ impl Number {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
-                "twice that many" => Some(Self::TwiceThatMany {
+                "twice that many" | "twice as much" => Some(Self::TwiceThatMany {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),

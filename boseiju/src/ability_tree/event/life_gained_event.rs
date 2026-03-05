@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct LifeGainedEvent {
-    pub player: crate::ability_tree::terminals::PlayerSpecifier,
+    pub player: crate::ability_tree::player::PlayerSpecifier,
     pub minimum_amount: Option<crate::ability_tree::number::Number>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -34,7 +34,7 @@ impl crate::ability_tree::AbilityTreeNode for LifeGainedEvent {
         use std::io::Write;
         write!(out, "player gains life")?;
         out.push_inter_branch()?;
-        write!(out, "player: {}", self.player)?;
+        self.player.display(out)?;
         out.next_final_branch()?;
         match self.minimum_amount.as_ref() {
             Some(minimum_amount) => {

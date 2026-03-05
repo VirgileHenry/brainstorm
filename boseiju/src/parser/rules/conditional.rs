@@ -5,6 +5,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let backward_duration_to_event_occured_condition = [time::BackwardDuration::ThisTurn {
         #[cfg(feature = "spanned_tree")]
@@ -27,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         timeframe: *duration,
                         event: event.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: event.span().merge(&duration.span()),
+                        span: event.node_span().merge(&duration.node_span()),
                     },
                 ),
             }),
@@ -67,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             object: reference.clone(),
                             specifiers: specifiers.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&specifiers.span()),
+                            span: reference.node_span().merge(&specifiers.node_span()),
                         },
                     ),
                 }),
@@ -104,7 +107,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             object: reference.clone(),
                             specifiers: specifiers.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&specifiers.span()),
+                            span: reference.node_span().merge(&specifiers.node_span()),
                         },
                     ),
                 }),

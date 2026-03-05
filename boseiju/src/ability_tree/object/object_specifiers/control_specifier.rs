@@ -1,45 +1,44 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
-/// Action for a creature to deal combat damage.
-///
-/// Combat damage is the special kind of damage that creature deals when
-/// they fight each other, or when they attack a player.
+/// A specifier for who controls a permanents.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct CreatureAttacksAction {
-    pub attacked_player: Option<crate::ability_tree::player::PlayerSpecifier>,
+pub struct ControlSpecifier {
+    pub controller: crate::ability_tree::player::PlayerSpecifier,
+    pub controlled: bool,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl AbilityTreeNode for CreatureAttacksAction {
+impl AbilityTreeNode for ControlSpecifier {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureAttacksAction.id()
+        crate::ability_tree::NodeKind::ControlSpecifier.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
-
         let mut children = arrayvec::ArrayVec::new_const();
-        match self.attacked_player.as_ref() {
-            Some(child) => children.push(child as &dyn AbilityTreeNode),
-            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
-        }
-
+        children.push(&self.controller as &dyn AbilityTreeNode);
         children
+    }
+
+    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
+        unimplemented!()
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "creature attacks")?;
-
+        write!(out, "control specifier:")?;
+        out.push_final_branch()?;
+        self.controller.display(out)?;
+        out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "creature action: attack"
+        "control specifier"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -49,10 +48,11 @@ impl AbilityTreeNode for CreatureAttacksAction {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureAttacksAction {
+impl crate::utils::DummyInit for ControlSpecifier {
     fn dummy_init() -> Self {
         Self {
-            attacked_player: None,
+            controller: crate::utils::dummy(),
+            controlled: false,
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

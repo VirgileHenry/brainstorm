@@ -19,6 +19,8 @@ pub use object_kind::PlaneswalkerSubtype;
 pub use object_kind::SpellSubtype;
 pub use object_kind::Supertype;
 pub use object_specifiers::AnotherObjectSpecifier;
+pub use object_specifiers::CastSpecifier;
+pub use object_specifiers::ControlSpecifier;
 pub use object_specifiers::NotPreviouslySelectedObjectSpecifier;
 pub use object_specifiers::ObjectSpecifier;
 pub use object_specifiers::ObjectSpecifiers;

@@ -7,6 +7,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Creature does a creature event */
@@ -30,18 +33,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals {
-                        #[cfg(feature = "spanned_tree")] span: sp1 })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: sp1,
+                    })),
                     ParserNode::LexerToken(Token::DamageKind(intermediates::DamageKind::CombatDamage {
-                        #[cfg(feature = "spanned_tree")]span: sp2 })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: sp2,
+                    })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreatureAction(crate::ability_tree::event::CreatureActionEvent {
                         creatures: reference.clone(),
                         action: crate::ability_tree::event::CreatureAction::DealsCombatDamage(
                             crate::ability_tree::event::CreatureDealsCombatDamageAction {
-                                #[cfg(feature = "spanned_tree")] span: sp1.merge(sp2) },
+                                #[cfg(feature = "spanned_tree")]
+                                span: sp1.merge(sp2),
+                            },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.span().merge(sp2),
+                        span: reference.node_span().merge(sp2),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -63,7 +72,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
-                        #[cfg(feature = "spanned_tree")]span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreatureAction(crate::ability_tree::event::CreatureActionEvent {
                         creatures: reference.clone(),
@@ -75,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.span().merge(span),
+                        span: reference.node_span().merge(span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -97,16 +108,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Dies {
-                        #[cfg(feature = "spanned_tree")]span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreatureAction(crate::ability_tree::event::CreatureActionEvent {
                         creatures: reference.clone(),
                         action: crate::ability_tree::event::CreatureAction::Dies(
                             crate::ability_tree::event::CreatureDiesAction {
-                                #[cfg(feature = "spanned_tree")]span: *span },
+                                #[cfg(feature = "spanned_tree")]
+                                span: *span,
+                            },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.span().merge(span),
+                        span: reference.node_span().merge(span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

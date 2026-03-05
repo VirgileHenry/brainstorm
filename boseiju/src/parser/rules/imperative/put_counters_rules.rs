@@ -8,6 +8,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Put counters on something, "put 2 +1/+1 counters on each creature you control" */
     let put_counters_rules = terminals::Counter::all()
@@ -31,7 +34,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
-                        #[cfg(feature = "spanned_tree")] span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::Counter(counter)),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
@@ -46,12 +51,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::CounterKind::NewCounter(counter.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: number.span().merge(&counter.span),
+                                    span: number.node_span().merge(&counter.span),
                                 });
                                 counters
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: span.merge(&reference.span()),
+                            span: span.merge(&reference.node_span()),
                         },
                     ),
                 }),

@@ -3,6 +3,9 @@ use crate::lexer::tokens::Token;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let duration_to_continuous_effect = [
         crate::ability_tree::time::ForwardDuration::UntilEndOfTurn {
@@ -30,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     duration: *duration,
                     effect: kind.clone(),
                     #[cfg(feature = "spanned_tree")]
-                    span: kind.span().merge(&duration.span()),
+                    span: kind.node_span().merge(&duration.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -52,11 +55,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         effect: ContinuousEffect {
                             duration: crate::ability_tree::time::ForwardDuration::ObjectLifetime {
                                 #[cfg(feature = "spanned_tree")]
-                                span: kind.span().empty_at_end(),
+                                span: kind.node_span().empty_at_end(),
                             },
                             effect: kind.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: kind.span(),
+                            span: kind.node_span(),
                         },
                     })
                 }

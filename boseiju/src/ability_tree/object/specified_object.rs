@@ -3,6 +3,9 @@ use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
+/// Fixme: could we split this into an enum, having specified objects
+/// for all object kinds ? it would require more types, but would allow
+/// for more expressivness ?
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SpecifiedObject {

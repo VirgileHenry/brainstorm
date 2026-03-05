@@ -7,6 +7,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Return any object from a zone to another */ ParserRule {
         expanded: RuleLhs::new(&[
@@ -33,7 +36,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
-                    #[cfg(feature = "spanned_tree")]span: start_span })),
+                    #[cfg(feature = "spanned_tree")]
+                        span: start_span,
+                })),
                 ParserNode::ObjectReference { reference },
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                 ParserNode::ZoneReference { zone: from_zone },
@@ -46,7 +51,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         from: from_zone.clone(),
                         to: to_zone.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(&to_zone.span()),
+                        span: start_span.merge(&to_zone.node_span()),
                     },
                 ),
             }),

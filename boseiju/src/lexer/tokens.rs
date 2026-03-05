@@ -25,7 +25,6 @@ pub enum Token {
     ChoiceReference(intermediates::ChoiceReference),
     Color(terminals::Color),
     ControlFlow(intermediates::ControlFlow),
-    ControlSpecifier(terminals::ControlSpecifier),
     CountSpecifier(intermediates::CountSpecifier),
     Counter(terminals::Counter),
     DamageKind(intermediates::DamageKind),
@@ -42,16 +41,17 @@ pub enum Token {
     NotOfAKind { not: intermediates::NotOfAKind },
     Number(intermediates::Number),
     NumberOfTimes(intermediates::NumberOfTimes),
+    NumberOperation(intermediates::NumberOperation),
     ObjectKind(object::ObjectKind),
     Order(terminals::Order),
     OwnableZone(zone::OwnableZone),
     OwnerSpecifier(terminals::OwnerSpecifier),
-    PermanentProperty(terminals::PermanentProperty),
-    PermanentState(terminals::PermanentState),
+    PermanentProperty(terminals::CardProperty),
+    PermanentState(terminals::CardState),
     Phase(terminals::Phase),
     PlayerAction(intermediates::PlayerAction),
     PlayerProperties(intermediates::PlayerProperties),
-    PlayerSpecifier(terminals::PlayerSpecifier),
+    PlayerSpecifier(intermediates::PlayerSpecifier),
     PowerToughnessModElements(intermediates::PowerToughnessModElements),
     PowerToughness { pt: terminals::PowerToughness },
     SagaChapterNumber { chapter: terminals::SagaChapterNumber },
@@ -72,19 +72,17 @@ impl Token {
             Some(Self::Counter(kind))
         } else if let Some(kind) = intermediates::CountSpecifier::try_from_span(&span) {
             Some(Self::CountSpecifier(kind))
-        } else if let Some(kind) = terminals::ControlSpecifier::try_from_span(&span) {
-            Some(Self::ControlSpecifier(kind))
         } else if let Some(kind) = terminals::OwnerSpecifier::try_from_span(&span) {
             Some(Self::OwnerSpecifier(kind))
         } else if let Some(kind) = terminals::Order::try_from_span(&span) {
             Some(Self::Order(kind))
         } else if let Some(kind) = intermediates::CardActions::try_from_span(&span) {
             Some(Self::CardActions(kind))
-        } else if let Some(kind) = terminals::PlayerSpecifier::try_from_span(&span) {
+        } else if let Some(kind) = intermediates::PlayerSpecifier::try_from_span(&span) {
             Some(Self::PlayerSpecifier(kind))
-        } else if let Some(kind) = terminals::PermanentState::try_from_span(&span) {
+        } else if let Some(kind) = terminals::CardState::try_from_span(&span) {
             Some(Self::PermanentState(kind))
-        } else if let Some(kind) = terminals::PermanentProperty::try_from_span(&span) {
+        } else if let Some(kind) = terminals::CardProperty::try_from_span(&span) {
             Some(Self::PermanentProperty(kind))
         } else if let Some(kind) = terminals::SpellProperty::try_from_span(&span) {
             Some(Self::SpellProperty(kind))
@@ -148,6 +146,8 @@ impl Token {
             Some(Self::PlayerProperties(kind))
         } else if let Some(kind) = intermediates::NumberOfTimes::try_from_span(&span) {
             Some(Self::NumberOfTimes(kind))
+        } else if let Some(kind) = intermediates::NumberOperation::try_from_span(&span) {
+            Some(Self::NumberOperation(kind))
         } else if let Some(kind) = intermediates::ChoiceReference::try_from_span(&span) {
             Some(Self::ChoiceReference(kind))
         } else if let Some(kind) = intermediates::Choice::try_from_span(&span) {
@@ -156,6 +156,8 @@ impl Token {
             Some(Self::AnyNumberOfClause { clauses })
         } else if let Some(kind) = intermediates::WinLoseClause::try_from_span(&span) {
             Some(Self::WinLoseClause(kind))
+        } else if let Some(kind) = intermediates::GlobalZone::try_from_span(&span) {
+            Some(Self::GlobalZone(kind))
         } else if let Some(kind) = intermediates::VhyToSortLater::try_from_span(&span) {
             Some(Self::VhyToSortLater(kind))
         } else {
@@ -165,38 +167,39 @@ impl Token {
 
     #[cfg(feature = "spanned_tree")]
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        use crate::ability_tree::AbilityTreeNode;
         match self {
             Self::AbilityWord(child) => child.span,
             Self::ActionKeyword(child) => child.span(),
             Self::AmbiguousToken(child) => child.span(),
             Self::AnyNumberOfClause { clauses } => clauses.span,
-            Self::BackwardDuration(child) => child.span(),
+            Self::BackwardDuration(child) => child.node_span(),
             Self::CardActions(child) => child.span(),
             Self::Choice(child) => child.span(),
             Self::ChoiceReference(child) => child.span(),
             Self::Color(child) => child.span,
             Self::ControlFlow(child) => child.span(),
-            Self::ControlSpecifier(child) => child.span(),
             Self::CountSpecifier(child) => child.span(),
             Self::Counter(child) => child.span,
             Self::DamageKind(child) => child.span(),
             Self::EnglishKeyword(child) => child.span(),
-            Self::ForwardDuration(child) => child.span(),
+            Self::ForwardDuration(child) => child.node_span(),
             Self::GlobalZone(child) => child.span(),
             Self::InAdditionToPayingItsOtherCost(child) => child.span,
-            Self::Instant(child) => child.span(),
+            Self::Instant(child) => child.node_span(),
             Self::KeywordAbility(child) => child.span,
             Self::KeywordAction(child) => child.span,
-            Self::Mana { mana } => mana.span(),
-            Self::NamedToken(child) => child.span(),
+            Self::Mana { mana } => mana.node_span(),
+            Self::NamedToken(child) => child.node_span(),
             Self::NonKind(child) => child.span(),
             Self::NotOfAKind { not } => not.span,
             Self::Number(child) => child.span(),
             Self::NumberOfTimes(child) => child.span(),
-            Self::ObjectKind(child) => child.span(),
-            Self::Order(child) => child.span(),
-            Self::OwnableZone(child) => child.span(),
-            Self::OwnerSpecifier(child) => child.span(),
+            Self::NumberOperation(child) => child.span(),
+            Self::ObjectKind(child) => child.node_span(),
+            Self::Order(child) => child.node_span(),
+            Self::OwnableZone(child) => child.node_span(),
+            Self::OwnerSpecifier(child) => child.node_span(),
             Self::PermanentProperty(child) => child.span(),
             Self::PermanentState(child) => child.span(),
             Self::Phase(child) => child.span(),

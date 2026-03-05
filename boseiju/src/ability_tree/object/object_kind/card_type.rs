@@ -64,9 +64,8 @@ impl idris::Idris for CardType {
 #[cfg(feature = "lexer")]
 impl crate::lexer::IntoToken for CardType {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            card_type: mtg_data::CardType::from_str(&span.text).ok()?,
+            card_type: crate::utils::from_str_singular_or_plural(&span.text)?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

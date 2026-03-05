@@ -1,35 +1,35 @@
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum GlobalZone {
-    TheBattlefield {
+pub enum NumberOperation {
+    Minus {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Anywhere {
+    Plus {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl GlobalZone {
+impl NumberOperation {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::TheBattlefield { span } => *span,
-            Self::Anywhere { span } => *span,
+            Self::Minus { span } => *span,
+            Self::Plus { span } => *span,
         }
     }
 }
 
-impl GlobalZone {
+impl NumberOperation {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "the battlefield" => Some(Self::TheBattlefield {
+            "minus" => Some(Self::Minus {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "anywhere" => Some(Self::Anywhere {
+            "plus" => Some(Self::Plus {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

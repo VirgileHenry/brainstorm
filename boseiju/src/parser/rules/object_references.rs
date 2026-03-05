@@ -6,6 +6,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let object_references_rules = vec![
         /* From an object count and specifiers, we can make an object reference */
@@ -25,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             amount: count.clone(),
                             specifiers: Some(specifiers.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: count.span().merge(&specifiers.span()),
+                            span: count.node_span().merge(&specifiers.node_span()),
                         },
                     ),
                 }),
@@ -51,9 +54,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Any {
-                        #[cfg(feature = "spanned_tree")] span: any_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: any_span,
+                    })),
                     ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target {
-                        #[cfg(feature = "spanned_tree")] span: target_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: target_span,
+                    })),
                 ] => Ok(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
                         crate::ability_tree::object::SpecifiedObject {
@@ -96,9 +103,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Other {
-                        #[cfg(feature = "spanned_tree")] span: other_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: other_span,
+                    })),
                     ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target {
-                        #[cfg(feature = "spanned_tree")] span: target_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: target_span,
+                    })),
                 ] => Ok(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
                         crate::ability_tree::object::SpecifiedObject {
@@ -112,7 +123,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 ),
                             )),
                             #[cfg(feature = "spanned_tree")]
-                            span: number.span().merge(target_span),
+                            span: number.node_span().merge(target_span),
                         },
                     ),
                 }),
@@ -143,7 +154,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Other {
-                        #[cfg(feature = "spanned_tree")] span: other_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: other_span,
+                    })),
                     ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target { .. })),
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Ok(ParserNode::ObjectReference {
@@ -154,12 +167,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let new_specifiers = specifiers.clone();
                                 let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
                                     crate::ability_tree::object::AnotherObjectSpecifier {
-                                        #[cfg(feature = "spanned_tree")] span: *other_span },
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *other_span,
+                                    },
                                 );
                                 Some(new_specifiers.add_factor_specifier(another_specifier))
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: number.span().merge(&specifiers.span()),
+                            span: number.node_span().merge(&specifiers.node_span()),
                         },
                     ),
                 }),
@@ -186,9 +201,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
-                        #[cfg(feature = "spanned_tree")] span: another_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: another_span,
+                    })),
                     ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target {
-                        #[cfg(feature = "spanned_tree")] span: target_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: target_span,
+                    })),
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Ok(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
@@ -204,12 +223,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let new_specifiers = specifiers.clone();
                                 let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
                                     crate::ability_tree::object::AnotherObjectSpecifier {
-                                        #[cfg(feature = "spanned_tree")]span: *another_span },
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *another_span,
+                                    },
                                 );
                                 Some(new_specifiers.add_factor_specifier(another_specifier))
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: another_span.merge(&specifiers.span()),
+                            span: another_span.merge(&specifiers.node_span()),
                         },
                     ),
                 }),
@@ -231,7 +252,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
-                        #[cfg(feature = "spanned_tree")] span: another_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: another_span,
+                    })),
                     ParserNode::ObjectSpecifiers { specifiers },
                 ] => Ok(ParserNode::ObjectReference {
                     reference: crate::ability_tree::object::ObjectReference::SpecifiedObj(
@@ -244,12 +267,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let new_specifiers = specifiers.clone();
                                 let another_specifier = crate::ability_tree::object::ObjectSpecifier::Another(
                                     crate::ability_tree::object::AnotherObjectSpecifier {
-                                        #[cfg(feature = "spanned_tree")] span: *another_span },
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *another_span,
+                                    },
                                 );
                                 Some(new_specifiers.add_factor_specifier(another_specifier))
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: another_span.merge(&specifiers.span()),
+                            span: another_span.merge(&specifiers.node_span()),
                         },
                     ),
                 }),
@@ -267,11 +292,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::object::SpecifiedObject {
                             amount: crate::ability_tree::object::CountSpecifier::All {
                                 #[cfg(feature = "spanned_tree")]
-                                span: specifiers.span().empty_at_start(),
+                                span: specifiers.node_span().empty_at_start(),
                             },
                             specifiers: Some(specifiers.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: specifiers.span(),
+                            span: specifiers.node_span(),
                         },
                     ),
                 }),
@@ -314,13 +339,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ]),
             merged: ParserNode::PreviouslyMentionnedObject { object: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
-                    #[cfg(feature = "spanned_tree")] span }))] => {
-                    Ok(ParserNode::PreviouslyMentionnedObject {
-                        object: crate::ability_tree::object::PreviouslyMentionnedObject { kind: None,
-                            #[cfg(feature = "spanned_tree")]span: *span },
-                    })
-                }
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::PreviouslyMentionnedObject {
+                    object: crate::ability_tree::object::PreviouslyMentionnedObject {
+                        kind: None,
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -330,7 +360,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Enchanted / equiped objects makes a special object specifier */
     let attached_objects_rules = [
         (
-            terminals::PermanentState::Enchanted {
+            terminals::CardState::Enchanted {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -341,7 +371,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
         ),
         (
-            terminals::PermanentState::Enchanted {
+            terminals::CardState::Enchanted {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -352,7 +382,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
         ),
         (
-            terminals::PermanentState::Enchanted {
+            terminals::CardState::Enchanted {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -363,7 +393,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
         ),
         (
-            terminals::PermanentState::Enchanted {
+            terminals::CardState::Enchanted {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -374,7 +404,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
         ),
         (
-            terminals::PermanentState::Enchanted {
+            terminals::CardState::Enchanted {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -385,7 +415,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
         ),
         (
-            terminals::PermanentState::Equipped {
+            terminals::CardState::Equipped {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -439,13 +469,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::That {
-                        #[cfg(feature = "spanned_tree")]span: that_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: that_span,
+                    })),
                     ParserNode::LexerToken(Token::ObjectKind(object_kind)),
                 ] => Ok(ParserNode::PreviouslyMentionnedObject {
                     object: crate::ability_tree::object::PreviouslyMentionnedObject {
                         kind: Some(object_kind.clone()),
                         #[cfg(feature = "spanned_tree")]
-                        span: that_span.merge(&object_kind.span()),
+                        span: that_span.merge(&object_kind.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

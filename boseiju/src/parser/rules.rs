@@ -28,6 +28,7 @@ mod mana;
 mod number;
 mod object_references;
 mod object_specifiers;
+mod player;
 mod replacement_effect;
 mod spell_ability;
 mod statement;
@@ -57,6 +58,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(number::rules()),
         Box::new(object_references::rules()),
         Box::new(object_specifiers::rules()),
+        Box::new(player::rules()),
         Box::new(replacement_effect::rules()),
         Box::new(spell_ability::rules()),
         Box::new(statement::rules()),

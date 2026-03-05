@@ -27,7 +27,7 @@ pub enum ObjectCharacteristicModification {
 impl ObjectCharacteristicModification {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::PowerToughnessModifiers(child) => child.span(),
+            Self::PowerToughnessModifiers(child) => child.node_span(),
         }
     }
 }

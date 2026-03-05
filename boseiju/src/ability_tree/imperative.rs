@@ -164,7 +164,7 @@ impl crate::utils::DummyInit for Imperative {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ImperativeList {
-    pub executing_player: crate::ability_tree::terminals::PlayerSpecifier,
+    pub executing_player: crate::ability_tree::player::PlayerSpecifier,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,
     pub imperatives: crate::utils::HeapArrayVec<Imperative, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]

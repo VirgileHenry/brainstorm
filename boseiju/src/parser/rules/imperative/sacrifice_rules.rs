@@ -7,6 +7,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Destroy any object reference */ ParserRule {
         expanded: RuleLhs::new(&[
@@ -32,7 +35,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     crate::ability_tree::imperative::SacrificeImperative {
                         object: reference.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: span.merge(&reference.span()),
+                        span: span.merge(&reference.node_span()),
                     },
                 ),
             }),
