@@ -64,9 +64,8 @@ impl idris::Idris for PlaneswalkerSubtype {
 #[cfg(feature = "lexer")]
 impl crate::lexer::IntoToken for PlaneswalkerSubtype {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            planeswalker_subtype: mtg_data::PlaneswalkerType::from_str(&span.text).ok()?,
+            planeswalker_subtype: crate::utils::from_str_singular_or_plural(&span.text)?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

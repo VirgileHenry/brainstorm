@@ -50,6 +50,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    AsLongAs {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     AsThough {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -82,7 +86,23 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Can {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Cant {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Cause {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Chosen {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Control {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -115,6 +135,10 @@ pub enum EnglishKeyword {
         span: crate::ability_tree::span::TreeSpan,
     },
     Except {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    First {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -162,10 +186,6 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Its {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     Kind {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -194,7 +214,15 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    New {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     No {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Not {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -203,6 +231,10 @@ pub enum EnglishKeyword {
         span: crate::ability_tree::span::TreeSpan,
     },
     On {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Once {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -226,7 +258,23 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Possessive {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     RatherThan {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Random {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Same {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Second {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -239,6 +287,10 @@ pub enum EnglishKeyword {
         span: crate::ability_tree::span::TreeSpan,
     },
     The {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TheRest {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -262,6 +314,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ThisWay {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Those {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -271,6 +327,10 @@ pub enum EnglishKeyword {
         span: crate::ability_tree::span::TreeSpan,
     },
     Top {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Twice {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -336,6 +396,7 @@ impl EnglishKeyword {
             Self::Any { span } => *span,
             Self::Are { span } => *span,
             Self::As { span } => *span,
+            Self::AsLongAs { span } => *span,
             Self::AsThough { span } => *span,
             Self::At { span } => *span,
             Self::Back { span } => *span,
@@ -344,7 +405,11 @@ impl EnglishKeyword {
             Self::Beginning { span } => *span,
             Self::Bottom { span } => *span,
             Self::By { span } => *span,
+            Self::Can { span } => *span,
             Self::Cant { span } => *span,
+            Self::Cause { span } => *span,
+            Self::Chosen { span } => *span,
+            Self::Control { span } => *span,
             Self::Copy { span } => *span,
             Self::Divided { span } => *span,
             Self::During { span } => *span,
@@ -353,6 +418,7 @@ impl EnglishKeyword {
             Self::Equal { span } => *span,
             Self::Everyting { span } => *span,
             Self::Except { span } => *span,
+            Self::First { span } => *span,
             Self::For { span } => *span,
             Self::From { span } => *span,
             Self::Have { span } => *span,
@@ -364,7 +430,6 @@ impl EnglishKeyword {
             Self::Instead { span } => *span,
             Self::Is { span } => *span,
             Self::It { span } => *span,
-            Self::Its { span } => *span,
             Self::Kind { span } => *span,
             Self::Less { span } => *span,
             Self::May { span } => *span,
@@ -372,26 +437,36 @@ impl EnglishKeyword {
             Self::More { span } => *span,
             Self::Named { span } => *span,
             Self::Next { span } => *span,
+            Self::New { span } => *span,
             Self::No { span } => *span,
+            Self::Not { span } => *span,
             Self::Of { span } => *span,
             Self::On { span } => *span,
+            Self::Once { span } => *span,
             Self::Only { span } => *span,
             Self::Onto { span } => *span,
             Self::Or { span } => *span,
             Self::Other { span } => *span,
             Self::Otherwise { span } => *span,
+            Self::Possessive { span } => *span,
             Self::RatherThan { span } => *span,
+            Self::Random { span } => *span,
+            Self::Same { span } => *span,
+            Self::Second { span } => *span,
             Self::Than { span } => *span,
             Self::That { span } => *span,
             Self::The { span } => *span,
+            Self::TheRest { span } => *span,
             Self::Them { span } => *span,
             Self::Then { span } => *span,
             Self::There { span } => *span,
             Self::They { span } => *span,
             Self::This { span } => *span,
+            Self::ThisWay { span } => *span,
             Self::Those { span } => *span,
             Self::To { span } => *span,
             Self::Top { span } => *span,
+            Self::Twice { span } => *span,
             Self::Types { span } => *span,
             Self::Unless { span } => *span,
             Self::Until { span } => *span,
@@ -454,6 +529,10 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "as long as" => Some(Self::As {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "as though" => Some(Self::AsThough {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -474,7 +553,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "become" => Some(Self::Become {
+            "become" | "becomes" => Some(Self::Become {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -490,7 +569,23 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "can" => Some(Self::Can {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "can't" => Some(Self::Cant {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "cause" | "causes" => Some(Self::Cause {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "chosen" => Some(Self::Chosen {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "control" | "controls" => Some(Self::Copy {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -506,11 +601,11 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "do" => Some(Self::Do {
+            "do" | "does" => Some(Self::Do {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "don't" => Some(Self::Dont {
+            "don't" | "doesn't" => Some(Self::Dont {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -523,6 +618,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "except" => Some(Self::Except {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "first" => Some(Self::First {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -562,15 +661,11 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "is" | "'s" => Some(Self::Is {
+            "is" => Some(Self::Is {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "it" => Some(Self::It {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "its" => Some(Self::Its {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -602,7 +697,15 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "new" => Some(Self::Next {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "no" => Some(Self::No {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "not" => Some(Self::No {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -611,6 +714,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "on" => Some(Self::On {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "once" => Some(Self::Once {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -634,7 +741,23 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "its" | "'s" | "their" => Some(Self::Possessive {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "rather than" => Some(Self::RatherThan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "random" => Some(Self::RatherThan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "same" => Some(Self::Same {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "second" => Some(Self::Second {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -647,6 +770,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "the" => Some(Self::The {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the rest" => Some(Self::The {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -670,6 +797,10 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "this way" => Some(Self::ThisWay {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "those" => Some(Self::Those {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -679,6 +810,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "top" => Some(Self::Top {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "twice" => Some(Self::Twice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

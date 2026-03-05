@@ -89,7 +89,7 @@ pub enum ObjectAbilitiesModification {
 impl ObjectAbilitiesModification {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::CharacteristicModification(child) => child.span(),
+            Self::CharacteristicModification(child) => child.node_span(),
             Self::GainAbility(child) => child.span,
         }
     }

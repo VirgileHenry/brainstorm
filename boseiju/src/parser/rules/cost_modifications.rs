@@ -5,6 +5,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Cost reduction */
@@ -173,7 +176,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         applies_to: reference.clone(),
                         modification: cost_modification.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.span().merge(&cost_modification.span()),
+                        span: reference.node_span().merge(&cost_modification.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

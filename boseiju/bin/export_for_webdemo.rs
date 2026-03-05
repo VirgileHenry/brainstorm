@@ -16,12 +16,13 @@ fn main() {
     const EXPORT_CARD_COUNT: usize = 100;
     let mut result = Vec::new();
 
-    let mut last_thousand = 0;
-    eprintln!("Parsing cards ... 0 / {}", cards.len());
+    let mut last_shown_percentage = 0;
+    eprintln!("Parsing all cards...0%");
     for (i, card) in cards.iter().enumerate() {
-        if i / 1000 > last_thousand || i + 1 == cards.len() {
-            eprintln!("\rParsing cards ... {} / {}", i, cards.len());
-            last_thousand += 1;
+        let progress = (i + 1) * 100 / cards.len();
+        if progress != last_shown_percentage {
+            eprintln!("\rParsing all cards...{progress}%");
+            last_shown_percentage = progress;
         }
 
         let card_name = card.name.clone();

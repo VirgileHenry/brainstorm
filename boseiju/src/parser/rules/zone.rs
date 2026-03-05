@@ -5,6 +5,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let default_rules = vec![super::ParserRule {
         expanded: super::RuleLhs::new(&[
@@ -16,13 +19,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ]),
         merged: ParserNode::ZoneReference { zone: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield {
-                #[cfg(feature = "spanned_tree")] span }))] => {
-                Ok(ParserNode::ZoneReference {
-                    zone: crate::ability_tree::zone::ZoneReference::TheBattlefield {
-                        #[cfg(feature = "spanned_tree")] span: *span },
-                })
-            }
+            &[
+                ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield {
+                    #[cfg(feature = "spanned_tree")]
+                    span,
+                })),
+            ] => Ok(ParserNode::ZoneReference {
+                zone: crate::ability_tree::zone::ZoneReference::TheBattlefield {
+                    #[cfg(feature = "spanned_tree")]
+                    span: *span,
+                },
+            }),
             _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
@@ -70,7 +77,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         zone: zone.clone(),
                         owner: owner.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: owner.span().merge(&zone.span()),
+                        span: owner.node_span().merge(&zone.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

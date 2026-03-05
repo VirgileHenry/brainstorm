@@ -46,6 +46,10 @@ path = "bin/card_coverage.rs"
 name = "export_for_webdemo"
 path = "bin/export_for_webdemo.rs"
 
+[[bin]]
+name = "most_required_tokens"
+path = "bin/most_required_tokens.rs"
+
 [[test]]
 name = "lexer"
 path = "tests/lexer.rs"

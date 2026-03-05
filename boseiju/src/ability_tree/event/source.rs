@@ -6,17 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum EventSource {
     AnEffect(EffectEventSource),
-    Player(crate::ability_tree::terminals::PlayerSpecifier),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl EventSource {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::AnEffect(child) => child.span,
-            Self::Player(child) => child.span(),
-        }
-    }
+    Player(PlayerEventSource),
 }
 
 impl crate::ability_tree::AbilityTreeNode for EventSource {
@@ -90,7 +80,7 @@ impl crate::ability_tree::AbilityTreeNode for EffectEventSource {
     }
 
     fn node_tag(&self) -> &'static str {
-        "effect event source"
+        "event source: effect"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -103,6 +93,57 @@ impl crate::ability_tree::AbilityTreeNode for EffectEventSource {
 impl crate::utils::DummyInit for EffectEventSource {
     fn dummy_init() -> Self {
         Self {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
+
+/// Fixme: doc
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct PlayerEventSource {
+    pub player: crate::ability_tree::player::PlayerSpecifier,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl crate::ability_tree::AbilityTreeNode for PlayerEventSource {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::PlayerEventSource.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.player as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "event source: player")?;
+        out.push_final_branch()?;
+        self.player.display(out)?;
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "event source: player"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for PlayerEventSource {
+    fn dummy_init() -> Self {
+        Self {
+            player: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

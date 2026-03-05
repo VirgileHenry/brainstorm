@@ -9,6 +9,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Create token with no specifiers */
@@ -51,7 +54,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         quantity: number.clone(),
                         token_specifiers: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: source.span().merge(&supertype.span),
+                        span: source.node_span().merge(&supertype.span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -109,13 +112,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: Some(crate::ability_tree::object::ObjectSpecifiers::Single(
-                            crate::ability_tree::object::ObjectSpecifier::Control(terminals::ControlSpecifier::YouControl {
+                            crate::ability_tree::object::ObjectSpecifier::Control(object::ControlSpecifier {
+                                controller: crate::ability_tree::player::PlayerSpecifier::You { span: *span },
+                                controlled: true,
                                 #[cfg(feature = "spanned_tree")]
                                 span: *span,
                             }),
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: source.span().merge(span),
+                        span: source.node_span().merge(span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -164,7 +169,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         quantity: number.clone(),
                         token_specifiers: Some(specifiers.clone()),
                         #[cfg(feature = "spanned_tree")]
-                        span: source.span().merge(&supertype.span),
+                        span: source.node_span().merge(&supertype.span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

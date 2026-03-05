@@ -6,6 +6,7 @@ pub mod event;
 pub mod imperative;
 pub mod number;
 pub mod object;
+pub mod player;
 pub mod statement;
 pub mod terminals;
 pub mod time;

@@ -31,6 +31,12 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// Type can be from a card
+    /// Or for mana type
+    Type {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -41,6 +47,7 @@ impl AmbiguousToken {
             Self::Counter { span } => *span,
             Self::Exile { span } => *span,
             Self::Gain { span } => *span,
+            Self::Type { span } => *span,
         }
     }
 }
@@ -61,6 +68,10 @@ impl AmbiguousToken {
                 span: span.into(),
             }),
             "gain" | "gains" | "gained" => Some(Self::Gain {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "type" => Some(Self::Gain {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

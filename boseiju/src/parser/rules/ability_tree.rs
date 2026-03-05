@@ -4,6 +4,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Multiple keyword abilities can be separated by commas instead of newlines */
@@ -94,7 +97,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::AbilityTree {
                             abilities,
                             #[cfg(feature = "spanned_tree")]
-                            span: ability.span(),
+                            span: ability.node_span(),
                         }
                     },
                 }),
@@ -127,7 +130,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::AbilityTree {
                             abilities,
                             #[cfg(feature = "spanned_tree")]
-                            span: tree.span.merge(&ability.span()),
+                            span: tree.span.merge(&ability.node_span()),
                         }
                     },
                 }),

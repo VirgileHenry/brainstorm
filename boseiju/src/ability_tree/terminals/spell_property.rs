@@ -12,6 +12,10 @@ pub enum SpellProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Resolved {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -20,6 +24,7 @@ impl SpellProperty {
         match self {
             Self::Countered { span } => *span,
             Self::Kicked { span } => *span,
+            Self::Resolved { span } => *span,
         }
     }
 }
@@ -29,6 +34,7 @@ impl std::fmt::Display for SpellProperty {
         match self {
             SpellProperty::Countered { .. } => write!(f, "countered"),
             SpellProperty::Kicked { .. } => write!(f, "kicked"),
+            SpellProperty::Resolved { .. } => write!(f, "kicked"),
         }
     }
 }
@@ -42,6 +48,10 @@ impl IntoToken for SpellProperty {
                 span: span.into(),
             }),
             "kicked" => Some(SpellProperty::Kicked {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "resolved" => Some(SpellProperty::Resolved {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

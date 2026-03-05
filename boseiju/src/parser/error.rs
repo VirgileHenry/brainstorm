@@ -1,6 +1,8 @@
+use crate::parser::ParserNode;
 use idris::Idris;
 
-use crate::parser::ParserNode;
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 /// Errors that can be thrown by the parser.
 #[derive(Debug, Clone)]

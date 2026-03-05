@@ -84,6 +84,9 @@ pub enum ParserNode {
     ObjectSpecifiers {
         specifiers: ability_tree::object::ObjectSpecifiers,
     },
+    Player {
+        player: ability_tree::player::PlayerSpecifier,
+    },
     PlayerAction {
         action: ability_tree::event::PlayerAction,
     },

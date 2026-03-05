@@ -4,6 +4,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* A Single statement and a dot can make a spell ability. */
@@ -18,7 +21,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
                             #[cfg(feature = "spanned_tree")]
-                            span: statement.span(),
+                            span: statement.node_span(),
                         }
                     },
                 }),
@@ -46,7 +49,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
                             #[cfg(feature = "spanned_tree")]
-                            span: s1.span().merge(&s2.span()),
+                            span: s1.node_span().merge(&s2.node_span()),
                         }
                     },
                 }),
@@ -79,7 +82,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
                             #[cfg(feature = "spanned_tree")]
-                            span: s1.span().merge(&s2.span()),
+                            span: s1.node_span().merge(&s2.node_span()),
                         }
                     },
                 }),

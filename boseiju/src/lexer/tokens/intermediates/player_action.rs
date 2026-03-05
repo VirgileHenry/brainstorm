@@ -54,6 +54,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Roll {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Search {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -85,6 +89,7 @@ impl PlayerAction {
             Self::Put { span } => *span,
             Self::Return { span } => *span,
             Self::Remove { span } => *span,
+            Self::Roll { span } => *span,
             Self::Search { span } => *span,
             Self::Shuffle { span } => *span,
             Self::Spend { span } => *span,
@@ -140,6 +145,10 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "remove" | "removing" => Some(Self::Remove {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "roll" | "rolls" => Some(Self::Roll {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

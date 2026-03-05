@@ -4,6 +4,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Spell ability to ability */
@@ -33,13 +36,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::StaticAbilityKind { kind },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                        #[cfg(feature = "spanned_tree")] span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Ability {
                     ability: crate::ability_tree::ability::Ability::Static(crate::ability_tree::ability::statik::StaticAbility {
                         kind: kind.clone(),
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: kind.span().merge(span),
+                        span: kind.node_span().merge(span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -67,10 +72,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::StaticAbilityKind { kind },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
-                        #[cfg(feature = "spanned_tree")] span: if_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: if_span,
+                    })),
                     ParserNode::Condition { condition },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                        #[cfg(feature = "spanned_tree")]span: dot_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::Ability {
                     ability: crate::ability_tree::ability::Ability::Static(crate::ability_tree::ability::statik::StaticAbility {
                         kind: kind.clone(),
@@ -78,11 +87,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: if_span.merge(&condition.span()),
+                                span: if_span.merge(&condition.node_span()),
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: kind.span().merge(dot_span),
+                        span: kind.node_span().merge(dot_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -114,12 +123,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
-                        #[cfg(feature = "spanned_tree")]span: if_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: if_span,
+                    })),
                     ParserNode::Condition { condition },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::StaticAbilityKind { kind },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                        #[cfg(feature = "spanned_tree")]span: dot_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::Ability {
                     ability: crate::ability_tree::ability::Ability::Static(crate::ability_tree::ability::statik::StaticAbility {
                         kind: kind.clone(),
@@ -127,7 +140,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: if_span.merge(&condition.span()),
+                                span: if_span.merge(&condition.node_span()),
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]

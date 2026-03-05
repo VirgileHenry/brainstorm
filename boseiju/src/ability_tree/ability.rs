@@ -22,7 +22,7 @@ impl AbilityKind {
         match self {
             Self::AbilityWord(ability) => ability.span,
             Self::Keyword(ability) => ability.span,
-            Self::Written(ability) => ability.span(),
+            Self::Written(ability) => ability.node_span(),
         }
     }
 }

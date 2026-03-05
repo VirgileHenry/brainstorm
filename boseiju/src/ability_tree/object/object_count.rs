@@ -27,7 +27,7 @@ impl CountSpecifier {
         match self {
             Self::A { span } => *span,
             Self::All { span } => *span,
-            Self::Target(child) => child.span(),
+            Self::Target(child) => child.node_span(),
             Self::AllOthers { span } => *span,
         }
     }

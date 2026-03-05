@@ -7,6 +7,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Object enters the battlefield event */
@@ -29,13 +32,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
-                        #[cfg(feature = "spanned_tree")] span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::EntersTheBattlefield(
                         crate::ability_tree::event::EntersTheBattlefieldEvent {
                             object: reference.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(span),
+                            span: reference.node_span().merge(span),
                         },
                     ),
                 }),
@@ -58,13 +63,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
-                        #[cfg(feature = "spanned_tree")]span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::EntersTheBattlefield(
                         crate::ability_tree::event::EntersTheBattlefieldEvent {
                             object: reference.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(span),
+                            span: reference.node_span().merge(span),
                         },
                     ),
                 }),

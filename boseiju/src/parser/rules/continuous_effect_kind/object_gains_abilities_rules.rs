@@ -9,6 +9,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     /* Object can "get" a power / toughness modifier */
     let power_toughness_modifier_rules = vec![
@@ -67,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                             power_mod: power.clone(),
                                             toughness_mod: toughness.clone(),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: span.merge(&toughness.span()),
+                                            span: span.merge(&toughness.node_span()),
                                         },
                                     )),
                                 );
@@ -76,7 +79,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&toughness.span()),
+                            span: reference.node_span().merge(&toughness.node_span()),
                         },
                     ),
                 }),
@@ -156,14 +159,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                             power_mod: power.clone(),
                                             toughness_mod: toughness.clone(),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: pt_mod_span.merge(&toughness.span()),
+                                            span: pt_mod_span.merge(&toughness.node_span()),
                                         },
                                     )),
                                 );
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: ability.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: gain_ab_span.merge(&ability.span()),
+                                    span: gain_ab_span.merge(&ability.node_span()),
                                 });
 
                                 modifications.push(characteristic_mod);
@@ -171,7 +174,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&ability.span()),
+                            span: reference.node_span().merge(&ability.node_span()),
                         },
                     ),
                 }),
@@ -230,7 +233,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
                         #[cfg(feature = "spanned_tree")]
-                        span: pt_mod_span,
+                            span: pt_mod_span,
                     })),
                     ParserNode::Number { number: power },
                     ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar { .. })),
@@ -238,7 +241,9 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                     ParserNode::Number { number: toughness },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
-                        #[cfg(feature = "spanned_tree")] span: ab1_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: ab1_span,
+                    })),
                     ParserNode::AbilityKind { ability: ability_1 },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
                     ParserNode::AbilityKind { ability: ability_2 },
@@ -257,19 +262,19 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                             power_mod: power.clone(),
                                             toughness_mod: toughness.clone(),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: pt_mod_span.merge(&toughness.span()),
+                                            span: pt_mod_span.merge(&toughness.node_span()),
                                         },
                                     )),
                                 );
                                 let gain_ab1_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: ability_1.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: ab1_span.merge(&ability_1.span()),
+                                    span: ab1_span.merge(&ability_1.node_span()),
                                 });
                                 let gain_ab2_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: ability_2.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: ability_2.span(),
+                                    span: ability_2.node_span(),
                                 });
 
                                 modifications.push(characteristic_mod);
@@ -278,7 +283,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&ability_2.span()),
+                            span: reference.node_span().merge(&ability_2.node_span()),
                         },
                     ),
                 }),
@@ -305,7 +310,9 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             &[
                 ParserNode::ObjectReference { reference },
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
-                    #[cfg(feature = "spanned_tree")] span })),
+                    #[cfg(feature = "spanned_tree")]
+                    span,
+                })),
                 ParserNode::AbilityKind { ability },
             ] => Ok(ParserNode::ContinuousEffect {
                 effect: continuous_effect::ContinuousEffect {
@@ -319,21 +326,21 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: ability.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: span.merge(&ability.span()),
+                                    span: span.merge(&ability.node_span()),
                                 });
                                 modifications.push(gain_ab_mod);
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&ability.span()),
+                            span: reference.node_span().merge(&ability.node_span()),
                         },
                     ),
                     duration: crate::ability_tree::time::ForwardDuration::ObjectLifetime {
                         #[cfg(feature = "spanned_tree")]
-                        span: ability.span().empty_at_end(),
+                        span: ability.node_span().empty_at_end(),
                     },
                     #[cfg(feature = "spanned_tree")]
-                    span: reference.span().merge(&ability.span()),
+                    span: reference.node_span().merge(&ability.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -369,7 +376,9 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             &[
                 ParserNode::ObjectReference { reference },
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
-                    #[cfg(feature = "spanned_tree")] span })),
+                    #[cfg(feature = "spanned_tree")]
+                    span,
+                })),
                 ParserNode::AbilityKind { ability },
                 ParserNode::LexerToken(Token::ForwardDuration(duration)),
             ] => Ok(ParserNode::ContinuousEffect {
@@ -384,18 +393,18 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: ability.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: span.merge(&ability.span()),
+                                    span: span.merge(&ability.node_span()),
                                 });
                                 modifications.push(gain_ab_mod);
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.span().merge(&ability.span()),
+                            span: reference.node_span().merge(&ability.node_span()),
                         },
                     ),
                     duration: duration.clone(),
                     #[cfg(feature = "spanned_tree")]
-                    span: reference.span().merge(&duration.span()),
+                    span: reference.node_span().merge(&duration.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

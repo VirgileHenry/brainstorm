@@ -7,6 +7,9 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* Exile object reference */
@@ -23,7 +26,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
-                        #[cfg(feature = "spanned_tree")]span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                     ParserNode::ObjectReference { reference },
                 ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Exile(
@@ -31,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             object: reference.clone(),
                             follow_up: None,
                             #[cfg(feature = "spanned_tree")]
-                            span: span.merge(&reference.span()),
+                            span: span.merge(&reference.node_span()),
                         },
                     ),
                 }),
@@ -59,7 +64,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
-                        #[cfg(feature = "spanned_tree")]span })),
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
                     ParserNode::ObjectReference { reference },
                     ParserNode::ExileFollowUp { follow_up },
                 ] => Ok(ParserNode::Imperative {
@@ -68,7 +75,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             object: reference.clone(),
                             follow_up: Some(follow_up.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: span.merge(&follow_up.span()),
+                            span: span.merge(&follow_up.node_span()),
                         },
                     ),
                 }),

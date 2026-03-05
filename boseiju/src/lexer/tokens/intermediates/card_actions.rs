@@ -40,23 +40,23 @@ impl CardActions {
 impl CardActions {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "block" | "blocks" => Some(Self::Blocks {
+            "block" | "blocks" | "blocked" => Some(Self::Blocks {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "die" | "dies" => Some(Self::Dies {
+            "die" | "dies" | "died" => Some(Self::Dies {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "enter" | "enters" => Some(Self::Enters {
+            "enter" | "enters" | "entered" => Some(Self::Enters {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "fight" | "fights" => Some(Self::Fight {
+            "fight" | "fights" | "fighted" => Some(Self::Fight {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "leave" | "leaves" => Some(Self::Leave {
+            "leave" | "leaves" | "left" => Some(Self::Leave {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

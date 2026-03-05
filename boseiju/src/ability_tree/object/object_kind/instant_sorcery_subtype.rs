@@ -64,9 +64,8 @@ impl idris::Idris for SpellSubtype {
 #[cfg(feature = "lexer")]
 impl crate::lexer::IntoToken for SpellSubtype {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            spell_subtype: mtg_data::SpellType::from_str(&span.text).ok()?,
+            spell_subtype: crate::utils::from_str_singular_or_plural(&span.text)?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

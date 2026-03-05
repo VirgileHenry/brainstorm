@@ -64,9 +64,8 @@ impl idris::Idris for Supertype {
 #[cfg(feature = "lexer")]
 impl crate::lexer::IntoToken for Supertype {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            supertype: mtg_data::Supertype::from_str(&span.text).ok()?,
+            supertype: crate::utils::from_str_singular_or_plural(&span.text)?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

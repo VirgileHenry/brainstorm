@@ -5,6 +5,9 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let ability_kind_rules = vec![
         /* Ability as an written ability */
@@ -62,7 +65,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             word: ab_word.clone(),
                             ability: ability.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: ab_word.span.merge(&ability.span()),
+                            span: ab_word.span.merge(&ability.node_span()),
                         },
                     ),
                 }),
