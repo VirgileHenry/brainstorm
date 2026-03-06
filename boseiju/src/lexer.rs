@@ -104,6 +104,7 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
                 length: end - start,
                 text: &input[start..end],
             };
+            /* Fix me: this is byte index, not character index ? may cause issues with the webdemo */
             if let Some(token) = tokens::Token::try_from_span(span) {
                 raw_tokens.drain(0..token_count + 1);
                 result.push(token);
