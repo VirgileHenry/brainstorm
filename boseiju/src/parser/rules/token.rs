@@ -183,7 +183,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::TokenDefinition { token: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PowerToughness { pt }),
+                    ParserNode::LexerToken(Token::PowerToughness {
+                        #[cfg(feature = "spanned_tree")]
+                        pt,
+                        ..
+                    }),
                     ParserNode::Colors { colors },
                     ParserNode::CreatureSubtypeList {
                         list: creature_subtypes_list,
@@ -228,6 +232,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 abilities.push(crate::ability_tree::ability::AbilityKind::Keyword(ability.clone()));
                                 abilities
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: ability.node_span(),
                         },
                         #[cfg(feature = "spanned_tree")]

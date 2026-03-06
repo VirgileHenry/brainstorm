@@ -30,7 +30,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// From the comprehensive rules:
 /// Anything that happens in a game. See rule 700.1.
 ///
-/// See also https://mtg.fandom.com/wiki/Event
+/// See also <https://mtg.fandom.com/wiki/Event>
 ///
 /// We keep a smaller list here, that are used to parse the cards.
 /// All events here are the ones encountered in triggered abilities / replacement effects.

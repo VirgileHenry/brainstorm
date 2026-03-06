@@ -11,7 +11,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// modifies control of objects, or affects players or the rules of the game,
 /// for a fixed or indefinite period. See rule 611, “Continuous Effects”.
 ///
-/// See https://mtg.fandom.com/wiki/Continuous_effect.
+/// See also <https://mtg.fandom.com/wiki/Continuous_effect>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContinuousEffect {

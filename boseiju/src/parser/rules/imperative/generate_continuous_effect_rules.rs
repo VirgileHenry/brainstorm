@@ -45,6 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *start_span,
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: effect.node_span().merge(start_span),
                         },
                     ),
@@ -79,6 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *end_span,
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: effect.node_span().merge(end_span),
                         },
                     ),

@@ -79,7 +79,7 @@ impl crate::utils::DummyInit for AbilityKind {
 /// 2. An activated or triggered ability on the stack. This kind of ability is an object.
 /// See rule 113, “Abilities,” and section 6, “Spells, Abilities, and Effects.”
 ///
-/// See also https://mtg.fandom.com/wiki/Ability
+/// See also <https://mtg.fandom.com/wiki/Ability>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Ability {
@@ -163,7 +163,7 @@ impl crate::utils::DummyInit for Ability {
 /// In the tree, keyword abilities are expanded such that they keep the
 /// keyword, but also carry the full ability expanded to its actual meaning.
 ///
-/// See also https://mtg.fandom.com/wiki/Keyword_ability
+/// See also <https://mtg.fandom.com/wiki/Keyword_ability>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct KeywordAbility {
@@ -226,7 +226,7 @@ impl crate::utils::DummyInit for KeywordAbility {
 /// An ability word is a word that thematically groups cards with a common functionality,
 /// but has no special meaning in the Comprehensive Rules.
 ///
-/// See also https://mtg.fandom.com/wiki/Ability_word
+/// See also <https://mtg.fandom.com/wiki/Ability_word>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AbilityWordAbility {

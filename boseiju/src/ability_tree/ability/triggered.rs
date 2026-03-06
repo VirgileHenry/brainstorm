@@ -10,10 +10,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// From the Comprehensive Rules:
 /// A kind of ability. Triggered abilities begin with the word “when,” “whenever,” or “at.”
-/// They’re written as “[Trigger condition], [effect].”
+/// They’re written as “\[Trigger condition\], \[effect\].”
 /// See rule 113, “Abilities,” and rule 603, “Handling Triggered Abilities.”
 ///
-/// See also: https://mtg.fandom.com/wiki/Triggered_ability
+/// See also: <https://mtg.fandom.com/wiki/Triggered_ability>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TriggeredAbility {

@@ -259,10 +259,7 @@ impl<'r> std::ops::Deref for EarleyTable<'r> {
     }
 }
 
-/// Attempts to parse a sequence of nodes into an ability tree, using the Earley parsing algorithm.
-///
-/// The algorithm reference can be found here: https://en.wikipedia.org/wiki/Earley_parser
-/// The algorithm used for the implementation was: https://fr.wikipedia.org/wiki/Analyse_Earley (cocorico)
+/// Actual implementation of the Earley algorithm.
 fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTree, error::ParserError> {
     use crate::utils::dummy;
     use idris::Idris;
@@ -433,8 +430,12 @@ fn completor_step<'r>(
     }
 }
 
-/// Parser function without artifacts, to get the result straight out.
-/// See [parse_impl] for a detailed explanation of the algorithm.
+/// Entry point of the parsing algorithm.
+///
+/// Attempts to parse a sequence of nodes into an ability tree, using the Earley parsing algorithm.
+///
+/// The algorithm reference can be found here: <https://en.wikipedia.org/wiki/Earley_parser>
+/// The algorithm used for the implementation was: <https://fr.wikipedia.org/wiki/Analyse_Earley> (cocorico)
 pub fn parse(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTree, error::ParserError> {
     parse_impl(tokens)
 }

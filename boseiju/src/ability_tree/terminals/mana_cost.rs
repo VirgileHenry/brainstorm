@@ -4,7 +4,7 @@ use crate::lexer::IntoToken;
 
 /// A cost requiring mana.
 ///
-/// See also https://mtg.fandom.com/wiki/Mana_cost
+/// See also <https://mtg.fandom.com/wiki/Mana_cost>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ManaCost {

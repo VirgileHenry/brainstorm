@@ -76,9 +76,6 @@ pub const MAX_NODE_DATA_SIZE: usize = 32;
 /// ```
 /// Here, this is a shortcut for having a `EmptyVariant(EmptyVariantData)` where the
 /// data would be an empty struct.
-/// When returning the children for such node, one can return an [`TerminalNodePlaceholder`]
-/// that is a zero sized struct that acts as an [`AbilityTreeNode`] with no children,
-/// no data and a given id.
 pub trait AbilityTreeNode {
     /// Get the node id.
     ///

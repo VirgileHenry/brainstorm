@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// A replacement effect replaces entirely one event with another.
 ///
-/// https://mtg.fandom.com/wiki/Replacement_effect
+/// See also <https://mtg.fandom.com/wiki/Replacement_effect>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContinuousEffectReplacementEvent {

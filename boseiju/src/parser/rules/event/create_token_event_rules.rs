@@ -47,14 +47,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ..
                     })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(supertype))),
+                    ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(_supertype))),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: source.node_span().merge(&supertype.span),
+                        span: source.node_span().merge(&_supertype.span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -113,7 +113,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         quantity: number.clone(),
                         token_specifiers: Some(crate::ability_tree::object::ObjectSpecifiers::Single(
                             crate::ability_tree::object::ObjectSpecifier::Control(object::ControlSpecifier {
-                                controller: crate::ability_tree::player::PlayerSpecifier::You { span: *span },
+                                controller: crate::ability_tree::player::PlayerSpecifier::You {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *span,
+                                },
                                 controlled: true,
                                 #[cfg(feature = "spanned_tree")]
                                 span: *span,
@@ -162,14 +165,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                     ParserNode::Number { number },
                     ParserNode::ObjectSpecifiers { specifiers },
-                    ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(supertype))),
+                    ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Supertype(_supertype))),
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::CreateTokens(crate::ability_tree::event::CreateTokensEvent {
                         source: source.clone(),
                         quantity: number.clone(),
                         token_specifiers: Some(specifiers.clone()),
                         #[cfg(feature = "spanned_tree")]
-                        span: source.node_span().merge(&supertype.span),
+                        span: source.node_span().merge(&_supertype.span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

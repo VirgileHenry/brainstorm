@@ -438,13 +438,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::ObjectReference { reference: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::PermanentState(state)),
-                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(card_type))),
+                ParserNode::LexerToken(Token::PermanentState(_state)),
+                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(_card_type))),
             ] => Ok(ParserNode::ObjectReference {
                 reference: crate::ability_tree::object::ObjectReference::ObjectAttachedTo(
                     crate::ability_tree::object::ObjectAttachedTo {
                         #[cfg(feature = "spanned_tree")]
-                        span: state.span().merge(&card_type.span),
+                        span: _state.span().merge(&_card_type.span),
                     },
                 ),
             }),

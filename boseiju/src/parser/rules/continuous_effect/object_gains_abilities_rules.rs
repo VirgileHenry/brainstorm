@@ -83,6 +83,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 span: reference.node_span().merge(&toughness.node_span()),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.node_span().merge(&toughness.node_span()),
                     },
                 }),
@@ -181,6 +182,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 span: reference.node_span().merge(&ability.node_span()),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.node_span().merge(&ability.node_span()),
                     },
                 }),
@@ -293,6 +295,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                                 span: reference.node_span().merge(&ability_2.node_span()),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.node_span().merge(&ability_2.node_span()),
                     },
                 }),
@@ -415,6 +418,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                             span: reference.node_span().merge(&duration.node_span()),
                         },
                         duration: duration.clone(),
+                        #[cfg(feature = "spanned_tree")]
                         span: reference.node_span().merge(&duration.node_span()),
                     },
                 ),

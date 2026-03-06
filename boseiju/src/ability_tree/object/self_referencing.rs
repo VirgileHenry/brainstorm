@@ -11,7 +11,7 @@ use crate::lexer::IntoToken;
 /// Prior to the Foundation (FDN) set, self referencing was done by mentionning the
 /// name of the card, either the full name or without the epiphet.
 ///
-/// Since FDN, self referencing can be done through "this <object kind>".
+/// Since FDN, self referencing can be done through "this card / creature / etc".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SelfReferencingObject {
