@@ -16,7 +16,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// supertype, rules text, abilities, power and toughness, loyalty,
 /// hand modifier and life modifier (the last two are for vanguard only).
 ///
-/// See also https://mtg.fandom.com/wiki/Object
+/// See also <https://mtg.fandom.com/wiki/Object>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectCharacteristicModification {

@@ -141,6 +141,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                            #[cfg(feature = "spanned_tree")]
                             span: choose_span.empty_at_start(),
                         },
                         condition: None,

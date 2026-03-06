@@ -12,7 +12,7 @@ const MAX_SUPERTYPES_COUNT: usize = 4;
 /// and contains the card’s card type(s), subtype(s), and/or supertype(s).
 /// See rule 205, “Type Line.”
 ///
-/// See also: https://mtg.fandom.com/wiki/Type_line
+/// See also: <https://mtg.fandom.com/wiki/Type_line>
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct TypeLine {

@@ -51,6 +51,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: if_span.merge(instead_span),
                             },
                         ),
+                        #[cfg(feature = "spanned_tree")]
                         span: if_span.merge(instead_span),
                     },
                 })

@@ -1,10 +1,12 @@
 use super::ParserNode;
-use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [

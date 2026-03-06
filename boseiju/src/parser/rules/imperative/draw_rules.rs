@@ -30,13 +30,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span: start_span,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(card))),
+                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(_card))),
             ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::Discard(
                     crate::ability_tree::imperative::DiscardImperative {
                         amount: number.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(&card.node_span()),
+                        span: start_span.merge(&_card.node_span()),
                     },
                 ),
             }),

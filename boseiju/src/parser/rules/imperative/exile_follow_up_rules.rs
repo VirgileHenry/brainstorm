@@ -1,4 +1,3 @@
-use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::time;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
@@ -8,6 +7,9 @@ use crate::parser::rules::ParserRuleDeclarationLocation;
 use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [/* Exile follow up that return the card */ ParserRule {
@@ -69,7 +71,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&zone.node_span()),
                         },
-                        at: Some(time::Instant::TheBeginningOfTheNextEndStep { span: *end_span }),
+                        at: Some(time::Instant::TheBeginningOfTheNextEndStep {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *end_span
+                        }),
                         #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
                     },

@@ -11,7 +11,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Static abilities do something all the time rather than being activated or triggered.
 /// See rule 113, “Abilities”, and rule 604, “Handling Static Abilities”.
 ///
-/// See the MTG wiki: https://mtg.fandom.com/wiki/Static_ability
+/// See also <https://mtg.fandom.com/wiki/Static_ability>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StaticAbility {
