@@ -69,6 +69,45 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
                             object: reference.clone(),
                             specifiers: specifiers.clone(),
+                            shall_match: true,
+                            #[cfg(feature = "spanned_tree")]
+                            span: reference.node_span().merge(&specifiers.node_span()),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Object match specifiers: "if it's a red card, ..." */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+            ]),
+            merged: ParserNode::Condition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Ok(ParserNode::Condition {
+                    condition: crate::ability_tree::conditional::Condition::ObjectMatchSpecifiers(
+                        crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
+                            object: reference.clone(),
+                            specifiers: specifiers.clone(),
+                            shall_match: true,
                             #[cfg(feature = "spanned_tree")]
                             span: reference.node_span().merge(&specifiers.node_span()),
                         },
@@ -106,6 +145,45 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
                             object: reference.clone(),
                             specifiers: specifiers.clone(),
+                            shall_match: true,
+                            #[cfg(feature = "spanned_tree")]
+                            span: reference.node_span().merge(&specifiers.node_span()),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* Object match specifiers: "if it isn't a red card, ..." */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Isnt {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+            ]),
+            merged: ParserNode::Condition { condition: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Isnt { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
+                    ParserNode::ObjectSpecifiers { specifiers },
+                ] => Ok(ParserNode::Condition {
+                    condition: crate::ability_tree::conditional::Condition::ObjectMatchSpecifiers(
+                        crate::ability_tree::conditional::ConditionObjectMatchSpecifiers {
+                            object: reference.clone(),
+                            specifiers: specifiers.clone(),
+                            shall_match: false,
                             #[cfg(feature = "spanned_tree")]
                             span: reference.node_span().merge(&specifiers.node_span()),
                         },

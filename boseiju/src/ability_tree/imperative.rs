@@ -6,6 +6,7 @@ mod discard_imperative;
 mod draw_imperative;
 mod exile_imperative;
 mod gain_life;
+mod generate_continuous_effect_imperative;
 mod put_counters_imperative;
 mod remove_counters_imperative;
 mod return_imperative;
@@ -24,6 +25,7 @@ pub use exile_imperative::ExileFollowUp;
 pub use exile_imperative::ExileFollowUpReturn;
 pub use exile_imperative::ExileImperative;
 pub use gain_life::GainLifeImperative;
+pub use generate_continuous_effect_imperative::GenerateContinuousEffectImperative;
 pub use put_counters_imperative::CounterKind;
 pub use put_counters_imperative::CounterOnPermanent;
 pub use put_counters_imperative::PutCountersImperative;
@@ -43,7 +45,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Imperatives regroups a lot of what "can be done" in the game: draw cards,
 /// destroy things, move cards around, etc.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Imperative {
     Choose(ChooseImperative),
     CreateToken(CreateTokenImperative),
@@ -53,30 +55,11 @@ pub enum Imperative {
     Draw(DrawImperative),
     Exile(ExileImperative),
     GainLife(GainLifeImperative),
+    GenerateContinuousEffect(GenerateContinuousEffectImperative),
     PutCounters(PutCountersImperative),
     RemoveCounters(RemoveCountersImperative),
     Return(ReturnImperative),
     Sacrifice(SacrificeImperative),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl Imperative {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Choose(child) => child.span,
-            Self::CreateToken(child) => child.span,
-            Self::DealsDamage(child) => child.span,
-            Self::Destroy(child) => child.span,
-            Self::Discard(child) => child.span,
-            Self::Draw(child) => child.span,
-            Self::Exile(child) => child.span,
-            Self::GainLife(child) => child.span,
-            Self::PutCounters(child) => child.span,
-            Self::RemoveCounters(child) => child.span,
-            Self::Return(child) => child.span,
-            Self::Sacrifice(child) => child.span,
-        }
-    }
 }
 
 impl AbilityTreeNode for Imperative {
@@ -96,6 +79,7 @@ impl AbilityTreeNode for Imperative {
             Self::Draw(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Exile(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GainLife(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::GenerateContinuousEffect(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Return(child) => children.push(child as &dyn AbilityTreeNode),
@@ -117,6 +101,7 @@ impl AbilityTreeNode for Imperative {
             Imperative::Draw(imperative) => imperative.display(out)?,
             Imperative::Exile(imperative) => imperative.display(out)?,
             Imperative::GainLife(imperative) => imperative.display(out)?,
+            Imperative::GenerateContinuousEffect(imperative) => imperative.display(out)?,
             Imperative::PutCounters(imperative) => imperative.display(out)?,
             Imperative::RemoveCounters(imperative) => imperative.display(out)?,
             Imperative::Return(imperative) => imperative.display(out)?,
@@ -141,6 +126,7 @@ impl AbilityTreeNode for Imperative {
             Self::Draw(child) => child.node_span(),
             Self::Exile(child) => child.node_span(),
             Self::GainLife(child) => child.node_span(),
+            Self::GenerateContinuousEffect(child) => child.node_span(),
             Self::PutCounters(child) => child.node_span(),
             Self::RemoveCounters(child) => child.node_span(),
             Self::Return(child) => child.node_span(),
@@ -162,7 +148,7 @@ impl crate::utils::DummyInit for Imperative {
 /// imperative and conditional ones. For example, Chart a Course states:
 /// "Draw two cards. Then discard a card unless you attacked this turn."
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImperativeList {
     pub executing_player: crate::ability_tree::player::PlayerSpecifier,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,

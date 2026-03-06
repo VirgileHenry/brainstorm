@@ -5,7 +5,7 @@ use crate::ability_tree::*;
 /// This is the root of the Magic: the Gathering texts,
 /// and can represent on its own the full text box of a card.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AbilityTree {
     pub abilities: crate::utils::HeapArrayVec<ability::AbilityKind, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]

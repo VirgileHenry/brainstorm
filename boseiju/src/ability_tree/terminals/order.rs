@@ -73,8 +73,8 @@ impl std::fmt::Display for Order {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for Order {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "a random order" => Some(Order::RandomOrder {

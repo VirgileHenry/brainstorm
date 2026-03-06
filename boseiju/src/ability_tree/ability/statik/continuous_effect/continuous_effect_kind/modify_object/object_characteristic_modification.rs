@@ -18,7 +18,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// See also https://mtg.fandom.com/wiki/Object
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectCharacteristicModification {
     PowerToughnessModifiers(PowerToughnessModifiers),
 }

@@ -1,5 +1,6 @@
 pub mod ability;
 pub mod card_layout;
+pub mod colors;
 pub mod conditional;
 pub mod cost;
 pub mod event;

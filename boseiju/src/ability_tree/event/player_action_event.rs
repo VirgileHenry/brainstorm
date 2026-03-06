@@ -11,7 +11,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// Player events includes attacking, drawing cards, etc.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerActionEvent {
     pub player: crate::ability_tree::player::PlayerSpecifier,
     pub action: PlayerAction,
@@ -72,7 +72,7 @@ impl crate::utils::DummyInit for PlayerActionEvent {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlayerAction {
     Attacks(PlayerAttacksAction),
     CastsSpell(PlayerCastsSpellEvent),

@@ -16,31 +16,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
+                ParserNode::ImperativeList { imperatives: dummy() }.id(),
             ]),
             merged: ParserNode::Statement { statement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::Imperative { imperative }, // Fixme: there are also "if they don't / if they do" stuff
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                        #[cfg(feature = "spanned_tree")]
-                            span: dot_span,
-                    })),
+                    ParserNode::ImperativeList { imperatives }, // Fixme: there are also "if they don't / if they do" stuff
                 ] => Ok(ParserNode::Statement {
                     statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
                         player: player.clone(),
-                        action: imperative.clone(),
+                        action: imperatives.clone(),
                         if_it_is_done: None,
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(dot_span),
+                        span: player.node_span().merge(&imperatives.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -56,12 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
+                ParserNode::ImperativeList { imperatives: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -89,8 +75,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::Imperative { imperative },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
                     ParserNode::LexerToken(_), /* Only for matching the proper rule tokens */
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do { .. })),
@@ -99,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Statement {
                     statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
                         player: player.clone(),
-                        action: imperative.clone(),
+                        action: imperatives.clone(),
                         if_it_is_done: Some(Box::new(statement.clone())),
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
@@ -119,12 +104,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
+                ParserNode::ImperativeList { imperatives: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -152,8 +132,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::Imperative { imperative },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
                     ParserNode::LexerToken(_), /* Only for matching the proper rule tokens */
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do { .. })),
@@ -162,7 +141,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Statement {
                     statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
                         player: player.clone(),
-                        action: imperative.clone(),
+                        action: imperatives.clone(),
                         if_it_is_done: Some(Box::new(statement.clone())),
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
@@ -182,12 +161,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
+                ParserNode::ImperativeList { imperatives: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -215,8 +189,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::Imperative { imperative },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
                     ParserNode::LexerToken(_), /* Only for matching the proper rule tokens */
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont { .. })),
@@ -225,7 +198,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Statement {
                     statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
                         player: player.clone(),
-                        action: imperative.clone(),
+                        action: imperatives.clone(),
                         if_it_is_done: None,
                         if_not_done: Some(Box::new(statement.clone())),
                         #[cfg(feature = "spanned_tree")]
@@ -245,12 +218,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
+                ParserNode::ImperativeList { imperatives: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -278,8 +246,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::Imperative { imperative },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
                     ParserNode::LexerToken(_), /* Only for matching the proper rule tokens */
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont { .. })),
@@ -288,7 +255,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Statement {
                     statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
                         player: player.clone(),
-                        action: imperative.clone(),
+                        action: imperatives.clone(),
                         if_it_is_done: None,
                         if_not_done: Some(Box::new(statement.clone())),
                         #[cfg(feature = "spanned_tree")]
@@ -299,38 +266,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* An imperative list with its closing dot can make a statement. */
+        /* An imperative list can make a statement. */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-            ]),
+            expanded: super::RuleLhs::new(&[ParserNode::ImperativeList { imperatives: dummy() }.id()]),
             merged: ParserNode::Statement { statement: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
-                        #[cfg(feature = "spanned_tree")]
-                            span: dot_span,
-                    })),
-                ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::Imperatives(
-                        #[cfg(feature = "spanned_tree")]
-                        {
-                            let mut imperatives = imperatives.clone();
-                            imperatives.span = imperatives.span.merge(dot_span);
-                            imperatives
-                        },
-                        #[cfg(not(feature = "spanned_tree"))]
-                        {
-                            let imperatives = imperatives.clone();
-                            imperatives
-                        },
-                    ),
+                &[ParserNode::ImperativeList { imperatives }] => Ok(ParserNode::Statement {
+                    statement: crate::ability_tree::statement::Statement::Imperatives(imperatives.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

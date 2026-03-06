@@ -1,9 +1,6 @@
 use crate::parser::ParserNode;
 use idris::Idris;
 
-#[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
-
 /// Errors that can be thrown by the parser.
 #[derive(Debug, Clone)]
 pub enum ParserError {
@@ -87,13 +84,16 @@ impl std::fmt::Display for ParserError {
                     for expecting in expecting.iter().take(10) {
                         let node_name = <ParserNode as idris::Idris>::name_from_id(expecting.expected);
                         write!(f, "\n - token \"{node_name}\" to create nodes")?;
-                        for (i, (for_node, for_rule)) in expecting.for_nodes.iter().enumerate() {
+                        for (i, (for_node, for_rule)) in expecting.for_nodes.iter().take(3).enumerate() {
                             let node_name = <ParserNode as idris::Idris>::name_from_id(*for_node);
                             if i == 0 {
                                 write!(f, " \"{node_name}\" (at {for_rule})")?;
                             } else {
                                 write!(f, ", \"{node_name}\" (at {for_rule})")?;
                             }
+                        }
+                        if expecting.for_nodes.len() > 3 {
+                            write!(f, "And {} others", expecting.for_nodes.len() - 10)?;
                         }
                     }
                     if expecting.len() > 10 {

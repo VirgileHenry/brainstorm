@@ -1,4 +1,6 @@
-use std::fmt::Write;
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -8,6 +10,8 @@ pub struct Colors {
     pub black: bool,
     pub red: bool,
     pub green: bool,
+    #[cfg(feature = "spanned_tree")]
+    span: crate::ability_tree::span::TreeSpan,
 }
 
 impl Colors {
@@ -18,7 +22,24 @@ impl Colors {
             black: false,
             red: false,
             green: false,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
+    }
+
+    pub fn from_iter<I: Iterator<Item = mtg_data::Color>>(colors: I) -> Self {
+        let mut result = Self::empty();
+        for color in colors {
+            match color {
+                mtg_data::Color::Black => result.black = true,
+                mtg_data::Color::Blue => result.blue = true,
+                mtg_data::Color::Green => result.green = true,
+                mtg_data::Color::Red => result.red = true,
+                mtg_data::Color::White => result.white = true,
+                _ => { /* Dafuk ? */ }
+            }
+        }
+        result
     }
 
     pub fn iter(&self) -> impl Iterator<Item = mtg_data::Color> {
@@ -40,6 +61,8 @@ impl Colors {
             black: (bitmask & (1 << 2)) > 0,
             red: (bitmask & (1 << 3)) > 0,
             green: (bitmask & (1 << 4)) > 0,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 
@@ -53,8 +76,38 @@ impl Colors {
     }
 }
 
+impl AbilityTreeNode for Colors {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::tree_node::NodeKind::Colors.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
+        unimplemented!()
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "colors"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> super::span::TreeSpan {
+        self.span
+    }
+}
+
 impl std::fmt::Display for Colors {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use std::fmt::Write;
         let mut colors = self.iter().peekable();
         while let Some(next) = colors.next() {
             f.write_char(next.as_char())?;
@@ -74,7 +127,16 @@ impl Default for Colors {
             black: false,
             red: false,
             green: false,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for Colors {
+    fn dummy_init() -> Self {
+        Default::default()
     }
 }
 

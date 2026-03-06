@@ -4,11 +4,21 @@ use crate::ability_tree::MAX_NODE_DATA_SIZE;
 use crate::lexer::IntoToken;
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Color {
     pub color: mtg_data::Color,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl Color {
+    pub fn all() -> impl Iterator<Item = Self> {
+        mtg_data::Color::all().map(|color| Self {
+            color,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        })
+    }
 }
 
 impl AbilityTreeNode for Color {

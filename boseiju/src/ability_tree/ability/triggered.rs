@@ -15,7 +15,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// See also: https://mtg.fandom.com/wiki/Triggered_ability
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TriggeredAbility {
     pub condition: TriggerCondition,
     pub effect: crate::ability_tree::ability::spell::SpellAbility,

@@ -134,8 +134,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Counter,
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -158,10 +157,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::EventSource { source },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { .. })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                        keyword_action: mtg_data::KeywordAction::Counter,
-                        ..
-                    })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                     ParserNode::ObjectReference { reference },
@@ -196,8 +192,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Counter,
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -221,10 +216,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would { .. })),
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put { .. })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                        keyword_action: mtg_data::KeywordAction::Counter,
-                        ..
-                    })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                     ParserNode::ObjectReference { reference },

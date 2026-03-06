@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Counter {
     pub kind: CounterKind,
     #[cfg(feature = "spanned_tree")]
@@ -56,8 +56,8 @@ impl AbilityTreeNode for Counter {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for Counter {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         let kind = match span.text {
             "+1/+1 counter" | "+1/+1 counters" => Some(CounterKind::PlusOnePlusOne),

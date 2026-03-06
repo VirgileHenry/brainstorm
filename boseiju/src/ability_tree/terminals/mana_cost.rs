@@ -6,7 +6,7 @@ use crate::lexer::IntoToken;
 ///
 /// See also https://mtg.fandom.com/wiki/Mana_cost
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ManaCost {
     pub cost: arrayvec::ArrayVec<crate::ability_tree::terminals::Mana, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]

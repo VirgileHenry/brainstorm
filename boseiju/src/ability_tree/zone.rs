@@ -31,18 +31,6 @@ pub enum ZoneReference {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl ZoneReference {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Anywhere { span } => *span,
-            Self::Exile { span } => *span,
-            Self::OwnedZone(child) => child.span,
-            Self::TheBattlefield { span } => *span,
-        }
-    }
-}
-
 impl AbilityTreeNode for ZoneReference {
     fn node_id(&self) -> usize {
         use idris::Idris;

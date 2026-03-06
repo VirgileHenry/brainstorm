@@ -9,7 +9,7 @@ const MAX_DAMAGES_DEALT: usize = MAX_CHILDREN_PER_NODE - 1;
 /// for instance Drakuseth, Maw of Flames states: "it deals 4 damage to any
 /// target and 3 damage to each of up to two other targets."
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DealsDamageImperative {
     pub dealer: crate::ability_tree::object::ObjectReference,
     pub damages: crate::utils::HeapArrayVec<DamagesDealt, MAX_DAMAGES_DEALT>,
@@ -82,7 +82,7 @@ impl crate::utils::DummyInit for DealsDamageImperative {
 /// This can be the same damage to multiple targets, or shared damage among targets,
 /// or anything that was mentionned in a single damage dealing action.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DamagesDealt {
     pub to: crate::ability_tree::object::ObjectReference,
     pub amount: crate::ability_tree::number::Number,

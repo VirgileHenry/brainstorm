@@ -172,8 +172,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Counter,
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -187,8 +186,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: start_span,
                     })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Those { .. })),
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                        keyword_action: mtg_data::KeywordAction::Counter,
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),

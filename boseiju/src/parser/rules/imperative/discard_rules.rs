@@ -19,11 +19,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             }))
             .id(),
             ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
+            ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(crate::utils::dummy()))).id(),
         ]),
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -31,11 +27,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Discard,
                     #[cfg(feature = "spanned_tree")]
-                    span: start_span,
+                        span: start_span,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card {
-                    #[cfg(feature = "spanned_tree")] span: end_span })),
+                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(
+                    crate::ability_tree::object::CardObjectKind {
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
+                    },
+                ))),
             ] => Ok(ParserNode::Imperative {
                 imperative: crate::ability_tree::imperative::Imperative::Discard(
                     crate::ability_tree::imperative::DiscardImperative {

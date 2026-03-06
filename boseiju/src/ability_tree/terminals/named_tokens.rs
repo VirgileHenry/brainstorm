@@ -60,8 +60,8 @@ impl AbilityTreeNode for NamedToken {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for NamedToken {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "koma's coil" => Some(Self::KomasCoil {

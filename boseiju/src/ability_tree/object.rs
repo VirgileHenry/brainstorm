@@ -10,12 +10,15 @@ pub use attached_to::ObjectAttachedTo;
 pub use object_count::CountSpecifier;
 pub use object_kind::ArtifactSubtype;
 pub use object_kind::BattleSubtype;
+pub use object_kind::CardObjectKind;
 pub use object_kind::CardType;
 pub use object_kind::CreatureSubtype;
 pub use object_kind::EnchantmentSubtype;
 pub use object_kind::LandSubtype;
 pub use object_kind::ObjectKind;
+pub use object_kind::PermanentObjectKind;
 pub use object_kind::PlaneswalkerSubtype;
+pub use object_kind::SpellObjectKind;
 pub use object_kind::SpellSubtype;
 pub use object_kind::Supertype;
 pub use object_specifiers::AnotherObjectSpecifier;
@@ -40,7 +43,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectReference {
     SelfReferencing(SelfReferencingObject),
     ObjectAttachedTo(ObjectAttachedTo),

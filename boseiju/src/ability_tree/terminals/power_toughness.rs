@@ -22,8 +22,8 @@ impl std::fmt::Display for PowerToughness {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for PowerToughness {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         let split: Vec<_> = span.text.split('/').collect();
         let (raw_pow, raw_tough) = match split.as_slice() {

@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// For example, gravecrawler says: "You may cast this card from your graveyard".
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlternativeCastingPermissions {
     pub player: crate::ability_tree::player::PlayerSpecifier,
     pub object: crate::ability_tree::object::ObjectReference,

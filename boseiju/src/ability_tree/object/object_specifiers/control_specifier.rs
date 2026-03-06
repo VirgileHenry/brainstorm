@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
 /// A specifier for who controls a permanents.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ControlSpecifier {
     pub controller: crate::ability_tree::player::PlayerSpecifier,
     pub controlled: bool,

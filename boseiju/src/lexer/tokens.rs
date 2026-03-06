@@ -13,7 +13,7 @@ pub trait IntoToken: Sized {
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
     AbilityWord(terminals::AbilityWord),
     ActionKeyword(intermediates::ActionKeyword),

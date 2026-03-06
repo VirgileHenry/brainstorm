@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Imperative to create tokens.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreateTokenImperative {
     pub tokens: crate::utils::HeapArrayVec<TokenCreation, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
@@ -64,7 +64,7 @@ impl crate::utils::DummyInit for CreateTokenImperative {
 ///
 /// This node regroups a group of created tokens, e.g. "3 1/1 red goblins".
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TokenCreation {
     pub amount: crate::ability_tree::number::Number,
     pub token: CreatedTokenKind,
@@ -118,7 +118,7 @@ impl AbilityTreeNode for TokenCreation {
 /// or will reference a token previously mentionned in the ability, e.g.
 /// "create twice as many of those tokens instead".
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CreatedTokenKind {
     PreviouslyMentionnedToken {
         #[cfg(feature = "spanned_tree")]

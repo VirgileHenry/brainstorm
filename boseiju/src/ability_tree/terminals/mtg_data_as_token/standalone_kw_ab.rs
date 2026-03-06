@@ -2,7 +2,7 @@
 /// additionnal text besides the keyword.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum StandaloneKeywordAbility {
     Absorb,
     Affinity,

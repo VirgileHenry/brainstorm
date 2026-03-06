@@ -11,7 +11,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// For instance, "Ward" on its own isn't truly a keyword abilty: It's "ward: pay 2 life".
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExpandedKeywordAbility {
     Enchant(EnchantKeywordAbility),
     Standalone(StandaloneKeywordAbility),
@@ -70,7 +70,7 @@ impl crate::utils::DummyInit for ExpandedKeywordAbility {
 
 /// Wrapper around the mtg type for the standalone keyword ability.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StandaloneKeywordAbility {
     pub keyword_ability: crate::ability_tree::terminals::StandaloneKeywordAbility,
     #[cfg(feature = "spanned_tree")]
@@ -129,7 +129,7 @@ impl crate::utils::DummyInit for StandaloneKeywordAbility {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WardKeywordAbility {
     pub cost: crate::ability_tree::cost::Cost,
     #[cfg(feature = "spanned_tree")]
@@ -189,7 +189,7 @@ impl crate::utils::DummyInit for WardKeywordAbility {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EnchantKeywordAbility {
     pub enchantable_object: crate::ability_tree::object::ObjectSpecifiers,
     #[cfg(feature = "spanned_tree")]

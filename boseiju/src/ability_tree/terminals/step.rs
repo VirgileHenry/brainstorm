@@ -93,8 +93,8 @@ impl std::fmt::Display for Step {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for Step {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "untap step" => Some(Step::Untap {

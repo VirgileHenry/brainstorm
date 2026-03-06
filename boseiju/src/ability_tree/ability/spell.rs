@@ -11,7 +11,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// Spell abilities are represented as a list of statements that are all of the spell effects.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpellAbility {
     pub effects: crate::utils::HeapArrayVec<crate::ability_tree::statement::Statement, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]

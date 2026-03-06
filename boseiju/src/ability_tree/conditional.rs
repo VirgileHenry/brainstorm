@@ -1,8 +1,10 @@
 mod event_occured;
+mod number_of_resolution;
 mod object_is_of_kind;
 mod this_is_your_turn;
 
 pub use event_occured::ConditionEventOccured;
+pub use number_of_resolution::NumberOfResolutions;
 pub use object_is_of_kind::ConditionObjectMatchSpecifiers;
 pub use this_is_your_turn::ConditionThisIsYourTurn;
 
@@ -15,7 +17,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// There are two kind of contional, an "if" that requires that a condition is met,
 /// and an "unless" that requires that the condition has not been met.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Conditional {
     If(ConditionalIf),
     Unless(ConditionalUnless),
@@ -70,7 +72,7 @@ impl crate::utils::DummyInit for Conditional {
 
 /// "If" variant of the [`Conditional`].
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionalIf {
     pub condition: Condition,
     #[cfg(feature = "spanned_tree")]
@@ -121,7 +123,7 @@ impl crate::utils::DummyInit for ConditionalIf {
 
 /// "Unless" variant of the [`Conditional`].
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionalUnless {
     pub condition: Condition,
     #[cfg(feature = "spanned_tree")]
@@ -172,7 +174,7 @@ impl crate::utils::DummyInit for ConditionalUnless {
 
 /// A condition regroups what can be used as conditions for conditinals.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Condition {
     EventOccured(ConditionEventOccured),
     ObjectMatchSpecifiers(ConditionObjectMatchSpecifiers),

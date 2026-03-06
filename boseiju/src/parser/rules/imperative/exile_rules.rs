@@ -68,6 +68,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span,
                     })),
                     ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
                     ParserNode::ExileFollowUp { follow_up },
                 ] => Ok(ParserNode::Imperative {
                     imperative: crate::ability_tree::imperative::Imperative::Exile(

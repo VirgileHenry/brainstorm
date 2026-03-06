@@ -14,8 +14,7 @@ mod ability;
 mod ability_kind;
 mod ability_tree;
 mod conditional;
-mod continuous_effect_kind;
-mod continuous_effects;
+mod continuous_effect;
 mod cost;
 mod cost_modifications;
 mod count_specifier;
@@ -33,6 +32,7 @@ mod replacement_effect;
 mod spell_ability;
 mod statement;
 mod statik;
+mod token;
 mod triggered_ability;
 mod zone;
 
@@ -43,8 +43,8 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
     let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
         Box::new(ability::rules()),
         Box::new(ability_tree::rules()),
-        Box::new(continuous_effects::rules()),
-        Box::new(continuous_effect_kind::rules()),
+        Box::new(ability_kind::rules()),
+        Box::new(continuous_effect::rules()),
         Box::new(cost::rules()),
         Box::new(cost_modifications::rules()),
         Box::new(count_specifier::rules()),
@@ -63,8 +63,8 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(spell_ability::rules()),
         Box::new(statement::rules()),
         Box::new(statik::rules()),
+        Box::new(token::rules()),
         Box::new(triggered_ability::rules()),
-        Box::new(ability_kind::rules()),
         Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()

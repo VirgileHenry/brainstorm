@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CounterOnPermanentReplacement {
     pub source_ref: super::EventSourceReference,
     pub put_counters: crate::ability_tree::imperative::PutCountersImperative,

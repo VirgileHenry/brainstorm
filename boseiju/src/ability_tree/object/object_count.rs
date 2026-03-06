@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CountSpecifier {
     A {
         #[cfg(feature = "spanned_tree")]

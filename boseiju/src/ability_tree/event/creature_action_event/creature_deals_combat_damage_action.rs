@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Combat damage is the special kind of damage that creature deals when
 /// they fight each other, or when they attack a player.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureDealsCombatDamageAction {
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

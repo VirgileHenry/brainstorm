@@ -1,4 +1,3 @@
-pub mod colors;
 pub mod layout;
 pub mod legalities;
 
@@ -10,7 +9,7 @@ pub struct Card {
     pub name: String,
     pub scryfall_id: uuid::Uuid,
     pub legalities: legalities::Legalities,
-    pub color_identity: colors::Colors,
+    pub color_identity: crate::ability_tree::colors::Colors,
     pub layout: layout::Layout,
     pub images_uris: Option<mtg_cardbase::ImageUris>,
 }
@@ -48,7 +47,7 @@ impl TryFrom<&mtg_cardbase::Card> for Card {
                 .map_err(|e| format!("in {}, failed to parse scryfall id to uuid: {e}", raw_card.name))?,
             legalities: legalities::Legalities::try_from(&raw_card.legalities)
                 .map_err(|e| format!("in {}, failed to parse legalities: {e}", raw_card.name))?,
-            color_identity: colors::Colors::try_from(raw_card.color_identity.as_slice())
+            color_identity: crate::ability_tree::colors::Colors::try_from(raw_card.color_identity.as_slice())
                 .map_err(|e| format!("in {}, failed to parse color identity: {e}", raw_card.name))?,
             layout: layout::Layout::try_from(raw_card)
                 .map_err(|e| format!("in {}, failed to parse layout: {e}", raw_card.name))?,

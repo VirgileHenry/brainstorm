@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// It may be a mana cost (paying mana), or any imperative that requires
 /// the player to do something (discard a card, sacrifice a creature...)
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Cost {
     ManaCost(crate::ability_tree::terminals::ManaCost),
     Imperative(crate::ability_tree::imperative::Imperative),

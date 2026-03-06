@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// A specifier for who casts a spell.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CastSpecifier {
     pub casting_player: crate::ability_tree::player::PlayerSpecifier,
     #[cfg(feature = "spanned_tree")]

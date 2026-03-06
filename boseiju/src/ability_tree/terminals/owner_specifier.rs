@@ -80,8 +80,8 @@ impl std::fmt::Display for OwnerSpecifier {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for OwnerSpecifier {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "you own" | "your" => Some(OwnerSpecifier::YouOwn {

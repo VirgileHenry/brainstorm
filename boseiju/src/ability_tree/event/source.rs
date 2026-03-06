@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventSource {
     AnEffect(EffectEventSource),
     Player(PlayerEventSource),
@@ -58,7 +58,7 @@ impl crate::utils::DummyInit for EventSource {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EffectEventSource {
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -101,7 +101,7 @@ impl crate::utils::DummyInit for EffectEventSource {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerEventSource {
     pub player: crate::ability_tree::player::PlayerSpecifier,
     #[cfg(feature = "spanned_tree")]
