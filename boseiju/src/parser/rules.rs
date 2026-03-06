@@ -33,6 +33,7 @@ mod replacement_effect;
 mod spell_ability;
 mod statement;
 mod statik;
+mod token;
 mod triggered_ability;
 mod zone;
 
@@ -43,6 +44,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
     let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
         Box::new(ability::rules()),
         Box::new(ability_tree::rules()),
+        Box::new(ability_kind::rules()),
         Box::new(continuous_effects::rules()),
         Box::new(continuous_effect_kind::rules()),
         Box::new(cost::rules()),
@@ -63,8 +65,8 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(spell_ability::rules()),
         Box::new(statement::rules()),
         Box::new(statik::rules()),
+        Box::new(token::rules()),
         Box::new(triggered_ability::rules()),
-        Box::new(ability_kind::rules()),
         Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()

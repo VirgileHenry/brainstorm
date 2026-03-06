@@ -14,10 +14,23 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* An imperative on its own can make a imperative list */
         ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::Imperative { imperative: dummy() }.id()]),
+            expanded: super::RuleLhs::new(&[
+                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Imperative { imperative }] => Ok(ParserNode::ImperativeList {
+                &[
+                    ParserNode::Imperative { imperative },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
+                ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
                             let mut imperatives = crate::utils::HeapArrayVec::new();
@@ -30,7 +43,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: imperative.node_span(),
+                        span: imperative.node_span().merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -47,6 +60,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -54,6 +72,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Imperative { imperative: imp1 },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
                     ParserNode::Imperative { imperative: imp2 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
@@ -68,7 +90,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: imp1.node_span().merge(&imp2.node_span()),
+                        span: imp1.node_span().merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -85,6 +107,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -92,6 +119,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Imperative { imperative },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Unless { .. })),
                     ParserNode::Condition { condition },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
@@ -111,7 +142,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: imperative.node_span().merge(&condition.node_span()),
+                        span: imperative.node_span().merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -133,6 +164,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -144,6 +180,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Condition { condition },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::Imperative { imperative },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
@@ -163,7 +203,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: if_span.merge(&imperative.node_span()),
+                        span: if_span.merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -175,10 +215,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Player { player: dummy() }.id(),
                 ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Player { player }, ParserNode::Imperative { imperative }] => Ok(ParserNode::ImperativeList {
+                &[
+                    ParserNode::Player { player },
+                    ParserNode::Imperative { imperative },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
+                ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
                             let mut imperatives = crate::utils::HeapArrayVec::new();
@@ -188,7 +240,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         executing_player: player.clone(),
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&imperative.node_span()),
+                        span: player.node_span().merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -206,6 +258,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -214,6 +271,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Imperative { imperative: imp1 },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
                     ParserNode::Imperative { imperative: imp2 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
@@ -225,7 +286,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         executing_player: player.clone(),
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&imp2.node_span()),
+                        span: player.node_span().merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -243,6 +304,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -254,6 +320,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: unless_span,
                     })),
                     ParserNode::Condition { condition },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
@@ -270,7 +340,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&condition.node_span()),
+                        span: player.node_span().merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -293,6 +363,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::Player { player: dummy() }.id(),
                 ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
             ]),
             merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -305,6 +380,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::Player { player },
                     ParserNode::Imperative { imperative },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: crate::ability_tree::imperative::ImperativeList {
                         imperatives: {
@@ -321,7 +400,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: if_span.merge(&imperative.node_span()),
+                        span: if_span.merge(dot_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -585,7 +585,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "control" | "controls" => Some(Self::Copy {
+            "control" | "controls" => Some(Self::Control {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

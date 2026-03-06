@@ -64,6 +64,29 @@ impl TypeLine {
         }
     }
 
+    pub fn creature_token(
+        subtype: crate::ability_tree::object::CreatureSubtype,
+        #[cfg(feature = "spanned_tree")] token_span: crate::ability_tree::span::TreeSpan,
+        #[cfg(feature = "spanned_tree")] subtype_span: crate::ability_tree::span::TreeSpan,
+    ) -> Self {
+        let mut result = Self::empty();
+        result.supertypes.push(crate::ability_tree::object::Supertype {
+            supertype: mtg_data::Supertype::Token,
+            #[cfg(feature = "spanned_tree")]
+            span: token_span,
+        });
+        result.creature = Some(CreatureSubtype {
+            subtypes: {
+                let mut subtypes = arrayvec::ArrayVec::new_const();
+                subtypes.push(subtype);
+                subtypes
+            },
+            #[cfg(feature = "spanned_tree")]
+            span: token_span.merge(&subtype_span),
+        });
+        result
+    }
+
     pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
         let mut result = arrayvec::ArrayVec::new_const();
 
@@ -341,6 +364,34 @@ impl AbilityTreeNode for TypeLine {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for TypeLine {
+    fn dummy_init() -> Self {
+        Self {
+            supertypes: arrayvec::ArrayVec::new_const(),
+            artifact: None,
+            battle: None,
+            conspiracy: None,
+            creature: None,
+            dungeon: None,
+            emblem: None,
+            enchantment: None,
+            hero: None,
+            instant: None,
+            kindred: None,
+            land: None,
+            phenomenon: None,
+            plane: None,
+            planeswalker: None,
+            scheme: None,
+            sorcery: None,
+            vanguard: None,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

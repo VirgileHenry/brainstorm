@@ -75,7 +75,7 @@ impl crate::utils::DummyInit for Statement {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct MayAbility {
     pub player: crate::ability_tree::player::PlayerSpecifier,
-    pub action: crate::ability_tree::imperative::Imperative,
+    pub action: crate::ability_tree::imperative::ImperativeList,
     pub if_it_is_done: Option<Box<Statement>>,
     pub if_not_done: Option<Box<Statement>>,
     #[cfg(feature = "spanned_tree")]

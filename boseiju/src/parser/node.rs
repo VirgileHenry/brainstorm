@@ -105,6 +105,9 @@ pub enum ParserNode {
     StaticAbilityKind {
         kind: crate::ability_tree::ability::statik::StaticAbilityKind,
     },
+    TokenDefinition {
+        token: ability_tree::card_layout::TokenLayout,
+    },
     TriggerCondition {
         condition: ability_tree::ability::triggered::TriggerCondition,
     },

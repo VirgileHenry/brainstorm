@@ -1,4 +1,3 @@
-use crate::ability_tree::object;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::rules::ParserNode;
@@ -8,40 +7,47 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "Discard <number> cards" makes a discard card imperative */
+    /* Destroy any object reference */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Discard,
+                keyword_action: mtg_data::KeywordAction::Create,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(crate::utils::dummy()))).id(),
+            ParserNode::TokenDefinition { token: dummy() }.id(),
         ]),
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Discard,
+                    keyword_action: mtg_data::KeywordAction::Create,
                     #[cfg(feature = "spanned_tree")]
-                        span: start_span,
+                    span,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(
-                    crate::ability_tree::object::CardObjectKind {
-                        #[cfg(feature = "spanned_tree")]
-                            span: end_span,
-                    },
-                ))),
+                ParserNode::TokenDefinition { token },
             ] => Ok(ParserNode::Imperative {
-                imperative: crate::ability_tree::imperative::Imperative::Discard(
-                    crate::ability_tree::imperative::DiscardImperative {
-                        amount: number.clone(),
+                imperative: crate::ability_tree::imperative::Imperative::CreateToken(
+                    crate::ability_tree::imperative::CreateTokenImperative {
+                        tokens: {
+                            let mut tokens = crate::utils::HeapArrayVec::new();
+                            tokens.push(crate::ability_tree::imperative::TokenCreation {
+                                amount: number.clone(),
+                                token: crate::ability_tree::imperative::CreatedTokenKind::NewToken(token.clone()),
+                                #[cfg(feature = "spanned_tree")]
+                                span: number.span().merge(&token.node_span()),
+                            });
+                            tokens
+                        },
                         #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(end_span),
+                        span: span.merge(&token.node_span()),
                     },
                 ),
             }),

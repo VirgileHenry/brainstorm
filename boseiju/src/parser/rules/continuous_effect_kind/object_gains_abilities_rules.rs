@@ -294,8 +294,8 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
     ];
 
     /* Objects "have" abilities is a continuous effect kind. */
-    /* "have" means its static, we shall parse it directly */
     let objects_have_abilities_only = vec![ParserRule {
+        /* "have" means its static, we shall parse it directly */
         expanded: RuleLhs::new(&[
             ParserNode::ObjectReference { reference: dummy() }.id(),
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {

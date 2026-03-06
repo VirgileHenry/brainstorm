@@ -16,7 +16,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ContinuousEffect {
     pub effect: continuous_effect_kind::ContinuousEffectKind,
-    pub duration: crate::ability_tree::time::ForwardDuration,
+    pub duration: crate::ability_tree::time::ForwardDuration, /* Fixme: no duration here, it's on the imperative that creates the effect. */
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

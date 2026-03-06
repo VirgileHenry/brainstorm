@@ -34,7 +34,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
-                        #[cfg(feature = "spanned_tree")] span: new_line_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: new_line_span,
+                    })),
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
@@ -79,8 +81,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeChoices { choices,
-                        #[cfg(feature = "spanned_tree")]span },
+                    ParserNode::ImperativeChoices {
+                        choices,
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine { .. })),
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
@@ -118,28 +123,43 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            /* Straight to imperative list, since we are missing a dot */
+            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Choose {
-                        #[cfg(feature = "spanned_tree")]span: choose_span })),
+                        #[cfg(feature = "spanned_tree")]
+                            span: choose_span,
+                    })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
                     ParserNode::ImperativeChoices {
                         choices,
                         #[cfg(feature = "spanned_tree")]
-                        span: choices_span,
+                            span: choices_span,
                     },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::Choose(
-                        crate::ability_tree::imperative::ChooseImperative {
-                            choice_count: number.clone(),
-                            can_choose_same_mode: false,
-                            choices: choices.clone(),
-                            #[cfg(feature = "spanned_tree")]
-                            span: choose_span.merge(&choices_span),
+                ] => Ok(ParserNode::ImperativeList {
+                    imperatives: crate::ability_tree::imperative::ImperativeList {
+                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                            span: choose_span.empty_at_start(),
                         },
-                    ),
+                        condition: None,
+                        imperatives: {
+                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            imperatives.push(crate::ability_tree::imperative::Imperative::Choose(
+                                crate::ability_tree::imperative::ChooseImperative {
+                                    choice_count: number.clone(),
+                                    can_choose_same_mode: false,
+                                    choices: choices.clone(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: choose_span.merge(&choices_span),
+                                },
+                            ));
+                            imperatives
+                        },
+                        #[cfg(feature = "spanned_tree")]
+                        span: choose_span.merge(&choices_span),
+                    },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
