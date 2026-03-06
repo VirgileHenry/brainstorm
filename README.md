@@ -34,11 +34,11 @@ There are mutiple objectives on the card groups we aim to parse:
 <!-- BEGIN_TEST_RECAP -->
 | Category | Cards total | Lexed (oracle text) | Parsed (oracle text) | Parsed (full card) |
 |-----|-----|-----|-----|-----|
-|Foundation set (FDN)|436|396 (90%)|43 (9%)|0 (0%)|
-|Last set (ECL)|267|176 (65%)|15 (5%)|0 (0%)|
-|Standard-legal cards|4168|2759 (66%)|129 (3%)|0 (0%)|
-|Commander-legal cards|30654|21895 (71%)|1660 (5%)|0 (0%)|
-|All (except uncards)|35464|23398 (65%)|1922 (5%)|0 (0%)|
+|Foundation set (FDN)|436|395 (90%)|68 (15%)|0 (0%)|
+|Last set (ECL)|267|175 (65%)|19 (7%)|0 (0%)|
+|Standard-legal cards|4168|2761 (66%)|214 (5%)|0 (0%)|
+|Commander-legal cards|30654|21947 (71%)|2254 (7%)|0 (0%)|
+|All (except uncards)|35464|23454 (66%)|2542 (7%)|0 (0%)|
 <!-- END_TEST_RECAP -->
 
 Uncards are not planned to be parsed, as their wording are unique enough that it would almost always require dedicating chunks of the tree representation for them.
