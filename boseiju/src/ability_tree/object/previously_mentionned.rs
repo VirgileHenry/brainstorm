@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Anything from "that permanent", "those counters", "that card", etc.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PreviouslyMentionnedObject {
     pub kind: Option<ObjectKind>,
     #[cfg(feature = "spanned_tree")]

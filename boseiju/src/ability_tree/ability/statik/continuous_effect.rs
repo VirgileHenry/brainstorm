@@ -13,10 +13,9 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// See https://mtg.fandom.com/wiki/Continuous_effect.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContinuousEffect {
     pub effect: continuous_effect_kind::ContinuousEffectKind,
-    pub duration: crate::ability_tree::time::ForwardDuration, /* Fixme: no duration here, it's on the imperative that creates the effect. */
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -30,16 +29,13 @@ impl crate::ability_tree::AbilityTreeNode for ContinuousEffect {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.effect as &dyn AbilityTreeNode);
-        children.push(&self.duration as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "continuous effect:")?;
-        out.push_inter_branch()?;
-        write!(out, "duration: {}", self.duration)?;
-        out.next_final_branch()?;
+        out.push_final_branch()?;
         write!(out, "effect:")?;
         out.push_final_branch()?;
         self.effect.display(out)?;
@@ -63,7 +59,6 @@ impl crate::utils::DummyInit for ContinuousEffect {
     fn dummy_init() -> Self {
         Self {
             effect: crate::utils::dummy(),
-            duration: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

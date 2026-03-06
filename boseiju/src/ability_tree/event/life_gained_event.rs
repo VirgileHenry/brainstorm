@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LifeGainedEvent {
     pub player: crate::ability_tree::player::PlayerSpecifier,
     pub minimum_amount: Option<crate::ability_tree::number::Number>,

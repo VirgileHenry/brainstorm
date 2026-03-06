@@ -35,7 +35,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// We keep a smaller list here, that are used to parse the cards.
 /// All events here are the ones encountered in triggered abilities / replacement effects.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Event {
     CreateTokens(CreateTokensEvent),
     CreatureAction(CreatureActionEvent),

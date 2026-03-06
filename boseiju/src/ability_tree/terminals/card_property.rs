@@ -69,8 +69,8 @@ impl std::fmt::Display for CardProperty {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for CardProperty {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "base power" => Some(CardProperty::BasePower {

@@ -11,7 +11,7 @@ use crate::ability_tree::MAX_NODE_DATA_SIZE;
 /// a reference to a previosuly mentionned number in the ability.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Number {
     AnyNumber {
         #[cfg(feature = "spanned_tree")]
@@ -103,7 +103,7 @@ impl crate::utils::DummyInit for Number {
 
 /// A literal number in an ability, such as "1", "two", "10"
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FixedNumber {
     pub number: u32,
     #[cfg(feature = "spanned_tree")]
@@ -163,7 +163,7 @@ impl crate::utils::DummyInit for FixedNumber {
 
 /// A number that can be anything after some minimum value: "one or more"
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OrMoreNumber {
     pub minimum: u32,
     #[cfg(feature = "spanned_tree")]
@@ -212,7 +212,7 @@ impl idris::Idris for OrMoreNumber {
 
 /// A number that can be anything after some minimum value: "one or more"
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpToNumber {
     pub maximum: u32,
     #[cfg(feature = "spanned_tree")]
@@ -262,7 +262,7 @@ impl idris::Idris for UpToNumber {
 /// An X number, where X is some other reference in the card:
 /// a mana cost, some value on cards, etc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct XNumber {
     pub x_definition: (), /* Fixme */
     #[cfg(feature = "spanned_tree")]

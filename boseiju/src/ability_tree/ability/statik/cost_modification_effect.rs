@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Modification of the cost of objects.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationEffect {
     pub applies_to: crate::ability_tree::object::ObjectReference,
     pub modification: CostModification,
@@ -62,7 +62,7 @@ impl crate::utils::DummyInit for CostModificationEffect {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CostModification {
     More(CostModificationCostMore),
     Less(CostModificationCostLess),
@@ -132,7 +132,7 @@ impl crate::utils::DummyInit for CostModification {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationCostMore {
     pub more: crate::ability_tree::terminals::ManaCost,
     #[cfg(feature = "spanned_tree")]
@@ -182,7 +182,7 @@ impl crate::utils::DummyInit for CostModificationCostMore {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationCostLess {
     pub less: crate::ability_tree::terminals::ManaCost,
     #[cfg(feature = "spanned_tree")]
@@ -232,7 +232,7 @@ impl crate::utils::DummyInit for CostModificationCostLess {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationCostSet {
     pub set: crate::ability_tree::terminals::ManaCost,
     #[cfg(feature = "spanned_tree")]

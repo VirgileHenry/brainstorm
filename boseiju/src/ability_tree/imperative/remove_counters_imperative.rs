@@ -5,7 +5,7 @@ const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 
 /// Imperative to put counters on objects.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RemoveCountersImperative {
     pub object: crate::ability_tree::object::ObjectReference,
     pub counters: crate::utils::HeapArrayVec<RemovableCounterOnPermanent, MAX_COUNTER_AMOUNT>,
@@ -75,7 +75,7 @@ impl crate::utils::DummyInit for RemoveCountersImperative {
 
 /// An amount and a kind of counters to be put on a permanent.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RemovableCounterOnPermanent {
     pub amount: crate::ability_tree::number::Number,
     pub counter: RemovableCounterKind,
@@ -128,7 +128,7 @@ impl crate::ability_tree::AbilityTreeNode for RemovableCounterOnPermanent {
 /// It's either a given kind of counter, e.g. "put a shield counter" or
 /// a previously mentionned kind of counter, e.g. "that many counters on...".
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RemovableCounterKind {
     AnyCounter {
         #[cfg(feature = "spanned_tree")]

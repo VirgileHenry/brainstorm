@@ -13,7 +13,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// See the MTG wiki: https://mtg.fandom.com/wiki/Static_ability
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StaticAbility {
     pub kind: StaticAbilityKind,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,
@@ -79,11 +79,11 @@ impl crate::utils::DummyInit for StaticAbility {
 ///
 /// All of the different static abilities that there is.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum StaticAbilityKind {
     ContinuousEffect(continuous_effect::ContinuousEffect),
-    CostModificationEffect(cost_modification_effect::CostModificationEffect),
-    AlternativeCastingPermissions(alterative_casting_permissions::AlternativeCastingPermissions),
+    CostModificationEffect(cost_modification_effect::CostModificationEffect), /* Fixme: that's a continuous effect */
+    AlternativeCastingPermissions(alterative_casting_permissions::AlternativeCastingPermissions), /* Fixme: that's a continuous effect */
 }
 
 #[cfg(feature = "spanned_tree")]

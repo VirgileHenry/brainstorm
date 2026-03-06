@@ -100,10 +100,6 @@ pub enum ForwardDuration {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    ObjectLifetime {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     UntilEndOfTurn {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -147,7 +143,6 @@ impl AbilityTreeNode for ForwardDuration {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::ForAsLongAsItsExiled { span } => *span,
-            Self::ObjectLifetime { span } => *span,
             Self::UntilEndOfTurn { span } => *span,
             Self::UntilEndOfYourNextTurn { span } => *span,
         }
@@ -185,7 +180,6 @@ impl std::fmt::Display for ForwardDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::ForAsLongAsItsExiled { .. } => write!(f, "for as long as it remains exiled"),
-            Self::ObjectLifetime { .. } => write!(f, "for the object lifetime"),
             Self::UntilEndOfTurn { .. } => write!(f, "until end of turn"),
             Self::UntilEndOfYourNextTurn { .. } => write!(f, "until the end of your next turn"),
         }

@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Statement {
     Imperatives(crate::ability_tree::imperative::ImperativeList),
     May(MayAbility),
@@ -72,7 +72,7 @@ impl crate::utils::DummyInit for Statement {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MayAbility {
     pub player: crate::ability_tree::player::PlayerSpecifier,
     pub action: crate::ability_tree::imperative::ImperativeList,
@@ -159,7 +159,7 @@ impl crate::utils::DummyInit for MayAbility {
 ///
 /// They always take the form: "do X. if Y, do Z instead".
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReplacableImperatives {
     pub first_clause: crate::ability_tree::imperative::ImperativeList,
     pub condition: crate::ability_tree::conditional::Conditional,

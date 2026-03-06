@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Imperative to draw cards or make a player draw cards.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DrawImperative {
     pub amount: crate::ability_tree::number::Number,
     #[cfg(feature = "spanned_tree")]

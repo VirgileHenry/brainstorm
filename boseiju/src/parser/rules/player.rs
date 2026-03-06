@@ -108,7 +108,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Possessive {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -123,7 +123,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Possessive { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Controller {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -145,7 +145,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::ObjectReference { reference: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Possessive {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -160,7 +160,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Possessive { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Owner {
                         #[cfg(feature = "spanned_tree")]
                         span,

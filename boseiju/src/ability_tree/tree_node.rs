@@ -12,7 +12,7 @@
 /// To do this, we create two variants, an IdMarker variant to give the node an id, and a variant
 /// that use the idris derive to recusrively add the nodes to all child variants.
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NodeKind {
     /// A special "no node" kind.
     ///
@@ -32,6 +32,7 @@ pub enum NodeKind {
     CastSpecifier,
     CharacteristicDefiningAbility,
     ChooseImperative,
+    Colors,
     Condition,
     Conditional,
     ConditionalIf,
@@ -77,6 +78,7 @@ pub enum NodeKind {
     ConditionEventOccured,
     ConditionObjectMatchSpecifier,
     GainLifeImperative,
+    GenerateContinuousEffectImperative,
     Imperative,
     ImperativeList,
     ImperativeChoices,
@@ -87,6 +89,8 @@ pub enum NodeKind {
     MayAbility,
     MtgData(MtgDataNodeKind),
     NumberIdMarker,
+    NumberOfResolutions(crate::ability_tree::conditional::NumberOfResolutions),
+    NumberOfResolutionsIdMarker,
     Number(crate::ability_tree::number::Number),
     ObjectAbilitiesModification,
     ObjectCharacteristicModification,
@@ -144,7 +148,7 @@ pub enum NodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum MtgDataNodeKind {
     AbilityWord(mtg_data::AbilityWord),
     AbilityWordIdMarker,
@@ -168,14 +172,14 @@ pub enum MtgDataNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KeywordAbilityNodeKind {
     Enchant,
     Ward,
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TerminalNodeKind {
     AnotherObjectSpecifier,
     CastSpecifierIdMarker,
@@ -202,7 +206,7 @@ pub enum TerminalNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TypeLineNodeKind {
     ArtifactSubtype,
     BattleSubtype,

@@ -6,7 +6,7 @@ const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChooseImperative {
     pub choice_count: crate::ability_tree::number::Number,
     pub can_choose_same_mode: bool,

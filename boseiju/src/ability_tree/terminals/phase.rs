@@ -57,8 +57,8 @@ impl std::fmt::Display for Phase {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for Phase {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "beginning phase" => Some(Phase::Beginning {

@@ -1,5 +1,5 @@
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HeapArrayVec<T, const CAP: usize> {
     inner: Box<arrayvec::ArrayVec<T, CAP>>,
 }

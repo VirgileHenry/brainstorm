@@ -81,8 +81,8 @@ impl std::fmt::Display for CardState {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for CardState {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "attached" => Some(CardState::Attached {

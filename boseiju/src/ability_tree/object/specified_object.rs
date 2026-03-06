@@ -6,8 +6,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: could we split this into an enum, having specified objects
 /// for all object kinds ? it would require more types, but would allow
 /// for more expressivness ?
+/// Fixme: at least we should have a specifier that acts as the main component ?
+/// "red card" -> card, "creatures you control" -> you control
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifiedObject {
     pub amount: CountSpecifier,
     pub specifiers: Option<ObjectSpecifiers>,

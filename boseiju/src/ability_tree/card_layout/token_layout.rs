@@ -2,12 +2,12 @@ use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Layout of a token
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct TokenLayout {
     pub name: String,
     pub card_type: crate::ability_tree::type_line::TypeLine,
-    pub color: crate::ability_tree::terminals::Color,
+    pub colors: crate::ability_tree::colors::Colors,
     pub abilities: crate::AbilityTree,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -22,7 +22,7 @@ impl AbilityTreeNode for TokenLayout {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.card_type as &dyn AbilityTreeNode);
-        children.push(&self.color as &dyn AbilityTreeNode);
+        children.push(&self.colors as &dyn AbilityTreeNode);
         children.push(&self.abilities as &dyn AbilityTreeNode);
         children
     }
@@ -38,7 +38,7 @@ impl AbilityTreeNode for TokenLayout {
         out.next_inter_branch()?;
         write!(out, "color:")?;
         out.push_final_branch()?;
-        self.color.display(out)?;
+        self.colors.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "abilities:")?;
@@ -82,7 +82,7 @@ impl super::LayoutImpl for TokenLayout {
             name: raw_card.name.clone(),
             card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span)
                 .ok_or_else(|| format!("Failed to parse card type: {}", raw_card.type_line))?,
-            color: unimplemented!(),
+            colors: crate::ability_tree::colors::Colors::try_from(raw_card.color_identity.as_slice())?,
             abilities: match raw_card.oracle_text.as_ref() {
                 Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
                     .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
@@ -105,7 +105,7 @@ impl crate::utils::DummyInit for TokenLayout {
             name: String::with_capacity(0),
             card_type: crate::utils::dummy(),
             abilities: crate::utils::dummy(),
-            color: crate::utils::dummy(),
+            colors: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

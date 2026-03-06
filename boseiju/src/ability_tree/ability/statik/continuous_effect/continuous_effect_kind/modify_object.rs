@@ -9,7 +9,7 @@ const MAX_OBJECT_MODIFICATIONS: usize = MAX_CHILDREN_PER_NODE - 1;
 
 /// A continuous effect that grants abilities to objects.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContinuousEffectModifyObject {
     pub object: crate::ability_tree::object::ObjectReference,
     pub modifications: crate::utils::HeapArrayVec<ObjectAbilitiesModification, MAX_OBJECT_MODIFICATIONS>,
@@ -79,7 +79,7 @@ impl crate::utils::DummyInit for ContinuousEffectModifyObject {
 
 /// A modification to an object.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectAbilitiesModification {
     CharacteristicModification(ObjectCharacteristicModification),
     GainAbility(ObjectGainAbility),
@@ -144,7 +144,7 @@ impl crate::utils::DummyInit for ObjectAbilitiesModification {
 
 /// An object modification that grants a new ability to that object.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ObjectGainAbility {
     pub ability: crate::ability_tree::ability::AbilityKind,
     #[cfg(feature = "spanned_tree")]

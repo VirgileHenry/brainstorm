@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// This is always an event, and can optionnaly have conditions for the event to happen.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TriggerCondition {
     pub event: crate::ability_tree::event::Event,
     pub condition: Option<crate::ability_tree::conditional::Conditional>,

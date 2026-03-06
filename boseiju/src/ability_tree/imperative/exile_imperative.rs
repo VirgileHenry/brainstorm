@@ -3,7 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExileImperative {
     pub object: crate::ability_tree::object::ObjectReference,
     pub follow_up: Option<ExileFollowUp>,
@@ -76,7 +76,7 @@ impl crate::utils::DummyInit for ExileImperative {
 
 /// List of things that can happen after exiling stuff
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExileFollowUp {
     ReturnIt(ExileFollowUpReturn),
 }
@@ -136,7 +136,7 @@ impl crate::utils::DummyInit for ExileFollowUp {
 
 /// Follow up to return an object after exiling it.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExileFollowUpReturn {
     pub return_imperative: crate::ability_tree::imperative::ReturnImperative,
     pub at: Option<crate::ability_tree::time::Instant>,

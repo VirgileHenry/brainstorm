@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Modify set power and toughness of a creature.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PowerToughnessModifiers {
     MinusMinus(PowerToughnessModifiersMinusMinus),
     MinusPlus(PowerToughnessModifiersMinusPlus),
@@ -84,7 +84,7 @@ impl crate::utils::DummyInit for PowerToughnessModifiers {
 
 /// A +X/+X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PowerToughnessModifiersPlusPlus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
@@ -157,7 +157,7 @@ impl idris::Idris for PowerToughnessModifiersPlusPlus {
 
 /// A +X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PowerToughnessModifiersPlusMinus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
@@ -230,7 +230,7 @@ impl idris::Idris for PowerToughnessModifiersPlusMinus {
 
 /// A -X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PowerToughnessModifiersMinusMinus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
@@ -303,7 +303,7 @@ impl idris::Idris for PowerToughnessModifiersMinusMinus {
 
 /// A -X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PowerToughnessModifiersMinusPlus {
     pub power_mod: crate::ability_tree::number::Number,
     pub toughness_mod: crate::ability_tree::number::Number,
@@ -376,7 +376,7 @@ impl idris::Idris for PowerToughnessModifiersMinusPlus {
 
 /// A -X/-X power and toughness modifier.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PowerToughnessModifiersSet {
     pub power: crate::ability_tree::number::Number,
     pub toughness: crate::ability_tree::number::Number,

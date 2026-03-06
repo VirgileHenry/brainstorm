@@ -43,7 +43,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 ///
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectReference {
     SelfReferencing(SelfReferencingObject),
     ObjectAttachedTo(ObjectAttachedTo),

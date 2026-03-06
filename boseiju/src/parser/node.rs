@@ -4,7 +4,7 @@ use crate::ability_tree;
 /// Otherwise, this can easily blow up the stack when attempting to store multiple of them.
 /// Current size is 112 bytes, let's try to keep it around here ?
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParserNode {
     LexerToken(crate::lexer::tokens::Token),
     Ability {
@@ -19,8 +19,8 @@ pub enum ParserNode {
     ContinuousEffect {
         effect: ability_tree::ability::statik::continuous_effect::ContinuousEffect,
     },
-    ContinuousEffectKind {
-        kind: ability_tree::ability::statik::continuous_effect::ContinuousEffectKind,
+    Colors {
+        colors: crate::ability_tree::colors::Colors,
     },
     Cost {
         cost: ability_tree::cost::Cost,
@@ -39,6 +39,11 @@ pub enum ParserNode {
     },
     CreatureAction {
         action: ability_tree::event::CreatureAction,
+    },
+    CreatureSubtypeList {
+        list: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, 24>, /* Fixme */
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
     },
     Event {
         event: ability_tree::event::Event,

@@ -5,7 +5,7 @@ use crate::lexer::IntoToken;
 
 /// Wrapper around the mana kind.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Mana {
     X {
         #[cfg(feature = "spanned_tree")]
@@ -108,8 +108,8 @@ impl AbilityTreeNode for Mana {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for Mana {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         use std::str::FromStr;
         Some(match mtg_data::Mana::from_str(&span.text).ok()? {
@@ -147,10 +147,10 @@ impl IntoToken for Mana {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            mtg_data::Mana::Snow => Self::Snow {#[cfg(feature = "spanned_tree")]
-                span:
-
-               span.into() },
+            mtg_data::Mana::Snow => Self::Snow {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            },
         })
     }
 }
@@ -167,7 +167,7 @@ impl crate::utils::DummyInit for Mana {
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AnyMana {
     pub mana: mtg_data::AnyMana,
     #[cfg(feature = "spanned_tree")]
@@ -207,7 +207,7 @@ impl AbilityTreeNode for AnyMana {
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ColoredMana {
     pub mana: mtg_data::ColoredMana,
     #[cfg(feature = "spanned_tree")]
@@ -247,7 +247,7 @@ impl AbilityTreeNode for ColoredMana {
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HybridMana {
     pub mana: mtg_data::HybridMana,
     #[cfg(feature = "spanned_tree")]
@@ -287,7 +287,7 @@ impl AbilityTreeNode for HybridMana {
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MonocoloredHybridMana {
     pub mana: mtg_data::MonocoloredHybridMana,
     #[cfg(feature = "spanned_tree")]
@@ -327,7 +327,7 @@ impl AbilityTreeNode for MonocoloredHybridMana {
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PhyrexianMana {
     pub mana: mtg_data::PhyrexianMana,
     #[cfg(feature = "spanned_tree")]
@@ -367,7 +367,7 @@ impl AbilityTreeNode for PhyrexianMana {
 
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HybridPhyrexianMana {
     pub mana: mtg_data::HybridPhyrexianMana,
     #[cfg(feature = "spanned_tree")]

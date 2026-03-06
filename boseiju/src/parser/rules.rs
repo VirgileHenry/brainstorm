@@ -14,8 +14,7 @@ mod ability;
 mod ability_kind;
 mod ability_tree;
 mod conditional;
-mod continuous_effect_kind;
-mod continuous_effects;
+mod continuous_effect;
 mod cost;
 mod cost_modifications;
 mod count_specifier;
@@ -45,8 +44,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(ability::rules()),
         Box::new(ability_tree::rules()),
         Box::new(ability_kind::rules()),
-        Box::new(continuous_effects::rules()),
-        Box::new(continuous_effect_kind::rules()),
+        Box::new(continuous_effect::rules()),
         Box::new(cost::rules()),
         Box::new(cost_modifications::rules()),
         Box::new(count_specifier::rules()),

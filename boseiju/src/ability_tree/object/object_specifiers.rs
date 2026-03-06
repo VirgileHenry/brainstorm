@@ -8,7 +8,7 @@ use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectSpecifiers {
     Single(ObjectSpecifier),
     And(SpecifierAndList),
@@ -145,7 +145,7 @@ impl crate::utils::DummyInit for ObjectSpecifiers {
 /// It means that for an object to match these specifiers,
 /// it must match all of them.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifierAndList {
     pub specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
@@ -207,7 +207,7 @@ impl crate::utils::DummyInit for SpecifierAndList {
 /// It means that for an object to match these specifiers,
 /// it must match any one specifier in the list.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifierOrList {
     pub specifiers: arrayvec::ArrayVec<ObjectSpecifier, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
@@ -300,7 +300,7 @@ const OR_OF_AND_LIST_INNER_ARRAY_LENGTH: usize = MAX_CHILDREN_PER_NODE / OR_OF_A
 ///
 /// This structure represent properly this case.
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifierOrOfAndList {
     pub specifiers: arrayvec::ArrayVec<
         arrayvec::ArrayVec<ObjectSpecifier, OR_OF_AND_LIST_INNER_ARRAY_LENGTH>,
@@ -388,7 +388,7 @@ impl crate::utils::DummyInit for SpecifierOrOfAndList {
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectSpecifier {
     Another(AnotherObjectSpecifier),
     Cast(CastSpecifier),
@@ -485,7 +485,7 @@ impl crate::utils::DummyInit for ObjectSpecifier {
 /// Marker struct for the special object specifier "another",
 /// which means "any that is not myself".
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AnotherObjectSpecifier {
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -527,7 +527,7 @@ impl std::fmt::Display for AnotherObjectSpecifier {
 /// Marker struct for the special object specifier "other target",
 /// which means "any target that was not already selected"
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NotPreviouslySelectedObjectSpecifier {
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

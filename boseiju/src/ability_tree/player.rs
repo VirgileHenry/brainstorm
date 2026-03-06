@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlayerSpecifier {
     All {
         #[cfg(feature = "spanned_tree")]
@@ -106,7 +106,7 @@ impl crate::utils::DummyInit for PlayerSpecifier {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSpecifierObjectController {
     pub object: Box<crate::ability_tree::object::ObjectReference>,
     #[cfg(feature = "spanned_tree")]
@@ -166,7 +166,7 @@ impl crate::utils::DummyInit for PlayerSpecifierObjectController {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSpecifierObjectOwner {
     pub object: Box<crate::ability_tree::object::ObjectReference>,
     #[cfg(feature = "spanned_tree")]

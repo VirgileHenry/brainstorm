@@ -9,7 +9,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AbilityKind {
     AbilityWord(AbilityWordAbility),
     Keyword(KeywordAbility),
@@ -81,7 +81,7 @@ impl crate::utils::DummyInit for AbilityKind {
 ///
 /// See also https://mtg.fandom.com/wiki/Ability
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Ability {
     /// A spell abilty, [CR 113.3a]
     Spell(spell::SpellAbility),
@@ -165,7 +165,7 @@ impl crate::utils::DummyInit for Ability {
 ///
 /// See also https://mtg.fandom.com/wiki/Keyword_ability
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct KeywordAbility {
     pub keyword: keyword::ExpandedKeywordAbility,
     pub ability: Ability,
@@ -228,7 +228,7 @@ impl crate::utils::DummyInit for KeywordAbility {
 ///
 /// See also https://mtg.fandom.com/wiki/Ability_word
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AbilityWordAbility {
     pub word: crate::ability_tree::terminals::AbilityWord,
     pub ability: Ability,

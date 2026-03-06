@@ -21,8 +21,8 @@ impl std::fmt::Display for SagaChapterNumber {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for SagaChapterNumber {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "i" => Some(SagaChapterNumber {
