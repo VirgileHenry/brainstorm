@@ -21,6 +21,9 @@ perf.data
 perf.data.old
 flamegraph.svg
 
+# exports and all
+boseiju_export.json
+
 # Debug files, visualization, etc
 *.dot
 *.svg

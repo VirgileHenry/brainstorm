@@ -14,7 +14,7 @@ pub mod time;
 pub mod type_line;
 pub mod zone;
 
-mod dummy_terminal;
+pub mod dummy_terminal;
 mod root;
 mod tree_node;
 

@@ -1,7 +1,7 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// An imperative for sacrificing an object.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SacrificeImperative {

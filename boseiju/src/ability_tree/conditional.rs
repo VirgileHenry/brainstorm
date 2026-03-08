@@ -4,7 +4,7 @@ mod object_is_of_kind;
 mod this_is_your_turn;
 
 pub use event_occured::ConditionEventOccured;
-pub use number_of_resolution::NumberOfResolutions;
+pub use number_of_resolution::ConditionNumberOfResolutions;
 pub use object_is_of_kind::ConditionObjectMatchSpecifiers;
 pub use this_is_your_turn::ConditionThisIsYourTurn;
 
@@ -177,19 +177,9 @@ impl crate::utils::DummyInit for ConditionalUnless {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Condition {
     EventOccured(ConditionEventOccured),
+    NumberOfResolutions(ConditionNumberOfResolutions),
     ObjectMatchSpecifiers(ConditionObjectMatchSpecifiers),
     ThisIsYourTurn(ConditionThisIsYourTurn),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl Condition {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::EventOccured(child) => child.span,
-            Self::ObjectMatchSpecifiers(child) => child.span,
-            Self::ThisIsYourTurn(child) => child.span,
-        }
-    }
 }
 
 impl AbilityTreeNode for Condition {
@@ -202,6 +192,7 @@ impl AbilityTreeNode for Condition {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::EventOccured(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::NumberOfResolutions(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ObjectMatchSpecifiers(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ThisIsYourTurn(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -214,6 +205,7 @@ impl AbilityTreeNode for Condition {
         out.push_final_branch()?;
         match self {
             Self::EventOccured(child) => child.display(out)?,
+            Self::NumberOfResolutions(child) => child.display(out)?,
             Self::ObjectMatchSpecifiers(child) => child.display(out)?,
             Self::ThisIsYourTurn(child) => child.display(out)?,
         }
@@ -229,6 +221,7 @@ impl AbilityTreeNode for Condition {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::EventOccured(child) => child.node_span(),
+            Self::NumberOfResolutions(child) => child.node_span(),
             Self::ObjectMatchSpecifiers(child) => child.node_span(),
             Self::ThisIsYourTurn(child) => child.node_span(),
         }

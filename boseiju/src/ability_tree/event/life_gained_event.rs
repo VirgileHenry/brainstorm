@@ -1,7 +1,9 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// An event for when a player gains life.
+///
+/// Fixme: this shall be in the player actions ?
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LifeGainedEvent {

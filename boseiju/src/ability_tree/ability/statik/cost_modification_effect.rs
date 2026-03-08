@@ -60,7 +60,8 @@ impl crate::utils::DummyInit for CostModificationEffect {
     }
 }
 
-/// Fixme: doc
+/// Modification of a cost.
+/// Either an additional cost, a reduction cost or a "set to" cost.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CostModification {
@@ -130,7 +131,7 @@ impl crate::utils::DummyInit for CostModification {
     }
 }
 
-/// Fixme: doc
+/// An "additionnal cost" cost modification.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationCostMore {
@@ -180,7 +181,7 @@ impl crate::utils::DummyInit for CostModificationCostMore {
     }
 }
 
-/// Fixme: doc
+/// A "cost less" cost modification.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationCostLess {
@@ -230,7 +231,7 @@ impl crate::utils::DummyInit for CostModificationCostLess {
     }
 }
 
-/// Fixme: doc
+/// A "cost set to" cost modification.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationCostSet {

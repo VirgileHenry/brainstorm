@@ -13,7 +13,7 @@ pub enum Layout {
     Leveler {},
     Class {},
     Case {},
-    Saga { layout: SagaLayout },
+    Saga { layout: SagaLayout }, /* Fixme: shall be parsed as normal since FF */
     Adventure {},
     Mutate {},
     Prototype {},
@@ -31,6 +31,36 @@ impl Layout {
         match self {
             Layout::Normal { layout } => layout.layout_debug_display(output),
             _ => writeln!(output, "Unimplemented!"),
+        }
+    }
+
+    pub fn layout_id(&self) -> usize {
+        use idris::Idris;
+        self.id()
+    }
+
+    pub fn root(&self) -> &dyn crate::ability_tree::AbilityTreeNode {
+        match self {
+            Self::Normal { layout } => layout,
+            Self::Split {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Flip {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Transform {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::ModalDfc {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Meld {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Leveler {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Class {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Case {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Saga { .. } => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Adventure {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Mutate {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Prototype {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Battle {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Planar {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Scheme {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Vanguard {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Token { layout } => layout,
+            Self::DoubleFaced {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Emblem {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
         }
     }
 

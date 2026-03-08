@@ -13,6 +13,7 @@ mtg-cardbase = { workspace = true }
 mtg-data = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 petgraph = "0.8.3"
 uuid = { version = "1.18.1", features = ["serde"] }
 rapidhash = { version = "4.4.1", optional = true }
@@ -35,8 +36,8 @@ name = "debug_fdn"
 path = "bin/debug_fdn.rs"
 
 [[bin]]
-name = "parse_all_cards"
-path = "bin/parse_all_cards.rs"
+name = "export"
+path = "bin/export.rs"
 
 [[bin]]
 name = "card_coverage"

@@ -1,7 +1,9 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// A condition that is met when a given event has occured in a given timeframe.
+///
+/// Examples are, "if you attacked this turn" or "if a creature died this turn".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionEventOccured {

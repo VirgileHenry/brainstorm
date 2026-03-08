@@ -3,7 +3,13 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 const MAX_COST_COUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 
-/// Fixme: doc
+/// Activated abilities are abilities that have an activation cost, and an effect.
+///
+/// From the comprehensive rules:
+/// A kind of ability. Activated abilities are written as “\[Cost\]: \[Effect.\] \[Activation instructions (if any).\]”
+/// See rule 113, “Abilities,” and rule 602, “Activating Activated Abilities.”
+///
+/// See also https://mtg.fandom.com/wiki/Activated_ability
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActivatedAbility {

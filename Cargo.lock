@@ -85,6 +85,7 @@ dependencies = [
  "rapidhash",
  "regex",
  "serde",
+ "serde_json",
  "uuid",
 ]
 

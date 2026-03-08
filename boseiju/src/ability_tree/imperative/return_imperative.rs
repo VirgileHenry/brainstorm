@@ -1,7 +1,10 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// An imperative for returning an object from one zone to another.
+///
+/// The imperative is called "return" as it's usually how it's phrased in cards,
+/// but it mostly moves the object from a zone to another.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReturnImperative {

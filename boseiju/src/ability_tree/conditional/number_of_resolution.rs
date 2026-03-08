@@ -1,11 +1,13 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// A condition on the number of times an ability has resolved in a turn.
+///
+/// Fixme: maybe better for the AI to see a number ?
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum NumberOfResolutions {
+pub enum ConditionNumberOfResolutions {
     FirstTimeThisAbilityResolves {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -24,7 +26,7 @@ pub enum NumberOfResolutions {
     },
 }
 
-impl crate::ability_tree::AbilityTreeNode for NumberOfResolutions {
+impl crate::ability_tree::AbilityTreeNode for ConditionNumberOfResolutions {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::NumberOfResolutionsIdMarker.id()
@@ -71,7 +73,7 @@ impl crate::ability_tree::AbilityTreeNode for NumberOfResolutions {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for NumberOfResolutions {
+impl crate::utils::DummyInit for ConditionNumberOfResolutions {
     fn dummy_init() -> Self {
         Self::FirstTimeThisAbilityResolves {
             #[cfg(feature = "spanned_tree")]
@@ -81,7 +83,7 @@ impl crate::utils::DummyInit for NumberOfResolutions {
 }
 
 #[cfg(feature = "lexer")]
-impl crate::lexer::IntoToken for NumberOfResolutions {
+impl crate::lexer::IntoToken for ConditionNumberOfResolutions {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "this is the first time this ability has resolved this turn" => Some(Self::SecondTimeThisAbilityResolves {

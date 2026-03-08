@@ -4,7 +4,9 @@ use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
 const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
 
-/// Fixme: doc
+/// An imperative that requires a player to choose between different clauses.
+///
+/// This is common in modal effects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChooseImperative {

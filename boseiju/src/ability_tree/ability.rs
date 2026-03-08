@@ -7,7 +7,14 @@ pub mod triggered;
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// The ability kind regroups all abilities that can be seen on MTG cards.
+/// The different kind of abilities are not abiltities in the MTG ruling sense,
+/// but in the "how they are constructed" sense.
+///
+/// The different kind of abilities are:
+/// - Ability word, which is a text ability with a keyword that thematically groups them, such as "landfall".
+/// - Keyword, which is a simple keyword that grants a more complicated ability, such as "flying"
+/// - Written, which is the standard ability as text.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AbilityKind {

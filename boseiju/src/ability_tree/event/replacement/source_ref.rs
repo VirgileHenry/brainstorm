@@ -1,7 +1,10 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// A reference to an event source.
+///
+/// This is used in event replacement effects, when the event is
+/// being replaced, the source event is replaced with a event source reference.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]

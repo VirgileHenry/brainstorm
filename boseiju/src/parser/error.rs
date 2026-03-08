@@ -93,7 +93,7 @@ impl std::fmt::Display for ParserError {
                             }
                         }
                         if expecting.for_nodes.len() > 3 {
-                            write!(f, "And {} others", expecting.for_nodes.len() - 10)?;
+                            write!(f, "And {} others", expecting.for_nodes.len() - 3)?;
                         }
                     }
                     if expecting.len() > 10 {

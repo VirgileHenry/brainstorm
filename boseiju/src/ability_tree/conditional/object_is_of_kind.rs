@@ -1,7 +1,9 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// A condition that is met when a given object matches given object specifiers.
+///
+/// For example, "if it is a zombie card".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionObjectMatchSpecifiers {

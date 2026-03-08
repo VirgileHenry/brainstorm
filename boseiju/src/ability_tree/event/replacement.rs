@@ -9,7 +9,10 @@ pub use token_creation::TokenCreationReplacement;
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// Fixme: doc
+/// An event replacement kind.
+///
+/// A replacement effect replaces an event with another,
+/// and this represent the event replacer.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventReplacement {
