@@ -25,7 +25,16 @@ pub enum Mana {
 
 impl Mana {
     pub fn mana_value(&self) -> usize {
-        unimplemented!()
+        match self {
+            Self::X { .. } => 0,
+            Self::Any(child) => child.mana.number,
+            Self::Colored(_) => 1,
+            Self::Hybrid(_) => 1,
+            Self::MonocoloredHybrid(child) => child.mana.number,
+            Self::Phyrexian(_) => 1,
+            Self::HybridPhyrexian(_) => 1,
+            Self::Snow { .. } => 1,
+        }
     }
 
     #[cfg(feature = "spanned_tree")]
