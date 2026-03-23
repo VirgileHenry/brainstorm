@@ -1493,3 +1493,48 @@ impl AbilityTreeNode for VanguardSubtype {
         self.span
     }
 }
+
+/// Simplified version of the card types for meaningful card info
+/// without the full card type line.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SimplifiedCardTypes {
+    pub artifact: bool,
+    pub battle: bool,
+    pub creature: bool,
+    pub enchantment: bool,
+    pub instant: bool,
+    pub land: bool,
+    pub planeswalker: bool,
+    pub sorcery: bool,
+}
+
+impl From<&TypeLine> for SimplifiedCardTypes {
+    fn from(type_line: &TypeLine) -> Self {
+        Self {
+            artifact: type_line.artifact.is_some(),
+            battle: type_line.battle.is_some(),
+            creature: type_line.creature.is_some(),
+            enchantment: type_line.enchantment.is_some(),
+            instant: type_line.instant.is_some(),
+            land: type_line.land.is_some(),
+            planeswalker: type_line.planeswalker.is_some(),
+            sorcery: type_line.sorcery.is_some(),
+        }
+    }
+}
+
+impl Default for SimplifiedCardTypes {
+    fn default() -> Self {
+        Self {
+            artifact: false,
+            battle: false,
+            creature: false,
+            enchantment: false,
+            instant: false,
+            land: false,
+            planeswalker: false,
+            sorcery: false,
+        }
+    }
+}

@@ -27,7 +27,7 @@ impl Card {
         Ok(())
     }
 
-    pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
+    pub fn card_types(&self) -> crate::ability_tree::type_line::SimplifiedCardTypes {
         self.layout.card_types()
     }
 

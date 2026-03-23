@@ -89,28 +89,28 @@ impl Layout {
         }
     }
 
-    pub fn card_types(&self) -> arrayvec::ArrayVec<mtg_data::CardType, 4> {
+    pub fn card_types(&self) -> crate::ability_tree::type_line::SimplifiedCardTypes {
         match self {
             Self::Normal { layout } => layout.card_types(),
-            Self::Split {} => arrayvec::ArrayVec::new_const(),
-            Self::Flip {} => arrayvec::ArrayVec::new_const(),
-            Self::Transform {} => arrayvec::ArrayVec::new_const(),
-            Self::ModalDfc {} => arrayvec::ArrayVec::new_const(),
-            Self::Meld {} => arrayvec::ArrayVec::new_const(),
-            Self::Leveler {} => arrayvec::ArrayVec::new_const(),
-            Self::Class {} => arrayvec::ArrayVec::new_const(),
-            Self::Case {} => arrayvec::ArrayVec::new_const(),
+            Self::Split {} => Default::default(),
+            Self::Flip {} => Default::default(),
+            Self::Transform {} => Default::default(),
+            Self::ModalDfc {} => Default::default(),
+            Self::Meld {} => Default::default(),
+            Self::Leveler {} => Default::default(),
+            Self::Class {} => Default::default(),
+            Self::Case {} => Default::default(),
             Self::Saga { layout } => layout.card_types(),
-            Self::Adventure {} => arrayvec::ArrayVec::new_const(),
-            Self::Mutate {} => arrayvec::ArrayVec::new_const(),
-            Self::Prototype {} => arrayvec::ArrayVec::new_const(),
-            Self::Battle {} => arrayvec::ArrayVec::new_const(),
-            Self::Planar {} => arrayvec::ArrayVec::new_const(),
-            Self::Scheme {} => arrayvec::ArrayVec::new_const(),
-            Self::Vanguard {} => arrayvec::ArrayVec::new_const(),
+            Self::Adventure {} => Default::default(),
+            Self::Mutate {} => Default::default(),
+            Self::Prototype {} => Default::default(),
+            Self::Battle {} => Default::default(),
+            Self::Planar {} => Default::default(),
+            Self::Scheme {} => Default::default(),
+            Self::Vanguard {} => Default::default(),
             Self::Token { layout } => layout.card_types(),
-            Self::DoubleFaced {} => arrayvec::ArrayVec::new_const(),
-            Self::Emblem {} => arrayvec::ArrayVec::new_const(),
+            Self::DoubleFaced {} => Default::default(),
+            Self::Emblem {} => Default::default(),
         }
     }
 }
