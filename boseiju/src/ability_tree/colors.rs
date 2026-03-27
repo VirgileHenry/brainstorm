@@ -27,6 +27,24 @@ impl Colors {
         }
     }
 
+    pub fn merge_colors(&self, other: &Self) -> Self {
+        Self {
+            white: self.white || other.white,
+            blue: self.blue || other.blue,
+            black: self.black || other.black,
+            red: self.red || other.red,
+            green: self.green || other.green,
+        }
+    }
+
+    pub fn contains(&self, other: &Self) -> bool {
+        (self.white || !other.white)
+            && (self.blue || !other.blue)
+            && (self.black || !other.black)
+            && (self.red || !other.red)
+            && (self.green || !other.green)
+    }
+
     pub fn from_iter<I: Iterator<Item = mtg_data::Color>>(colors: I) -> Self {
         let mut result = Self::empty();
         for color in colors {
