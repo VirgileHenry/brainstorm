@@ -1,5 +1,6 @@
 pub mod intermediates;
 
+use crate::ability_tree::conditional;
 use crate::ability_tree::object;
 use crate::ability_tree::terminals;
 use crate::ability_tree::time;
@@ -40,6 +41,7 @@ pub enum Token {
     NonKind(intermediates::NonKind),
     NotOfAKind { not: intermediates::NotOfAKind },
     Number(intermediates::Number),
+    NumberOfResolutions(conditional::NumberOfResolutions),
     NumberOfTimes(intermediates::NumberOfTimes),
     NumberOperation(intermediates::NumberOperation),
     ObjectKind(object::ObjectKind),
@@ -130,6 +132,8 @@ impl Token {
             Some(Self::SelfReferencing { reference })
         } else if let Some(kind) = intermediates::Number::try_from_span(&span) {
             Some(Self::Number(kind))
+        } else if let Some(kind) = conditional::NumberOfResolutions::try_from_span(&span) {
+            Some(Self::NumberOfResolutions(kind))
         } else if let Some(not) = intermediates::NotOfAKind::try_from_span(&span) {
             Some(Self::NotOfAKind { not })
         } else if let Some(kind) = intermediates::ActionKeyword::try_from_span(&span) {
@@ -194,6 +198,7 @@ impl Token {
             Self::NonKind(child) => child.span(),
             Self::NotOfAKind { not } => not.span,
             Self::Number(child) => child.span(),
+            Self::NumberOfResolutions(child) => child.node_span(),
             Self::NumberOfTimes(child) => child.span(),
             Self::NumberOperation(child) => child.span(),
             Self::ObjectKind(child) => child.node_span(),

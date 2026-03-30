@@ -36,6 +36,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Sacrificed {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Tapped {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -58,6 +62,7 @@ impl CardState {
             Self::Equipped { span } => *span,
             Self::Exiled { span } => *span,
             Self::Revealed { span } => *span,
+            Self::Sacrificed { span } => *span,
             Self::Tapped { span } => *span,
             Self::Untapped { span } => *span,
         }
@@ -74,7 +79,8 @@ impl std::fmt::Display for CardState {
             CardState::Enchanted { .. } => write!(f, "enchanted"),
             CardState::Equipped { .. } => write!(f, "equipped"),
             CardState::Exiled { .. } => write!(f, "exiled"),
-            CardState::Revealed { .. } => write!(f, "exiled"),
+            CardState::Revealed { .. } => write!(f, "revealed"),
+            CardState::Sacrificed { .. } => write!(f, "sacrificed"),
             CardState::Tapped { .. } => write!(f, "tapped"),
             CardState::Untapped { .. } => write!(f, "untapped"),
         }
@@ -114,6 +120,10 @@ impl IntoToken for CardState {
                 span: span.into(),
             }),
             "revealed" => Some(CardState::Revealed {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "sacrificed" => Some(CardState::Sacrificed {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
