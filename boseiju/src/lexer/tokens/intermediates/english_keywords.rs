@@ -287,6 +287,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Still {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Than {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -464,6 +468,7 @@ impl EnglishKeyword {
             Self::Random { span } => *span,
             Self::Same { span } => *span,
             Self::Second { span } => *span,
+            Self::Still { span } => *span,
             Self::Than { span } => *span,
             Self::That { span } => *span,
             Self::The { span } => *span,
@@ -777,6 +782,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "second" => Some(Self::Second {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "still" => Some(Self::Still {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
