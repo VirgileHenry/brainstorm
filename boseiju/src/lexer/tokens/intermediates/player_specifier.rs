@@ -70,8 +70,8 @@ impl PlayerSpecifier {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for PlayerSpecifier {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "each player" | "players" => Some(Self::All {

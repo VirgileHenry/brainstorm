@@ -80,8 +80,8 @@ impl std::fmt::Display for OwnableZone {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for OwnableZone {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "graveyard" => Some(OwnableZone::Graveyard {
