@@ -15,8 +15,8 @@ pub struct KeywordAction {
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for KeywordAction {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         Some(Self {
             keyword_action: crate::utils::from_str_singular_or_plural(&span.text)?,
@@ -73,8 +73,8 @@ impl AbilityTreeNode for AbilityWord {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for AbilityWord {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         use std::str::FromStr;
         Some(Self {

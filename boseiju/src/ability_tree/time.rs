@@ -55,8 +55,8 @@ impl AbilityTreeNode for Instant {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for Instant {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "any time" => Some(Self::AnyTime {
@@ -108,6 +108,10 @@ pub enum ForwardDuration {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    While {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 impl AbilityTreeNode for ForwardDuration {
@@ -145,12 +149,13 @@ impl AbilityTreeNode for ForwardDuration {
             Self::ForAsLongAsItsExiled { span } => *span,
             Self::UntilEndOfTurn { span } => *span,
             Self::UntilEndOfYourNextTurn { span } => *span,
+            Self::While { span } => *span,
         }
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for ForwardDuration {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "until end of turn" => Some(Self::UntilEndOfTurn {
@@ -158,6 +163,11 @@ impl IntoToken for ForwardDuration {
                 span: Default::default(),
             }),
             "until the end of your next turn" => Some(Self::UntilEndOfYourNextTurn {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
+            // This token is maybe too generic ? But I think it will make sense when the parser will add condition
+            "while" => Some(Self::While {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }),
@@ -182,6 +192,7 @@ impl std::fmt::Display for ForwardDuration {
             Self::ForAsLongAsItsExiled { .. } => write!(f, "for as long as it remains exiled"),
             Self::UntilEndOfTurn { .. } => write!(f, "until end of turn"),
             Self::UntilEndOfYourNextTurn { .. } => write!(f, "until the end of your next turn"),
+            Self::While { .. } => write!(f, "while"),
         }
     }
 }
@@ -234,8 +245,8 @@ impl AbilityTreeNode for BackwardDuration {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for BackwardDuration {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "this turn" => Some(Self::ThisTurn {

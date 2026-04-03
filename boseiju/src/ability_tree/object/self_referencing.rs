@@ -51,8 +51,8 @@ impl std::fmt::Display for SelfReferencingObject {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for SelfReferencingObject {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "this creature" => Some(SelfReferencingObject {

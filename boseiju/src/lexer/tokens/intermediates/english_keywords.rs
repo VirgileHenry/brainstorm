@@ -115,6 +115,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Different {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Divided {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -128,6 +132,10 @@ pub enum EnglishKeyword {
         span: crate::ability_tree::span::TreeSpan,
     },
     Dont {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    End {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -147,11 +155,19 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Fewer {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     For {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     From {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Greatest {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -421,16 +437,20 @@ impl EnglishKeyword {
             Self::Chosen { span } => *span,
             Self::Control { span } => *span,
             Self::Copy { span } => *span,
+            Self::Different { span } => *span,
             Self::Divided { span } => *span,
             Self::During { span } => *span,
             Self::Do { span } => *span,
             Self::Dont { span } => *span,
+            Self::End { span } => *span,
             Self::Equal { span } => *span,
             Self::Everyting { span } => *span,
             Self::Except { span } => *span,
             Self::First { span } => *span,
+            Self::Fewer { span } => *span,
             Self::For { span } => *span,
             Self::From { span } => *span,
+            Self::Greatest { span } => *span,
             Self::Have { span } => *span,
             Self::Into { span } => *span,
             Self::If { span } => *span,
@@ -600,11 +620,15 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "control" | "controls" => Some(Self::Control {
+            "control" | "controls" | "controlled" => Some(Self::Control {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "copy" => Some(Self::Copy {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "different" => Some(Self::Different {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -624,6 +648,10 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "end" => Some(Self::End {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "equal" => Some(Self::Equal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -640,11 +668,19 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "from" => Some(Self::From {
+            "fewer" => Some(Self::Fewer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "for" => Some(Self::For {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "from" => Some(Self::From {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "greatest" => Some(Self::Greatest {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
