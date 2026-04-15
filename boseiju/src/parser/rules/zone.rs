@@ -1,5 +1,4 @@
 use super::ParserNode;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
@@ -52,38 +51,63 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     .into_iter()
     .map(|zone| {
         [
-            terminals::OwnerSpecifier::YouOwn {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
+            /* For zones, ambiguous token "your" is valid */
+            super::ParserRule {
+                expanded: super::RuleLhs::new(&[
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::OwnableZone(zone)).id(),
+                ]),
+                merged: ParserNode::ZoneReference { zone: dummy() }.id(),
+                reduction: |nodes: &[ParserNode]| match &nodes {
+                    &[
+                        ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
+                            #[cfg(feature = "spanned_tree")]
+                                span: owner_span,
+                        })),
+                        ParserNode::LexerToken(Token::OwnableZone(zone)),
+                    ] => Ok(ParserNode::ZoneReference {
+                        zone: crate::ability_tree::zone::ZoneReference::OwnedZone(crate::ability_tree::zone::OwnedZone {
+                            zone: zone.clone(),
+                            owner: crate::ability_tree::player::PlayerSpecifier::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *owner_span,
+                            },
+                            #[cfg(feature = "spanned_tree")]
+                            span: owner_span.merge(&zone.node_span()),
+                        }),
+                    }),
+                    _ => Err("Provided tokens do not match rule definition"),
+                },
+                creation_loc: super::ParserRuleDeclarationLocation::here(),
             },
-            terminals::OwnerSpecifier::ObjectOwner {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
+            /* Otherwise, any player specifier is valid: "enchanted creature's controller graveyard" is valid */
+            super::ParserRule {
+                expanded: super::RuleLhs::new(&[
+                    ParserNode::Player { player: dummy() }.id(),
+                    ParserNode::LexerToken(Token::OwnableZone(zone)).id(),
+                ]),
+                merged: ParserNode::ZoneReference { zone: dummy() }.id(),
+                reduction: |nodes: &[ParserNode]| match &nodes {
+                    &[
+                        ParserNode::Player { player },
+                        ParserNode::LexerToken(Token::OwnableZone(zone)),
+                    ] => Ok(ParserNode::ZoneReference {
+                        zone: crate::ability_tree::zone::ZoneReference::OwnedZone(crate::ability_tree::zone::OwnedZone {
+                            zone: zone.clone(),
+                            owner: player.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.node_span().merge(&zone.node_span()),
+                        }),
+                    }),
+                    _ => Err("Provided tokens do not match rule definition"),
+                },
+                creation_loc: super::ParserRuleDeclarationLocation::here(),
             },
         ]
-        .into_iter()
-        .map(move |owner| super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::OwnerSpecifier(owner)).id(),
-                ParserNode::LexerToken(Token::OwnableZone(zone)).id(),
-            ]),
-            merged: ParserNode::ZoneReference { zone: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::OwnerSpecifier(owner)),
-                    ParserNode::LexerToken(Token::OwnableZone(zone)),
-                ] => Ok(ParserNode::ZoneReference {
-                    zone: crate::ability_tree::zone::ZoneReference::OwnedZone(crate::ability_tree::zone::OwnedZone {
-                        zone: zone.clone(),
-                        owner: owner.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: owner.node_span().merge(&zone.node_span()),
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        })
     })
     .flatten()
     .collect::<Vec<_>>();

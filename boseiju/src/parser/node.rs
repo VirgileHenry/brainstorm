@@ -67,12 +67,15 @@ pub enum ParserNode {
         imperatives: ability_tree::imperative::ImperativeList,
     },
     ImperativeChoices {
-        choices: crate::utils::HeapArrayVec<ability_tree::ability::spell::SpellAbility, 23 /* Fixme */>,
+        choices: crate::utils::HeapArrayVec<ability_tree::ability::spell::SpellAbility, 11 /* Fixme */>,
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Instant {
+        instant: crate::ability_tree::time::Instant,
+    },
     KeywordAbility {
-        ability: ability_tree::ability::KeywordAbility,
+        keyword_ability: ability_tree::ability::KeywordAbility,
     },
     ManaCost {
         mana_cost: ability_tree::terminals::ManaCost,

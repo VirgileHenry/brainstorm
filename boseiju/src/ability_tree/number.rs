@@ -27,20 +27,6 @@ pub enum Number {
     X(XNumber),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl Number {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::AnyNumber { span } => *span,
-            Self::Number(number) => number.span,
-            Self::OrMore(number) => number.span,
-            Self::ThatMany { span } => *span,
-            Self::UpTo(number) => number.span,
-            Self::X(number) => number.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for Number {
     fn node_id(&self) -> usize {
         use idris::Idris;

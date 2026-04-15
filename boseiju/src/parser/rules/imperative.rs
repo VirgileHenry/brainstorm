@@ -1,3 +1,4 @@
+mod add_mana_rules;
 mod choose_rules;
 mod create_token_rules;
 mod deals_damage_rules;
@@ -15,6 +16,7 @@ mod sacrifice_rules;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
+        add_mana_rules::rules().collect::<Vec<_>>(),
         choose_rules::rules().collect::<Vec<_>>(),
         create_token_rules::rules().collect::<Vec<_>>(),
         deals_damage_rules::rules().collect::<Vec<_>>(),

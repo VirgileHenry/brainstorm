@@ -1,5 +1,5 @@
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Destroy any object reference */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                 keyword_action: mtg_data::KeywordAction::Create,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -26,7 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::Imperative { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
                     #[cfg(feature = "spanned_tree")]
                     span,
@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 amount: number.clone(),
                                 token: crate::ability_tree::imperative::CreatedTokenKind::NewToken(token.clone()),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.span().merge(&token.node_span()),
+                                span: number.node_span().merge(&token.node_span()),
                             });
                             tokens
                         },

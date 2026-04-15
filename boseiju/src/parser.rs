@@ -264,6 +264,10 @@ fn parse_impl(tokens: &[crate::lexer::tokens::Token]) -> Result<crate::AbilityTr
     use crate::utils::dummy;
     use idris::Idris;
 
+    if tokens.is_empty() {
+        return Ok(crate::AbilityTree::empty());
+    }
+
     /* Rule map, all our parsing rules in a single struct */
     lazy_static::lazy_static!(
         /// The rule map contains all the rules to parse the MTG cards.

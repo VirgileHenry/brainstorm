@@ -60,7 +60,6 @@ Suspect
 Tap
 Time Travel
 Transform
-Treasure
 Untap
 Venture into the dungeon
 Vote

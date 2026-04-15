@@ -66,7 +66,6 @@ pub enum KeywordAction {
     Tap,
     TimeTravel,
     Transform,
-    Treasure,
     Untap,
     VentureIntoTheDungeon,
     Vote,
@@ -138,7 +137,6 @@ impl std::str::FromStr for KeywordAction {
             "tap" => Ok(Self::Tap),
             "time travel" => Ok(Self::TimeTravel),
             "transform" => Ok(Self::Transform),
-            "treasure" => Ok(Self::Treasure),
             "untap" => Ok(Self::Untap),
             "venture into the dungeon" => Ok(Self::VentureIntoTheDungeon),
             "vote" => Ok(Self::Vote),
@@ -215,7 +213,6 @@ impl KeywordAction {
             Self::Tap => "tap",
             Self::TimeTravel => "time travel",
             Self::Transform => "transform",
-            Self::Treasure => "treasure",
             Self::Untap => "untap",
             Self::VentureIntoTheDungeon => "venture into the dungeon",
             Self::Vote => "vote",
@@ -294,10 +291,10 @@ impl KeywordAction {
             Self::Tap,
             Self::TimeTravel,
             Self::Transform,
-            Self::Treasure,
             Self::Untap,
             Self::VentureIntoTheDungeon,
             Self::Vote,
-        ].into_iter()
+        ]
+        .into_iter()
     }
 }

@@ -21,17 +21,6 @@ pub enum OwnerSpecifier {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl OwnerSpecifier {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::YouOwn { span } => *span,
-            Self::YouDontOwn { span } => *span,
-            Self::ObjectOwner { span } => *span,
-        }
-    }
-}
-
 impl AbilityTreeNode for OwnerSpecifier {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;
@@ -84,7 +73,7 @@ impl std::fmt::Display for OwnerSpecifier {
 impl IntoToken for OwnerSpecifier {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "you own" | "your" => Some(OwnerSpecifier::YouOwn {
+            "you own" => Some(OwnerSpecifier::YouOwn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

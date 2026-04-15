@@ -13,6 +13,11 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// Color can either be for mana or cards
+    Color {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     /// Counter can either be a counter that we put on a permanent,
     /// or the action to counter a spell.
     Counter {
@@ -37,6 +42,14 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// Your is a special owner specifier:
+    /// - your graveyard: zone owner specifier
+    /// - your upkeep: instant owner specifier
+    /// - your control: control specifier
+    Your {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -44,10 +57,12 @@ impl AmbiguousToken {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Attack { span } => *span,
+            Self::Color { span } => *span,
             Self::Counter { span } => *span,
             Self::Exile { span } => *span,
             Self::Gain { span } => *span,
             Self::Type { span } => *span,
+            Self::Your { span } => *span,
         }
     }
 }
@@ -56,6 +71,10 @@ impl AmbiguousToken {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "attack" | "attacks" | "attacked" => Some(Self::Attack {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "color" | "colors" => Some(Self::Color {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -71,7 +90,11 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "type" => Some(Self::Gain {
+            "type" => Some(Self::Type {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "your" => Some(Self::Your {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

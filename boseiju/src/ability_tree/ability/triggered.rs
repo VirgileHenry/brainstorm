@@ -1,6 +1,7 @@
-mod trigger_cond;
+mod trigger_condition;
 
-pub use trigger_cond::TriggerCondition;
+pub use trigger_condition::TriggerCondition;
+pub use trigger_condition::TriggerConditionKind;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;

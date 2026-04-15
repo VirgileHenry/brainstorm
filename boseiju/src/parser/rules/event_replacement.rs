@@ -1,6 +1,5 @@
 use super::ParserNode;
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
@@ -87,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::EventSourceReference { source: dummy() }.id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -104,7 +103,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::EventSourceReference { source },
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Create,
                         #[cfg(feature = "spanned_tree")]
                             span: create_span,

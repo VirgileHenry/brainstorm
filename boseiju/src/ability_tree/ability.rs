@@ -1,5 +1,6 @@
 pub mod activated;
-pub mod keyword;
+pub mod common;
+pub mod keyword_ability;
 pub mod spell;
 pub mod statik;
 pub mod triggered;
@@ -19,7 +20,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AbilityKind {
     AbilityWord(AbilityWordAbility),
-    Keyword(KeywordAbility),
+    KeywordAbility(KeywordAbility),
     Written(Ability),
 }
 
@@ -28,7 +29,7 @@ impl AbilityKind {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AbilityWord(ability) => ability.span,
-            Self::Keyword(ability) => ability.span,
+            Self::KeywordAbility(ability) => ability.span,
             Self::Written(ability) => ability.node_span(),
         }
     }
@@ -44,7 +45,7 @@ impl AbilityTreeNode for AbilityKind {
         let mut abilities = arrayvec::ArrayVec::new_const();
         match self {
             Self::AbilityWord(ability) => abilities.push(ability as &dyn AbilityTreeNode),
-            Self::Keyword(ability) => abilities.push(ability as &dyn AbilityTreeNode),
+            Self::KeywordAbility(ability) => abilities.push(ability as &dyn AbilityTreeNode),
             Self::Written(ability) => abilities.push(ability as &dyn AbilityTreeNode),
         };
         abilities
@@ -53,7 +54,7 @@ impl AbilityTreeNode for AbilityKind {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         match self {
             Self::AbilityWord(ability) => ability.display(out),
-            Self::Keyword(ability) => ability.display(out),
+            Self::KeywordAbility(ability) => ability.display(out),
             Self::Written(ability) => ability.display(out),
         }
     }
@@ -66,7 +67,7 @@ impl AbilityTreeNode for AbilityKind {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AbilityWord(child) => child.node_span(),
-            Self::Keyword(child) => child.node_span(),
+            Self::KeywordAbility(child) => child.node_span(),
             Self::Written(child) => child.node_span(),
         }
     }
@@ -174,7 +175,7 @@ impl crate::utils::DummyInit for Ability {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct KeywordAbility {
-    pub keyword: keyword::ExpandedKeywordAbility,
+    pub keyword: keyword_ability::ExpandedKeywordAbility,
     pub ability: Ability,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

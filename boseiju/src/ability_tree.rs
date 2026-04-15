@@ -27,7 +27,7 @@ pub use tree_node::NodeKind;
 /// Maximum number of children a single node can have.
 ///
 /// This constant strongly impact the size of the tree, and is mostly bottom-limited by exisiting MTG cards.
-pub const MAX_CHILDREN_PER_NODE: usize = 24;
+pub const MAX_CHILDREN_PER_NODE: usize = 12;
 
 /// Maximim size for the node data.
 pub const MAX_NODE_DATA_SIZE: usize = 32;

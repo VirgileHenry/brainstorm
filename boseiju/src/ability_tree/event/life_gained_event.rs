@@ -8,7 +8,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LifeGainedEvent {
     pub player: crate::ability_tree::player::PlayerSpecifier,
-    pub minimum_amount: Option<crate::ability_tree::number::Number>,
+    pub amount: Option<crate::ability_tree::number::Number>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -22,7 +22,7 @@ impl crate::ability_tree::AbilityTreeNode for LifeGainedEvent {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.player as &dyn AbilityTreeNode);
-        match self.minimum_amount.as_ref() {
+        match self.amount.as_ref() {
             Some(amount) => children.push(amount as &dyn AbilityTreeNode),
             None => {
                 let dummy = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::none_node();
@@ -38,7 +38,7 @@ impl crate::ability_tree::AbilityTreeNode for LifeGainedEvent {
         out.push_inter_branch()?;
         self.player.display(out)?;
         out.next_final_branch()?;
-        match self.minimum_amount.as_ref() {
+        match self.amount.as_ref() {
             Some(minimum_amount) => {
                 write!(out, "gains at least:")?;
                 out.push_final_branch()?;
@@ -67,7 +67,7 @@ impl crate::utils::DummyInit for LifeGainedEvent {
     fn dummy_init() -> Self {
         Self {
             player: crate::utils::dummy(),
-            minimum_amount: crate::utils::dummy(),
+            amount: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

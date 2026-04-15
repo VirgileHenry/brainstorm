@@ -1,3 +1,5 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
 #[derive(idris_derive::Idris)]
@@ -54,9 +56,36 @@ pub enum Step {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl Step {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl AbilityTreeNode for Step {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::StepIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::Step(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "step"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Untap { span } => *span,
             Self::Upkeep { span } => *span,
@@ -113,11 +142,11 @@ impl IntoToken for Step {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "declaration of attackers" => Some(Step::DeclareAttackers {
+            "declare attackers step" => Some(Step::DeclareAttackers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "declaration of blockers" => Some(Step::DeclareBlockers {
+            "declare blockers step" => Some(Step::DeclareBlockers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -126,10 +155,6 @@ impl IntoToken for Step {
                 span: span.into(),
             }),
             "damage step" => Some(Step::Damage {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "last strike damage step" => Some(Step::LastStrikeDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -146,6 +171,16 @@ impl IntoToken for Step {
                 span: span.into(),
             }),
             _ => None,
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for Step {
+    fn dummy_init() -> Self {
+        Self::Untap {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

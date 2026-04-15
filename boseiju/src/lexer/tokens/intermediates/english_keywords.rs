@@ -539,7 +539,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "as long as" => Some(Self::As {
+            "as long as" => Some(Self::AsLongAs {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -1,11 +1,25 @@
 use crate::parser::ParserNode;
 use idris::Idris;
 
+fn rebuild_context(tokens: &[crate::lexer::tokens::Token]) -> String {
+    let mut result = "".to_string();
+
+    for (i, token) in tokens.iter().enumerate() {
+        result.push_str(ParserNode::name_from_id(ParserNode::from(token.clone()).id()));
+        if i < tokens.len() - 1 {
+            result.push(' ');
+        }
+    }
+
+    result
+}
+
 /// Errors that can be thrown by the parser.
 #[derive(Debug, Clone)]
 pub enum ParserError {
     UnexpectedToken {
         found: FoundToken,
+        context: String,
         expecting: Vec<PossibleExpectedToken>,
     },
     FailedToApplyRule {
@@ -62,6 +76,7 @@ impl ParserError {
 
         Self::UnexpectedToken {
             found: stuck_on_token,
+            context: rebuild_context(tokens),
             expecting: expecting.into_iter().collect(),
         }
     }
@@ -70,7 +85,7 @@ impl ParserError {
 impl std::fmt::Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::UnexpectedToken { found, expecting } => {
+            Self::UnexpectedToken { found, expecting, .. } => {
                 #[cfg(feature = "spanned_tree")]
                 write!(
                     f,

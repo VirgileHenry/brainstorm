@@ -57,12 +57,12 @@ impl CardProperty {
 impl std::fmt::Display for CardProperty {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            CardProperty::BasePower { .. } => write!(f, "converted mana cost"),
-            CardProperty::BasePowerAndToughness { .. } => write!(f, "converted mana cost"),
-            CardProperty::BaseToughness { .. } => write!(f, "converted mana cost"),
-            CardProperty::Color { .. } => write!(f, "converted mana cost"),
-            CardProperty::ManaValue { .. } => write!(f, "converted mana cost"),
-            CardProperty::Name { .. } => write!(f, "converted mana cost"),
+            CardProperty::BasePower { .. } => write!(f, "base power"),
+            CardProperty::BasePowerAndToughness { .. } => write!(f, "base power and toughness"),
+            CardProperty::BaseToughness { .. } => write!(f, "base toughness"),
+            CardProperty::Color { .. } => write!(f, "color"),
+            CardProperty::ManaValue { .. } => write!(f, "mana value"),
+            CardProperty::Name { .. } => write!(f, "name"),
             CardProperty::Power { .. } => write!(f, "power"),
             CardProperty::Tougness { .. } => write!(f, "touhness"),
         }
@@ -82,10 +82,6 @@ impl IntoToken for CardProperty {
                 span: span.into(),
             }),
             "base toughness" => Some(CardProperty::BaseToughness {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "color" | "colors" => Some(CardProperty::Color {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

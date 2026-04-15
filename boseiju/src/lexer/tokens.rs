@@ -32,9 +32,8 @@ pub enum Token {
     ForwardDuration(time::ForwardDuration),
     GlobalZone(intermediates::GlobalZone),
     InAdditionToPayingItsOtherCost(intermediates::InAdditionToPayingItsOtherCost),
-    Instant(time::Instant),
     KeywordAbility(intermediates::KeywordAbility),
-    KeywordAction(terminals::KeywordAction),
+    KeywordAction(intermediates::KeywordAction),
     Mana { mana: terminals::Mana },
     NamedToken(terminals::NamedToken),
     NonKind(intermediates::NonKind),
@@ -47,7 +46,7 @@ pub enum Token {
     OwnableZone(zone::OwnableZone),
     OwnerSpecifier(terminals::OwnerSpecifier),
     PermanentProperty(terminals::CardProperty),
-    PermanentState(terminals::CardState),
+    CardState(terminals::CardState),
     Phase(terminals::Phase),
     PlayerAction(intermediates::PlayerAction),
     PlayerProperties(intermediates::PlayerProperties),
@@ -81,7 +80,7 @@ impl Token {
         } else if let Some(kind) = intermediates::PlayerSpecifier::try_from_span(&span) {
             Some(Self::PlayerSpecifier(kind))
         } else if let Some(kind) = terminals::CardState::try_from_span(&span) {
-            Some(Self::PermanentState(kind))
+            Some(Self::CardState(kind))
         } else if let Some(kind) = terminals::CardProperty::try_from_span(&span) {
             Some(Self::PermanentProperty(kind))
         } else if let Some(kind) = terminals::SpellProperty::try_from_span(&span) {
@@ -98,8 +97,6 @@ impl Token {
             Some(Self::SagaChapterNumber { chapter })
         } else if let Some(kind) = intermediates::InAdditionToPayingItsOtherCost::try_from_span(&span) {
             Some(Self::InAdditionToPayingItsOtherCost(kind))
-        } else if let Some(kind) = crate::ability_tree::time::Instant::try_from_span(&span) {
-            Some(Self::Instant(kind))
         } else if let Some(kind) = crate::ability_tree::time::ForwardDuration::try_from_span(&span) {
             Some(Self::ForwardDuration(kind))
         } else if let Some(kind) = crate::ability_tree::time::BackwardDuration::try_from_span(&span) {
@@ -114,7 +111,7 @@ impl Token {
             Some(Self::AbilityWord(kind))
         } else if let Some(kind) = intermediates::KeywordAbility::try_from_span(&span) {
             Some(Self::KeywordAbility(kind))
-        } else if let Some(kind) = terminals::KeywordAction::try_from_span(&span) {
+        } else if let Some(kind) = intermediates::KeywordAction::try_from_span(&span) {
             Some(Self::KeywordAction(kind))
         } else if let Some(mana) = terminals::Mana::try_from_span(&span) {
             Some(Self::Mana { mana })
@@ -186,7 +183,6 @@ impl Token {
             Self::ForwardDuration(child) => child.node_span(),
             Self::GlobalZone(child) => child.span(),
             Self::InAdditionToPayingItsOtherCost(child) => child.span,
-            Self::Instant(child) => child.node_span(),
             Self::KeywordAbility(child) => child.span,
             Self::KeywordAction(child) => child.span,
             Self::Mana { mana } => mana.node_span(),
@@ -201,8 +197,8 @@ impl Token {
             Self::OwnableZone(child) => child.node_span(),
             Self::OwnerSpecifier(child) => child.node_span(),
             Self::PermanentProperty(child) => child.span(),
-            Self::PermanentState(child) => child.span(),
-            Self::Phase(child) => child.span(),
+            Self::CardState(child) => child.node_span(),
+            Self::Phase(child) => child.node_span(),
             Self::PlayerAction(child) => child.span(),
             Self::PlayerProperties(child) => child.span(),
             Self::PlayerSpecifier(child) => child.span(),
@@ -211,7 +207,7 @@ impl Token {
             Self::SagaChapterNumber { chapter } => chapter.span,
             Self::SelfReferencing { reference } => reference.span,
             Self::SpellProperty(child) => child.span(),
-            Self::Step(child) => child.span(),
+            Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),

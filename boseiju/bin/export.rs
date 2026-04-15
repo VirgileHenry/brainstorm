@@ -7,7 +7,7 @@ use std::io::Write;
 use boseiju::*;
 
 fn main() -> std::io::Result<()> {
-    let cards = mtg_cardbase::AllCardsIter::new();
+    let cards = mtg_cardbase::AllCardsIter::hexxed_v1_cards();
 
     const MAX_ERRORS_SHOWN: usize = 10;
     const OUTPUT_FILE: &'static str = "boseiju_export.json";

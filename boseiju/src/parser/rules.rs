@@ -13,6 +13,7 @@
 mod ability;
 mod ability_kind;
 mod ability_tree;
+mod activated_ability;
 mod conditional;
 mod continuous_effect;
 mod cost;
@@ -22,7 +23,9 @@ mod event;
 mod event_replacement;
 mod imperative;
 mod imperative_list;
-mod keyword_to_ability;
+mod instant;
+mod keyword_ability;
+mod keyword_action;
 mod mana;
 mod number;
 mod object_references;
@@ -34,6 +37,7 @@ mod statement;
 mod statik;
 mod token;
 mod triggered_ability;
+mod triggered_condition;
 mod zone;
 
 use crate::parser::node::ParserNode;
@@ -44,6 +48,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(ability::rules()),
         Box::new(ability_tree::rules()),
         Box::new(ability_kind::rules()),
+        Box::new(activated_ability::rules()),
         Box::new(continuous_effect::rules()),
         Box::new(cost::rules()),
         Box::new(cost_modifications::rules()),
@@ -53,7 +58,9 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(conditional::rules()),
         Box::new(imperative::rules()),
         Box::new(imperative_list::rules()),
-        Box::new(keyword_to_ability::rules()),
+        Box::new(instant::rules()),
+        Box::new(keyword_ability::rules()),
+        Box::new(keyword_action::rules()),
         Box::new(mana::rules()),
         Box::new(number::rules()),
         Box::new(object_references::rules()),
@@ -65,6 +72,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(statik::rules()),
         Box::new(token::rules()),
         Box::new(triggered_ability::rules()),
+        Box::new(triggered_condition::rules()),
         Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()

@@ -25,7 +25,28 @@ impl AllCardsIter {
         }
         let cards_json = cards_json.expect("Missing json card database!");
         let all_cards: Vec<crate::Card> = serde_json::from_str(&cards_json).expect("Invalid json for provided card list!");
-        AllCardsIter(all_cards)
+        Self(all_cards)
+    }
+
+    pub fn standard_legal() -> Self {
+        let cards = Self::new();
+        let filter = |card: &crate::Card| card.legalities.standard == "legal";
+        let standard_legal_cards = cards.0.into_iter().filter(filter);
+        Self(standard_legal_cards.collect())
+    }
+
+    pub fn commander_legal() -> Self {
+        let cards = Self::new();
+        let filter = |card: &crate::Card| card.legalities.commander == "legal";
+        let commander_legal_cards = cards.0.into_iter().filter(filter);
+        Self(commander_legal_cards.collect())
+    }
+
+    pub fn hexxed_v1_cards() -> Self {
+        let cards = Self::new();
+        let filter = |card: &crate::Card| card.set_type != "funny" && card.set_type != "alchemy";
+        let commander_legal_cards = cards.0.into_iter().filter(filter);
+        Self(commander_legal_cards.collect())
     }
 
     pub fn len(&self) -> usize {

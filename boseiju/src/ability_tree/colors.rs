@@ -27,16 +27,6 @@ impl Colors {
         }
     }
 
-    pub fn merge_colors(&self, other: &Self) -> Self {
-        Self {
-            white: self.white || other.white,
-            blue: self.blue || other.blue,
-            black: self.black || other.black,
-            red: self.red || other.red,
-            green: self.green || other.green,
-        }
-    }
-
     pub fn contains(&self, other: &Self) -> bool {
         (self.white || !other.white)
             && (self.blue || !other.blue)

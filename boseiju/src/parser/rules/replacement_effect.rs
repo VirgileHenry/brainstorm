@@ -1,3 +1,5 @@
+mod etb_replacement;
+
 use super::ParserNode;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
@@ -5,7 +7,7 @@ use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    [super::ParserRule {
+    let default_replacement_effects = vec![super::ParserRule {
         expanded: super::RuleLhs::new(&[
             ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
                 #[cfg(feature = "spanned_tree")]
@@ -59,6 +61,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: super::ParserRuleDeclarationLocation::here(),
-    }]
-    .into_iter()
+    }];
+
+    [default_replacement_effects, etb_replacement::rules().collect::<Vec<_>>()]
+        .into_iter()
+        .flatten()
 }

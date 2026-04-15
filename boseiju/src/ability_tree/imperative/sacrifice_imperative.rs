@@ -24,9 +24,9 @@ impl AbilityTreeNode for SacrificeImperative {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        writeln!(out, "Sacrifice:")?;
+        write!(out, "Sacrifice:")?;
         out.push_final_branch()?;
-        writeln!(out, "Object:")?;
+        write!(out, "Object:")?;
         out.push_final_branch()?;
         self.object.display(out)?;
         out.pop_branch();

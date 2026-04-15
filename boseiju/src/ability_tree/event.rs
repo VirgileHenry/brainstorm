@@ -45,20 +45,6 @@ pub enum Event {
     PutCounterOnPermanent(PutCounterOnPermanentEvent),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl Event {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::CreateTokens(child) => child.span,
-            Self::CreatureAction(child) => child.span,
-            Self::EntersTheBattlefield(child) => child.span,
-            Self::LifeGained(child) => child.span,
-            Self::PlayerAction(child) => child.span,
-            Self::PutCounterOnPermanent(child) => child.span,
-        }
-    }
-}
-
 impl crate::ability_tree::AbilityTreeNode for Event {
     fn node_id(&self) -> usize {
         use idris::Idris;

@@ -71,6 +71,18 @@ impl IntoToken for SelfReferencingObject {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "this aura" => Some(SelfReferencingObject {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "this land" => Some(SelfReferencingObject {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "this artifact" => Some(SelfReferencingObject {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "~" => Some(SelfReferencingObject {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),

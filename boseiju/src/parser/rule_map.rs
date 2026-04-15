@@ -22,7 +22,7 @@ impl RuleMap {
         /*
         let mut lhs_to_rule: std::collections::HashMap<_, _> = std::collections::HashMap::new();
         */
-        let mut rhs_to_rule: std::collections::HashMap<_, Vec<_>> = std::collections::HashMap::new();
+        let mut merged_to_rules: std::collections::HashMap<_, Vec<_>> = std::collections::HashMap::new();
 
         for (rule_index, rule) in rules.iter().enumerate() {
             /* This check forces the grammar to be unambiguous, maybe we want it later on ?
@@ -33,13 +33,10 @@ impl RuleMap {
                 });
             }
             */
-            rhs_to_rule.entry(rule.merged).or_default().push(rule_index);
+            merged_to_rules.entry(rule.merged).or_default().push(rule_index);
         }
 
-        Ok(Self {
-            rules,
-            merged_to_rules: rhs_to_rule,
-        })
+        Ok(Self { rules, merged_to_rules })
     }
 
     pub fn get_rules_for_token(&self, node_id: usize) -> Option<impl Iterator<Item = &ParserRule>> {

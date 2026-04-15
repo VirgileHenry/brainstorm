@@ -17,6 +17,7 @@ serde_json = { workspace = true }
 petgraph = "0.8.3"
 uuid = { version = "1.18.1", features = ["serde"] }
 rapidhash = { version = "4.4.1", optional = true }
+serde-big-array = "0.5.1"
 
 [dev-dependencies]
 krark = { workspace = true }
@@ -50,6 +51,10 @@ path = "bin/export_for_webdemo.rs"
 [[bin]]
 name = "most_required_tokens"
 path = "bin/most_required_tokens.rs"
+
+[[bin]]
+name = "most_required_nodes"
+path = "bin/most_required_nodes.rs"
 
 [[test]]
 name = "lexer"

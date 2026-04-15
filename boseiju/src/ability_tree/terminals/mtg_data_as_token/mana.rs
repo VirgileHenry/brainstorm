@@ -36,20 +36,6 @@ impl Mana {
             Self::Snow { .. } => 1,
         }
     }
-
-    #[cfg(feature = "spanned_tree")]
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::X { span } => *span,
-            Self::Any(child) => child.span,
-            Self::Colored(child) => child.span,
-            Self::Hybrid(child) => child.span,
-            Self::MonocoloredHybrid(child) => child.span,
-            Self::Phyrexian(child) => child.span,
-            Self::HybridPhyrexian(child) => child.span,
-            Self::Snow { span } => *span,
-        }
-    }
 }
 
 impl AbilityTreeNode for Mana {

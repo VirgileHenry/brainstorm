@@ -6,36 +6,6 @@ use crate::ability_tree::NodeKind;
 use crate::ability_tree::tree_node::MtgDataNodeKind;
 use idris::Idris;
 
-/// Wrapper around the keyword actions.
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct KeywordAction {
-    pub keyword_action: mtg_data::KeywordAction,
-    #[cfg(feature = "spanned_tree")]
-    pub span: crate::ability_tree::span::TreeSpan,
-}
-
-impl IntoToken for KeywordAction {
-    #[cfg(feature = "lexer")]
-    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        Some(Self {
-            keyword_action: crate::utils::from_str_singular_or_plural(&span.text)?,
-            #[cfg(feature = "spanned_tree")]
-            span: span.into(),
-        })
-    }
-}
-
-impl idris::Idris for KeywordAction {
-    const COUNT: usize = mtg_data::KeywordAction::COUNT;
-    fn id(&self) -> usize {
-        self.keyword_action.id()
-    }
-    fn name_from_id(id: usize) -> &'static str {
-        mtg_data::KeywordAction::name_from_id(id)
-    }
-}
-
 /// Wrapper around the ability word.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]

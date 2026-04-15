@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
@@ -23,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -42,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::EventSource { source },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would { .. })),
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Create,
                         ..
                     })),
@@ -70,7 +69,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -94,7 +93,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::EventSource { source },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would { .. })),
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Create,
                         ..
                     })),
@@ -139,7 +138,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Create,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -159,7 +158,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::EventSource { source },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Would { .. })),
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Create,
                         ..
                     })),

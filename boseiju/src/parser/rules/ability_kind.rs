@@ -24,11 +24,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* Ability as a keyword ability */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::KeywordAbility { ability: dummy() }.id()]),
+            expanded: super::RuleLhs::new(&[ParserNode::KeywordAbility {
+                keyword_ability: dummy(),
+            }
+            .id()]),
             merged: ParserNode::AbilityKind { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::KeywordAbility { ability }] => Ok(ParserNode::AbilityKind {
-                    ability: crate::ability_tree::ability::AbilityKind::Keyword(ability.clone()),
+                &[ParserNode::KeywordAbility { keyword_ability }] => Ok(ParserNode::AbilityKind {
+                    ability: crate::ability_tree::ability::AbilityKind::KeywordAbility(keyword_ability.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

@@ -14,23 +14,12 @@ pub enum CountSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Target(crate::ability_tree::number::Number),
     AllOthers {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-}
-
-#[cfg(feature = "spanned_tree")]
-impl CountSpecifier {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::A { span } => *span,
-            Self::All { span } => *span,
-            Self::Target(child) => child.node_span(),
-            Self::AllOthers { span } => *span,
-        }
-    }
+    Count(crate::ability_tree::number::Number),
+    Target(crate::ability_tree::number::Number),
 }
 
 impl AbilityTreeNode for CountSpecifier {
@@ -59,13 +48,19 @@ impl AbilityTreeNode for CountSpecifier {
         match self {
             Self::A { .. } => write!(out, "a")?,
             Self::All { .. } => write!(out, "all")?,
+            Self::AllOthers { .. } => write!(out, "all others")?,
+            Self::Count(num) => {
+                write!(out, "count")?;
+                out.push_final_branch()?;
+                num.display(out)?;
+                out.pop_branch();
+            }
             Self::Target(num) => {
                 write!(out, "target")?;
                 out.push_final_branch()?;
                 num.display(out)?;
                 out.pop_branch();
             }
-            Self::AllOthers { .. } => write!(out, "all others")?,
         }
         out.pop_branch();
         Ok(())
@@ -80,8 +75,9 @@ impl AbilityTreeNode for CountSpecifier {
         match self {
             Self::A { span } => *span,
             Self::All { span } => *span,
-            Self::Target(child) => child.node_span(),
             Self::AllOthers { span } => *span,
+            Self::Count(child) => child.node_span(),
+            Self::Target(child) => child.node_span(),
         }
     }
 }

@@ -11,6 +11,7 @@ mod english_keywords;
 mod global_zone;
 mod in_addition_to_paying_its_other_costs;
 mod keyword_ability;
+mod keyword_action;
 mod non_kind;
 mod not_of_a_kind;
 mod number;
@@ -37,6 +38,7 @@ pub use english_keywords::EnglishKeyword;
 pub use global_zone::GlobalZone;
 pub use in_addition_to_paying_its_other_costs::InAdditionToPayingItsOtherCost;
 pub use keyword_ability::KeywordAbility;
+pub use keyword_action::KeywordAction;
 pub use non_kind::NonKind;
 pub use not_of_a_kind::NotOfAKind;
 pub use number::Number;
@@ -115,7 +117,7 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "mana" => Some(Self::Life {
+            "mana" => Some(Self::Mana {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

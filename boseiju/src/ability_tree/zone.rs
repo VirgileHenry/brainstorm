@@ -14,7 +14,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Otherwise, there are "owned zones" such as the players hand, libraries, etc.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ZoneReference {
     Anywhere {
         #[cfg(feature = "spanned_tree")]

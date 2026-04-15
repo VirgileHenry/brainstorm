@@ -1,5 +1,4 @@
 use super::ParserNode;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
@@ -48,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Cast,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -67,7 +66,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         ..
                     })),
@@ -99,7 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Cast,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -131,7 +130,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         ..
                     })),

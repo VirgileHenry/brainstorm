@@ -7,7 +7,7 @@ use boseiju::*;
 fn main() {
     const SHOWN_TOKENS: usize = 20;
 
-    let cards = mtg_cardbase::AllCardsIter::new();
+    let cards = mtg_cardbase::AllCardsIter::hexxed_v1_cards();
     let mut most_required_tokens = std::collections::HashMap::<String, usize>::new();
 
     let mut last_shown_percentage = 0;

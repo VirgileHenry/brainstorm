@@ -1,7 +1,7 @@
 use crate::ability_tree::ability::Ability;
 use crate::ability_tree::ability::KeywordAbility;
-use crate::ability_tree::ability::keyword::ExpandedKeywordAbility;
-use crate::ability_tree::ability::keyword::StandaloneKeywordAbility;
+use crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility;
+use crate::ability_tree::ability::keyword_ability::StandaloneKeywordAbility;
 use crate::ability_tree::ability::spell::SpellAbility;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::intermediates;
@@ -25,9 +25,7 @@ pub fn keyword_to_abilities(keyword: intermediates::KeywordAbility) -> Result<Ke
         mtg_data::KeywordAbility::Bargain => terminals::StandaloneKeywordAbility::Bargain,
         mtg_data::KeywordAbility::BasicLandcycling => terminals::StandaloneKeywordAbility::BasicLandcycling,
         mtg_data::KeywordAbility::BattleCry => terminals::StandaloneKeywordAbility::BattleCry,
-        mtg_data::KeywordAbility::Bestow => terminals::StandaloneKeywordAbility::Bestow,
         mtg_data::KeywordAbility::Blitz => terminals::StandaloneKeywordAbility::Blitz,
-        mtg_data::KeywordAbility::Bloodthirst => terminals::StandaloneKeywordAbility::Bloodthirst,
         mtg_data::KeywordAbility::Boast => terminals::StandaloneKeywordAbility::Boast,
         mtg_data::KeywordAbility::Bushido => terminals::StandaloneKeywordAbility::Bushido,
         mtg_data::KeywordAbility::Buyback => terminals::StandaloneKeywordAbility::Buyback,
@@ -122,7 +120,6 @@ pub fn keyword_to_abilities(keyword: intermediates::KeywordAbility) -> Result<Ke
         mtg_data::KeywordAbility::Islandwalk => terminals::StandaloneKeywordAbility::Islandwalk,
         mtg_data::KeywordAbility::JobSelect => terminals::StandaloneKeywordAbility::JobSelect,
         mtg_data::KeywordAbility::JumpStart => terminals::StandaloneKeywordAbility::JumpStart,
-        mtg_data::KeywordAbility::Kicker => terminals::StandaloneKeywordAbility::Kicker,
         mtg_data::KeywordAbility::Landcycling => terminals::StandaloneKeywordAbility::Landcycling,
         mtg_data::KeywordAbility::Landwalk => terminals::StandaloneKeywordAbility::Landwalk,
         mtg_data::KeywordAbility::LegendaryLandwalk => terminals::StandaloneKeywordAbility::LegendaryLandwalk,
@@ -148,7 +145,6 @@ pub fn keyword_to_abilities(keyword: intermediates::KeywordAbility) -> Result<Ke
         mtg_data::KeywordAbility::Mutate => terminals::StandaloneKeywordAbility::Mutate,
         mtg_data::KeywordAbility::Myriad => terminals::StandaloneKeywordAbility::Myriad,
         mtg_data::KeywordAbility::Nightbound => terminals::StandaloneKeywordAbility::Nightbound,
-        mtg_data::KeywordAbility::Ninjutsu => terminals::StandaloneKeywordAbility::Ninjutsu,
         mtg_data::KeywordAbility::NonbasicLandwalk => terminals::StandaloneKeywordAbility::NonbasicLandwalk,
         mtg_data::KeywordAbility::Offering => terminals::StandaloneKeywordAbility::Offering,
         mtg_data::KeywordAbility::Offspring => terminals::StandaloneKeywordAbility::Offspring,
@@ -174,7 +170,6 @@ pub fn keyword_to_abilities(keyword: intermediates::KeywordAbility) -> Result<Ke
         mtg_data::KeywordAbility::Reconfigure => terminals::StandaloneKeywordAbility::Reconfigure,
         mtg_data::KeywordAbility::Recover => terminals::StandaloneKeywordAbility::Recover,
         mtg_data::KeywordAbility::Reinforce => terminals::StandaloneKeywordAbility::Reinforce,
-        mtg_data::KeywordAbility::Renown => terminals::StandaloneKeywordAbility::Renown,
         mtg_data::KeywordAbility::Replicate => terminals::StandaloneKeywordAbility::Replicate,
         mtg_data::KeywordAbility::Retrace => terminals::StandaloneKeywordAbility::Retrace,
         mtg_data::KeywordAbility::Riot => terminals::StandaloneKeywordAbility::Riot,

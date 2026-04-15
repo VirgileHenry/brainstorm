@@ -1,4 +1,3 @@
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
@@ -54,7 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Cast,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -74,7 +73,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
                             span: cast_span,
@@ -108,7 +107,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Cast,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -129,7 +128,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::KeywordAction(terminals::KeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
                             span: cast_span,

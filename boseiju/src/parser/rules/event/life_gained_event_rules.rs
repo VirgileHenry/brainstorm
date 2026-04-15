@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                         player: player.clone(),
-                        minimum_amount: None,
+                        amount: None,
                         #[cfg(feature = "spanned_tree")]
                         span: player.node_span().merge(span),
                     }),
@@ -48,57 +48,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* Past form: "if you have gained life" */
+        /* Present form + number requirement: "whenever you gain <amount> life" */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-            ]),
-            merged: ParserNode::Event { event: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
-                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain { .. })),
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    })),
-                ] => Ok(ParserNode::Event {
-                    event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
-                        player: player.clone(),
-                        minimum_amount: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(span),
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* Past form + number requirement: "if you have gained 3 or more life" */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -115,7 +68,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain { .. })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
@@ -125,7 +77,81 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                         player: player.clone(),
-                        minimum_amount: Some(number.clone()),
+                        amount: Some(number.clone()),
+                        #[cfg(feature = "spanned_tree")]
+                        span: player.node_span().merge(span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* Past form: "if you have gained life" */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::Player { player: dummy() }.id(),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::Event { event: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Player { player },
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain { .. })),
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Event {
+                    event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
+                        player: player.clone(),
+                        amount: None,
+                        #[cfg(feature = "spanned_tree")]
+                        span: player.node_span().merge(span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* Past form + number requirement: "if you have gained 3 or more life" */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::Player { player: dummy() }.id(),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::Event { event: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Player { player },
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain { .. })),
+                    ParserNode::Number { number },
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Life {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Event {
+                    event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
+                        player: player.clone(),
+                        amount: Some(number.clone()),
                         #[cfg(feature = "spanned_tree")]
                         span: player.node_span().merge(span),
                     }),
@@ -167,7 +193,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Event {
                     event: crate::ability_tree::event::Event::LifeGained(crate::ability_tree::event::LifeGainedEvent {
                         player: player.clone(),
-                        minimum_amount: None,
+                        amount: None,
                         #[cfg(feature = "spanned_tree")]
                         span: player.node_span().merge(span),
                     }),

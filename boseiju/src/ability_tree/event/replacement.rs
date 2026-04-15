@@ -1,8 +1,12 @@
 mod counter_on_permanent;
+mod enters_the_battlefield;
 mod source_ref;
 mod token_creation;
 
 pub use counter_on_permanent::CounterOnPermanentReplacement;
+pub use enters_the_battlefield::EtbModifier;
+pub use enters_the_battlefield::EtbReplacement;
+pub use enters_the_battlefield::EtbWithCounters;
 pub use source_ref::EventSourceReference;
 pub use token_creation::TokenCreationReplacement;
 
@@ -16,16 +20,18 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventReplacement {
-    TokenCreation(TokenCreationReplacement),
     CounterOnPermanent(CounterOnPermanentReplacement),
+    EntersTheBattlefield(EtbReplacement),
+    TokenCreation(TokenCreationReplacement),
 }
 
 #[cfg(feature = "spanned_tree")]
 impl EventReplacement {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::TokenCreation(child) => child.span,
             Self::CounterOnPermanent(child) => child.span,
+            Self::EntersTheBattlefield(child) => child.span,
+            Self::TokenCreation(child) => child.span,
         }
     }
 }
@@ -39,8 +45,9 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::TokenCreation(child) => children.push(child as &dyn AbilityTreeNode),
             Self::CounterOnPermanent(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::EntersTheBattlefield(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::TokenCreation(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -50,8 +57,9 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
         write!(out, "event replacement")?;
         out.push_final_branch()?;
         match self {
-            Self::TokenCreation(child) => child.display(out)?,
             Self::CounterOnPermanent(child) => child.display(out)?,
+            Self::EntersTheBattlefield(child) => child.display(out)?,
+            Self::TokenCreation(child) => child.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -64,8 +72,9 @@ impl crate::ability_tree::AbilityTreeNode for EventReplacement {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::TokenCreation(child) => child.node_span(),
             Self::CounterOnPermanent(child) => child.node_span(),
+            Self::EntersTheBattlefield(child) => child.node_span(),
+            Self::TokenCreation(child) => child.node_span(),
         }
     }
 }

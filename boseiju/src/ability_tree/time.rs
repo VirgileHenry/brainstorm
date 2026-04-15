@@ -3,43 +3,40 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
 /// Fixme: doc
-#[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum Instant {
-    AnyTime {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    TheBeginningOfTheNextEndStep {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Instant {
+    pub step_or_phase: StepOrPhase,
+    pub owner: crate::ability_tree::player::PlayerSpecifier,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl AbilityTreeNode for Instant {
     fn node_id(&self) -> usize {
-        use crate::ability_tree::tree_node::TerminalNodeKind;
         use idris::Idris;
-
-        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::InstantIdMarker).id()
+        crate::ability_tree::NodeKind::Instant.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use crate::ability_tree::NodeKind;
-        use crate::ability_tree::tree_node::TerminalNodeKind;
-        use idris::Idris;
-
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = NodeKind::Terminal(TerminalNodeKind::Instant(*self)).id();
-        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
-        children.push(child as &dyn AbilityTreeNode);
+        children.push(&self.step_or_phase as &dyn AbilityTreeNode);
+        children.push(&self.owner as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "{self}")
+        write!(out, "instant:")?;
+        out.push_inter_branch()?;
+        self.step_or_phase.display(out)?;
+        out.next_final_branch()?;
+        write!(out, "of player:")?;
+        out.push_final_branch()?;
+        self.owner.display(out)?;
+        out.pop_branch();
+        out.pop_branch();
+        Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
@@ -48,46 +45,74 @@ impl AbilityTreeNode for Instant {
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::AnyTime { span } => *span,
-            Self::TheBeginningOfTheNextEndStep { span } => *span,
-        }
-    }
-}
-
-impl IntoToken for Instant {
-    #[cfg(feature = "lexer")]
-    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        match span.text {
-            "any time" => Some(Self::AnyTime {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }),
-            "the beginning of the next end step" => Some(Self::TheBeginningOfTheNextEndStep {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }),
-            _ => None,
-        }
+        self.span
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Instant {
     fn dummy_init() -> Self {
-        Self::TheBeginningOfTheNextEndStep {
+        Self {
+            step_or_phase: crate::utils::dummy(),
+            owner: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
     }
 }
 
-impl std::fmt::Display for Instant {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+/// Either a step or a phase, both discrete time elements.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum StepOrPhase {
+    Step(crate::ability_tree::terminals::Step),
+    Phase(crate::ability_tree::terminals::Phase),
+}
+
+impl AbilityTreeNode for StepOrPhase {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::StepOrPhase.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::AnyTime { .. } => write!(f, "at any time"),
-            Self::TheBeginningOfTheNextEndStep { .. } => write!(f, "at the beginning of the next endstep"),
+            Self::Step(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Phase(child) => children.push(child as &dyn AbilityTreeNode),
         }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "step or phase:")?;
+        out.push_final_branch()?;
+        match self {
+            Self::Step(child) => child.display(out)?,
+            Self::Phase(child) => child.display(out)?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "step or phase"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::Step(child) => child.node_span(),
+            Self::Phase(child) => child.node_span(),
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for StepOrPhase {
+    fn dummy_init() -> Self {
+        Self::Step(crate::utils::dummy())
     }
 }
 

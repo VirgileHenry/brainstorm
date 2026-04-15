@@ -1,5 +1,9 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
+/// Fixme: state specific based on kind ? spells can be countered,
+/// creatures can be attacking...
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -46,9 +50,36 @@ pub enum CardState {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl CardState {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl AbilityTreeNode for CardState {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::CardStateIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::CardState(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "owner specifier"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Attached { span } => *span,
             Self::Attacking { span } => *span,
@@ -126,6 +157,16 @@ impl IntoToken for CardState {
                 span: span.into(),
             }),
             _ => None,
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CardState {
+    fn dummy_init() -> Self {
+        Self::Attacking {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
         }
     }
 }

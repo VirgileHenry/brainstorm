@@ -30,21 +30,85 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::ManaCost { mana_cost: dummy() }.id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
             ]),
             merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(Token::Mana { mana }),
+                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
+                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
                 ] => Ok(ParserNode::ManaCost {
                     mana_cost: {
-                        let mut mana_cost = mana_cost.clone();
-                        if mana_cost.cost.try_push(mana.clone()).is_err() {
-                            return Err("Too many mana symbols for cost !");
+                        let mut cost = arrayvec::ArrayVec::new_const();
+                        cost.push(m1.clone());
+                        cost.push(m2.clone());
+                        terminals::ManaCost {
+                            cost,
+                            #[cfg(feature = "spanned_tree")]
+                            span: m1.node_span().merge(&m2.node_span()),
                         }
-                        mana_cost
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+            ]),
+            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
+                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
+                    ParserNode::LexerToken(Token::Mana { mana: m3 }),
+                ] => Ok(ParserNode::ManaCost {
+                    mana_cost: {
+                        let mut cost = arrayvec::ArrayVec::new_const();
+                        cost.push(m1.clone());
+                        cost.push(m2.clone());
+                        cost.push(m3.clone());
+                        terminals::ManaCost {
+                            cost,
+                            #[cfg(feature = "spanned_tree")]
+                            span: m1.node_span().merge(&m3.node_span()),
+                        }
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+            ]),
+            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
+                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
+                    ParserNode::LexerToken(Token::Mana { mana: m3 }),
+                    ParserNode::LexerToken(Token::Mana { mana: m4 }),
+                ] => Ok(ParserNode::ManaCost {
+                    mana_cost: {
+                        let mut cost = arrayvec::ArrayVec::new_const();
+                        cost.push(m1.clone());
+                        cost.push(m2.clone());
+                        cost.push(m3.clone());
+                        cost.push(m4.clone());
+                        terminals::ManaCost {
+                            cost,
+                            #[cfg(feature = "spanned_tree")]
+                            span: m1.node_span().merge(&m4.node_span()),
+                        }
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

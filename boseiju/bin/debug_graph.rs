@@ -1,8 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text =
-        "Flying\nWhenever Drakuseth attacks, it deals 4 damage to any target and 3 damage to each of up to two other targets.";
+    let oracle_text = "This land enters tapped.\n{T}: Add {W}.";
     let card_name = "Drakuseth";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

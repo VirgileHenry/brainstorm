@@ -11,72 +11,8 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    let standalone_keyword_abilities = crate::ability_tree::terminals::StandaloneKeywordAbility::all()
-        .map(|keyword| ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
-                keyword_ability: keyword.into(),
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id()]),
-            merged: ParserNode::KeywordAbility { ability: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::KeywordAbility(keyword))] => Ok(ParserNode::KeywordAbility {
-                    ability: crate::ability_tree::ability::keyword::keyword_to_abilities(*keyword)?,
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        })
-        .collect::<Vec<_>>();
-
-    let keyword_abilities_with_extra_nodes = vec![
-        /* Enchant an object specifiers (creature, artifact, creature you control...) */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
-                    keyword_ability: mtg_data::KeywordAbility::Enchant,
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
-            ]),
-            merged: ParserNode::KeywordAbility { ability: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
-                        keyword_ability: mtg_data::KeywordAbility::Enchant,
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    })),
-                    ParserNode::ObjectSpecifiers { specifiers },
-                ] => Ok(ParserNode::KeywordAbility {
-                    ability: crate::ability_tree::ability::KeywordAbility {
-                        keyword: crate::ability_tree::ability::keyword::ExpandedKeywordAbility::Enchant(
-                            crate::ability_tree::ability::keyword::EnchantKeywordAbility {
-                                enchantable_object: specifiers.clone(),
-                                #[cfg(feature = "spanned_tree")]
-                                span: span.merge(&specifiers.node_span()),
-                            },
-                        ),
-                        /* Fixme */
-                        ability: crate::ability_tree::ability::Ability::Spell(
-                            crate::ability_tree::ability::spell::SpellAbility {
-                                effects: crate::utils::HeapArrayVec::new(),
-                                #[cfg(feature = "spanned_tree")]
-                                span: Default::default(),
-                            },
-                        ),
-                        #[cfg(feature = "spanned_tree")]
-                        span: span.merge(&specifiers.node_span()),
-                    },
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* Ward with a mana cost */
+    [
+        /* Ward with a mana cost, no long hyphen */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
@@ -87,7 +23,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ManaCost { mana_cost: dummy() }.id(),
             ]),
-            merged: ParserNode::KeywordAbility { ability: dummy() }.id(),
+            merged: ParserNode::KeywordAbility {
+                keyword_ability: dummy(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
@@ -97,9 +36,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                     ParserNode::ManaCost { mana_cost },
                 ] => Ok(ParserNode::KeywordAbility {
-                    ability: crate::ability_tree::ability::KeywordAbility {
-                        keyword: crate::ability_tree::ability::keyword::ExpandedKeywordAbility::Ward(
-                            crate::ability_tree::ability::keyword::WardKeywordAbility {
+                    keyword_ability: crate::ability_tree::ability::KeywordAbility {
+                        keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Ward(
+                            crate::ability_tree::ability::keyword_ability::WardKeywordAbility {
                                 cost: crate::ability_tree::cost::Cost::ManaCost(mana_cost.clone()),
                                 #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&mana_cost.span),
@@ -137,7 +76,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::Cost { cost: dummy() }.id(),
             ]),
-            merged: ParserNode::KeywordAbility { ability: dummy() }.id(),
+            merged: ParserNode::KeywordAbility {
+                keyword_ability: dummy(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
@@ -148,9 +90,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
                     ParserNode::Cost { cost },
                 ] => Ok(ParserNode::KeywordAbility {
-                    ability: crate::ability_tree::ability::KeywordAbility {
-                        keyword: crate::ability_tree::ability::keyword::ExpandedKeywordAbility::Ward(
-                            crate::ability_tree::ability::keyword::WardKeywordAbility {
+                    keyword_ability: crate::ability_tree::ability::KeywordAbility {
+                        keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Ward(
+                            crate::ability_tree::ability::keyword_ability::WardKeywordAbility {
                                 cost: cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&cost.node_span()),
@@ -172,9 +114,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-    ];
-
-    [standalone_keyword_abilities, keyword_abilities_with_extra_nodes]
-        .into_iter()
-        .flatten()
+    ]
+    .into_iter()
 }

@@ -290,6 +290,7 @@ impl AbilityWord {
             Self::Void,
             Self::WillOfThePlaneswalkers,
             Self::WillOfTheCouncil,
-        ].into_iter()
+        ]
+        .into_iter()
     }
 }

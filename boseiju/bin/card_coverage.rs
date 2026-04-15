@@ -47,7 +47,7 @@ impl CoverageTestResults {
 
 fn main() -> std::io::Result<()> {
     /* Run the test coverage once, on all the cards */
-    let cards = mtg_cardbase::AllCardsIter::new();
+    let cards = mtg_cardbase::AllCardsIter::hexxed_v1_cards();
     let mut cards_parsing_results = Vec::with_capacity(cards.len());
 
     let mut last_shown_percentage = 0;
