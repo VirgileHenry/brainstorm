@@ -50,7 +50,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<imperative> and <imperative>" can make an imperative list */
+        /* "<imperative> and <imperative>." can make an imperative list */
         ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Imperative { imperative: dummy() }.id(),
@@ -82,6 +82,109 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             let mut imperatives = crate::utils::HeapArrayVec::new();
                             imperatives.push(imp1.clone());
                             imperatives.push(imp2.clone());
+                            imperatives
+                        },
+                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                            #[cfg(feature = "spanned_tree")]
+                            span: imp1.node_span().empty_at_start(),
+                        },
+                        condition: None,
+                        #[cfg(feature = "spanned_tree")]
+                        span: imp1.node_span().merge(dot_span),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<imperative>. <imperative>." can make an imperative list */
+        ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Imperative { imperative: imp1 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::Imperative { imperative: imp2 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
+                ] => Ok(ParserNode::ImperativeList {
+                    imperatives: crate::ability_tree::imperative::ImperativeList {
+                        imperatives: {
+                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            imperatives.push(imp1.clone());
+                            imperatives.push(imp2.clone());
+                            imperatives
+                        },
+                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                            #[cfg(feature = "spanned_tree")]
+                            span: imp1.node_span().empty_at_start(),
+                        },
+                        condition: None,
+                        #[cfg(feature = "spanned_tree")]
+                        span: imp1.node_span().merge(dot_span),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<imperative>. <imperative>. <imperative>." can make an imperative list */
+        ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Imperative { imperative: imp1 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::Imperative { imperative: imp2 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::Imperative { imperative: imp3 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                        #[cfg(feature = "spanned_tree")]
+                            span: dot_span,
+                    })),
+                ] => Ok(ParserNode::ImperativeList {
+                    imperatives: crate::ability_tree::imperative::ImperativeList {
+                        imperatives: {
+                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            imperatives.push(imp1.clone());
+                            imperatives.push(imp2.clone());
+                            imperatives.push(imp3.clone());
                             imperatives
                         },
                         executing_player: crate::ability_tree::player::PlayerSpecifier::You {

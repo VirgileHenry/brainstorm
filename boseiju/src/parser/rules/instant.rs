@@ -86,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     .id(),
                     ParserNode::LexerToken(Token::Step(step)).id(),
                 ]),
-                merged: ParserNode::Instant { instant: dummy() }.id(),
+                merged: ParserNode::RecurrentInstant { instant: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::The {
@@ -100,8 +100,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: player_span,
                         })),
                         ParserNode::LexerToken(Token::Step(step)),
-                    ] => Ok(ParserNode::Instant {
-                        instant: crate::ability_tree::time::Instant {
+                    ] => Ok(ParserNode::RecurrentInstant {
+                        instant: crate::ability_tree::time::RecurrentInstant {
                             step_or_phase: crate::ability_tree::time::StepOrPhase::Step(step.clone()),
                             owner: crate::ability_tree::player::PlayerSpecifier::You {
                                 #[cfg(feature = "spanned_tree")]
@@ -140,7 +140,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     .id(),
                     ParserNode::LexerToken(Token::Step(step)).id(),
                 ]),
-                merged: ParserNode::Instant { instant: dummy() }.id(),
+                merged: ParserNode::RecurrentInstant { instant: dummy() }.id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::The {
@@ -154,8 +154,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: player_span,
                         })),
                         ParserNode::LexerToken(Token::Step(step)),
-                    ] => Ok(ParserNode::Instant {
-                        instant: crate::ability_tree::time::Instant {
+                    ] => Ok(ParserNode::RecurrentInstant {
+                        instant: crate::ability_tree::time::RecurrentInstant {
                             step_or_phase: crate::ability_tree::time::StepOrPhase::Step(step.clone()),
                             owner: crate::ability_tree::player::PlayerSpecifier::All {
                                 #[cfg(feature = "spanned_tree")]
@@ -164,6 +164,68 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&step.node_span()),
                         },
+                    }),
+                    _ => Err("Provided tokens do not match rule definition"),
+                },
+                creation_loc: super::ParserRuleDeclarationLocation::here(),
+            },
+            /* "the beginning of your next <step>" is an incoming instant for "you" player */
+            super::ParserRule {
+                expanded: super::RuleLhs::new(&[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::The {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Beginning {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Next {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }))
+                    .id(),
+                    ParserNode::LexerToken(Token::Step(step)).id(),
+                ]),
+                merged: ParserNode::IncomingInstant { instant: dummy() }.id(),
+                reduction: |nodes: &[ParserNode]| match &nodes {
+                    &[
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::The {
+                            #[cfg(feature = "spanned_tree")]
+                                span: start_span,
+                        })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Beginning { .. })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of { .. })),
+                        ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
+                            #[cfg(feature = "spanned_tree")]
+                                span: player_span,
+                        })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Next { .. })),
+                        ParserNode::LexerToken(Token::Step(step)),
+                    ] => Ok(ParserNode::IncomingInstant {
+                        instant: crate::ability_tree::time::IncomingInstant::NextStepOrPhase(
+                            crate::ability_tree::time::IncomingNextStepOrPhase {
+                                step_or_phase: crate::ability_tree::time::StepOrPhase::Step(step.clone()),
+                                owner: crate::ability_tree::player::PlayerSpecifier::You {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *player_span,
+                                },
+                                #[cfg(feature = "spanned_tree")]
+                                span: step.node_span().merge(start_span),
+                            },
+                        ),
                     }),
                     _ => Err("Provided tokens do not match rule definition"),
                 },

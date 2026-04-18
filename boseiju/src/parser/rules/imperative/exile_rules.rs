@@ -12,7 +12,39 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* Exile object reference */
+        /* "exile <object reference>" */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+            ]),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                    ParserNode::ObjectReference { reference },
+                ] => Ok(ParserNode::Imperative {
+                    imperative: crate::ability_tree::imperative::Imperative::Exile(
+                        crate::ability_tree::imperative::ExileImperative {
+                            object: reference.clone(),
+                            follow_up: None,
+                            #[cfg(feature = "spanned_tree")]
+                            span: span.merge(&reference.node_span()),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "exile <object reference> from <zone>" */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {

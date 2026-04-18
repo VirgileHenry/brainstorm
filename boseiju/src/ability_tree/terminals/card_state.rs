@@ -50,6 +50,54 @@ pub enum CardState {
     },
 }
 
+impl CardState {
+    pub fn all() -> impl Iterator<Item = Self> {
+        [
+            Self::Attached {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Attacking {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Blocking {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Blocked {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Enchanted {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Equipped {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Exiled {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Revealed {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Tapped {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Untapped {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+        ]
+        .into_iter()
+    }
+}
+
 impl AbilityTreeNode for CardState {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;

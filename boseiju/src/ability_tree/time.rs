@@ -1,15 +1,21 @@
+mod incoming_instant;
+mod recurrent_instant;
+mod step_or_phase;
+
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
+pub use incoming_instant::*;
+pub use recurrent_instant::*;
+pub use step_or_phase::*;
+
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Instant {
-    pub step_or_phase: StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerSpecifier,
-    #[cfg(feature = "spanned_tree")]
-    pub span: crate::ability_tree::span::TreeSpan,
+pub enum Instant {
+    Incoming(IncomingInstant),
+    Reccurent(RecurrentInstant),
 }
 
 impl AbilityTreeNode for Instant {
@@ -20,21 +26,21 @@ impl AbilityTreeNode for Instant {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.step_or_phase as &dyn AbilityTreeNode);
-        children.push(&self.owner as &dyn AbilityTreeNode);
+        match self {
+            Self::Incoming(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Reccurent(child) => children.push(child as &dyn AbilityTreeNode),
+        }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "instant:")?;
-        out.push_inter_branch()?;
-        self.step_or_phase.display(out)?;
-        out.next_final_branch()?;
-        write!(out, "of player:")?;
         out.push_final_branch()?;
-        self.owner.display(out)?;
-        out.pop_branch();
+        match self {
+            Self::Incoming(child) => child.display(out)?,
+            Self::Reccurent(child) => child.display(out)?,
+        }
         out.pop_branch();
         Ok(())
     }
@@ -45,74 +51,17 @@ impl AbilityTreeNode for Instant {
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        self.span
+        match self {
+            Self::Incoming(child) => child.node_span(),
+            Self::Reccurent(child) => child.node_span(),
+        }
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Instant {
     fn dummy_init() -> Self {
-        Self {
-            step_or_phase: crate::utils::dummy(),
-            owner: crate::utils::dummy(),
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }
-    }
-}
-
-/// Either a step or a phase, both discrete time elements.
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum StepOrPhase {
-    Step(crate::ability_tree::terminals::Step),
-    Phase(crate::ability_tree::terminals::Phase),
-}
-
-impl AbilityTreeNode for StepOrPhase {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::ability_tree::NodeKind::StepOrPhase.id()
-    }
-
-    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let mut children = arrayvec::ArrayVec::new_const();
-        match self {
-            Self::Step(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Phase(child) => children.push(child as &dyn AbilityTreeNode),
-        }
-        children
-    }
-
-    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
-        write!(out, "step or phase:")?;
-        out.push_final_branch()?;
-        match self {
-            Self::Step(child) => child.display(out)?,
-            Self::Phase(child) => child.display(out)?,
-        }
-        out.pop_branch();
-        Ok(())
-    }
-
-    fn node_tag(&self) -> &'static str {
-        "step or phase"
-    }
-
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Step(child) => child.node_span(),
-            Self::Phase(child) => child.node_span(),
-        }
-    }
-}
-
-#[cfg(feature = "parser")]
-impl crate::utils::DummyInit for StepOrPhase {
-    fn dummy_init() -> Self {
-        Self::Step(crate::utils::dummy())
+        Self::Reccurent(crate::utils::dummy())
     }
 }
 
@@ -122,6 +71,10 @@ impl crate::utils::DummyInit for StepOrPhase {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ForwardDuration {
     ForAsLongAsItsExiled {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Forever {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -168,6 +121,7 @@ impl AbilityTreeNode for ForwardDuration {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::ForAsLongAsItsExiled { span } => *span,
+            Self::Forever { span } => *span,
             Self::UntilEndOfTurn { span } => *span,
             Self::UntilEndOfYourNextTurn { span } => *span,
         }
@@ -205,6 +159,7 @@ impl std::fmt::Display for ForwardDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::ForAsLongAsItsExiled { .. } => write!(f, "for as long as it remains exiled"),
+            Self::Forever { .. } => write!(f, "forever"),
             Self::UntilEndOfTurn { .. } => write!(f, "until end of turn"),
             Self::UntilEndOfYourNextTurn { .. } => write!(f, "until the end of your next turn"),
         }

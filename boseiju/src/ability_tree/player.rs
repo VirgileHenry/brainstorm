@@ -10,6 +10,10 @@ pub enum PlayerSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    AnOpponent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Any {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -60,14 +64,24 @@ impl AbilityTreeNode for PlayerSpecifier {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "player specifier:")?;
         match self {
             Self::All { .. } => write!(out, "all players")?,
+            Self::AnOpponent { .. } => write!(out, "an opponent")?,
             Self::Any { .. } => write!(out, "a player")?,
             Self::EachOpponent { .. } => write!(out, "each opponent")?,
-            Self::ObjectController(child) => child.display(out)?,
+            Self::ObjectController(child) => {
+                write!(out, "object controller's:")?;
+                out.push_final_branch()?;
+                child.display(out)?;
+                out.pop_branch();
+            }
             Self::TargetOpponent { .. } => write!(out, "target opponent")?,
-            Self::ObjectOwner(child) => child.display(out)?,
+            Self::ObjectOwner(child) => {
+                write!(out, "object owner's:")?;
+                out.push_final_branch()?;
+                child.display(out)?;
+                out.pop_branch();
+            }
             Self::ToYourLeft { .. } => write!(out, "the player to your left")?,
             Self::ToYourRight { .. } => write!(out, "the player to your right")?,
             Self::You { .. } => write!(out, "you")?,
@@ -83,6 +97,7 @@ impl AbilityTreeNode for PlayerSpecifier {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::All { span } => *span,
+            Self::AnOpponent { span } => *span,
             Self::Any { span } => *span,
             Self::EachOpponent { span } => *span,
             Self::ObjectController(child) => child.span,

@@ -63,3 +63,64 @@ impl AbilityTreeNode for TriggeredAbility {
         self.span
     }
 }
+
+/// Fixme: doc
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DelayedTriggerAbility {
+    pub instant: crate::ability_tree::time::IncomingInstant,
+    pub effect: crate::ability_tree::ability::spell::SpellAbility,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl AbilityTreeNode for DelayedTriggerAbility {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::DelayedTriggerAbility.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.effect as &dyn AbilityTreeNode);
+        children.push(&self.instant as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "delayed triggered ability:")?;
+        out.push_inter_branch()?;
+        write!(out, "instant:")?;
+        out.push_final_branch()?;
+        self.instant.display(out)?;
+        out.pop_branch();
+        out.next_final_branch()?;
+        write!(out, "effect:")?;
+        out.push_final_branch()?;
+        self.effect.display(out)?;
+        out.pop_branch();
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "delayed triggered ability"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+impl crate::utils::DummyInit for DelayedTriggerAbility {
+    fn dummy_init() -> Self {
+        Self {
+            instant: crate::utils::dummy(),
+            effect: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}

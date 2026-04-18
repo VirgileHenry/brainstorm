@@ -60,7 +60,7 @@ pub fn parser_error_to_json(error: boseiju::parser::ParserError) -> String {
             let message = message.replace('\n', "\\n");
             format!("{{\"start\":0,\"end\":0,\"message\":\"{message}\"}}")
         }
-        boseiju::parser::ParserError::UnexpectedToken { found, expecting } => {
+        boseiju::parser::ParserError::UnexpectedToken { found, expecting, .. } => {
             let mut message = format!("Unexpected token {} at position {}", found.name, found.position);
             message.push_str(&format!("\nExpecting one of:"));
             for expecting in expecting.iter().take(10) {

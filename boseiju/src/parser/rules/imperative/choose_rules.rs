@@ -147,11 +147,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         condition: None,
                         imperatives: {
                             let mut imperatives = crate::utils::HeapArrayVec::new();
-                            imperatives.push(crate::ability_tree::imperative::Imperative::Choose(
-                                crate::ability_tree::imperative::ChooseImperative {
-                                    choice_count: number.clone(),
+                            imperatives.push(crate::ability_tree::imperative::Imperative::Modal(
+                                crate::ability_tree::imperative::ModalImperative {
+                                    mode_count: number.clone(),
                                     can_choose_same_mode: false,
-                                    choices: choices.clone(),
+                                    modes: choices.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: choose_span.merge(&choices_span),
                                 },

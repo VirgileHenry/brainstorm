@@ -40,10 +40,8 @@ pub enum ParserNode {
     CreatureAction {
         action: ability_tree::event::CreatureAction,
     },
-    CreatureSubtypeList {
-        list: arrayvec::ArrayVec<crate::ability_tree::object::CreatureSubtype, 24>, /* Fixme */
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
+    CreatureSubtype {
+        subtype: ability_tree::object::CreatureSubtype,
     },
     Event {
         event: ability_tree::event::Event,
@@ -71,14 +69,17 @@ pub enum ParserNode {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Instant {
-        instant: crate::ability_tree::time::Instant,
+    IncomingInstant {
+        instant: crate::ability_tree::time::IncomingInstant,
     },
     KeywordAbility {
         keyword_ability: ability_tree::ability::KeywordAbility,
     },
     ManaCost {
         mana_cost: ability_tree::terminals::ManaCost,
+    },
+    ManaToAdd {
+        mana: ability_tree::imperative::ManaToAdd,
     },
     Number {
         number: ability_tree::number::Number,
@@ -103,6 +104,9 @@ pub enum ParserNode {
     },
     PutCounterKind {
         kind: ability_tree::imperative::CounterKind,
+    },
+    RecurrentInstant {
+        instant: crate::ability_tree::time::RecurrentInstant,
     },
     SpellAbility {
         ability: crate::ability_tree::ability::spell::SpellAbility,

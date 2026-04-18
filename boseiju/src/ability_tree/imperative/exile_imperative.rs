@@ -38,7 +38,7 @@ impl crate::ability_tree::AbilityTreeNode for ExileImperative {
         out.push_final_branch()?;
         self.object.display(out)?;
         out.pop_branch();
-        out.next_inter_branch()?;
+        out.next_final_branch()?;
         match self.follow_up.as_ref() {
             Some(follow_up) => {
                 write!(out, "and then:")?;
@@ -138,8 +138,8 @@ impl crate::utils::DummyInit for ExileFollowUp {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExileFollowUpReturn {
-    pub return_imperative: crate::ability_tree::imperative::ReturnImperative,
-    pub at: Option<crate::ability_tree::time::Instant>,
+    pub return_imperative: crate::ability_tree::imperative::ChangeZoneImperative,
+    pub at: Option<crate::ability_tree::time::IncomingInstant>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

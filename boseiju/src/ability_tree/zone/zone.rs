@@ -7,6 +7,14 @@ use crate::lexer::IntoToken;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnableZone {
+    /// The battlefield is technically not an owned zone.
+    ///
+    /// However, "the battlefield under <player> control" can be interpreted
+    /// as "your battlefield ?" soo it makes sense
+    Battlefield {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Graveyard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -25,6 +33,7 @@ pub enum OwnableZone {
 impl OwnableZone {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Battlefield { span } => *span,
             Self::Graveyard { span } => *span,
             Self::Hand { span } => *span,
             Self::Library { span } => *span,
@@ -64,6 +73,7 @@ impl AbilityTreeNode for OwnableZone {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Battlefield { span } => *span,
             Self::Graveyard { span } => *span,
             Self::Hand { span } => *span,
             Self::Library { span } => *span,
@@ -74,6 +84,7 @@ impl AbilityTreeNode for OwnableZone {
 impl std::fmt::Display for OwnableZone {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            OwnableZone::Battlefield { .. } => write!(f, "graveyard"),
             OwnableZone::Graveyard { .. } => write!(f, "graveyard"),
             OwnableZone::Hand { .. } => write!(f, "hand"),
             OwnableZone::Library { .. } => write!(f, "library"),

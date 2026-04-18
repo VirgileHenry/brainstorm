@@ -11,7 +11,8 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    [/* Destroy any object reference */ ParserRule {
+    /* Sacrifice any object reference */
+    std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                 keyword_action: mtg_data::KeywordAction::Sacrifice,
@@ -42,6 +43,5 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: ParserRuleDeclarationLocation::here(),
-    }]
-    .into_iter()
+    })
 }

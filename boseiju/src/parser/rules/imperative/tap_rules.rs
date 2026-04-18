@@ -1,0 +1,45 @@
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
+use crate::parser::rules::ParserNode;
+use crate::parser::rules::ParserRule;
+use crate::parser::rules::ParserRuleDeclarationLocation;
+use crate::parser::rules::RuleLhs;
+use crate::utils::dummy;
+use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+    /* Tap any object reference */
+    std::iter::once(ParserRule {
+        expanded: RuleLhs::new(&[
+            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                keyword_action: mtg_data::KeywordAction::Tap,
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::ObjectReference { reference: dummy() }.id(),
+        ]),
+        merged: ParserNode::Imperative { imperative: dummy() }.id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Tap,
+                    #[cfg(feature = "spanned_tree")]
+                    span,
+                })),
+                ParserNode::ObjectReference { reference },
+            ] => Ok(ParserNode::Imperative {
+                imperative: crate::ability_tree::imperative::Imperative::Tap(crate::ability_tree::imperative::TapImperative {
+                    object: reference.clone(),
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.merge(&reference.node_span()),
+                }),
+            }),
+            _ => Err("Provided tokens do not match rule definition"),
+        },
+        creation_loc: ParserRuleDeclarationLocation::here(),
+    })
+}

@@ -12,7 +12,7 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "add <number> mana of any color"  */
+        /* "add <mana to add>" allows to make an add mana imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
@@ -20,6 +20,124 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
+                ParserNode::ManaToAdd { mana: dummy() }.id(),
+            ]),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
+                        #[cfg(feature = "spanned_tree")]
+                            span: add_span,
+                    })),
+                    ParserNode::ManaToAdd { mana },
+                ] => Ok(ParserNode::Imperative {
+                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
+                        crate::ability_tree::imperative::AddManaImperative {
+                            possibilities: [mana.clone()].into_iter().collect(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: mana.node_span().merge(add_span),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "add <mana to add> or <mana to add>" allows to make an add mana imperative */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ManaToAdd { mana: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ManaToAdd { mana: dummy() }.id(),
+            ]),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
+                        #[cfg(feature = "spanned_tree")]
+                            span: add_span,
+                    })),
+                    ParserNode::ManaToAdd { mana: m1 },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::ManaToAdd { mana: m2 },
+                ] => Ok(ParserNode::Imperative {
+                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
+                        crate::ability_tree::imperative::AddManaImperative {
+                            possibilities: [m1.clone(), m2.clone()].into_iter().collect(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: m2.node_span().merge(add_span),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "add <mana to add>, <mana to add>, or <mana to add>" allows to make an add mana imperative */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ManaToAdd { mana: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ManaToAdd { mana: dummy() }.id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ManaToAdd { mana: dummy() }.id(),
+            ]),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
+                        #[cfg(feature = "spanned_tree")]
+                            span: add_span,
+                    })),
+                    ParserNode::ManaToAdd { mana: m1 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::ManaToAdd { mana: m2 },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::ManaToAdd { mana: m3 },
+                ] => Ok(ParserNode::Imperative {
+                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
+                        crate::ability_tree::imperative::AddManaImperative {
+                            possibilities: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: m3.node_span().merge(add_span),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<number> mana of any color" */
+        ParserRule {
+            expanded: RuleLhs::new(&[
                 ParserNode::Number { number: dummy() }.id(),
                 ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Mana {
                     #[cfg(feature = "spanned_tree")]
@@ -42,40 +160,23 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ManaToAdd { mana: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                        #[cfg(feature = "spanned_tree")]
-                            span: start_span,
-                    })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Mana {
-                        #[cfg(feature = "spanned_tree")]
-                            span: any_color_start_span,
-                    })),
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Mana { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Any { .. })),
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Color {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
-                        crate::ability_tree::imperative::AddManaImperative {
-                            mana: {
-                                let mut added_mana = arrayvec::ArrayVec::new_const();
-                                added_mana.push(crate::ability_tree::imperative::ManaToAdd {
-                                    kind: crate::ability_tree::imperative::ManaToAddKind::AnyColor {
-                                        span: any_color_start_span.merge(end_span),
-                                    },
-                                    amount: number.clone(),
-                                    span: any_color_start_span.merge(end_span),
-                                });
-                                added_mana
-                            },
+                ] => Ok(ParserNode::ManaToAdd {
+                    mana: crate::ability_tree::imperative::ManaToAdd::AnyColor(
+                        crate::ability_tree::imperative::ManaToAddOfAnyColor {
+                            amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: start_span.merge(end_span),
+                            span: number.node_span().merge(end_span),
                         },
                     ),
                 }),
@@ -83,43 +184,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "add <mana symbol>" is the simplest way to add mana */
+        /* "<mana symbol>" is the simplest mana to add */
         ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-            ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Mana { mana: dummy() }).id()]),
+            merged: ParserNode::ManaToAdd { mana: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                        #[cfg(feature = "spanned_tree")]
-                            span: add_span,
-                    })),
-                    ParserNode::LexerToken(Token::Mana { mana }),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
-                        crate::ability_tree::imperative::AddManaImperative {
-                            mana: {
-                                let mut added_mana = arrayvec::ArrayVec::new_const();
-                                added_mana.push(crate::ability_tree::imperative::ManaToAdd {
-                                    kind: crate::ability_tree::imperative::ManaToAddKind::Specific(mana.clone()),
-                                    amount: crate::ability_tree::number::Number::Number(
-                                        crate::ability_tree::number::FixedNumber {
-                                            number: 1,
-                                            span: mana.node_span(),
-                                        },
-                                    ),
-                                    span: mana.node_span(),
-                                });
-                                added_mana
-                            },
+                &[ParserNode::LexerToken(Token::Mana { mana })] => Ok(ParserNode::ManaToAdd {
+                    mana: crate::ability_tree::imperative::ManaToAdd::Symbols(
+                        crate::ability_tree::imperative::ManaToAddSymbols {
+                            symbols: [mana.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: mana.node_span().merge(add_span),
+                            span: mana.node_span(),
                         },
                     ),
                 }),
@@ -130,44 +205,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add <mana> <mana> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ManaToAdd { mana: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                        #[cfg(feature = "spanned_tree")]
-                            span: add_span,
-                    })),
                     ParserNode::LexerToken(Token::Mana { mana: m1 }),
                     ParserNode::LexerToken(Token::Mana { mana: m2 }),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
-                        crate::ability_tree::imperative::AddManaImperative {
-                            mana: {
-                                let mut added_mana = arrayvec::ArrayVec::new_const();
-                                for mana in [m1, m2] {
-                                    added_mana.push(crate::ability_tree::imperative::ManaToAdd {
-                                        kind: crate::ability_tree::imperative::ManaToAddKind::Specific(mana.clone()),
-                                        amount: crate::ability_tree::number::Number::Number(
-                                            crate::ability_tree::number::FixedNumber {
-                                                number: 1,
-                                                span: mana.node_span(),
-                                            },
-                                        ),
-                                        span: mana.node_span(),
-                                    });
-                                }
-                                added_mana
-                            },
+                ] => Ok(ParserNode::ManaToAdd {
+                    mana: crate::ability_tree::imperative::ManaToAdd::Symbols(
+                        crate::ability_tree::imperative::ManaToAddSymbols {
+                            symbols: [m1.clone(), m2.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m2.node_span().merge(add_span),
+                            span: m1.node_span().merge(&m2.node_span()),
                         },
                     ),
                 }),
@@ -178,46 +229,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add <mana> <mana> <mana> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ManaToAdd { mana: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                        #[cfg(feature = "spanned_tree")]
-                            span: add_span,
-                    })),
                     ParserNode::LexerToken(Token::Mana { mana: m1 }),
                     ParserNode::LexerToken(Token::Mana { mana: m2 }),
                     ParserNode::LexerToken(Token::Mana { mana: m3 }),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
-                        crate::ability_tree::imperative::AddManaImperative {
-                            mana: {
-                                let mut added_mana = arrayvec::ArrayVec::new_const();
-                                for mana in [m1, m2, m3] {
-                                    added_mana.push(crate::ability_tree::imperative::ManaToAdd {
-                                        kind: crate::ability_tree::imperative::ManaToAddKind::Specific(mana.clone()),
-                                        amount: crate::ability_tree::number::Number::Number(
-                                            crate::ability_tree::number::FixedNumber {
-                                                number: 1,
-                                                span: mana.node_span(),
-                                            },
-                                        ),
-                                        span: mana.node_span(),
-                                    });
-                                }
-                                added_mana
-                            },
+                ] => Ok(ParserNode::ManaToAdd {
+                    mana: crate::ability_tree::imperative::ManaToAdd::Symbols(
+                        crate::ability_tree::imperative::ManaToAddSymbols {
+                            symbols: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m3.node_span().merge(add_span),
+                            span: m1.node_span().merge(&m3.node_span()),
                         },
                     ),
                 }),
@@ -228,48 +255,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add <mana> <mana> <mana> <mana> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ManaToAdd { mana: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                        #[cfg(feature = "spanned_tree")]
-                            span: add_span,
-                    })),
                     ParserNode::LexerToken(Token::Mana { mana: m1 }),
                     ParserNode::LexerToken(Token::Mana { mana: m2 }),
                     ParserNode::LexerToken(Token::Mana { mana: m3 }),
                     ParserNode::LexerToken(Token::Mana { mana: m4 }),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
-                        crate::ability_tree::imperative::AddManaImperative {
-                            mana: {
-                                let mut added_mana = arrayvec::ArrayVec::new_const();
-                                for mana in [m1, m2, m3, m4] {
-                                    added_mana.push(crate::ability_tree::imperative::ManaToAdd {
-                                        kind: crate::ability_tree::imperative::ManaToAddKind::Specific(mana.clone()),
-                                        amount: crate::ability_tree::number::Number::Number(
-                                            crate::ability_tree::number::FixedNumber {
-                                                number: 1,
-                                                span: mana.node_span(),
-                                            },
-                                        ),
-                                        span: mana.node_span(),
-                                    });
-                                }
-                                added_mana
-                            },
+                ] => Ok(ParserNode::ManaToAdd {
+                    mana: crate::ability_tree::imperative::ManaToAdd::Symbols(
+                        crate::ability_tree::imperative::ManaToAddSymbols {
+                            symbols: [m1.clone(), m2.clone(), m3.clone(), m4.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m4.node_span().merge(add_span),
+                            span: m1.node_span().merge(&m4.node_span()),
                         },
                     ),
                 }),
@@ -280,50 +283,28 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add <mana> <mana> <mana> <mana> <mana> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
                 ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ManaToAdd { mana: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
-                        #[cfg(feature = "spanned_tree")]
-                            span: add_span,
-                    })),
                     ParserNode::LexerToken(Token::Mana { mana: m1 }),
                     ParserNode::LexerToken(Token::Mana { mana: m2 }),
                     ParserNode::LexerToken(Token::Mana { mana: m3 }),
                     ParserNode::LexerToken(Token::Mana { mana: m4 }),
                     ParserNode::LexerToken(Token::Mana { mana: m5 }),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
-                        crate::ability_tree::imperative::AddManaImperative {
-                            mana: {
-                                let mut added_mana = arrayvec::ArrayVec::new_const();
-                                for mana in [m1, m2, m3, m4, m5] {
-                                    added_mana.push(crate::ability_tree::imperative::ManaToAdd {
-                                        kind: crate::ability_tree::imperative::ManaToAddKind::Specific(mana.clone()),
-                                        amount: crate::ability_tree::number::Number::Number(
-                                            crate::ability_tree::number::FixedNumber {
-                                                number: 1,
-                                                span: mana.node_span(),
-                                            },
-                                        ),
-                                        span: mana.node_span(),
-                                    });
-                                }
-                                added_mana
-                            },
+                ] => Ok(ParserNode::ManaToAdd {
+                    mana: crate::ability_tree::imperative::ManaToAdd::Symbols(
+                        crate::ability_tree::imperative::ManaToAddSymbols {
+                            symbols: [m1.clone(), m2.clone(), m3.clone(), m4.clone(), m5.clone()]
+                                .into_iter()
+                                .collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m5.node_span().merge(add_span),
+                            span: m1.node_span().merge(&m5.node_span()),
                         },
                     ),
                 }),

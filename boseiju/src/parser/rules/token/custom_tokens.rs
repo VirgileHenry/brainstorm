@@ -12,87 +12,27 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Tokens creatures with one creature subtype */
+    /* creature subtypes can be converted to the abstract "creature subtype" to avoid rule explosion */
     let creature_subtypes_to_subtype_list = crate::ability_tree::object::CreatureSubtype::all()
         .into_iter()
-        .map(|creature_subtype| {
-            [
-                /* A creature subtype on its own can make a subtype list */
-                ParserRule {
-                    expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::ObjectKind(
-                        crate::ability_tree::object::ObjectKind::CreatureSubtype(creature_subtype),
-                    ))
-                    .id()]),
-                    merged: ParserNode::CreatureSubtypeList {
-                        list: dummy(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }
-                    .id(),
-                    reduction: |nodes: &[ParserNode]| match &nodes {
-                        &[
-                            ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CreatureSubtype(
-                                creature_subtype,
-                            ))),
-                        ] => Ok(ParserNode::CreatureSubtypeList {
-                            list: {
-                                let mut list = arrayvec::ArrayVec::new();
-                                list.push(creature_subtype.clone());
-                                list
-                            },
-                            #[cfg(feature = "spanned_tree")]
-                            span: creature_subtype.span,
-                        }),
-                        _ => Err("Provided tokens do not match rule definition"),
-                    },
-                    creation_loc: ParserRuleDeclarationLocation::here(),
-                },
-                /* We can add creatures to that list (we can't express al the rules because of rule explosion here) */
-                ParserRule {
-                    expanded: RuleLhs::new(&[
-                        ParserNode::CreatureSubtypeList {
-                            list: dummy(),
-                            #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
-                        }
-                        .id(),
-                        ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CreatureSubtype(
-                            creature_subtype,
-                        )))
-                        .id(),
-                    ]),
-                    merged: ParserNode::CreatureSubtypeList {
-                        list: dummy(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }
-                    .id(),
-                    reduction: |nodes: &[ParserNode]| match &nodes {
-                        &[
-                            ParserNode::CreatureSubtypeList {
-                                list,
-                                #[cfg(feature = "spanned_tree")]
-                                span,
-                            },
-                            ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CreatureSubtype(
-                                creature_subtype,
-                            ))),
-                        ] => Ok(ParserNode::CreatureSubtypeList {
-                            list: {
-                                let mut list = list.clone();
-                                list.push(creature_subtype.clone());
-                                list
-                            },
-                            #[cfg(feature = "spanned_tree")]
-                            span: span.merge(&creature_subtype.span),
-                        }),
-                        _ => Err("Provided tokens do not match rule definition"),
-                    },
-                    creation_loc: ParserRuleDeclarationLocation::here(),
-                },
-            ]
+        .map(|creature_subtype| ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::ObjectKind(
+                crate::ability_tree::object::ObjectKind::CreatureSubtype(creature_subtype),
+            ))
+            .id()]),
+            merged: ParserNode::CreatureSubtype { subtype: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CreatureSubtype(
+                        creature_subtype,
+                    ))),
+                ] => Ok(ParserNode::CreatureSubtype {
+                    subtype: creature_subtype.clone(),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
         })
-        .flatten()
         .collect::<Vec<_>>();
 
     let single_color_to_colors = crate::ability_tree::terminals::Color::all()
@@ -138,7 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         .collect::<Vec<_>>();
 
     let create_token_rules = vec![
-        /* Token layout with the form: <p>/<t> <colors> <creature subtypes> creature token with <ability> */
+        /* <P/T> <colors> <subtype> creature token  */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PowerToughness {
@@ -151,12 +91,153 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 })
                 .id(),
                 ParserNode::Colors { colors: dummy() }.id(),
-                ParserNode::CreatureSubtypeList {
-                    list: dummy(),
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }
+                ParserNode::CreatureSubtype { subtype: dummy() }.id(),
+                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
+                    crate::ability_tree::object::CardType {
+                        card_type: mtg_data::CardType::Creature,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                )))
                 .id(),
+                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
+                    crate::ability_tree::object::Supertype {
+                        supertype: mtg_data::Supertype::Token,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                )))
+                .id(),
+            ]),
+            merged: ParserNode::TokenDefinition { token: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PowerToughness {
+                        #[cfg(feature = "spanned_tree")]
+                        pt,
+                        ..
+                    }),
+                    ParserNode::Colors { colors },
+                    ParserNode::CreatureSubtype { subtype },
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
+                        crate::ability_tree::object::CardType {
+                            card_type: mtg_data::CardType::Creature,
+                            ..
+                        },
+                    ))),
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
+                        crate::ability_tree::object::Supertype {
+                            supertype: mtg_data::Supertype::Token,
+                            #[cfg(feature = "spanned_tree")]
+                                span: token_span,
+                        },
+                    ))),
+                ] => Ok(ParserNode::TokenDefinition {
+                    token: crate::ability_tree::card_layout::TokenLayout {
+                        name: format!("{} token", subtype.creature_subtype),
+                        card_type: crate::ability_tree::type_line::TypeLine::creature_token(
+                            &[subtype.clone()],
+                            #[cfg(feature = "spanned_tree")]
+                            subtype.node_span().merge(token_span),
+                        ),
+                        colors: colors.clone(),
+                        abilities: crate::AbilityTree::empty(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: pt.span.merge(token_span),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* <P/T> <colors> <subtype1> <subtype2> creature token  */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::PowerToughness {
+                    pt: terminals::PowerToughness {
+                        power: 0,
+                        toughness: 0,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                })
+                .id(),
+                ParserNode::Colors { colors: dummy() }.id(),
+                ParserNode::CreatureSubtype { subtype: dummy() }.id(),
+                ParserNode::CreatureSubtype { subtype: dummy() }.id(),
+                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
+                    crate::ability_tree::object::CardType {
+                        card_type: mtg_data::CardType::Creature,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                )))
+                .id(),
+                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
+                    crate::ability_tree::object::Supertype {
+                        supertype: mtg_data::Supertype::Token,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                )))
+                .id(),
+            ]),
+            merged: ParserNode::TokenDefinition { token: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PowerToughness {
+                        #[cfg(feature = "spanned_tree")]
+                        pt,
+                        ..
+                    }),
+                    ParserNode::Colors { colors },
+                    ParserNode::CreatureSubtype { subtype: subtype1 },
+                    ParserNode::CreatureSubtype { subtype: subtype2 },
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
+                        crate::ability_tree::object::CardType {
+                            card_type: mtg_data::CardType::Creature,
+                            ..
+                        },
+                    ))),
+                    ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
+                        crate::ability_tree::object::Supertype {
+                            supertype: mtg_data::Supertype::Token,
+                            #[cfg(feature = "spanned_tree")]
+                                span: token_span,
+                        },
+                    ))),
+                ] => Ok(ParserNode::TokenDefinition {
+                    token: crate::ability_tree::card_layout::TokenLayout {
+                        name: format!("{} token", subtype1.creature_subtype),
+                        card_type: crate::ability_tree::type_line::TypeLine::creature_token(
+                            &[subtype1.clone(), subtype2.clone()],
+                            #[cfg(feature = "spanned_tree")]
+                            subtype1.node_span().merge(token_span),
+                        ),
+                        colors: colors.clone(),
+                        abilities: crate::AbilityTree::empty(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: pt.span.merge(token_span),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* <P/T> <colors> <subtype> creature token with <ability>  */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::PowerToughness {
+                    pt: terminals::PowerToughness {
+                        power: 0,
+                        toughness: 0,
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                })
+                .id(),
+                ParserNode::Colors { colors: dummy() }.id(),
+                ParserNode::CreatureSubtype { subtype: dummy() }.id(),
                 ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
                     crate::ability_tree::object::CardType {
                         card_type: mtg_data::CardType::Creature,
@@ -192,11 +273,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         ..
                     }),
                     ParserNode::Colors { colors },
-                    ParserNode::CreatureSubtypeList {
-                        list: creature_subtypes_list,
-                        #[cfg(feature = "spanned_tree")]
-                            span: creature_subtypes_span,
-                    },
+                    ParserNode::CreatureSubtype { subtype },
                     ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::CardType(
                         crate::ability_tree::object::CardType {
                             card_type: mtg_data::CardType::Creature,
@@ -214,17 +291,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::TokenDefinition {
                     token: crate::ability_tree::card_layout::TokenLayout {
-                        name: format!(
-                            "{} token",
-                            creature_subtypes_list
-                                .iter()
-                                .map(|st| format!("{} ", st.creature_subtype))
-                                .collect::<String>()
-                        ),
+                        name: format!("{} token", subtype.creature_subtype),
                         card_type: crate::ability_tree::type_line::TypeLine::creature_token(
-                            creature_subtypes_list,
+                            &[subtype.clone()],
                             #[cfg(feature = "spanned_tree")]
-                            creature_subtypes_span.merge(token_span),
+                            subtype.node_span().merge(token_span),
                         ),
                         colors: colors.clone(),
                         abilities: crate::AbilityTree {

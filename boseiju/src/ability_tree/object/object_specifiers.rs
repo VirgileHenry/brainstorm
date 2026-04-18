@@ -397,6 +397,7 @@ pub enum ObjectSpecifier {
     Kind(crate::ability_tree::object::ObjectKind),
     NotOfAKind(crate::ability_tree::object::ObjectKind),
     NotPreviouslySelected(NotPreviouslySelectedObjectSpecifier),
+    State(crate::ability_tree::terminals::CardState),
 }
 
 impl ObjectSpecifier {
@@ -428,6 +429,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             Self::Kind(child) => children.push(child as &dyn AbilityTreeNode),
             Self::NotOfAKind(child) => children.push(child as &dyn AbilityTreeNode),
             Self::NotPreviouslySelected(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::State(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -442,6 +444,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             ObjectSpecifier::Kind(_) => write!(out, "kind specifier:")?,
             ObjectSpecifier::NotOfAKind(_) => write!(out, "not of a kind specifier:")?,
             ObjectSpecifier::NotPreviouslySelected(_) => write!(out, "not previously selected:")?,
+            ObjectSpecifier::State(_) => write!(out, "with state:")?,
         }
         out.push_final_branch()?;
         match self {
@@ -452,6 +455,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             ObjectSpecifier::Kind(object) => object.display(out)?,
             ObjectSpecifier::NotOfAKind(object) => object.display(out)?,
             ObjectSpecifier::NotPreviouslySelected(another) => another.display(out)?,
+            ObjectSpecifier::State(another) => another.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -471,6 +475,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             Self::Kind(child) => child.node_span(),
             Self::NotOfAKind(child) => child.node_span(),
             Self::NotPreviouslySelected(child) => child.node_span(),
+            Self::State(child) => child.node_span(),
         }
     }
 }

@@ -67,7 +67,10 @@ impl TypeLine {
         for subtype in creature_subtypes.iter() {
             result.creature[subtype.creature_subtype.id()] = true;
         }
-        result.span = span;
+        #[cfg(feature = "spanned_tree")]
+        {
+            result.span = span;
+        }
         result
     }
 
@@ -82,7 +85,10 @@ impl TypeLine {
         for subtype in artifact_subtypes.iter() {
             result.artifact[subtype.artifact_subtype.id()] = true;
         }
-        result.span = span;
+        #[cfg(feature = "spanned_tree")]
+        {
+            result.span = span;
+        }
         result
     }
 
@@ -150,6 +156,8 @@ impl AbilityTreeNode for TypeLine {
         for card_type in mtg_data::SpellType::all().filter(|c| self.sorcery[c.id()]) {
             write!(out, "{card_type} ")?;
         }
+
+        out.pop_branch();
 
         Ok(())
     }

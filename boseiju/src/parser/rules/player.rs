@@ -8,100 +8,208 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    let terminal_player_rules = [
-        intermediates::PlayerSpecifier::All {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-        intermediates::PlayerSpecifier::Any {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-        intermediates::PlayerSpecifier::EachOpponent {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-        intermediates::PlayerSpecifier::TargetOpponent {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-        intermediates::PlayerSpecifier::ToYourLeft {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-        intermediates::PlayerSpecifier::ToYourRight {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-        intermediates::PlayerSpecifier::You {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        },
-    ]
-    .into_iter()
-    .map(|player| super::ParserRule {
-        expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(player)).id()]),
-        merged: ParserNode::Player { player: dummy() }.id(),
-        reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::LexerToken(Token::PlayerSpecifier(player))] => Ok(ParserNode::Player {
-                player: match player {
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::All {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::All {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::Any {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::Any {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::EachOpponent {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::EachOpponent {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::TargetOpponent {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::TargetOpponent {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::ToYourLeft {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::ToYourLeft {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::ToYourRight {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::ToYourRight {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    crate::lexer::tokens::intermediates::PlayerSpecifier::You {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    } => crate::ability_tree::player::PlayerSpecifier::You {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                    _ => return Err("Unreachable in player rules"),
+    let terminal_player_rules = vec![
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::All {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
                 },
-            }),
-            _ => Err("Provided tokens do not match rule definition"),
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::All {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::All {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        creation_loc: super::ParserRuleDeclarationLocation::here(),
-    })
-    .collect::<Vec<_>>();
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::AnOpponent {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::AnOpponent {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::AnOpponent {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::Any {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Any {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::Any {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::EachOpponent {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::EachOpponent {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::EachOpponent {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::TargetOpponent {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::TargetOpponent {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::TargetOpponent {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::ToYourLeft {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::ToYourLeft {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::ToYourLeft {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::ToYourRight {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::ToYourRight {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::ToYourRight {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediates::PlayerSpecifier::You {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Player { player: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Player {
+                    player: crate::ability_tree::player::PlayerSpecifier::You {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+    ];
 
     let non_terminal_player_rules = vec![
         /* Object's controller is a player specifier */

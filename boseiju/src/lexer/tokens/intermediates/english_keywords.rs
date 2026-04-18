@@ -255,10 +255,6 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Onto {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     Or {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -452,7 +448,6 @@ impl EnglishKeyword {
             Self::On { span } => *span,
             Self::Once { span } => *span,
             Self::Only { span } => *span,
-            Self::Onto { span } => *span,
             Self::Or { span } => *span,
             Self::Other { span } => *span,
             Self::Otherwise { span } => *span,
@@ -731,7 +726,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "on" => Some(Self::On {
+            "on" | "onto" => Some(Self::On {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -740,10 +735,6 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "only" => Some(Self::Only {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "onto" => Some(Self::Onto {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

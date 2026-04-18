@@ -32,6 +32,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs.push(cost.clone());
                                 costs
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: cost.span().merge(&ability.span),
                         },
                     ),
@@ -75,6 +76,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs.push(c2.clone());
                                 costs
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: c2.span().merge(&ability.span),
                         },
                     ),
@@ -127,6 +129,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs.push(c3.clone());
                                 costs
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: c3.span().merge(&ability.span),
                         },
                     ),
@@ -188,6 +191,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs.push(c4.clone());
                                 costs
                             },
+                            #[cfg(feature = "spanned_tree")]
                             span: c4.span().merge(&ability.span),
                         },
                     ),

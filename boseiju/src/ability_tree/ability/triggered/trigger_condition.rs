@@ -74,7 +74,10 @@ impl crate::utils::DummyInit for TriggerCondition {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TriggerConditionKind {
     Event(crate::ability_tree::event::Event),
-    AtInstant(crate::ability_tree::time::Instant),
+    /// Triggered ability that triggers at a given instant.
+    /// The instant has to be a recurrent instant I think ?
+    /// Maybe some cards will prove me wrong here
+    AtInstant(crate::ability_tree::time::RecurrentInstant),
 }
 
 impl AbilityTreeNode for TriggerConditionKind {

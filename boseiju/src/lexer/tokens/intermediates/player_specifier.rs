@@ -9,6 +9,10 @@ pub enum PlayerSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    AnOpponent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Any {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -52,6 +56,7 @@ impl PlayerSpecifier {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::All { span } => *span,
+            Self::AnOpponent { span } => *span,
             Self::Any { span } => *span,
             Self::Controller { span } => *span,
             Self::DefendingPlayer { span } => *span,
@@ -73,7 +78,11 @@ impl IntoToken for PlayerSpecifier {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "an opponent" | "a player" => Some(Self::Any {
+            "an opponent" => Some(Self::AnOpponent {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "a player" => Some(Self::Any {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

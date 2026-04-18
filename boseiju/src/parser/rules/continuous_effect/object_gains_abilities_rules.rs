@@ -429,10 +429,73 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
     })
     .collect::<Vec<_>>();
 
+    let object_gain_abilities = vec![
+        /* "<object> gain <ability>" is forever. It usually happens when the object also get sacrificed at some point */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::AbilityKind { ability: dummy() }.id(),
+            ]),
+            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                    ParserNode::AbilityKind { ability },
+                ] => Ok(ParserNode::Imperative {
+                    imperative: crate::ability_tree::imperative::Imperative::GenerateContinuousEffect(
+                        crate::ability_tree::imperative::GenerateContinuousEffectImperative {
+                            effect: continuous_effect::ContinuousEffect {
+                                effect: continuous_effect::ContinuousEffectKind::ModifyObjectAbilities(
+                                    continuous_effect::ContinuousEffectModifyObject {
+                                        object: reference.clone(),
+                                        modifications: {
+                                            use continuous_effect::modify_object::*;
+
+                                            let mut modifications = crate::utils::HeapArrayVec::new();
+                                            let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
+                                                ability: ability.clone(),
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: span.merge(&ability.node_span()),
+                                            });
+                                            modifications.push(gain_ab_mod);
+                                            modifications
+                                        },
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: reference.node_span().merge(&ability.node_span()),
+                                    },
+                                ),
+                                #[cfg(feature = "spanned_tree")]
+                                span: reference.node_span().merge(&ability.node_span()),
+                            },
+                            duration: crate::ability_tree::time::ForwardDuration::Forever {
+                                #[cfg(feature = "spanned_tree")]
+                                span: ability.node_span().empty_at_end(),
+                            },
+                            #[cfg(feature = "spanned_tree")]
+                            span: reference.node_span().merge(&ability.node_span()),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+    ];
+
     [
         power_toughness_modifier_rules,
         objects_have_abilities_only,
         object_gains_abilities_until,
+        object_gain_abilities,
     ]
     .into_iter()
     .flatten()

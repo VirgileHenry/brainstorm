@@ -10,7 +10,7 @@ use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Bloodthirst <mana cost> */
+    /* Bloodthirst <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {

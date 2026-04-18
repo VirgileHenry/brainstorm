@@ -4,9 +4,7 @@ mod source_ref;
 mod token_creation;
 
 pub use counter_on_permanent::CounterOnPermanentReplacement;
-pub use enters_the_battlefield::EtbModifier;
-pub use enters_the_battlefield::EtbReplacement;
-pub use enters_the_battlefield::EtbWithCounters;
+pub use enters_the_battlefield::*;
 pub use source_ref::EventSourceReference;
 pub use token_creation::TokenCreationReplacement;
 

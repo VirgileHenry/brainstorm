@@ -52,7 +52,7 @@ impl idris::Idris for RenownKeywordAbility {
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for RenownKeywordAbility {
-    fn dummy_init() -> RenownKeywordAbility {
+    fn dummy_init() -> Self {
         Self {
             amount: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]

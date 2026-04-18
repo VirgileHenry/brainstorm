@@ -384,10 +384,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
     ];
 
+    /* Card states can be specifiers: "untapped creatures" */
+    let card_state_to_specifier = crate::ability_tree::terminals::CardState::all()
+        .map(|state| super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::CardState(state)).id()]),
+            merged: ParserNode::ObjectSpecifier { specifier: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::LexerToken(Token::CardState(state))] => Ok(ParserNode::ObjectSpecifier {
+                    specifier: object::ObjectSpecifier::State(*state),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        })
+        .collect::<Vec<_>>();
+
     [
         object_specifiers_rules,
         object_kind_to_specifiers,
         object_non_kind_to_specifiers,
+        card_state_to_specifier,
     ]
     .into_iter()
     .flatten()

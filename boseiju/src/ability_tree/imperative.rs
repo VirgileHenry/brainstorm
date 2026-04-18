@@ -8,6 +8,7 @@ mod draw_imperative;
 mod exile_imperative;
 mod gain_life;
 mod generate_continuous_effect_imperative;
+mod generate_delayed_trigger_ab_imperative;
 mod keyword_action;
 mod put_counters_imperative;
 mod remove_counters_imperative;
@@ -26,6 +27,7 @@ pub use draw_imperative::*;
 pub use exile_imperative::*;
 pub use gain_life::*;
 pub use generate_continuous_effect_imperative::*;
+pub use generate_delayed_trigger_ab_imperative::*;
 pub use keyword_action::*;
 pub use put_counters_imperative::*;
 pub use remove_counters_imperative::*;
@@ -47,7 +49,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Imperative {
     AddMana(AddManaImperative),
-    Choose(ChooseImperative),
+    ChangeZone(ChangeZoneImperative),
     CreateToken(CreateTokenImperative),
     DealsDamage(DealsDamageImperative),
     Destroy(DestroyImperative),
@@ -56,10 +58,11 @@ pub enum Imperative {
     Exile(ExileImperative),
     GainLife(GainLifeImperative),
     GenerateContinuousEffect(GenerateContinuousEffectImperative),
+    GenerateDelayedTriggeredAbility(GenerateDelayedTriggeredAbilityImperative),
     KeywordAction(KeywordAction),
+    Modal(ModalImperative),
     PutCounters(PutCountersImperative),
     RemoveCounters(RemoveCountersImperative),
-    Return(ReturnImperative),
     Sacrifice(SacrificeImperative),
     Tap(TapImperative),
     Untap(UntapImperative),
@@ -75,7 +78,7 @@ impl AbilityTreeNode for Imperative {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::AddMana(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Choose(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ChangeZone(child) => children.push(child as &dyn AbilityTreeNode),
             Self::CreateToken(child) => children.push(child as &dyn AbilityTreeNode),
             Self::DealsDamage(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Destroy(child) => children.push(child as &dyn AbilityTreeNode),
@@ -84,10 +87,11 @@ impl AbilityTreeNode for Imperative {
             Self::Exile(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GainLife(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GenerateContinuousEffect(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::GenerateDelayedTriggeredAbility(child) => children.push(child as &dyn AbilityTreeNode),
             Self::KeywordAction(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Modal(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Return(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Sacrifice(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Tap(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Untap(child) => children.push(child as &dyn AbilityTreeNode),
@@ -101,7 +105,7 @@ impl AbilityTreeNode for Imperative {
         out.push_final_branch()?;
         match self {
             Imperative::AddMana(imperative) => imperative.display(out)?,
-            Imperative::Choose(imperative) => imperative.display(out)?,
+            Imperative::ChangeZone(imperative) => imperative.display(out)?,
             Imperative::CreateToken(imperative) => imperative.display(out)?,
             Imperative::DealsDamage(imperative) => imperative.display(out)?,
             Imperative::Destroy(imperative) => imperative.display(out)?,
@@ -110,10 +114,11 @@ impl AbilityTreeNode for Imperative {
             Imperative::Exile(imperative) => imperative.display(out)?,
             Imperative::GainLife(imperative) => imperative.display(out)?,
             Imperative::GenerateContinuousEffect(imperative) => imperative.display(out)?,
+            Imperative::GenerateDelayedTriggeredAbility(imperative) => imperative.display(out)?,
             Imperative::KeywordAction(imperative) => imperative.display(out)?,
+            Imperative::Modal(imperative) => imperative.display(out)?,
             Imperative::PutCounters(imperative) => imperative.display(out)?,
             Imperative::RemoveCounters(imperative) => imperative.display(out)?,
-            Imperative::Return(imperative) => imperative.display(out)?,
             Imperative::Sacrifice(imperative) => imperative.display(out)?,
             Imperative::Tap(imperative) => imperative.display(out)?,
             Imperative::Untap(imperative) => imperative.display(out)?,
@@ -130,7 +135,7 @@ impl AbilityTreeNode for Imperative {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AddMana(child) => child.node_span(),
-            Self::Choose(child) => child.node_span(),
+            Self::ChangeZone(child) => child.node_span(),
             Self::CreateToken(child) => child.node_span(),
             Self::DealsDamage(child) => child.node_span(),
             Self::Destroy(child) => child.node_span(),
@@ -139,10 +144,11 @@ impl AbilityTreeNode for Imperative {
             Self::Exile(child) => child.node_span(),
             Self::GainLife(child) => child.node_span(),
             Self::GenerateContinuousEffect(child) => child.node_span(),
+            Self::GenerateDelayedTriggeredAbility(child) => child.node_span(),
             Self::KeywordAction(child) => child.node_span(),
+            Self::Modal(child) => child.node_span(),
             Self::PutCounters(child) => child.node_span(),
             Self::RemoveCounters(child) => child.node_span(),
-            Self::Return(child) => child.node_span(),
             Self::Sacrifice(child) => child.node_span(),
             Self::Tap(child) => child.node_span(),
             Self::Untap(child) => child.node_span(),

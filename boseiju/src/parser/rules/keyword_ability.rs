@@ -1,10 +1,21 @@
+mod afterlife;
 mod bestow;
 mod bloodthirst;
+mod bushido;
+mod crew;
+mod cycling;
+mod echo;
 mod enchant;
 mod equip;
 mod kicker;
+mod megamorph;
 mod ninjutsu;
+mod prototype;
+mod reinforce;
 mod renown;
+mod ripple;
+mod suspend;
+mod vanishing;
 mod ward;
 
 use super::ParserNode;
@@ -41,13 +52,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
 
     [
         standalone_keyword_abilities,
+        afterlife::rules().collect::<Vec<_>>(),
         bestow::rules().collect::<Vec<_>>(),
         bloodthirst::rules().collect::<Vec<_>>(),
+        bushido::rules().collect::<Vec<_>>(),
+        crew::rules().collect::<Vec<_>>(),
+        cycling::rules().collect::<Vec<_>>(),
+        echo::rules().collect::<Vec<_>>(),
         enchant::rules().collect::<Vec<_>>(),
         equip::rules().collect::<Vec<_>>(),
         kicker::rules().collect::<Vec<_>>(),
+        megamorph::rules().collect::<Vec<_>>(),
         ninjutsu::rules().collect::<Vec<_>>(),
+        prototype::rules().collect::<Vec<_>>(),
+        reinforce::rules().collect::<Vec<_>>(),
         renown::rules().collect::<Vec<_>>(),
+        ripple::rules().collect::<Vec<_>>(),
+        suspend::rules().collect::<Vec<_>>(),
+        vanishing::rules().collect::<Vec<_>>(),
         ward::rules().collect::<Vec<_>>(),
     ]
     .into_iter()

@@ -6,7 +6,7 @@ use crate::ability_tree::imperative::AddManaImperative;
 use crate::ability_tree::imperative::Imperative;
 use crate::ability_tree::imperative::ImperativeList;
 use crate::ability_tree::imperative::ManaToAdd;
-use crate::ability_tree::imperative::ManaToAddKind;
+use crate::ability_tree::imperative::ManaToAddOfAnyColor;
 use crate::ability_tree::imperative::SacrificeImperative;
 use crate::ability_tree::number::FixedNumber;
 use crate::ability_tree::number::Number;
@@ -32,13 +32,9 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                             imperatives: {
                                 let mut imperatives = HeapArrayVec::new();
                                 let add_mana_imperative = Imperative::AddMana(AddManaImperative {
-                                    mana: {
+                                    possibilities: {
                                         let mut added_mana = arrayvec::ArrayVec::new();
-                                        let mana = ManaToAdd {
-                                            kind: ManaToAddKind::AnyColor {
-                                                #[cfg(feature = "spanned_tree")]
-                                                span: Default::default(),
-                                            },
+                                        let mana = ManaToAdd::AnyColor(ManaToAddOfAnyColor {
                                             amount: Number::Number(FixedNumber {
                                                 number: 1,
                                                 #[cfg(feature = "spanned_tree")]
@@ -46,7 +42,7 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                                             }),
                                             #[cfg(feature = "spanned_tree")]
                                             span: Default::default(),
-                                        };
+                                        });
                                         added_mana.push(mana);
                                         added_mana
                                     },

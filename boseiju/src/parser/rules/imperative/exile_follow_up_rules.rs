@@ -35,7 +35,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Instant { instant: dummy() }.id(),
+            ParserNode::RecurrentInstant { instant: dummy() }.id(),
         ]),
         merged: ParserNode::ExileFollowUp { follow_up: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -49,16 +49,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::ZoneReference { zone },
                 ParserNode::LexerToken(Token::UnderControl(intermediates::UnderControl::UnderItsOwnersControl { .. })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::At { .. })),
-                ParserNode::Instant { instant },
+                ParserNode::IncomingInstant { instant },
             ] => Ok(ParserNode::ExileFollowUp {
                 follow_up: crate::ability_tree::imperative::ExileFollowUp::ReturnIt(
                     crate::ability_tree::imperative::ExileFollowUpReturn {
-                        return_imperative: crate::ability_tree::imperative::ReturnImperative {
+                        return_imperative: crate::ability_tree::imperative::ChangeZoneImperative {
                             object: crate::ability_tree::object::ObjectReference::PreviouslyMentionned(object.clone()),
-                            from: crate::ability_tree::zone::ZoneReference::Exile {
+                            from: Some(crate::ability_tree::zone::ZoneReference::Exile {
                                 #[cfg(feature = "spanned_tree")]
                                 span: start_span.empty_at_end(),
-                            },
+                            }),
                             to: zone.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&zone.node_span()),

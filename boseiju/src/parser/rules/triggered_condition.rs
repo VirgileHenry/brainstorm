@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Instant { instant: dummy() }.id(),
+                ParserNode::RecurrentInstant { instant: dummy() }.id(),
             ]),
             merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -26,7 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
-                    ParserNode::Instant { instant },
+                    ParserNode::RecurrentInstant { instant },
                 ] => Ok(ParserNode::TriggerCondition {
                     condition: crate::ability_tree::ability::triggered::TriggerCondition {
                         kind: crate::ability_tree::ability::triggered::TriggerConditionKind::AtInstant(instant.clone()),
@@ -47,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Instant { instant: dummy() }.id(),
+                ParserNode::RecurrentInstant { instant: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
-                    ParserNode::Instant { instant },
+                    ParserNode::RecurrentInstant { instant },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]

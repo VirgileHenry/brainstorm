@@ -80,8 +80,9 @@ impl crate::utils::DummyInit for EtbReplacement {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EtbModifier {
+    PerformAction(EtbPerformAction),
     WithCounters(EtbWithCounters),
-    WithState(crate::ability_tree::terminals::CardState),
+    WithState(EtbWithState),
 }
 
 impl AbilityTreeNode for EtbModifier {
@@ -93,6 +94,7 @@ impl AbilityTreeNode for EtbModifier {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::PerformAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::WithCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::WithState(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -104,6 +106,7 @@ impl AbilityTreeNode for EtbModifier {
         write!(out, "enters the battlefield modifier:")?;
         out.push_final_branch()?;
         match self {
+            Self::PerformAction(child) => child.display(out)?,
             Self::WithCounters(child) => child.display(out)?,
             Self::WithState(child) => child.display(out)?,
         }
@@ -118,6 +121,7 @@ impl AbilityTreeNode for EtbModifier {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::PerformAction(child) => child.node_span(),
             Self::WithCounters(child) => child.node_span(),
             Self::WithState(child) => child.node_span(),
         }
@@ -186,6 +190,106 @@ impl crate::utils::DummyInit for EtbWithCounters {
         Self {
             counter_kind: crate::utils::dummy(),
             amount: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EtbWithState {
+    pub state: crate::ability_tree::terminals::CardState,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl AbilityTreeNode for EtbWithState {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::EtbWithState.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.state as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "enters the battlefield with state:")?;
+        out.push_final_branch()?;
+        self.state.display(out)?;
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "enters the battlefield with counters"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for EtbWithState {
+    fn dummy_init() -> Self {
+        Self {
+            state: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EtbPerformAction {
+    pub action: crate::ability_tree::ability::spell::SpellAbility,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl AbilityTreeNode for EtbPerformAction {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::EtbPerformAction.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.action as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "perform action on etb:")?;
+        out.push_final_branch()?;
+        self.action.display(out)?;
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "enters the battlefield with counters"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for EtbPerformAction {
+    fn dummy_init() -> Self {
+        Self {
+            action: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

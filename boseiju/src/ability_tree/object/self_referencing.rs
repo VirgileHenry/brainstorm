@@ -83,6 +83,10 @@ impl IntoToken for SelfReferencingObject {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "this enchantment" => Some(SelfReferencingObject {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "~" => Some(SelfReferencingObject {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),

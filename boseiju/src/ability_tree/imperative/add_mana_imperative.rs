@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AddManaImperative {
-    pub mana: arrayvec::ArrayVec<ManaToAdd, MAX_CHILDREN_PER_NODE>,
+    pub possibilities: arrayvec::ArrayVec<ManaToAdd, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -18,7 +18,7 @@ impl crate::ability_tree::AbilityTreeNode for AddManaImperative {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        for mana in self.mana.iter() {
+        for mana in self.possibilities.iter() {
             children.push(mana as &dyn AbilityTreeNode);
         }
         children
@@ -27,15 +27,18 @@ impl crate::ability_tree::AbilityTreeNode for AddManaImperative {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "add mana:")?;
-        for (i, mana) in self.mana.iter().enumerate() {
-            if i == self.mana.len() - 1 {
+        out.push_final_branch()?;
+        write!(out, "possiblities:")?;
+        for (i, possibility) in self.possibilities.iter().enumerate() {
+            if i == self.possibilities.len() - 1 {
                 out.push_final_branch()?;
             } else {
                 out.push_inter_branch()?;
             }
-            mana.display(out)?;
+            possibility.display(out)?;
             out.pop_branch();
         }
+        out.pop_branch();
         Ok(())
     }
 
@@ -53,7 +56,7 @@ impl crate::ability_tree::AbilityTreeNode for AddManaImperative {
 impl crate::utils::DummyInit for AddManaImperative {
     fn dummy_init() -> Self {
         Self {
-            mana: crate::utils::dummy(),
+            possibilities: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
@@ -62,11 +65,9 @@ impl crate::utils::DummyInit for AddManaImperative {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ManaToAdd {
-    pub kind: ManaToAddKind,
-    pub amount: crate::ability_tree::number::Number,
-    #[cfg(feature = "spanned_tree")]
-    pub span: crate::ability_tree::span::TreeSpan,
+pub enum ManaToAdd {
+    AnyColor(ManaToAddOfAnyColor),
+    Symbols(ManaToAddSymbols),
 }
 
 impl crate::ability_tree::AbilityTreeNode for ManaToAdd {
@@ -77,24 +78,21 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAdd {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.kind as &dyn AbilityTreeNode);
-        children.push(&self.amount as &dyn AbilityTreeNode);
+        match self {
+            Self::AnyColor(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Symbols(child) => children.push(child as &dyn AbilityTreeNode),
+        }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "mana to add")?;
-        out.push_inter_branch()?;
-        write!(out, "kind:")?;
         out.push_final_branch()?;
-        self.kind.display(out)?;
-        out.pop_branch();
-        out.next_final_branch()?;
-        write!(out, "amount:")?;
-        out.push_final_branch()?;
-        self.amount.display(out)?;
-        out.pop_branch();
+        match self {
+            Self::AnyColor(child) => child.display(out)?,
+            Self::Symbols(child) => child.display(out)?,
+        }
         out.pop_branch();
         Ok(())
     }
@@ -105,58 +103,54 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAdd {
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        self.span
+        match self {
+            Self::AnyColor(child) => child.node_span(),
+            Self::Symbols(child) => child.node_span(),
+        }
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ManaToAdd {
     fn dummy_init() -> Self {
-        Self {
-            kind: crate::utils::dummy(),
-            amount: crate::utils::dummy(),
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }
+        Self::Symbols(crate::utils::dummy())
     }
 }
 
+/// List of mana symbols to add to the mana pool.
+///
+/// For instance:
+/// - {R}
+/// - {R}{R}{R}{R}{R}
+/// - {B}{R}{G}
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ManaToAddKind {
-    Specific(crate::ability_tree::terminals::Mana),
-    AnyColor {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
+pub struct ManaToAddSymbols {
+    pub symbols: arrayvec::ArrayVec<crate::ability_tree::terminals::Mana, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl crate::ability_tree::AbilityTreeNode for ManaToAddKind {
+impl crate::ability_tree::AbilityTreeNode for ManaToAddSymbols {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::ManaToAddKind.id()
+        crate::ability_tree::NodeKind::ManaToAddSymbols.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
-
         let mut children = arrayvec::ArrayVec::new_const();
-        match self {
-            Self::Specific(mana_kind) => children.push(mana_kind as &dyn AbilityTreeNode),
-            Self::AnyColor { .. } => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::ability_tree::NodeKind::ManaToAddKindAnyColor.id(),
-            ) as &dyn AbilityTreeNode),
+        for symbol in self.symbols.iter() {
+            children.push(symbol as &dyn AbilityTreeNode);
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "mana to add kind")?;
+        write!(out, "mana symbols")?;
         out.push_final_branch()?;
-        match self {
-            Self::Specific(mana_kind) => mana_kind.display(out)?,
-            Self::AnyColor { .. } => write!(out, "mana of any color")?,
+        for symbol in self.symbols.iter() {
+            symbol.display(out)?;
         }
         out.pop_branch();
         Ok(())
@@ -168,17 +162,74 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAddKind {
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Specific(mana_kind) => mana_kind.node_span(),
-            Self::AnyColor { span } => *span,
-        }
+        self.span
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ManaToAddKind {
+impl crate::utils::DummyInit for ManaToAddSymbols {
     fn dummy_init() -> Self {
-        Self::AnyColor {
+        Self {
+            symbols: arrayvec::ArrayVec::new_const(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
+
+/// List of mana symbols to add to the mana pool.
+///
+/// For instance:
+/// - {R}
+/// - {R}{R}{R}{R}{R}
+/// - {B}{R}{G}
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ManaToAddOfAnyColor {
+    pub amount: crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl crate::ability_tree::AbilityTreeNode for ManaToAddOfAnyColor {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::ManaToAddOfAnyColor.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.amount as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "mana of any color:")?;
+        out.push_final_branch()?;
+        write!(out, "amount:")?;
+        out.push_final_branch()?;
+        self.amount.display(out)?;
+        out.pop_branch();
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "mana to add kind"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.span
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for ManaToAddOfAnyColor {
+    fn dummy_init() -> Self {
+        Self {
+            amount: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
