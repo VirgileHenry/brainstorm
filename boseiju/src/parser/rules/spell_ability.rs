@@ -1,6 +1,4 @@
 use super::ParserNode;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -9,7 +7,7 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* A Single statement and a dot can make a spell ability. */
+        /* "<statement>" is a spell ability */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::Statement { statement: dummy() }.id()]),
             merged: ParserNode::SpellAbility { ability: dummy() }.id(),
@@ -29,62 +27,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* Spell abilities can have multiple statements.*/
-        /* Wording with two separate statements: "A. B." */
+        /* "<spell ability>" makes an ability */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::Statement { statement: dummy() }.id(),
-                ParserNode::Statement { statement: dummy() }.id(),
-            ]),
-            merged: ParserNode::SpellAbility { ability: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::SpellAbility { ability: dummy() }.id()]),
+            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Statement { statement: s1 },
-                    ParserNode::Statement { statement: s2 },
-                ] => Ok(ParserNode::SpellAbility {
-                    ability: {
-                        let mut statements = crate::utils::HeapArrayVec::new();
-                        statements.push(s1.clone());
-                        statements.push(s2.clone());
+                &[ParserNode::SpellAbility { ability }] => Ok(ParserNode::WrittenAbility {
+                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
                         crate::ability_tree::ability::spell::SpellAbility {
-                            effects: statements,
+                            effects: ability.effects.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: s1.node_span().merge(&s2.node_span()),
-                        }
-                    },
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
-        /* Wording with two separate statements and a "Then": "A. Then B." */
-        super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::Statement { statement: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
-            ]),
-            merged: ParserNode::SpellAbility { ability: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Statement { statement: s1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then { .. })),
-                    ParserNode::Statement { statement: s2 },
-                ] => Ok(ParserNode::SpellAbility {
-                    ability: {
-                        let mut statements = crate::utils::HeapArrayVec::new();
-                        statements.push(s1.clone());
-                        statements.push(s2.clone());
-                        crate::ability_tree::ability::spell::SpellAbility {
-                            effects: statements,
-                            #[cfg(feature = "spanned_tree")]
-                            span: s1.node_span().merge(&s2.node_span()),
-                        }
-                    },
+                            span: ability.node_span(),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

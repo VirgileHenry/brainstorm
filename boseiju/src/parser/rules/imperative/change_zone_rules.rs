@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ZoneReference { zone: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
@@ -38,11 +38,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ObjectReference { reference },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::ChangeZone(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
                             object: reference.clone(),
-                            from: None,
+                            from: crate::ability_tree::zone::ZoneReference::TheBattlefield {
+                                #[cfg(feature = "spanned_tree")]
+                                span: reference.node_span().empty_at_end(),
+                            },
                             to: to_zone.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&to_zone.node_span()),
@@ -75,7 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ZoneReference { zone: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
@@ -87,11 +90,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ZoneReference { zone: from_zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::ChangeZone(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
                             object: reference.clone(),
-                            from: Some(from_zone.clone()),
+                            from: from_zone.clone(),
                             to: to_zone.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&to_zone.node_span()),
@@ -124,7 +127,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ZoneReference { zone: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
@@ -136,11 +139,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ZoneReference { zone: from_zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::ChangeZone(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
                             object: reference.clone(),
-                            from: Some(from_zone.clone()),
+                            from: from_zone.clone(),
                             to: to_zone.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&to_zone.node_span()),

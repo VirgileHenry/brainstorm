@@ -28,9 +28,18 @@ pub enum NodeKind {
     Ability,
     AbilityKind,
     AbilityTree,
+    AbilityWordMarkerId,
+    AbilityWord(AbilityWordNodeKind),
     AbilityWordAbility,
     ActivatedAbility,
     AddManaImperative,
+    CardManaValuePropertySpecifier,
+    CardPowerPropertySpecifier,
+    CardPropertySpecifier,
+    CardTotalPowerPropertySpecifier,
+    CardTotalPowerAndToughnessPropertySpecifier,
+    CardTotalManaValuePropertySpecifier,
+    CardToughnessPropertySpecifier,
     CastSpecifier,
     ChangeZoneImperative,
     CharacteristicDefiningAbility,
@@ -44,6 +53,8 @@ pub enum NodeKind {
     ContinuousEffect,
     ContinuousEffectKind,
     ContinuousEffectModifyObject,
+    ContinuousEffectObjectCantDoAction,
+    ContinuousEffectEventCantHappen,
     ContinuousEffectObjectStateRestriction,
     ContinuousEffectReplacementEvent,
     ControlSpecifier,
@@ -62,6 +73,7 @@ pub enum NodeKind {
     CreatureAction,
     CreatureActionEvent,
     CreatureAttacksAction,
+    CreatureBlocksAction,
     CreatureDiesAction,
     CreatureDealsCombatDamageAction,
     DamagesDealt,
@@ -83,6 +95,8 @@ pub enum NodeKind {
     ExileImperative,
     ExileFollowUp,
     ExileFollowUpReturn,
+    ExpandedAbilityWordIdMarker,
+    ExpandedAbilityWord(crate::ability_tree::terminals::StandaloneAbilityWord),
     ExpandedKeywordAbilityIdMarker,
     ExpandedKeywordAbility(crate::ability_tree::terminals::StandaloneKeywordAbility),
     ExpandedKeywordActionIdMarker,
@@ -93,6 +107,7 @@ pub enum NodeKind {
     GenerateContinuousEffectImperative,
     GenerateDelayedTriggeredAbilityImperative,
     Imperative,
+    ImperativeKind,
     ImperativeList,
     ImperativeChoices,
     IncomingInstant,
@@ -112,11 +127,14 @@ pub enum NodeKind {
     ManaToAddKindAnyColor,
     MayAbility,
     MtgData(MtgDataNodeKind),
+    MultipleObjectReferences,
+    NextCastedSpellSpecifier,
     NumberIdMarker,
     NumberOfResolutions(crate::ability_tree::conditional::ConditionNumberOfResolutions),
     NumberOfResolutionsIdMarker,
     Number(crate::ability_tree::number::Number),
     ObjectAbilitiesModification,
+    ObjectBecomesStateEvent,
     ObjectCharacteristicModification,
     ObjectGainAbility,
     ObjectReference,
@@ -171,6 +189,9 @@ pub enum NodeKind {
     TypeLine(TypeLineNodeKind),
     UnlessConditional,
     UntapImperative,
+    XDefinition,
+    XFromCost,
+    XNumberOfObjects,
     ZoneReferenceIdMarker,
     ZoneReference(crate::ability_tree::zone::ZoneReference),
 }
@@ -202,15 +223,19 @@ pub enum MtgDataNodeKind {
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KeywordAbilityNodeKind {
+    Affinity,
     Afterlife,
     Bestow,
+    Blitz,
     Bloodthirst,
     Bushido,
+    Cleave,
     Crew,
     Cycling,
     Echo,
     Enchant,
     Equip,
+    Flashback,
     Kicker,
     Megamorph,
     Ninjutsu,
@@ -221,14 +246,22 @@ pub enum KeywordAbilityNodeKind {
     Suspend,
     Vanishing,
     Ward,
+    Warp,
 }
 
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KeywordActionNodeKind {
     Adapt,
+    Mill,
     Scry,
     Surveil,
+}
+
+#[derive(idris_derive::Idris)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum AbilityWordNodeKind {
+    Descend,
 }
 
 #[derive(idris_derive::Idris)]
@@ -238,6 +271,8 @@ pub enum TerminalNodeKind {
     CastSpecifierIdMarker,
     BackwardDurationIdMarker,
     BackwardDuration(crate::ability_tree::time::BackwardDuration),
+    CardProperty(crate::ability_tree::terminals::CardProperty),
+    CardPropertyIdMarker,
     CardState(crate::ability_tree::terminals::CardState),
     CardStateIdMarker,
     ControlSpecifierIdMarker,
@@ -258,6 +293,8 @@ pub enum TerminalNodeKind {
     Phase(crate::ability_tree::terminals::Phase),
     PhaseIdMarker,
     SelfReferencing,
+    SpellProperty(crate::ability_tree::terminals::SpellProperty),
+    SpellPropertyIdMarker,
     Step(crate::ability_tree::terminals::Step),
     StepIdMarker,
 }

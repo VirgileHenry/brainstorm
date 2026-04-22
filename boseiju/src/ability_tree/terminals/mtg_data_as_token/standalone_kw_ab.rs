@@ -5,7 +5,6 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum StandaloneKeywordAbility {
     Absorb,
-    Affinity,
     Afflict,
     Afterlife,
     Aftermath,
@@ -215,7 +214,6 @@ impl StandaloneKeywordAbility {
     pub fn all() -> impl Iterator<Item = Self> {
         [
             Self::Absorb,
-            Self::Affinity,
             Self::Afflict,
             Self::Afterlife,
             Self::Aftermath,
@@ -428,7 +426,6 @@ impl std::fmt::Display for StandaloneKeywordAbility {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Absorb => write!(f, "absorb"),
-            Self::Affinity => write!(f, "affinity"),
             Self::Afflict => write!(f, "afflict"),
             Self::Afterlife => write!(f, "afterlife"),
             Self::Aftermath => write!(f, "aftermath"),
@@ -640,7 +637,6 @@ impl From<StandaloneKeywordAbility> for mtg_data::KeywordAbility {
     fn from(value: StandaloneKeywordAbility) -> Self {
         match value {
             StandaloneKeywordAbility::Absorb => mtg_data::KeywordAbility::Absorb,
-            StandaloneKeywordAbility::Affinity => mtg_data::KeywordAbility::Affinity,
             StandaloneKeywordAbility::Afflict => mtg_data::KeywordAbility::Afflict,
             StandaloneKeywordAbility::Afterlife => mtg_data::KeywordAbility::Afterlife,
             StandaloneKeywordAbility::Aftermath => mtg_data::KeywordAbility::Aftermath,

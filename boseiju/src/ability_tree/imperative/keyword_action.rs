@@ -1,13 +1,15 @@
 mod adapt;
 mod keyword_to_abilities;
+mod mill;
 mod scry;
 mod surveil;
 
 pub use keyword_to_abilities::keyword_action_to_abilities;
 
-pub use adapt::AdaptKeywordAbility;
-pub use scry::ScryKeywordAbility;
-pub use surveil::SurveilKeywordAbility;
+pub use adapt::AdaptKeywordAction;
+pub use mill::MillKeywordAction;
+pub use scry::ScryKeywordAction;
+pub use surveil::SurveilKeywordAction;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -85,14 +87,19 @@ impl crate::utils::DummyInit for KeywordAction {
 /// expect all keyword abilities required additional text also have this text.
 ///
 /// For instance, "Ward" on its own isn't truly a keyword abilty: It's "ward: pay 2 life".
+///
+/// Fixme: destroy shall be here, and the imperative is to move a creature from battlefield to graveyard.
+/// We shall ensure the thing gets the state "destroyed", so indestructible can be written as
+/// "event cant happen" -> "creature has state" -> "destroyed"
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExpandedKeywordAction {
-    Adapt(AdaptKeywordAbility),
-    Scry(ScryKeywordAbility),
+    Adapt(AdaptKeywordAction),
+    Mill(MillKeywordAction),
+    Scry(ScryKeywordAction),
     Standalone(StandaloneKeywordAction),
-    Surveil(SurveilKeywordAbility),
+    Surveil(SurveilKeywordAction),
 }
 
 impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
@@ -105,6 +112,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Adapt(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Mill(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Scry(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Standalone(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Surveil(child) => children.push(child as &dyn AbilityTreeNode),
@@ -118,6 +126,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
         out.push_final_branch()?;
         match self {
             Self::Adapt(child) => child.display(out)?,
+            Self::Mill(child) => child.display(out)?,
             Self::Scry(child) => child.display(out)?,
             Self::Standalone(child) => child.display(out)?,
             Self::Surveil(child) => child.display(out)?,
@@ -134,6 +143,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Adapt(child) => child.node_span(),
+            Self::Mill(child) => child.node_span(),
             Self::Scry(child) => child.node_span(),
             Self::Standalone(child) => child.node_span(),
             Self::Surveil(child) => child.node_span(),

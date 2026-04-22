@@ -23,15 +23,6 @@ pub enum ObjectCharacteristicModification {
     PowerToughnessModifiers(PowerToughnessModifiers),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl ObjectCharacteristicModification {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::PowerToughnessModifiers(child) => child.node_span(),
-        }
-    }
-}
-
 impl AbilityTreeNode for ObjectCharacteristicModification {
     fn node_id(&self) -> usize {
         use idris::Idris;

@@ -4,9 +4,12 @@ use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "cost: spell ability" makes an activated ability */
+        /* "<cost>: <spell ability>" makes an activated ability */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Cost { cost: dummy() }.id(),
@@ -17,14 +20,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Cost { cost },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Colons { .. })),
                     ParserNode::SpellAbility { ability },
-                ] => Ok(ParserNode::Ability {
-                    ability: crate::ability_tree::ability::Ability::Activated(
+                ] => Ok(ParserNode::WrittenAbility {
+                    ability: crate::ability_tree::ability::WrittenAbility::Activated(
                         crate::ability_tree::ability::activated::ActivatedAbility {
                             effect: ability.clone(),
                             costs: {
@@ -33,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: cost.span().merge(&ability.span),
+                            span: cost.node_span().merge(&ability.span),
                         },
                     ),
                 }),
@@ -41,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "cost, cost: spell ability" makes an activated ability */
+        /* "<cost>, <cost>: <spell ability>" makes an activated ability */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Cost { cost: dummy() }.id(),
@@ -58,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Cost { cost: c1 },
@@ -66,8 +69,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Cost { cost: c2 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Colons { .. })),
                     ParserNode::SpellAbility { ability },
-                ] => Ok(ParserNode::Ability {
-                    ability: crate::ability_tree::ability::Ability::Activated(
+                ] => Ok(ParserNode::WrittenAbility {
+                    ability: crate::ability_tree::ability::WrittenAbility::Activated(
                         crate::ability_tree::ability::activated::ActivatedAbility {
                             effect: ability.clone(),
                             costs: {
@@ -77,7 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: c2.span().merge(&ability.span),
+                            span: c2.node_span().merge(&ability.span),
                         },
                     ),
                 }),
@@ -85,7 +88,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "cost, cost, cost: spell ability" makes an activated ability */
+        /* "<cost>, <cost>, <cost>: <spell ability>" makes an activated ability */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Cost { cost: dummy() }.id(),
@@ -108,7 +111,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Cost { cost: c1 },
@@ -118,8 +121,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Cost { cost: c3 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Colons { .. })),
                     ParserNode::SpellAbility { ability },
-                ] => Ok(ParserNode::Ability {
-                    ability: crate::ability_tree::ability::Ability::Activated(
+                ] => Ok(ParserNode::WrittenAbility {
+                    ability: crate::ability_tree::ability::WrittenAbility::Activated(
                         crate::ability_tree::ability::activated::ActivatedAbility {
                             effect: ability.clone(),
                             costs: {
@@ -130,7 +133,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: c3.span().merge(&ability.span),
+                            span: c3.node_span().merge(&ability.span),
                         },
                     ),
                 }),
@@ -138,7 +141,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "cost, cost: spell ability" makes an activated ability */
+        /* "<cost>, <cost>, <cost>, <cost>: <spell ability>" makes an activated ability */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Cost { cost: dummy() }.id(),
@@ -167,7 +170,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Cost { cost: c1 },
@@ -179,8 +182,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Cost { cost: c4 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Colons { .. })),
                     ParserNode::SpellAbility { ability },
-                ] => Ok(ParserNode::Ability {
-                    ability: crate::ability_tree::ability::Ability::Activated(
+                ] => Ok(ParserNode::WrittenAbility {
+                    ability: crate::ability_tree::ability::WrittenAbility::Activated(
                         crate::ability_tree::ability::activated::ActivatedAbility {
                             effect: ability.clone(),
                             costs: {
@@ -192,7 +195,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 costs
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: c4.span().merge(&ability.span),
+                            span: c4.node_span().merge(&ability.span),
                         },
                     ),
                 }),

@@ -3,13 +3,13 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SurveilKeywordAbility {
+pub struct SurveilKeywordAction {
     pub amount: crate::ability_tree::number::Number,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl crate::ability_tree::AbilityTreeNode for SurveilKeywordAbility {
+impl crate::ability_tree::AbilityTreeNode for SurveilKeywordAction {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::KeywordActionNodeKind;
         use idris::Idris;
@@ -40,7 +40,7 @@ impl crate::ability_tree::AbilityTreeNode for SurveilKeywordAbility {
     }
 }
 
-impl idris::Idris for SurveilKeywordAbility {
+impl idris::Idris for SurveilKeywordAction {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
@@ -51,8 +51,8 @@ impl idris::Idris for SurveilKeywordAbility {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for SurveilKeywordAbility {
-    fn dummy_init() -> SurveilKeywordAbility {
+impl crate::utils::DummyInit for SurveilKeywordAction {
+    fn dummy_init() -> SurveilKeywordAction {
         Self {
             amount: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]

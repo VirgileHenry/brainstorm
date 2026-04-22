@@ -23,17 +23,6 @@ pub enum EventReplacement {
     TokenCreation(TokenCreationReplacement),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl EventReplacement {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::CounterOnPermanent(child) => child.span,
-            Self::EntersTheBattlefield(child) => child.span,
-            Self::TokenCreation(child) => child.span,
-        }
-    }
-}
-
 impl crate::ability_tree::AbilityTreeNode for EventReplacement {
     fn node_id(&self) -> usize {
         use idris::Idris;

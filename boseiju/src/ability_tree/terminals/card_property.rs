@@ -1,3 +1,5 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
 #[derive(idris_derive::Idris)]
@@ -32,15 +34,42 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Tougness {
+    Toughness {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl CardProperty {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl AbilityTreeNode for CardProperty {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::CardPropertyIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::CardProperty(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "phase"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::BasePower { span } => *span,
             Self::BasePowerAndToughness { span } => *span,
@@ -49,7 +78,7 @@ impl CardProperty {
             Self::ManaValue { span } => *span,
             Self::Name { span } => *span,
             Self::Power { span } => *span,
-            Self::Tougness { span } => *span,
+            Self::Toughness { span } => *span,
         }
     }
 }
@@ -64,7 +93,7 @@ impl std::fmt::Display for CardProperty {
             CardProperty::ManaValue { .. } => write!(f, "mana value"),
             CardProperty::Name { .. } => write!(f, "name"),
             CardProperty::Power { .. } => write!(f, "power"),
-            CardProperty::Tougness { .. } => write!(f, "touhness"),
+            CardProperty::Toughness { .. } => write!(f, "touhness"),
         }
     }
 }
@@ -97,7 +126,7 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "toughness" => Some(CardProperty::Tougness {
+            "toughness" => Some(CardProperty::Toughness {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

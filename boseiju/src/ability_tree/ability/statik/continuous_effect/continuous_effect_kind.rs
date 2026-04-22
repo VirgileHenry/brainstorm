@@ -1,8 +1,10 @@
-pub mod modify_object;
-pub mod replacement_effect;
+mod event_cant_happen;
+mod modify_object;
+mod replacement_effect;
 
-pub use modify_object::ContinuousEffectModifyObject;
-pub use replacement_effect::ContinuousEffectReplacementEvent;
+pub use event_cant_happen::*;
+pub use modify_object::*;
+pub use replacement_effect::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -13,18 +15,9 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ContinuousEffectKind {
+    EventCantHappen(ContinuousEventCantHappen),
     ModifyObjectAbilities(ContinuousEffectModifyObject),
     ReplacementEffect(ContinuousEffectReplacementEvent),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl ContinuousEffectKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::ModifyObjectAbilities(child) => child.span,
-            Self::ReplacementEffect(child) => child.span,
-        }
-    }
 }
 
 impl AbilityTreeNode for ContinuousEffectKind {
@@ -37,6 +30,7 @@ impl AbilityTreeNode for ContinuousEffectKind {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::ModifyObjectAbilities(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::EventCantHappen(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ReplacementEffect(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -48,6 +42,7 @@ impl AbilityTreeNode for ContinuousEffectKind {
         out.push_final_branch()?;
         match self {
             Self::ModifyObjectAbilities(child) => child.display(out)?,
+            Self::EventCantHappen(child) => child.display(out)?,
             Self::ReplacementEffect(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -62,6 +57,7 @@ impl AbilityTreeNode for ContinuousEffectKind {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::ModifyObjectAbilities(child) => child.node_span(),
+            Self::EventCantHappen(child) => child.node_span(),
             Self::ReplacementEffect(child) => child.node_span(),
         }
     }

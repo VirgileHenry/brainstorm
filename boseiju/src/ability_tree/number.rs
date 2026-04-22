@@ -1,3 +1,7 @@
+mod x_definition;
+
+pub use x_definition::*;
+
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::MAX_NODE_DATA_SIZE;
@@ -250,7 +254,7 @@ impl idris::Idris for UpToNumber {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct XNumber {
-    pub x_definition: (), /* Fixme */
+    pub x_definition: Box<XDefinition>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -262,8 +266,8 @@ impl AbilityTreeNode for XNumber {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let children = arrayvec::ArrayVec::new_const();
-        /* Fixme: push x definition child node */
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(self.x_definition.as_ref() as &dyn AbilityTreeNode);
         children
     }
 
@@ -271,7 +275,7 @@ impl AbilityTreeNode for XNumber {
         use std::io::Write;
         write!(out, "x, where x is:")?;
         out.push_final_branch()?;
-        /* Fixme: display x definition */
+        self.x_definition.display(out)?;
         out.pop_branch();
         Ok(())
     }

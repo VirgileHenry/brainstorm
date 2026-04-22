@@ -2,7 +2,11 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ControlFlow {
-    NewLine {
+    Bullet {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Colons {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -14,15 +18,15 @@ pub enum ControlFlow {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Colons {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     LongDash {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Bullet {
+    NewLine {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    QuotationMark {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -32,12 +36,13 @@ pub enum ControlFlow {
 impl ControlFlow {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::NewLine { span } => *span,
+            Self::Bullet { span } => *span,
+            Self::Colons { span } => *span,
             Self::Comma { span } => *span,
             Self::Dot { span } => *span,
-            Self::Colons { span } => *span,
             Self::LongDash { span } => *span,
-            Self::Bullet { span } => *span,
+            Self::NewLine { span } => *span,
+            Self::QuotationMark { span } => *span,
         }
     }
 }
@@ -45,7 +50,11 @@ impl ControlFlow {
 impl ControlFlow {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "\n" => Some(ControlFlow::NewLine {
+            "•" => Some(ControlFlow::Bullet {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            ":" => Some(ControlFlow::Colons {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -57,15 +66,15 @@ impl ControlFlow {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            ":" => Some(ControlFlow::Colons {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "—" => Some(ControlFlow::LongDash {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "•" => Some(ControlFlow::Bullet {
+            "\n" => Some(ControlFlow::NewLine {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "\"" => Some(ControlFlow::QuotationMark {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

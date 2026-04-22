@@ -14,6 +14,10 @@ pub enum CountSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TheNext {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -23,6 +27,7 @@ impl CountSpecifier {
             Self::All { span } => *span,
             Self::AllOthers { span } => *span,
             Self::Target { span } => *span,
+            Self::TheNext { span } => *span,
         }
     }
 }
@@ -39,6 +44,10 @@ impl CountSpecifier {
                 span: span.into(),
             }),
             "all other" | "each other" => Some(Self::AllOthers {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the next" => Some(Self::TheNext {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -85,16 +85,6 @@ pub enum ObjectAbilitiesModification {
     GainAbility(ObjectGainAbility),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl ObjectAbilitiesModification {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::CharacteristicModification(child) => child.node_span(),
-            Self::GainAbility(child) => child.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for ObjectAbilitiesModification {
     fn node_id(&self) -> usize {
         use idris::Idris;
@@ -146,7 +136,7 @@ impl crate::utils::DummyInit for ObjectAbilitiesModification {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ObjectGainAbility {
-    pub ability: crate::ability_tree::ability::AbilityKind,
+    pub ability: crate::ability_tree::ability::Ability,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

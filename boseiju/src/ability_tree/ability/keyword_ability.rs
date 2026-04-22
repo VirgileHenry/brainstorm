@@ -1,12 +1,16 @@
+mod affinity;
 mod afterlife;
 mod bestow;
+mod blitz;
 mod bloodthirst;
 mod bushido;
+mod cleave;
 mod crew;
 mod cycling;
 mod echo;
 mod enchant;
 mod equip;
+mod flashback;
 mod keyword_to_abilities;
 mod kicker;
 mod megamorph;
@@ -18,18 +22,23 @@ mod ripple;
 mod suspend;
 mod vanishing;
 mod ward;
+mod warp;
 
 pub use keyword_to_abilities::keyword_to_abilities;
 
+pub use affinity::AffinityKeywordAbility;
 pub use afterlife::AfterlifeKeywordAbility;
 pub use bestow::BestowKeywordAbility;
+pub use blitz::BlitzKeywordAbility;
 pub use bloodthirst::BloodthirstKeywordAbility;
 pub use bushido::BushidoKeywordAbility;
+pub use cleave::CleaveKeywordAbility;
 pub use crew::CrewKeywordAbility;
 pub use cycling::CyclingKeywordAbility;
 pub use echo::EchoKeywordAbility;
 pub use enchant::EnchantKeywordAbility;
 pub use equip::EquipKeywordAbility;
+pub use flashback::FlashbackKeywordAbility;
 pub use kicker::KickerKeywordAbility;
 pub use megamorph::MegamorphKeywordAbility;
 pub use ninjutsu::NinjutsuKeywordAbility;
@@ -40,6 +49,7 @@ pub use ripple::RippleKeywordAbility;
 pub use suspend::SuspendKeywordAbility;
 pub use vanishing::VanishingKeywordAbility;
 pub use ward::WardKeywordAbility;
+pub use warp::WarpKeywordAbility;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -52,15 +62,19 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExpandedKeywordAbility {
+    Affinity(AffinityKeywordAbility),
     Afterlife(AfterlifeKeywordAbility),
     Bestow(BestowKeywordAbility),
+    Blitz(BlitzKeywordAbility),
     Bloodthirst(BloodthirstKeywordAbility),
     Bushido(BushidoKeywordAbility),
+    Cleave(CleaveKeywordAbility),
     Crew(CrewKeywordAbility),
     Cycling(CyclingKeywordAbility),
     Echo(EchoKeywordAbility),
     Equip(EquipKeywordAbility),
     Enchant(EnchantKeywordAbility),
+    Flashback(FlashbackKeywordAbility),
     Kicker(KickerKeywordAbility),
     Megamorph(MegamorphKeywordAbility),
     Ninjutsu(NinjutsuKeywordAbility),
@@ -72,6 +86,7 @@ pub enum ExpandedKeywordAbility {
     Suspend(SuspendKeywordAbility),
     Vanishing(VanishingKeywordAbility),
     Ward(WardKeywordAbility),
+    Warp(WarpKeywordAbility),
 }
 
 impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
@@ -83,15 +98,19 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::Affinity(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Afterlife(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Bestow(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Blitz(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Bloodthirst(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Bushido(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Cleave(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Crew(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Cycling(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Echo(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Equip(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Enchant(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Flashback(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Kicker(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Megamorph(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Ninjutsu(child) => children.push(child as &dyn AbilityTreeNode),
@@ -103,6 +122,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Suspend(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Vanishing(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Ward(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Warp(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -112,15 +132,19 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
         write!(out, "keyword ability:")?;
         out.push_final_branch()?;
         match self {
+            Self::Affinity(child) => child.display(out)?,
             Self::Afterlife(child) => child.display(out)?,
             Self::Bestow(child) => child.display(out)?,
+            Self::Blitz(child) => child.display(out)?,
             Self::Bloodthirst(child) => child.display(out)?,
             Self::Bushido(child) => child.display(out)?,
+            Self::Cleave(child) => child.display(out)?,
             Self::Crew(child) => child.display(out)?,
             Self::Cycling(child) => child.display(out)?,
             Self::Echo(child) => child.display(out)?,
             Self::Equip(child) => child.display(out)?,
             Self::Enchant(child) => child.display(out)?,
+            Self::Flashback(child) => child.display(out)?,
             Self::Kicker(child) => child.display(out)?,
             Self::Megamorph(child) => child.display(out)?,
             Self::Ninjutsu(child) => child.display(out)?,
@@ -132,6 +156,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Suspend(child) => child.display(out)?,
             Self::Vanishing(child) => child.display(out)?,
             Self::Ward(child) => child.display(out)?,
+            Self::Warp(child) => child.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -144,15 +169,19 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Affinity(child) => child.node_span(),
             Self::Afterlife(child) => child.node_span(),
             Self::Bestow(child) => child.node_span(),
+            Self::Blitz(child) => child.node_span(),
             Self::Bloodthirst(child) => child.node_span(),
             Self::Bushido(child) => child.node_span(),
+            Self::Cleave(child) => child.node_span(),
             Self::Crew(child) => child.node_span(),
             Self::Cycling(child) => child.node_span(),
             Self::Echo(child) => child.node_span(),
             Self::Equip(child) => child.node_span(),
             Self::Enchant(child) => child.node_span(),
+            Self::Flashback(child) => child.node_span(),
             Self::Kicker(child) => child.node_span(),
             Self::Megamorph(child) => child.node_span(),
             Self::Ninjutsu(child) => child.node_span(),
@@ -164,6 +193,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Suspend(child) => child.node_span(),
             Self::Vanishing(child) => child.node_span(),
             Self::Ward(child) => child.node_span(),
+            Self::Warp(child) => child.node_span(),
         }
     }
 }

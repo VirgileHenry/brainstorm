@@ -2,12 +2,13 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-#[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Crew <number> */
@@ -43,11 +44,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::Ability::Spell(crate::ability_tree::ability::spell::SpellAbility {
-                        effects: crate::utils::HeapArrayVec::new(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }),
+                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
+                        crate::ability_tree::ability::spell::SpellAbility {
+                            effects: crate::utils::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                    ),
                     #[cfg(feature = "spanned_tree")]
                     span: number.node_span().merge(crew_span),
                 },

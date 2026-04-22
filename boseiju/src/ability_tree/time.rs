@@ -171,6 +171,7 @@ impl std::fmt::Display for ForwardDuration {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BackwardDuration {
+    /* Fixme: weird one */
     ThisTurn {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,

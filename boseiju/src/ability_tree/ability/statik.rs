@@ -86,17 +86,6 @@ pub enum StaticAbilityKind {
     AlternativeCastingPermissions(alterative_casting_permissions::AlternativeCastingPermissions), /* Fixme: that's a continuous effect */
 }
 
-#[cfg(feature = "spanned_tree")]
-impl StaticAbilityKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::ContinuousEffect(child) => child.span,
-            Self::CostModificationEffect(child) => child.span,
-            Self::AlternativeCastingPermissions(child) => child.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for StaticAbilityKind {
     fn node_id(&self) -> usize {
         use idris::Idris;

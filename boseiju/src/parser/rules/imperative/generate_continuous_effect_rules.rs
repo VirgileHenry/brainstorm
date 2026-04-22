@@ -1,3 +1,4 @@
+use crate::ability_tree::ability::statik::continuous_effect;
 use crate::ability_tree::time;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
@@ -28,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ContinuousEffect { effect: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::ForwardDuration(time::ForwardDuration::UntilEndOfTurn {
@@ -37,8 +38,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::ContinuousEffect { effect },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::GenerateContinuousEffect(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
                         crate::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: effect.clone(),
                             duration: time::ForwardDuration::UntilEndOfTurn {
@@ -64,7 +65,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ContinuousEffect { effect },
@@ -72,8 +73,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::GenerateContinuousEffect(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
                         crate::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: effect.clone(),
                             duration: time::ForwardDuration::UntilEndOfTurn {
@@ -82,6 +83,80 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                             #[cfg(feature = "spanned_tree")]
                             span: effect.node_span().merge(end_span),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<object reference> this turn has <ability>" makes a generated continuous effect. */
+        /* Fixme: this only appears with: "the next <spell specifier> this turn has...", maybe we could be more restrictive */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(Token::BackwardDuration(time::BackwardDuration::ThisTurn {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::KeywordAbility {
+                    keyword_ability: dummy(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference },
+                    ParserNode::LexerToken(Token::BackwardDuration(time::BackwardDuration::ThisTurn {
+                        #[cfg(feature = "spanned_tree")]
+                            span: this_turn_span,
+                    })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                        #[cfg(feature = "spanned_tree")]
+                            span: have_span,
+                    })),
+                    ParserNode::KeywordAbility { keyword_ability },
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
+                        crate::ability_tree::imperative::GenerateContinuousEffectImperative {
+                            effect: continuous_effect::ContinuousEffect {
+                                effect: continuous_effect::ContinuousEffectKind::ModifyObjectAbilities(
+                                    continuous_effect::ContinuousEffectModifyObject {
+                                        object: reference.clone(),
+                                        modifications: {
+                                            let mut modifications = crate::utils::HeapArrayVec::new();
+                                            let gain_ab_mod = continuous_effect::ObjectAbilitiesModification::GainAbility(
+                                                continuous_effect::ObjectGainAbility {
+                                                    ability: crate::ability_tree::ability::Ability::KeywordAbility(
+                                                        keyword_ability.clone(),
+                                                    ),
+                                                    #[cfg(feature = "spanned_tree")]
+                                                    span: keyword_ability.node_span().merge(have_span),
+                                                },
+                                            );
+                                            modifications.push(gain_ab_mod);
+                                            modifications
+                                        },
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: reference.node_span().merge(&keyword_ability.node_span()),
+                                    },
+                                ),
+                                #[cfg(feature = "spanned_tree")]
+                                span: reference.node_span().merge(&keyword_ability.node_span()),
+                            },
+                            duration: time::ForwardDuration::UntilEndOfTurn {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *this_turn_span,
+                            },
+                            #[cfg(feature = "spanned_tree")]
+                            span: reference.node_span().merge(&keyword_ability.node_span()),
                         },
                     ),
                 }),

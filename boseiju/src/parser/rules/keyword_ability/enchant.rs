@@ -45,7 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         ),
                         /* Fixme */
-                        ability: crate::ability_tree::ability::Ability::Spell(
+                        ability: crate::ability_tree::ability::WrittenAbility::Spell(
                             crate::ability_tree::ability::spell::SpellAbility {
                                 effects: crate::utils::HeapArrayVec::new(),
                                 #[cfg(feature = "spanned_tree")]

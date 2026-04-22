@@ -29,12 +29,8 @@ parser = ["lexer", "dep:rapidhash"]
 spanned_tree = ["lexer"]
 
 [[bin]]
-name = "debug_graph"
-path = "bin/debug_graph.rs"
-
-[[bin]]
-name = "debug_fdn"
-path = "bin/debug_fdn.rs"
+name = "debug"
+path = "bin/debug.rs"
 
 [[bin]]
 name = "export"

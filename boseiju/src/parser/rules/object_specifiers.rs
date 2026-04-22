@@ -1,3 +1,5 @@
+mod object_property_specifier;
+
 use super::ParserNode;
 use crate::ability_tree::object;
 use crate::lexer::tokens::Token;
@@ -404,6 +406,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         object_kind_to_specifiers,
         object_non_kind_to_specifiers,
         card_state_to_specifier,
+        object_property_specifier::rules().collect::<Vec<_>>(),
     ]
     .into_iter()
     .flatten()

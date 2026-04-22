@@ -12,16 +12,6 @@ pub enum Cost {
     Imperative(crate::ability_tree::imperative::Imperative),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl Cost {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::ManaCost(child) => child.span,
-            Self::Imperative(child) => child.node_span(),
-        }
-    }
-}
-
 impl crate::ability_tree::AbilityTreeNode for Cost {
     fn node_id(&self) -> usize {
         use idris::Idris;

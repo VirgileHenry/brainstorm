@@ -142,6 +142,7 @@ fn run_card(card: &mtg_cardbase::Card) -> TestResult {
     }
 }
 
+/// Doc
 fn card_legal_in(card: &mtg_cardbase::Card, format: mtg_data::Format) -> bool {
     let legality = match format {
         mtg_data::Format::Commander => &card.legalities.commander,

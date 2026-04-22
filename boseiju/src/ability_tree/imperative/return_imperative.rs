@@ -9,7 +9,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChangeZoneImperative {
     pub object: crate::ability_tree::object::ObjectReference,
-    pub from: Option<crate::ability_tree::zone::ZoneReference>,
+    pub from: crate::ability_tree::zone::ZoneReference,
     pub to: crate::ability_tree::zone::ZoneReference,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -22,21 +22,16 @@ impl AbilityTreeNode for ChangeZoneImperative {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
-
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.object as &dyn AbilityTreeNode);
-        match self.from.as_ref() {
-            Some(from) => children.push(from as &dyn AbilityTreeNode),
-            None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
-        }
+        children.push(&self.from as &dyn AbilityTreeNode);
         children.push(&self.to as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "return:")?;
+        write!(out, "change zone:")?;
         out.push_inter_branch()?;
         write!(out, "object:")?;
         out.push_final_branch()?;
@@ -45,10 +40,7 @@ impl AbilityTreeNode for ChangeZoneImperative {
         out.next_inter_branch()?;
         write!(out, "from:")?;
         out.push_final_branch()?;
-        match self.from.as_ref() {
-            Some(from) => from.display(out)?,
-            None => write!(out, "wherever the fuck it is")?,
-        }
+        self.from.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "to:")?;

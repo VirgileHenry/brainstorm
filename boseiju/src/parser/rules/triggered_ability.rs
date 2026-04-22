@@ -17,14 +17,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::Ability { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::TriggerCondition { condition },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
-                ] => Ok(ParserNode::Ability {
-                    ability: crate::ability_tree::ability::Ability::Triggered(
+                ] => Ok(ParserNode::WrittenAbility {
+                    ability: crate::ability_tree::ability::WrittenAbility::Triggered(
                         crate::ability_tree::ability::triggered::TriggeredAbility {
                             condition: condition.clone(),
                             effect: ability.clone(),

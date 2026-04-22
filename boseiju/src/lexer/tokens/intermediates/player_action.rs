@@ -123,7 +123,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "lose" | "loses" => Some(Self::LookAt {
+            "lose" | "loses" => Some(Self::Lose {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

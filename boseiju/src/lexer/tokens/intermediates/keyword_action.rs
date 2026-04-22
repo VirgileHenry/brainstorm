@@ -12,9 +12,8 @@ pub struct KeywordAction {
 #[cfg(feature = "lexer")]
 impl IntoToken for KeywordAction {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        use std::str::FromStr;
         Some(Self {
-            keyword_action: mtg_data::KeywordAction::from_str(&span.text).ok()?,
+            keyword_action: crate::utils::from_str_singular_or_plural(&span.text)?,
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })

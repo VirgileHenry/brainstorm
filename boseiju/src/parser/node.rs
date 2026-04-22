@@ -13,6 +13,9 @@ pub enum ParserNode {
     AbilityTree {
         tree: ability_tree::AbilityTree,
     },
+    AbilityWord {
+        ability_word: ability_tree::ability::ability_word::ExpandedAbilityWord,
+    },
     Condition {
         condition: ability_tree::conditional::Condition,
     },
@@ -55,14 +58,17 @@ pub enum ParserNode {
     EventSourceReference {
         source: ability_tree::event::replacement::EventSourceReference,
     },
-    ExileFollowUp {
-        follow_up: ability_tree::imperative::ExileFollowUp,
+    ForwardDuration {
+        duration: crate::ability_tree::time::ForwardDuration,
     },
     Imperative {
         imperative: ability_tree::imperative::Imperative,
     },
+    ImperativeKind {
+        imperative: ability_tree::imperative::ImperativeKind,
+    },
     ImperativeList {
-        imperatives: ability_tree::imperative::ImperativeList,
+        imperatives: ability_tree::imperative_list::ImperativeList,
     },
     ImperativeChoices {
         choices: crate::utils::HeapArrayVec<ability_tree::ability::spell::SpellAbility, 11 /* Fixme */>,
@@ -80,6 +86,11 @@ pub enum ParserNode {
     },
     ManaToAdd {
         mana: ability_tree::imperative::ManaToAdd,
+    },
+    MultipleKeywordAbilities {
+        abilities: crate::utils::HeapArrayVec<crate::ability_tree::ability::KeywordAbility, 12 /* Fixme */>,
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
     },
     Number {
         number: ability_tree::number::Number,
@@ -123,8 +134,11 @@ pub enum ParserNode {
     TriggerCondition {
         condition: ability_tree::ability::triggered::TriggerCondition,
     },
-    AbilityKind {
-        ability: ability_tree::ability::AbilityKind,
+    WrittenAbility {
+        ability: ability_tree::ability::WrittenAbility,
+    },
+    XDefinition {
+        definition: ability_tree::number::XDefinition,
     },
     ZoneReference {
         zone: ability_tree::zone::ZoneReference,

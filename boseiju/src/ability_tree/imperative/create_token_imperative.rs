@@ -127,16 +127,6 @@ pub enum CreatedTokenKind {
     NewToken(crate::ability_tree::card_layout::TokenLayout),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl CreatedTokenKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::PreviouslyMentionnedToken { span } => *span,
-            Self::NewToken(child) => child.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for CreatedTokenKind {
     fn node_id(&self) -> usize {
         use idris::Idris;

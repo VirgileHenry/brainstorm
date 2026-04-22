@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
         /* Numbers on their own can make count specifiers */
-        /* Fixme: check what does not pass without it, maybe this is too much */
+        /* Fixme: check what cards fails without it, maybe this is too much */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::Number { number: dummy() }.id()]),
             merged: ParserNode::CountSpecifier { count: dummy() }.id(),
@@ -166,6 +166,32 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::CountSpecifier {
                     count: crate::ability_tree::object::CountSpecifier::AllOthers {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "The next" is a count specifier */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::CountSpecifier(
+                intermediates::CountSpecifier::TheNext {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::TheNext {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::CountSpecifier {
+                    count: crate::ability_tree::object::CountSpecifier::TheNext {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
                     },

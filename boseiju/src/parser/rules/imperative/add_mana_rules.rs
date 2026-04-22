@@ -22,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ManaToAdd { mana: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
@@ -30,8 +30,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: add_span,
                     })),
                     ParserNode::ManaToAdd { mana },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::AddMana(
                         crate::ability_tree::imperative::AddManaImperative {
                             possibilities: [mana.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ManaToAdd { mana: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
@@ -69,8 +69,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::ManaToAdd { mana: m1 },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
                     ParserNode::ManaToAdd { mana: m2 },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::AddMana(
                         crate::ability_tree::imperative::AddManaImperative {
                             possibilities: [m1.clone(), m2.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
@@ -109,7 +109,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ManaToAdd { mana: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Add {
@@ -122,8 +122,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
                     ParserNode::ManaToAdd { mana: m3 },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::AddMana(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::AddMana(
                         crate::ability_tree::imperative::AddManaImperative {
                             possibilities: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]

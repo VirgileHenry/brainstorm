@@ -11,8 +11,8 @@
 //! responsible for creating the rules that can create this ability tree node.
 
 mod ability;
-mod ability_kind;
 mod ability_tree;
+mod ability_word;
 mod activated_ability;
 mod conditional;
 mod continuous_effect;
@@ -35,9 +35,11 @@ mod replacement_effect;
 mod spell_ability;
 mod statement;
 mod statik;
+mod time;
 mod token;
 mod triggered_ability;
 mod triggered_condition;
+mod x_definition;
 mod zone;
 
 use crate::parser::node::ParserNode;
@@ -47,7 +49,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
     let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
         Box::new(ability::rules()),
         Box::new(ability_tree::rules()),
-        Box::new(ability_kind::rules()),
+        Box::new(ability_word::rules()),
         Box::new(activated_ability::rules()),
         Box::new(continuous_effect::rules()),
         Box::new(cost::rules()),
@@ -71,8 +73,10 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(statement::rules()),
         Box::new(statik::rules()),
         Box::new(token::rules()),
+        Box::new(time::rules()),
         Box::new(triggered_ability::rules()),
         Box::new(triggered_condition::rules()),
+        Box::new(x_definition::rules()),
         Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()

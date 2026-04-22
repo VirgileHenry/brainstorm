@@ -22,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
             ParserNode::ObjectReference { reference: dummy() }.id(),
         ]),
-        merged: ParserNode::Imperative { imperative: dummy() }.id(),
+        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
@@ -31,8 +31,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span,
                 })),
                 ParserNode::ObjectReference { reference },
-            ] => Ok(ParserNode::Imperative {
-                imperative: crate::ability_tree::imperative::Imperative::Destroy(
+            ] => Ok(ParserNode::ImperativeKind {
+                imperative: crate::ability_tree::imperative::ImperativeKind::Destroy(
                     crate::ability_tree::imperative::DestroyImperative {
                         object: reference.clone(),
                         #[cfg(feature = "spanned_tree")]

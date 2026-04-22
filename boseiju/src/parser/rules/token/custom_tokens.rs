@@ -301,7 +301,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         abilities: crate::AbilityTree {
                             abilities: {
                                 let mut abilities = crate::utils::HeapArrayVec::new();
-                                abilities.push(crate::ability_tree::ability::AbilityKind::KeywordAbility(
+                                abilities.push(crate::ability_tree::ability::Ability::KeywordAbility(
                                     keyword_ability.clone(),
                                 ));
                                 abilities

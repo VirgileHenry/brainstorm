@@ -1,8 +1,12 @@
+mod card_property_specifier;
 mod cast_specifier;
 mod control_specifier;
+mod not_previously_selected_specifier;
 
+pub use card_property_specifier::*;
 pub use cast_specifier::CastSpecifier;
 pub use control_specifier::ControlSpecifier;
+pub use not_previously_selected_specifier::NotPreviouslySelectedObjectSpecifier;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -23,16 +27,6 @@ impl ObjectSpecifiers {
             #[cfg(feature = "spanned_tree")]
             span,
         ))
-    }
-
-    #[cfg(feature = "spanned_tree")]
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Single(child) => child.node_span(),
-            Self::And(child) => child.span,
-            Self::Or(child) => child.span,
-            Self::OrOfAnd(child) => child.span,
-        }
     }
 }
 
@@ -387,6 +381,11 @@ impl crate::utils::DummyInit for SpecifierOrOfAndList {
 }
 
 /// Fixme: doc
+///
+/// Fixme: shall all specifier have their own nodes ?
+/// it's a bit weird to have directly the attributes ?
+/// The AI will see specifier -> color instead of
+/// specifier -> color specifier -> color
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectSpecifier {
@@ -398,6 +397,7 @@ pub enum ObjectSpecifier {
     NotOfAKind(crate::ability_tree::object::ObjectKind),
     NotPreviouslySelected(NotPreviouslySelectedObjectSpecifier),
     State(crate::ability_tree::terminals::CardState),
+    WithProperty(CardPropertySpecifier),
 }
 
 impl ObjectSpecifier {
@@ -430,6 +430,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             Self::NotOfAKind(child) => children.push(child as &dyn AbilityTreeNode),
             Self::NotPreviouslySelected(child) => children.push(child as &dyn AbilityTreeNode),
             Self::State(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::WithProperty(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -445,6 +446,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             ObjectSpecifier::NotOfAKind(_) => write!(out, "not of a kind specifier:")?,
             ObjectSpecifier::NotPreviouslySelected(_) => write!(out, "not previously selected:")?,
             ObjectSpecifier::State(_) => write!(out, "with state:")?,
+            ObjectSpecifier::WithProperty(_) => write!(out, "with property:")?,
         }
         out.push_final_branch()?;
         match self {
@@ -456,6 +458,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             ObjectSpecifier::NotOfAKind(object) => object.display(out)?,
             ObjectSpecifier::NotPreviouslySelected(another) => another.display(out)?,
             ObjectSpecifier::State(another) => another.display(out)?,
+            ObjectSpecifier::WithProperty(another) => another.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -476,6 +479,7 @@ impl AbilityTreeNode for ObjectSpecifier {
             Self::NotOfAKind(child) => child.node_span(),
             Self::NotPreviouslySelected(child) => child.node_span(),
             Self::State(child) => child.node_span(),
+            Self::WithProperty(child) => child.node_span(),
         }
     }
 }
@@ -526,47 +530,5 @@ impl AbilityTreeNode for AnotherObjectSpecifier {
 impl std::fmt::Display for AnotherObjectSpecifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "others")
-    }
-}
-
-/// Marker struct for the special object specifier "other target",
-/// which means "any target that was not already selected"
-#[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct NotPreviouslySelectedObjectSpecifier {
-    #[cfg(feature = "spanned_tree")]
-    pub span: crate::ability_tree::span::TreeSpan,
-}
-
-impl AbilityTreeNode for NotPreviouslySelectedObjectSpecifier {
-    fn node_id(&self) -> usize {
-        use crate::ability_tree::tree_node::TerminalNodeKind;
-        use idris::Idris;
-
-        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NotPreviouslySelectedObjectSpecifier).id()
-    }
-
-    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new()
-    }
-
-    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
-        write!(out, "{self}")
-    }
-
-    fn node_tag(&self) -> &'static str {
-        "not previously selected specifier"
-    }
-
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        self.span
-    }
-}
-
-impl std::fmt::Display for NotPreviouslySelectedObjectSpecifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "not previously selected")
     }
 }

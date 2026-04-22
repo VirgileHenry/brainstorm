@@ -34,7 +34,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference: dealer },
@@ -43,8 +43,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::DamageKind(intermediates::DamageKind::Damage { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                     ParserNode::ObjectReference { reference: to },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::DealsDamage(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::DealsDamage(
                         crate::ability_tree::imperative::DealsDamageImperative {
                             dealer: dealer.clone(),
                             damages: {
@@ -105,7 +105,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::ObjectReference { reference: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ObjectReference { reference: dealer },
@@ -119,8 +119,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::DamageKind(intermediates::DamageKind::Damage { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                     ParserNode::ObjectReference { reference: to_d2 },
-                ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::DealsDamage(
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::DealsDamage(
                         crate::ability_tree::imperative::DealsDamageImperative {
                             dealer: dealer.clone(),
                             damages: {

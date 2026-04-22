@@ -1,8 +1,10 @@
 mod creature_attacks_action;
+mod creature_blocks_action;
 mod creature_deals_combat_damage_action;
 mod creature_dies_action;
 
 pub use creature_attacks_action::CreatureAttacksAction;
+pub use creature_blocks_action::CreatureBlocksAction;
 pub use creature_deals_combat_damage_action::CreatureDealsCombatDamageAction;
 pub use creature_dies_action::CreatureDiesAction;
 
@@ -18,6 +20,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureActionEvent {
+    /// Fixme: differentiates object reference to actually reference only creatures
     pub creatures: crate::ability_tree::object::ObjectReference,
     pub action: CreatureAction,
     #[cfg(feature = "spanned_tree")]
@@ -80,19 +83,9 @@ impl crate::utils::DummyInit for CreatureActionEvent {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CreatureAction {
     Attacks(CreatureAttacksAction),
+    Blocks(CreatureBlocksAction),
     DealsCombatDamage(CreatureDealsCombatDamageAction),
     Dies(CreatureDiesAction),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl CreatureAction {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Attacks(child) => child.span,
-            Self::DealsCombatDamage(child) => child.span,
-            Self::Dies(child) => child.span,
-        }
-    }
 }
 
 impl AbilityTreeNode for CreatureAction {
@@ -105,6 +98,7 @@ impl AbilityTreeNode for CreatureAction {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Attacks(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Blocks(child) => children.push(child as &dyn AbilityTreeNode),
             Self::DealsCombatDamage(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Dies(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -117,6 +111,7 @@ impl AbilityTreeNode for CreatureAction {
         out.push_final_branch()?;
         match self {
             Self::Attacks(action) => action.display(out)?,
+            Self::Blocks(action) => action.display(out)?,
             Self::DealsCombatDamage(action) => action.display(out)?,
             Self::Dies(action) => action.display(out)?,
         }
@@ -132,6 +127,7 @@ impl AbilityTreeNode for CreatureAction {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Attacks(child) => child.node_span(),
+            Self::Blocks(child) => child.node_span(),
             Self::DealsCombatDamage(child) => child.node_span(),
             Self::Dies(child) => child.node_span(),
         }

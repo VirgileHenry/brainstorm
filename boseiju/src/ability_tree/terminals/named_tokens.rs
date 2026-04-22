@@ -13,15 +13,6 @@ pub enum NamedToken {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl NamedToken {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::KomasCoil { span } => *span,
-        }
-    }
-}
-
 impl AbilityTreeNode for NamedToken {
     fn node_id(&self) -> usize {
         use crate::ability_tree::NodeKind;

@@ -2,15 +2,16 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-#[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Surveil <mana cost> */
+    /* Surveil <amount> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
@@ -21,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
             ParserNode::Number { number: dummy() }.id(),
         ]),
-        merged: ParserNode::Imperative { imperative: dummy() }.id(),
+        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
@@ -30,11 +31,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span: surveil_span,
                 })),
                 ParserNode::Number { number },
-            ] => Ok(ParserNode::Imperative {
-                imperative: crate::ability_tree::imperative::Imperative::KeywordAction(
+            ] => Ok(ParserNode::ImperativeKind {
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                     crate::ability_tree::imperative::KeywordAction {
                         keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Surveil(
-                            crate::ability_tree::imperative::SurveilKeywordAbility {
+                            crate::ability_tree::imperative::SurveilKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: number.node_span().merge(surveil_span),

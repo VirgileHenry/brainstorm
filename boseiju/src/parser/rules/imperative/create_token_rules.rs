@@ -23,7 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             ParserNode::Number { number: dummy() }.id(),
             ParserNode::TokenDefinition { token: dummy() }.id(),
         ]),
-        merged: ParserNode::Imperative { imperative: dummy() }.id(),
+        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
@@ -33,8 +33,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 })),
                 ParserNode::Number { number },
                 ParserNode::TokenDefinition { token },
-            ] => Ok(ParserNode::Imperative {
-                imperative: crate::ability_tree::imperative::Imperative::CreateToken(
+            ] => Ok(ParserNode::ImperativeKind {
+                imperative: crate::ability_tree::imperative::ImperativeKind::CreateToken(
                     crate::ability_tree::imperative::CreateTokenImperative {
                         tokens: {
                             let mut tokens = crate::utils::HeapArrayVec::new();

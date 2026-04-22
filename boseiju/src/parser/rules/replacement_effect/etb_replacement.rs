@@ -55,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     crate::ability_tree::event::EntersTheBattlefieldEvent {
                                         object: reference.clone(),
                                         #[cfg(feature = "spanned_tree")]
-                                        span: reference.span(),
+                                        span: reference.node_span(),
                                     },
                                 ),
                                 replaced_by: EventReplacement::EntersTheBattlefield(EtbReplacement {
@@ -135,7 +135,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     crate::ability_tree::event::EntersTheBattlefieldEvent {
                                         object: reference.clone(),
                                         #[cfg(feature = "spanned_tree")]
-                                        span: reference.span(),
+                                        span: reference.node_span(),
                                     },
                                 ),
                                 replaced_by: EventReplacement::EntersTheBattlefield(EtbReplacement {
@@ -198,16 +198,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
                         #[cfg(feature = "spanned_tree")]
                         span: enters_span,
-                    }))
-                    ,
+                    })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
                         #[cfg(feature = "spanned_tree")]
                         span: with_span,
-                    }))
-                    ,
+                    })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::Counter(counter))
-                    ,
+                    ParserNode::LexerToken(Token::Counter(counter)),
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: continuous_effect::ContinuousEffect {
                         effect: continuous_effect::ContinuousEffectKind::ReplacementEffect(
@@ -216,7 +213,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     event::EntersTheBattlefieldEvent {
                                         object: reference.clone(),
                                         #[cfg(feature = "spanned_tree")]
-                                        span: reference.span(),
+                                        span: reference.node_span(),
                                     },
                                 ),
                                 replaced_by: EventReplacement::EntersTheBattlefield(EtbReplacement {

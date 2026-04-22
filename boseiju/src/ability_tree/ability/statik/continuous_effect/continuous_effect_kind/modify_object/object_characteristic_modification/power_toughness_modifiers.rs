@@ -13,19 +13,6 @@ pub enum PowerToughnessModifiers {
     Set(PowerToughnessModifiersSet),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl PowerToughnessModifiers {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::MinusMinus(child) => child.span,
-            Self::MinusPlus(child) => child.span,
-            Self::PlusMinus(child) => child.span,
-            Self::PlusPlus(child) => child.span,
-            Self::Set(child) => child.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for PowerToughnessModifiers {
     fn node_id(&self) -> usize {
         use idris::Idris;
@@ -107,15 +94,16 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusPlus {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
+        write!(out, "power / toughness mod:")?;
         out.push_inter_branch()?;
         write!(out, "power mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "+")?;
         self.power_mod.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "toughness mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "+")?;
         self.toughness_mod.display(out)?;
         out.pop_branch();

@@ -13,7 +13,7 @@ struct ExportableCard {
 fn main() {
     let cards = mtg_cardbase::AllCardsIter::new();
 
-    const EXPORT_CARD_COUNT: usize = 100;
+    const EXPORT_CARD_COUNT: usize = 500;
     let mut result = Vec::new();
 
     let mut last_shown_percentage = 0;

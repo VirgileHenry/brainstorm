@@ -1,8 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "As this enchantment enters, choose a creature type.\nWhenever a creature you control of the chosen type enters or attacks, draw a card.";
-    let card_name = "Drakuseth";
+    let oracle_text = "Menace\nWhenever ~ attack, the next noncreature spell you cast this turn has affinity for artifacts.";
+    let card_name = "Gornog, the Red Reaper";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;

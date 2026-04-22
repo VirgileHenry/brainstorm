@@ -123,7 +123,7 @@ impl AbilityTreeNode for CardState {
     }
 
     fn node_tag(&self) -> &'static str {
-        "owner specifier"
+        "card state"
     }
 
     #[cfg(feature = "spanned_tree")]

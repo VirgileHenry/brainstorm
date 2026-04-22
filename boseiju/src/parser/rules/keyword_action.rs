@@ -1,4 +1,5 @@
 mod adapt;
+mod mill;
 mod scry;
 mod surveil;
 
@@ -20,10 +21,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id()]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::KeywordAction(keyword))] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative::KeywordAction(
+                &[ParserNode::LexerToken(Token::KeywordAction(keyword))] => Ok(ParserNode::ImperativeKind {
+                    imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                         crate::ability_tree::imperative::keyword_action_to_abilities(*keyword)?,
                     ),
                 }),
@@ -36,6 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         keyword_actions_to_imperatives,
         adapt::rules().collect::<Vec<_>>(),
+        mill::rules().collect::<Vec<_>>(),
         scry::rules().collect::<Vec<_>>(),
         surveil::rules().collect::<Vec<_>>(),
     ]

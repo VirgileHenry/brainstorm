@@ -78,16 +78,6 @@ pub enum PlayerAction {
     CastsSpell(PlayerCastsSpellEvent),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl PlayerAction {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Attacks(child) => child.span,
-            Self::CastsSpell(child) => child.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for PlayerAction {
     fn node_id(&self) -> usize {
         use idris::Idris;

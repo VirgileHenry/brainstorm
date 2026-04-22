@@ -1,24 +1,14 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::imperative_list::ImperativeList;
 
 /// Fixme: doc
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Statement {
-    Imperatives(crate::ability_tree::imperative::ImperativeList),
+    Imperatives(ImperativeList),
     May(MayAbility),
     ReplacableImperatives(ReplacableImperatives),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl Statement {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Imperatives(child) => child.span,
-            Self::May(child) => child.span,
-            Self::ReplacableImperatives(child) => child.span,
-        }
-    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for Statement {
@@ -71,11 +61,12 @@ impl crate::utils::DummyInit for Statement {
     }
 }
 
+/// Fixme: own file
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MayAbility {
     pub player: crate::ability_tree::player::PlayerSpecifier,
-    pub action: crate::ability_tree::imperative::ImperativeList,
+    pub action: crate::ability_tree::imperative_list::ImperativeList,
     pub if_it_is_done: Option<Box<Statement>>,
     pub if_not_done: Option<Box<Statement>>,
     #[cfg(feature = "spanned_tree")]
@@ -158,12 +149,14 @@ impl crate::utils::DummyInit for MayAbility {
 /// list if some condition is met.
 ///
 /// They always take the form: "do X. if Y, do Z instead".
+///
+/// Fixme: own file
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReplacableImperatives {
-    pub first_clause: crate::ability_tree::imperative::ImperativeList,
+    pub first_clause: crate::ability_tree::imperative_list::ImperativeList,
     pub condition: crate::ability_tree::conditional::Conditional,
-    pub replacing_clause: crate::ability_tree::imperative::ImperativeList,
+    pub replacing_clause: crate::ability_tree::imperative_list::ImperativeList,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

@@ -355,6 +355,41 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
+        /* "<obj ref> or <obj ref>" make a multiple object references reference */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ObjectReference { reference: dummy() }.id(),
+            ]),
+            merged: ParserNode::ObjectReference { reference: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::ObjectReference { reference: ref1 },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::ObjectReference { reference: ref2 },
+                ] => Ok(ParserNode::ObjectReference {
+                    reference: crate::ability_tree::object::ObjectReference::OneAmong(
+                        crate::ability_tree::object::MultipleObjectReferences {
+                            objects: {
+                                let mut objects = crate::utils::HeapArrayVec::new();
+                                objects.push(ref1.clone());
+                                objects.push(ref2.clone());
+                                objects
+                            },
+                            #[cfg(feature = "spanned_tree")]
+                            span: ref1.node_span().merge(&ref2.node_span()),
+                        },
+                    ),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
     ];
 
     /* Enchanted / equiped objects makes a special object specifier */

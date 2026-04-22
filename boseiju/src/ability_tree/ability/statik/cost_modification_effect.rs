@@ -70,17 +70,6 @@ pub enum CostModification {
     Set(CostModificationCostSet),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl CostModification {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::More(child) => child.span,
-            Self::Less(child) => child.span,
-            Self::Set(child) => child.span,
-        }
-    }
-}
-
 impl crate::ability_tree::AbilityTreeNode for CostModification {
     fn node_id(&self) -> usize {
         use idris::Idris;

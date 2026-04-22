@@ -32,7 +32,7 @@ impl crate::ability_tree::AbilityTreeNode for GenerateDelayedTriggeredAbilityImp
     }
 
     fn node_tag(&self) -> &'static str {
-        "generate continuous effect"
+        "generate delayed triggered ability"
     }
 
     #[cfg(feature = "spanned_tree")]

@@ -15,15 +15,6 @@ pub enum EventSourceReference {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl EventSourceReference {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::ThatEvent { span } => *span,
-        }
-    }
-}
-
 impl AbilityTreeNode for EventSourceReference {
     fn node_id(&self) -> usize {
         use idris::Idris;

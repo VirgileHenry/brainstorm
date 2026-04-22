@@ -2,12 +2,13 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-#[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* Adapt <mana cost> */
@@ -21,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
             ParserNode::Number { number: dummy() }.id(),
         ]),
-        merged: ParserNode::Imperative { imperative: dummy() }.id(),
+        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
@@ -30,11 +31,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span: adapt_span,
                 })),
                 ParserNode::Number { number },
-            ] => Ok(ParserNode::Imperative {
-                imperative: crate::ability_tree::imperative::Imperative::KeywordAction(
+            ] => Ok(ParserNode::ImperativeKind {
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                     crate::ability_tree::imperative::KeywordAction {
                         keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Adapt(
-                            crate::ability_tree::imperative::AdaptKeywordAbility {
+                            crate::ability_tree::imperative::AdaptKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: number.node_span().merge(adapt_span),

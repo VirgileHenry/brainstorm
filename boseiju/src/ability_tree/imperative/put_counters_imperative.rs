@@ -137,16 +137,6 @@ pub enum CounterKind {
     NewCounter(crate::ability_tree::terminals::Counter),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl CounterKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::PreviouslyMentionnedCounter { span } => *span,
-            Self::NewCounter(child) => child.span,
-        }
-    }
-}
-
 impl AbilityTreeNode for CounterKind {
     fn node_id(&self) -> usize {
         use idris::Idris;

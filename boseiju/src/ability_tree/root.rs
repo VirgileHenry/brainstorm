@@ -7,7 +7,7 @@ use crate::ability_tree::*;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AbilityTree {
-    pub abilities: crate::utils::HeapArrayVec<ability::AbilityKind, MAX_CHILDREN_PER_NODE>,
+    pub abilities: crate::utils::HeapArrayVec<ability::Ability, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

@@ -5,22 +5,17 @@ mod create_token_event;
 mod creature_action_event;
 mod enters_the_battlefield_event;
 mod life_gained_event;
+mod object_becomes_state;
 mod player_action_event;
 mod put_counter_on_permanent_event;
 
-pub use create_token_event::CreateTokensEvent;
-pub use creature_action_event::CreatureAction;
-pub use creature_action_event::CreatureActionEvent;
-pub use creature_action_event::CreatureAttacksAction;
-pub use creature_action_event::CreatureDealsCombatDamageAction;
-pub use creature_action_event::CreatureDiesAction;
-pub use enters_the_battlefield_event::EntersTheBattlefieldEvent;
-pub use life_gained_event::LifeGainedEvent;
-pub use player_action_event::PlayerAction;
-pub use player_action_event::PlayerActionEvent;
-pub use player_action_event::PlayerAttacksAction;
-pub use player_action_event::PlayerCastsSpellEvent;
-pub use put_counter_on_permanent_event::PutCounterOnPermanentEvent;
+pub use create_token_event::*;
+pub use creature_action_event::*;
+pub use enters_the_battlefield_event::*;
+pub use life_gained_event::*;
+pub use object_becomes_state::*;
+pub use player_action_event::*;
+pub use put_counter_on_permanent_event::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -41,6 +36,7 @@ pub enum Event {
     CreatureAction(CreatureActionEvent),
     EntersTheBattlefield(EntersTheBattlefieldEvent),
     LifeGained(LifeGainedEvent),
+    ObjectBecomesState(ObjectBecomesStateEvent),
     PlayerAction(PlayerActionEvent),
     PutCounterOnPermanent(PutCounterOnPermanentEvent),
 }
@@ -58,6 +54,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreatureAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::EntersTheBattlefield(child) => children.push(child as &dyn AbilityTreeNode),
             Self::LifeGained(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ObjectBecomesState(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PlayerAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounterOnPermanent(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -73,6 +70,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreatureAction(event) => event.display(out)?,
             Self::EntersTheBattlefield(event) => event.display(out)?,
             Self::LifeGained(event) => event.display(out)?,
+            Self::ObjectBecomesState(event) => event.display(out)?,
             Self::PlayerAction(event) => event.display(out)?,
             Self::PutCounterOnPermanent(event) => event.display(out)?,
         }
@@ -91,6 +89,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreatureAction(child) => child.node_span(),
             Self::EntersTheBattlefield(child) => child.node_span(),
             Self::LifeGained(child) => child.node_span(),
+            Self::ObjectBecomesState(child) => child.node_span(),
             Self::PlayerAction(child) => child.node_span(),
             Self::PutCounterOnPermanent(child) => child.node_span(),
         }

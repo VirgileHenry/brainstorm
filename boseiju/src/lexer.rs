@@ -82,7 +82,7 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
         static ref raw_token_regex: regex::Regex = {
             /* List of non words token we also want to match */
             const MATCHABLE_NON_WORDS: &[&'static str] = &[
-                "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n",
+                "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n", "\"",
             ];
             let matchable_non_words: String = MATCHABLE_NON_WORDS.iter().cloned().collect();
             let raw_token_pattern = format!("(\\b\\w+\\b)|([{}])", matchable_non_words);

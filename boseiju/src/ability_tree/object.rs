@@ -2,37 +2,19 @@ mod attached_to;
 mod object_count;
 mod object_kind;
 mod object_specifiers;
+mod one_among_references;
 mod previously_mentionned;
 mod self_referencing;
 mod specified_object;
 
-pub use attached_to::ObjectAttachedTo;
-pub use object_count::CountSpecifier;
-pub use object_kind::ArtifactSubtype;
-pub use object_kind::BattleSubtype;
-pub use object_kind::CardObjectKind;
-pub use object_kind::CardType;
-pub use object_kind::CreatureSubtype;
-pub use object_kind::EnchantmentSubtype;
-pub use object_kind::LandSubtype;
-pub use object_kind::ObjectKind;
-pub use object_kind::PermanentObjectKind;
-pub use object_kind::PlaneswalkerSubtype;
-pub use object_kind::SpellObjectKind;
-pub use object_kind::SpellSubtype;
-pub use object_kind::Supertype;
-pub use object_specifiers::AnotherObjectSpecifier;
-pub use object_specifiers::CastSpecifier;
-pub use object_specifiers::ControlSpecifier;
-pub use object_specifiers::NotPreviouslySelectedObjectSpecifier;
-pub use object_specifiers::ObjectSpecifier;
-pub use object_specifiers::ObjectSpecifiers;
-pub use object_specifiers::SpecifierAndList;
-pub use object_specifiers::SpecifierOrList;
-pub use object_specifiers::SpecifierOrOfAndList;
-pub use previously_mentionned::PreviouslyMentionnedObject;
-pub use self_referencing::SelfReferencingObject;
-pub use specified_object::SpecifiedObject;
+pub use attached_to::*;
+pub use object_count::*;
+pub use object_kind::*;
+pub use object_specifiers::*;
+pub use one_among_references::*;
+pub use previously_mentionned::*;
+pub use self_referencing::*;
+pub use specified_object::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -45,22 +27,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectReference {
-    SelfReferencing(SelfReferencingObject),
     ObjectAttachedTo(ObjectAttachedTo),
-    SpecifiedObj(SpecifiedObject),
+    OneAmong(MultipleObjectReferences),
     PreviouslyMentionned(PreviouslyMentionnedObject),
-}
-
-#[cfg(feature = "spanned_tree")]
-impl ObjectReference {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::SelfReferencing(child) => child.span,
-            Self::ObjectAttachedTo(child) => child.span,
-            Self::SpecifiedObj(child) => child.span,
-            Self::PreviouslyMentionned(child) => child.span,
-        }
-    }
+    SelfReferencing(SelfReferencingObject),
+    SpecifiedObj(SpecifiedObject),
 }
 
 impl crate::ability_tree::AbilityTreeNode for ObjectReference {
@@ -72,10 +43,11 @@ impl crate::ability_tree::AbilityTreeNode for ObjectReference {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::SelfReferencing(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ObjectAttachedTo(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::SpecifiedObj(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::OneAmong(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PreviouslyMentionned(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::SelfReferencing(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::SpecifiedObj(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -85,10 +57,11 @@ impl crate::ability_tree::AbilityTreeNode for ObjectReference {
         write!(out, "object reference:")?;
         out.push_final_branch()?;
         match self {
-            Self::SelfReferencing(child) => child.display(out)?,
             Self::ObjectAttachedTo(child) => child.display(out)?,
-            Self::SpecifiedObj(child) => child.display(out)?,
+            Self::OneAmong(child) => child.display(out)?,
             Self::PreviouslyMentionned(child) => child.display(out)?,
+            Self::SelfReferencing(child) => child.display(out)?,
+            Self::SpecifiedObj(child) => child.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -101,10 +74,11 @@ impl crate::ability_tree::AbilityTreeNode for ObjectReference {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::SelfReferencing(child) => child.node_span(),
             Self::ObjectAttachedTo(child) => child.node_span(),
-            Self::SpecifiedObj(child) => child.node_span(),
+            Self::OneAmong(child) => child.node_span(),
             Self::PreviouslyMentionned(child) => child.node_span(),
+            Self::SelfReferencing(child) => child.node_span(),
+            Self::SpecifiedObj(child) => child.node_span(),
         }
     }
 }

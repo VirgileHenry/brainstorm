@@ -151,6 +151,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ForEach {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     From {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -339,6 +343,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Total {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Twice {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -422,6 +430,7 @@ impl EnglishKeyword {
             Self::Except { span } => *span,
             Self::First { span } => *span,
             Self::For { span } => *span,
+            Self::ForEach { span } => *span,
             Self::From { span } => *span,
             Self::Have { span } => *span,
             Self::Into { span } => *span,
@@ -469,6 +478,7 @@ impl EnglishKeyword {
             Self::Those { span } => *span,
             Self::To { span } => *span,
             Self::Top { span } => *span,
+            Self::Total { span } => *span,
             Self::Twice { span } => *span,
             Self::Types { span } => *span,
             Self::Unless { span } => *span,
@@ -635,6 +645,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "for" => Some(Self::For {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "for each" => Some(Self::ForEach {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -819,6 +833,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "top" => Some(Self::Top {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "total" => Some(Self::Total {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

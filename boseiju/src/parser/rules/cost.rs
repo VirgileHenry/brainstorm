@@ -1,5 +1,6 @@
 use super::ParserNode;
-use crate::{lexer::tokens::Token, utils::dummy};
+use crate::lexer::tokens::Token;
+use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
@@ -45,18 +46,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Cost {
-                    cost: crate::ability_tree::cost::Cost::Imperative(crate::ability_tree::imperative::Imperative::Tap(
-                        crate::ability_tree::imperative::TapImperative {
-                            object: crate::ability_tree::object::ObjectReference::SelfReferencing(
-                                crate::ability_tree::object::SelfReferencingObject {
-                                    #[cfg(feature = "spanned_tree")]
-                                    span: *span,
-                                },
-                            ),
+                    cost: crate::ability_tree::cost::Cost::Imperative(crate::ability_tree::imperative::Imperative {
+                        kind: crate::ability_tree::imperative::ImperativeKind::Tap(
+                            crate::ability_tree::imperative::TapImperative {
+                                object: crate::ability_tree::object::ObjectReference::SelfReferencing(
+                                    crate::ability_tree::object::SelfReferencingObject {
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *span,
+                                    },
+                                ),
+                                #[cfg(feature = "spanned_tree")]
+                                span: *span,
+                            },
+                        ),
+                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
-                            span: *span,
+                            span: span.empty_at_end(),
                         },
-                    )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: span.clone(),
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -79,18 +88,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Cost {
-                    cost: crate::ability_tree::cost::Cost::Imperative(crate::ability_tree::imperative::Imperative::Untap(
-                        crate::ability_tree::imperative::UntapImperative {
-                            object: crate::ability_tree::object::ObjectReference::SelfReferencing(
-                                crate::ability_tree::object::SelfReferencingObject {
-                                    #[cfg(feature = "spanned_tree")]
-                                    span: *span,
-                                },
-                            ),
+                    cost: crate::ability_tree::cost::Cost::Imperative(crate::ability_tree::imperative::Imperative {
+                        kind: crate::ability_tree::imperative::ImperativeKind::Untap(
+                            crate::ability_tree::imperative::UntapImperative {
+                                object: crate::ability_tree::object::ObjectReference::SelfReferencing(
+                                    crate::ability_tree::object::SelfReferencingObject {
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *span,
+                                    },
+                                ),
+                                #[cfg(feature = "spanned_tree")]
+                                span: *span,
+                            },
+                        ),
+                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
-                            span: *span,
+                            span: span.empty_at_end(),
                         },
-                    )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: span.clone(),
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

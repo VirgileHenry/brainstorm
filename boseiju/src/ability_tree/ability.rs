@@ -1,3 +1,4 @@
+pub mod ability_word;
 pub mod activated;
 pub mod common;
 pub mod keyword_ability;
@@ -18,24 +19,13 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// - Written, which is the standard ability as text.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum AbilityKind {
+pub enum Ability {
     AbilityWord(AbilityWordAbility),
     KeywordAbility(KeywordAbility),
-    Written(Ability),
+    Written(WrittenAbility),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl AbilityKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::AbilityWord(ability) => ability.span,
-            Self::KeywordAbility(ability) => ability.span,
-            Self::Written(ability) => ability.node_span(),
-        }
-    }
-}
-
-impl AbilityTreeNode for AbilityKind {
+impl AbilityTreeNode for Ability {
     fn node_id(&self) -> usize {
         use idris::Idris;
         super::NodeKind::AbilityKind.id()
@@ -74,7 +64,7 @@ impl AbilityTreeNode for AbilityKind {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for AbilityKind {
+impl crate::utils::DummyInit for Ability {
     fn dummy_init() -> Self {
         Self::Written(crate::utils::dummy())
     }
@@ -90,7 +80,7 @@ impl crate::utils::DummyInit for AbilityKind {
 /// See also <https://mtg.fandom.com/wiki/Ability>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Ability {
+pub enum WrittenAbility {
     /// A spell abilty, [CR 113.3a]
     Spell(spell::SpellAbility),
     /// An activated abilty, [CR 113.3b]
@@ -101,19 +91,7 @@ pub enum Ability {
     Static(statik::StaticAbility),
 }
 
-#[cfg(feature = "spanned_tree")]
-impl Ability {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Spell(ability) => ability.span,
-            Self::Activated(ability) => ability.span,
-            Self::Triggered(ability) => ability.span,
-            Self::Static(ability) => ability.span,
-        }
-    }
-}
-
-impl AbilityTreeNode for Ability {
+impl AbilityTreeNode for WrittenAbility {
     fn node_id(&self) -> usize {
         use idris::Idris;
         super::NodeKind::Ability.id()
@@ -132,10 +110,10 @@ impl AbilityTreeNode for Ability {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         match self {
-            Ability::Spell(spell) => spell.display(out)?,
-            Ability::Activated(activated) => activated.display(out)?,
-            Ability::Triggered(triggered) => triggered.display(out)?,
-            Ability::Static(statik) => statik.display(out)?,
+            WrittenAbility::Spell(spell) => spell.display(out)?,
+            WrittenAbility::Activated(activated) => activated.display(out)?,
+            WrittenAbility::Triggered(triggered) => triggered.display(out)?,
+            WrittenAbility::Static(statik) => statik.display(out)?,
         }
         Ok(())
     }
@@ -156,7 +134,7 @@ impl AbilityTreeNode for Ability {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for Ability {
+impl crate::utils::DummyInit for WrittenAbility {
     fn dummy_init() -> Self {
         Self::Spell(crate::utils::dummy())
     }
@@ -176,7 +154,7 @@ impl crate::utils::DummyInit for Ability {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct KeywordAbility {
     pub keyword: keyword_ability::ExpandedKeywordAbility,
-    pub ability: Ability,
+    pub ability: WrittenAbility,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -229,7 +207,7 @@ impl crate::utils::DummyInit for KeywordAbility {
     }
 }
 
-/// A Keyword Ability.
+/// An ability word.
 ///
 /// An ability word is a word that thematically groups cards with a common functionality,
 /// but has no special meaning in the Comprehensive Rules.
@@ -238,8 +216,8 @@ impl crate::utils::DummyInit for KeywordAbility {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AbilityWordAbility {
-    pub word: crate::ability_tree::terminals::AbilityWord,
-    pub ability: Ability,
+    pub word: ability_word::ExpandedAbilityWord,
+    pub ability: WrittenAbility,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

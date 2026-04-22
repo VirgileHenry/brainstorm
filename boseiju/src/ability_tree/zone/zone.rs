@@ -29,18 +29,6 @@ pub enum OwnableZone {
     },
 }
 
-#[cfg(feature = "spanned_tree")]
-impl OwnableZone {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::Battlefield { span } => *span,
-            Self::Graveyard { span } => *span,
-            Self::Hand { span } => *span,
-            Self::Library { span } => *span,
-        }
-    }
-}
-
 impl AbilityTreeNode for OwnableZone {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;

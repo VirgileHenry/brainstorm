@@ -1,3 +1,4 @@
+mod ability_word;
 mod action_keywords;
 mod ambiguous_tokens;
 mod any_number_of_clause;
@@ -25,6 +26,7 @@ mod tap_untap_cost;
 mod under_control;
 mod win_lose_clauses;
 
+pub use ability_word::AbilityWord;
 pub use action_keywords::ActionKeyword;
 pub use ambiguous_tokens::AmbiguousToken;
 pub use any_number_of_clause::AnyNumberOfClause;

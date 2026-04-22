@@ -2,6 +2,9 @@ use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// Fixme: doc
+///
+/// Fixme: they should have real children, the ai can make a diff
+/// between the count and target nodes currently
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -18,8 +21,12 @@ pub enum CountSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Count(crate::ability_tree::number::Number),
-    Target(crate::ability_tree::number::Number),
+    Count(crate::ability_tree::number::Number),  /* Fixme */
+    Target(crate::ability_tree::number::Number), /* Fixme */
+    TheNext {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 impl AbilityTreeNode for CountSpecifier {
@@ -61,6 +68,7 @@ impl AbilityTreeNode for CountSpecifier {
                 num.display(out)?;
                 out.pop_branch();
             }
+            Self::TheNext { .. } => write!(out, "the next")?,
         }
         out.pop_branch();
         Ok(())
@@ -78,6 +86,7 @@ impl AbilityTreeNode for CountSpecifier {
             Self::AllOthers { span } => *span,
             Self::Count(child) => child.node_span(),
             Self::Target(child) => child.node_span(),
+            Self::TheNext { span } => *span,
         }
     }
 }

@@ -20,6 +20,7 @@ pub use mana_cost::ManaCost;
 pub use mtg_data_as_token::color::Color;
 pub use mtg_data_as_token::keywords::AbilityWord;
 pub use mtg_data_as_token::mana::Mana;
+pub use mtg_data_as_token::standalone_ab_word::StandaloneAbilityWord;
 pub use mtg_data_as_token::standalone_kw_ab::StandaloneKeywordAbility;
 pub use mtg_data_as_token::standalone_kw_action::StandaloneKeywordAction;
 pub use named_tokens::NamedToken;

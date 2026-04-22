@@ -15,7 +15,7 @@ pub trait IntoToken: Sized {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
-    AbilityWord(terminals::AbilityWord),
+    AbilityWord(intermediates::AbilityWord),
     ActionKeyword(intermediates::ActionKeyword),
     AmbiguousToken(intermediates::AmbiguousToken),
     AnyNumberOfClause { clauses: intermediates::AnyNumberOfClause },
@@ -45,7 +45,7 @@ pub enum Token {
     Order(terminals::Order),
     OwnableZone(zone::OwnableZone),
     OwnerSpecifier(terminals::OwnerSpecifier),
-    PermanentProperty(terminals::CardProperty),
+    CardProperty(terminals::CardProperty),
     CardState(terminals::CardState),
     Phase(terminals::Phase),
     PlayerAction(intermediates::PlayerAction),
@@ -82,7 +82,7 @@ impl Token {
         } else if let Some(kind) = terminals::CardState::try_from_span(&span) {
             Some(Self::CardState(kind))
         } else if let Some(kind) = terminals::CardProperty::try_from_span(&span) {
-            Some(Self::PermanentProperty(kind))
+            Some(Self::CardProperty(kind))
         } else if let Some(kind) = terminals::SpellProperty::try_from_span(&span) {
             Some(Self::SpellProperty(kind))
         } else if let Some(kind) = terminals::Phase::try_from_span(&span) {
@@ -107,7 +107,7 @@ impl Token {
             Some(Self::OwnableZone(kind))
         } else if let Some(kind) = terminals::Color::try_from_span(&span) {
             Some(Self::Color(kind))
-        } else if let Some(kind) = terminals::AbilityWord::try_from_span(&span) {
+        } else if let Some(kind) = intermediates::AbilityWord::try_from_span(&span) {
             Some(Self::AbilityWord(kind))
         } else if let Some(kind) = intermediates::KeywordAbility::try_from_span(&span) {
             Some(Self::KeywordAbility(kind))
@@ -196,7 +196,7 @@ impl Token {
             Self::Order(child) => child.node_span(),
             Self::OwnableZone(child) => child.node_span(),
             Self::OwnerSpecifier(child) => child.node_span(),
-            Self::PermanentProperty(child) => child.span(),
+            Self::CardProperty(child) => child.node_span(),
             Self::CardState(child) => child.node_span(),
             Self::Phase(child) => child.node_span(),
             Self::PlayerAction(child) => child.span(),
@@ -206,7 +206,7 @@ impl Token {
             Self::PowerToughness { pt } => pt.span,
             Self::SagaChapterNumber { chapter } => chapter.span,
             Self::SelfReferencing { reference } => reference.span,
-            Self::SpellProperty(child) => child.span(),
+            Self::SpellProperty(child) => child.node_span(),
             Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
             Self::UnderControl(child) => child.span(),
