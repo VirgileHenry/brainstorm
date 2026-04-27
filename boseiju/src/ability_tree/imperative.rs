@@ -5,6 +5,7 @@ mod deals_damage_imperative;
 mod destroy_imperative;
 mod discard_imperative;
 mod draw_imperative;
+mod for_each_imperative;
 mod gain_life;
 mod generate_continuous_effect_imperative;
 mod generate_delayed_trigger_ab_imperative;
@@ -23,6 +24,7 @@ pub use deals_damage_imperative::*;
 pub use destroy_imperative::*;
 pub use discard_imperative::*;
 pub use draw_imperative::*;
+pub use for_each_imperative::*;
 pub use gain_life::*;
 pub use generate_continuous_effect_imperative::*;
 pub use generate_delayed_trigger_ab_imperative::*;
@@ -120,6 +122,7 @@ pub enum ImperativeKind {
     Destroy(DestroyImperative),
     Discard(DiscardImperative),
     Draw(DrawImperative),
+    ForEach(ForEachImperative),
     GainLife(GainLifeImperative),
     GenerateContinuousEffect(GenerateContinuousEffectImperative),
     GenerateDelayedTriggeredAbility(GenerateDelayedTriggeredAbilityImperative),
@@ -148,6 +151,7 @@ impl AbilityTreeNode for ImperativeKind {
             Self::Destroy(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Discard(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Draw(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ForEach(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GainLife(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GenerateContinuousEffect(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GenerateDelayedTriggeredAbility(child) => children.push(child as &dyn AbilityTreeNode),
@@ -174,6 +178,7 @@ impl AbilityTreeNode for ImperativeKind {
             Self::Destroy(imperative) => imperative.display(out)?,
             Self::Discard(imperative) => imperative.display(out)?,
             Self::Draw(imperative) => imperative.display(out)?,
+            Self::ForEach(imperative) => imperative.display(out)?,
             Self::GainLife(imperative) => imperative.display(out)?,
             Self::GenerateContinuousEffect(imperative) => imperative.display(out)?,
             Self::GenerateDelayedTriggeredAbility(imperative) => imperative.display(out)?,
@@ -203,6 +208,7 @@ impl AbilityTreeNode for ImperativeKind {
             Self::Destroy(child) => child.node_span(),
             Self::Discard(child) => child.node_span(),
             Self::Draw(child) => child.node_span(),
+            Self::ForEach(child) => child.node_span(),
             Self::GainLife(child) => child.node_span(),
             Self::GenerateContinuousEffect(child) => child.node_span(),
             Self::GenerateDelayedTriggeredAbility(child) => child.node_span(),

@@ -148,32 +148,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "All other" is a count specifier */
-        super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::CountSpecifier(
-                intermediates::CountSpecifier::AllOthers {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                },
-            ))
-            .id()]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::AllOthers {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::AllOthers {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
         /* "The next" is a count specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::CountSpecifier(

@@ -188,7 +188,7 @@ impl crate::ability_tree::AbilityTreeNode for ReplacableImperatives {
         out.push_final_branch()?;
         self.condition.display(out)?;
         out.pop_branch();
-        out.next_inter_branch()?;
+        out.next_final_branch()?;
         write!(out, "replacing imperative:")?;
         out.push_final_branch()?;
         self.replacing_clause.display(out)?;

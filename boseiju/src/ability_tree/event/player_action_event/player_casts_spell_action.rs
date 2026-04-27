@@ -1,11 +1,12 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::object::specified_object::SpellSpecifier;
 
 /// An event for when a player casts a spell.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerCastsSpellEvent {
-    pub spell_specifiers: Option<crate::ability_tree::object::ObjectSpecifiers>,
+    pub spell_specifiers: Option<SpellSpecifier>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

@@ -1,9 +1,9 @@
-use super::ParserNode;
-use super::ParserRule;
-use super::ParserRuleDeclarationLocation;
-use super::RuleLhs;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
+use crate::parser::rules::ParserNode;
+use crate::parser::rules::ParserRule;
+use crate::parser::rules::ParserRuleDeclarationLocation;
+use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 

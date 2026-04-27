@@ -1,6 +1,8 @@
 mod adapt;
+mod bolster;
 mod mill;
 mod scry;
+mod support;
 mod surveil;
 
 use super::ParserNode;
@@ -37,8 +39,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         keyword_actions_to_imperatives,
         adapt::rules().collect::<Vec<_>>(),
+        bolster::rules().collect::<Vec<_>>(),
         mill::rules().collect::<Vec<_>>(),
         scry::rules().collect::<Vec<_>>(),
+        support::rules().collect::<Vec<_>>(),
         surveil::rules().collect::<Vec<_>>(),
     ]
     .into_iter()

@@ -58,7 +58,7 @@ impl crate::ability_tree::AbilityTreeNode for ConditionNumberOfResolutions {
     }
 
     fn node_tag(&self) -> &'static str {
-        "condition: number of resolution"
+        "number of resolution"
     }
 
     #[cfg(feature = "spanned_tree")]

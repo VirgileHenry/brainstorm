@@ -3,11 +3,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 
-/// Imperative to put counters on objects.
+/// Imperative to remove counters on permanents.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RemoveCountersImperative {
-    pub object: crate::ability_tree::object::ObjectReference,
+    pub object: crate::ability_tree::object::PermanentReference,
     pub counters: crate::utils::HeapArrayVec<RemovableCounterOnPermanent, MAX_COUNTER_AMOUNT>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -16,7 +16,7 @@ pub struct RemoveCountersImperative {
 impl AbilityTreeNode for RemoveCountersImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::PutCountersImperative.id()
+        crate::ability_tree::NodeKind::RemoveCountersImperative.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {

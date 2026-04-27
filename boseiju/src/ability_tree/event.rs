@@ -1,21 +1,10 @@
-pub mod replacement;
-pub mod source;
+mod creature_performs_action;
+mod object_gains_state;
+mod permanent_performs_action;
 
-mod create_token_event;
-mod creature_action_event;
-mod enters_the_battlefield_event;
-mod life_gained_event;
-mod object_becomes_state;
-mod player_action_event;
-mod put_counter_on_permanent_event;
-
-pub use create_token_event::*;
-pub use creature_action_event::*;
-pub use enters_the_battlefield_event::*;
-pub use life_gained_event::*;
-pub use object_becomes_state::*;
-pub use player_action_event::*;
-pub use put_counter_on_permanent_event::*;
+pub use creature_performs_action::*;
+pub use object_gains_state::*;
+pub use permanent_performs_action::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -32,13 +21,9 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Event {
-    CreateTokens(CreateTokensEvent),
-    CreatureAction(CreatureActionEvent),
-    EntersTheBattlefield(EntersTheBattlefieldEvent),
-    LifeGained(LifeGainedEvent),
-    ObjectBecomesState(ObjectBecomesStateEvent),
-    PlayerAction(PlayerActionEvent),
-    PutCounterOnPermanent(PutCounterOnPermanentEvent),
+    CreaturePerformsAction(CreaturePerformsActionEvent),
+    ObjectGainsState(ObjectGainsStateEvent),
+    PermanentPerformsAction(PermanentPerformsActionEvent),
 }
 
 impl crate::ability_tree::AbilityTreeNode for Event {
@@ -50,13 +35,9 @@ impl crate::ability_tree::AbilityTreeNode for Event {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::CreateTokens(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::CreatureAction(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::EntersTheBattlefield(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::LifeGained(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::ObjectBecomesState(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::PlayerAction(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::PutCounterOnPermanent(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CreaturePerformsAction(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ObjectGainsState(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PermanentPerformsAction(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -66,13 +47,9 @@ impl crate::ability_tree::AbilityTreeNode for Event {
         write!(out, "event:")?;
         out.push_final_branch()?;
         match self {
-            Self::CreateTokens(event) => event.display(out)?,
-            Self::CreatureAction(event) => event.display(out)?,
-            Self::EntersTheBattlefield(event) => event.display(out)?,
-            Self::LifeGained(event) => event.display(out)?,
-            Self::ObjectBecomesState(event) => event.display(out)?,
-            Self::PlayerAction(event) => event.display(out)?,
-            Self::PutCounterOnPermanent(event) => event.display(out)?,
+            Self::CreaturePerformsAction(event) => event.display(out)?,
+            Self::ObjectGainsState(event) => event.display(out)?,
+            Self::PermanentPerformsAction(event) => event.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -85,13 +62,9 @@ impl crate::ability_tree::AbilityTreeNode for Event {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::CreateTokens(child) => child.node_span(),
-            Self::CreatureAction(child) => child.node_span(),
-            Self::EntersTheBattlefield(child) => child.node_span(),
-            Self::LifeGained(child) => child.node_span(),
-            Self::ObjectBecomesState(child) => child.node_span(),
-            Self::PlayerAction(child) => child.node_span(),
-            Self::PutCounterOnPermanent(child) => child.node_span(),
+            Self::CreaturePerformsAction(child) => child.node_span(),
+            Self::ObjectGainsState(child) => child.node_span(),
+            Self::PermanentPerformsAction(child) => child.node_span(),
         }
     }
 }
@@ -99,6 +72,6 @@ impl crate::ability_tree::AbilityTreeNode for Event {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Event {
     fn dummy_init() -> Self {
-        Self::CreateTokens(crate::utils::dummy())
+        Self::CreaturePerformsAction(crate::utils::dummy())
     }
 }

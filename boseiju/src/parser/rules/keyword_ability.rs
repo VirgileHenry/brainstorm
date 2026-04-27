@@ -7,14 +7,19 @@ mod bushido;
 mod cleave;
 mod crew;
 mod cycling;
+mod dash;
+mod disguise;
 mod echo;
 mod enchant;
 mod equip;
 mod flashback;
+mod freerunning;
 mod kicker;
 mod megamorph;
+mod morph;
 mod multiple_keyword_abilities;
 mod ninjutsu;
+mod outlast;
 mod prototype;
 mod reinforce;
 mod renown;
@@ -67,15 +72,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         cleave::rules().collect::<Vec<_>>(),
         crew::rules().collect::<Vec<_>>(),
         cycling::rules().collect::<Vec<_>>(),
+        dash::rules().collect::<Vec<_>>(),
+        disguise::rules().collect::<Vec<_>>(),
         echo::rules().collect::<Vec<_>>(),
         enchant::rules().collect::<Vec<_>>(),
         equip::rules().collect::<Vec<_>>(),
         flashback::rules().collect::<Vec<_>>(),
+        freerunning::rules().collect::<Vec<_>>(),
         kicker::rules().collect::<Vec<_>>(),
         megamorph::rules().collect::<Vec<_>>(),
+        morph::rules().collect::<Vec<_>>(),
         multiple_keyword_abilities::rules().collect::<Vec<_>>(),
         ninjutsu::rules().collect::<Vec<_>>(),
         prototype::rules().collect::<Vec<_>>(),
+        outlast::rules().collect::<Vec<_>>(),
         reinforce::rules().collect::<Vec<_>>(),
         renown::rules().collect::<Vec<_>>(),
         ripple::rules().collect::<Vec<_>>(),

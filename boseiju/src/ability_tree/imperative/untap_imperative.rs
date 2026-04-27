@@ -1,11 +1,11 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// An imperative for "destroying" an object.
+/// An imperative for untapping an object.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UntapImperative {
-    pub object: crate::ability_tree::object::ObjectReference,
+    pub object: crate::ability_tree::object::PermanentReference,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

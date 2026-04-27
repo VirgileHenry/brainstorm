@@ -1,5 +1,7 @@
 //! Perform the card coverage test, and outputs a markdown table with a recap.
 
+use rayon::prelude::*;
+
 struct CoverageTestCase {
     name: &'static str,
     filter_func: Box<dyn Fn(&mtg_cardbase::Card) -> bool>,
@@ -48,18 +50,58 @@ impl CoverageTestResults {
 fn main() -> std::io::Result<()> {
     /* Run the test coverage once, on all the cards */
     let cards = mtg_cardbase::AllCardsIter::hexxed_v1_cards();
-    let mut cards_parsing_results = Vec::with_capacity(cards.len());
+    let cards_vec: Vec<_> = cards.iter().collect();
 
-    let mut last_shown_percentage = 0;
-    eprintln!("Parsing all cards...0%");
-    for (i, card) in cards.iter().enumerate() {
-        let progress = (i + 1) * 100 / cards.len();
-        if progress != last_shown_percentage {
-            eprintln!("\rParsing all cards...{progress}%");
-            last_shown_percentage = progress;
-        }
-        cards_parsing_results.push((card, run_card(card)))
-    }
+    let num_threads = rayon::current_num_threads();
+    let chunk_size = cards_vec.len().div_ceil(num_threads);
+
+    let multi = indicatif::MultiProgress::new();
+    let template = "Thread {prefix:>2} [{bar:40.yellow/white}] {pos:>6}/{len:6} ({percent}%)";
+    let style = indicatif::ProgressStyle::with_template(template)
+        .unwrap()
+        .progress_chars("─● ");
+
+    let chunks: Vec<_> = cards_vec.chunks(chunk_size).collect();
+    let bars: Vec<indicatif::ProgressBar> = chunks
+        .iter()
+        .enumerate()
+        .map(|(i, chunk)| {
+            let pb = multi.add(indicatif::ProgressBar::new(chunk.len() as u64));
+            pb.set_style(style.clone());
+            pb.set_prefix(format!("{i}"));
+            pb
+        })
+        .collect();
+
+    // Each thread produces its own Vec; we concatenate at the end.
+    // No shared mutex needed — the result vec just preserves per-card order within a chunk.
+    let cards_parsing_results: Vec<(&mtg_cardbase::Card, TestResult)> = chunks
+        .par_iter()
+        .zip(bars.par_iter())
+        .flat_map(|(chunk, pb)| {
+            let total = chunk.len();
+            let mut last_shown_percentage = 0usize;
+            let mut local: Vec<(&mtg_cardbase::Card, TestResult)> = Vec::with_capacity(total);
+
+            for (i, card) in chunk.iter().enumerate() {
+                let progress = (i + 1) * 100 / total;
+                if progress != last_shown_percentage {
+                    pb.set_position(((i + 1) as u64).min(total as u64));
+                    last_shown_percentage = progress;
+                }
+
+                local.push((*card, run_card(card)));
+            }
+
+            let done_template = "Thread {prefix:>2} [{bar:40.green/white}] {pos:>6}/{len:6} ({percent}%)";
+            let style = indicatif::ProgressStyle::with_template(done_template)
+                .unwrap()
+                .progress_chars("─● ");
+            pb.set_style(style);
+            pb.finish_with_message("done");
+            local
+        })
+        .collect();
 
     /* Create the different coverage categories */
     let categories = vec![
@@ -90,6 +132,7 @@ fn main() -> std::io::Result<()> {
         .collect::<Vec<_>>();
 
     /* Finally, we can display the output */
+    println!("");
     println!("| Category | Cards total | Lexed (oracle text) | Parsed (oracle text) | Parsed (full card) |");
     println!("|-----|-----|-----|-----|-----|");
 

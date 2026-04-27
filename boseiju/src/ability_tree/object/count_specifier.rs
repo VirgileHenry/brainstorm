@@ -1,0 +1,96 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+
+/// Fixme: doc
+///
+/// Fixme: they should have real children, the ai can make a diff
+/// between the count and target nodes currently
+#[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CountSpecifier {
+    A {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    All {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Count(crate::ability_tree::number::Number),  /* Fixme */
+    Target(crate::ability_tree::number::Number), /* Fixme */
+    TheNext {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+impl AbilityTreeNode for CountSpecifier {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::ability_tree::NodeKind::CountSpecifierIdMarker.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self {
+            Self::Target(child) => children.push(child as &dyn AbilityTreeNode),
+            _ => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
+                crate::ability_tree::NodeKind::CountSpecifier(self.clone()).id(),
+            ) as &dyn AbilityTreeNode),
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "count specifier:")?;
+        out.push_final_branch()?;
+        match self {
+            Self::A { .. } => write!(out, "a")?,
+            Self::All { .. } => write!(out, "all")?,
+            Self::Count(num) => {
+                write!(out, "count")?;
+                out.push_final_branch()?;
+                num.display(out)?;
+                out.pop_branch();
+            }
+            Self::Target(num) => {
+                write!(out, "target")?;
+                out.push_final_branch()?;
+                num.display(out)?;
+                out.pop_branch();
+            }
+            Self::TheNext { .. } => write!(out, "the next")?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "object count"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::A { span } => *span,
+            Self::All { span } => *span,
+            Self::Count(child) => child.node_span(),
+            Self::Target(child) => child.node_span(),
+            Self::TheNext { span } => *span,
+        }
+    }
+}
+
+#[cfg(feature = "parser")]
+impl crate::utils::DummyInit for CountSpecifier {
+    fn dummy_init() -> Self {
+        Self::All {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}

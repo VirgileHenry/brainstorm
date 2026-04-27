@@ -4,11 +4,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /* Fixme: maybe "target object becomes tap" is better ?  */
 /* We need a way for the AI to tell "tapping" is equivalent to "being tapped" */
 
-/// An imperative for "destroying" an object.
+/// An imperative for tapping an object.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TapImperative {
-    pub object: crate::ability_tree::object::ObjectReference,
+    pub object: crate::ability_tree::object::PermanentReference,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

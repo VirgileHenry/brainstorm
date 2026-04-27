@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AffinityKeywordAbility {
-    pub for_object: crate::ability_tree::object::ObjectSpecifiers,
+    pub for_object: crate::ability_tree::object::PermanentReference,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

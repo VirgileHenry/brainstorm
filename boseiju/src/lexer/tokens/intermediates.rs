@@ -2,12 +2,15 @@ mod ability_word;
 mod action_keywords;
 mod ambiguous_tokens;
 mod any_number_of_clause;
+mod attached_permanent;
 mod card_actions;
+mod card_own_name;
+mod card_property;
+mod card_state;
 mod choice;
 mod choice_reference;
 mod control_flow;
 mod count_specifier;
-mod damage_kind;
 mod english_keywords;
 mod global_zone;
 mod in_addition_to_paying_its_other_costs;
@@ -30,12 +33,15 @@ pub use ability_word::AbilityWord;
 pub use action_keywords::ActionKeyword;
 pub use ambiguous_tokens::AmbiguousToken;
 pub use any_number_of_clause::AnyNumberOfClause;
+pub use attached_permanent::AttachedObject;
 pub use card_actions::CardActions;
+pub use card_own_name::CardOwnName;
+pub use card_property::CardProperty;
+pub use card_state::CardState;
 pub use choice::Choice;
 pub use choice_reference::ChoiceReference;
 pub use control_flow::ControlFlow;
 pub use count_specifier::CountSpecifier;
-pub use damage_kind::DamageKind;
 pub use english_keywords::EnglishKeyword;
 pub use global_zone::GlobalZone;
 pub use in_addition_to_paying_its_other_costs::InAdditionToPayingItsOtherCost;
@@ -63,6 +69,10 @@ pub enum VhyToSortLater {
         span: crate::ability_tree::span::TreeSpan,
     },
     Source {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Card {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -98,6 +108,7 @@ impl VhyToSortLater {
         match self {
             Self::Life { span } => *span,
             Self::Source { span } => *span,
+            Self::Card { span } => *span,
             Self::Cost { span } => *span,
             Self::Player { span } => *span,
             Self::Turn { span } => *span,
@@ -112,6 +123,10 @@ impl VhyToSortLater {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "ability" => Some(Self::Ability {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "card" => Some(Self::Card {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -12,7 +12,7 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "exile <object reference>" -> move object from battlfield to exile */
+        /* "exile <permanent reference>" -> move object from battlfield to exile */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
             ]),
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -29,21 +29,21 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: exile_span,
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
-                            object: reference.clone(),
+                            object: crate::ability_tree::object::CardReference::Permanent(permanent.clone()),
                             from: crate::ability_tree::zone::ZoneReference::TheBattlefield {
                                 #[cfg(feature = "spanned_tree")]
-                                span: reference.node_span().empty_at_end(),
+                                span: permanent.node_span().empty_at_end(),
                             },
                             to: crate::ability_tree::zone::ZoneReference::Exile {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *exile_span,
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(exile_span),
+                            span: permanent.node_span().merge(exile_span),
                         },
                     ),
                 }),
@@ -51,7 +51,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "exile <object reference> from <zone>" means to move from <zone> to <exile> */
+        /* "exile <card reference> from <zone>" means to move from <zone> to <exile> */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Exile {
@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -74,13 +74,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: exile_span,
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CardReference { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
-                            object: reference.clone(),
+                            object: card.clone(),
                             from: zone.clone(),
                             to: crate::ability_tree::zone::ZoneReference::Exile {
                                 #[cfg(feature = "spanned_tree")]

@@ -8,49 +8,37 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     [/* Treasure token */ ParserRule {
         expanded: crate::parser::rules::RuleLhs::new(&[
-            ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::ArtifactSubtype(
-                crate::ability_tree::object::ArtifactSubtype {
-                    artifact_subtype: mtg_data::ArtifactType::Treasure,
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                },
-            )))
+            ParserNode::LexerToken(Token::ArtifactSubtype(crate::ability_tree::terminals::ArtifactSubtype {
+                artifact_subtype: mtg_data::ArtifactType::Treasure,
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
             .id(),
-            ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
-                crate::ability_tree::object::Supertype {
-                    supertype: mtg_data::Supertype::Token,
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                },
-            )))
+            ParserNode::LexerToken(Token::Supertype(crate::ability_tree::terminals::Supertype {
+                supertype: mtg_data::Supertype::Token,
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
             .id(),
         ]),
         merged: ParserNode::TokenDefinition { token: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::ArtifactSubtype(
-                    crate::ability_tree::object::ArtifactSubtype {
-                        artifact_subtype: mtg_data::ArtifactType::Treasure,
-                        #[cfg(feature = "spanned_tree")]
-                            span: treasure_span,
-                    },
-                ))),
-                ParserNode::LexerToken(Token::ObjectKind(crate::ability_tree::object::ObjectKind::Supertype(
-                    crate::ability_tree::object::Supertype {
-                        supertype: mtg_data::Supertype::Token,
-                        #[cfg(feature = "spanned_tree")]
-                            span: token_span,
-                    },
-                ))),
+                ParserNode::LexerToken(Token::ArtifactSubtype(crate::ability_tree::terminals::ArtifactSubtype {
+                    artifact_subtype: mtg_data::ArtifactType::Treasure,
+                    #[cfg(feature = "spanned_tree")]
+                        span: treasure_span,
+                })),
+                ParserNode::LexerToken(Token::Supertype(crate::ability_tree::terminals::Supertype {
+                    supertype: mtg_data::Supertype::Token,
+                    #[cfg(feature = "spanned_tree")]
+                        span: token_span,
+                })),
             ] => Ok(ParserNode::TokenDefinition {
                 token: crate::ability_tree::card_layout::TokenLayout {
                     name: "Treasure".to_string(),
                     card_type: crate::ability_tree::type_line::TypeLine::artifact_token(
-                        &[crate::ability_tree::object::ArtifactSubtype {
-                            artifact_subtype: mtg_data::ArtifactType::Treasure,
-                            #[cfg(feature = "spanned_tree")]
-                            span: *token_span,
-                        }],
+                        &[mtg_data::ArtifactType::Treasure],
                         #[cfg(feature = "spanned_tree")]
                         treasure_span.merge(token_span),
                     ),

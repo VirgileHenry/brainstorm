@@ -13,10 +13,10 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<object> gain <ability> <forward duration>" is a generate continuous effect imperative */
+        /* "<permanent reference> gain <ability> <forward duration>" is a generate continuous effect imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -39,8 +39,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
                         crate::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: ContinuousEffect {
-                                effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                                    object: reference.clone(),
+                                effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                                    object: permanent.clone(),
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
@@ -52,14 +52,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: reference.node_span().merge(&ability.node_span()),
+                                    span: permanent.node_span().merge(&ability.node_span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: reference.node_span().merge(&duration.node_span()),
+                                span: permanent.node_span().merge(&duration.node_span()),
                             },
                             duration: duration.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&duration.node_span()),
+                            span: permanent.node_span().merge(&duration.node_span()),
                         },
                     ),
                 }),
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gain <ability>" is forever. It usually happens when the object also get sacrificed at some point */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -81,7 +81,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -91,8 +91,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
                         crate::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: ContinuousEffect {
-                                effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                                    object: reference.clone(),
+                                effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                                    object: permanent.clone(),
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
@@ -104,17 +104,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: reference.node_span().merge(&ability.node_span()),
+                                    span: permanent.node_span().merge(&ability.node_span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: reference.node_span().merge(&ability.node_span()),
+                                span: permanent.node_span().merge(&ability.node_span()),
                             },
                             duration: crate::ability_tree::time::ForwardDuration::Forever {
                                 #[cfg(feature = "spanned_tree")]
                                 span: ability.node_span().empty_at_end(),
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&ability.node_span()),
+                            span: permanent.node_span().merge(&ability.node_span()),
                         },
                     ),
                 }),

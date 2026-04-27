@@ -1,7 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Menace\nWhenever ~ attack, the next noncreature spell you cast this turn has affinity for artifacts.";
+    let oracle_text =
+        "Trample\nWhenever a creature an opponent controls dies, this creature deals 1 damage to that creature's controller.";
     let card_name = "Gornog, the Red Reaper";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

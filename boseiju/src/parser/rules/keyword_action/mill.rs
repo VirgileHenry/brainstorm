@@ -1,11 +1,9 @@
-use super::ParserNode;
-use super::ParserRule;
-use super::ParserRuleDeclarationLocation;
-use super::RuleLhs;
-use crate::ability_tree::object;
-use crate::ability_tree::object::CardObjectKind;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
+use crate::parser::rules::ParserNode;
+use crate::parser::rules::ParserRule;
+use crate::parser::rules::ParserRuleDeclarationLocation;
+use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
@@ -20,10 +18,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             }))
             .id(),
             ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(CardObjectKind {
+            ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
-            })))
+            }))
             .id(),
         ]),
         merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
@@ -35,10 +33,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span: start_span,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::ObjectKind(object::ObjectKind::Card(CardObjectKind {
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
                     #[cfg(feature = "spanned_tree")]
                         span: end_span,
-                }))),
+                })),
             ] => Ok(ParserNode::ImperativeKind {
                 imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                     crate::ability_tree::imperative::KeywordAction {

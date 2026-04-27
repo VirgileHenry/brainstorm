@@ -9,7 +9,6 @@ pub fn keyword_action_to_abilities(keyword: intermediates::KeywordAction) -> Res
     let keyword_action = match keyword.keyword_action {
         mtg_data::KeywordAction::Abandon => terminals::StandaloneKeywordAction::Abandon,
         mtg_data::KeywordAction::Activate => terminals::StandaloneKeywordAction::Activate,
-        mtg_data::KeywordAction::Amass => terminals::StandaloneKeywordAction::Amass,
         mtg_data::KeywordAction::Assemble => terminals::StandaloneKeywordAction::Assemble,
         mtg_data::KeywordAction::Attach => terminals::StandaloneKeywordAction::Attach,
         mtg_data::KeywordAction::Behold => terminals::StandaloneKeywordAction::Behold,
@@ -23,7 +22,6 @@ pub fn keyword_action_to_abilities(keyword: intermediates::KeywordAction) -> Res
         mtg_data::KeywordAction::Convert => terminals::StandaloneKeywordAction::Convert,
         mtg_data::KeywordAction::Counter => terminals::StandaloneKeywordAction::Counter,
         mtg_data::KeywordAction::Create => terminals::StandaloneKeywordAction::Create,
-        mtg_data::KeywordAction::Destroy => terminals::StandaloneKeywordAction::Destroy,
         mtg_data::KeywordAction::Detain => terminals::StandaloneKeywordAction::Detain,
         mtg_data::KeywordAction::Discard => terminals::StandaloneKeywordAction::Discard,
         mtg_data::KeywordAction::Discover => terminals::StandaloneKeywordAction::Discover,

@@ -1,5 +1,7 @@
+mod game_state_number;
 mod x_definition;
 
+pub use game_state_number::*;
 pub use x_definition::*;
 
 use crate::ability_tree::AbilityTreeNode;

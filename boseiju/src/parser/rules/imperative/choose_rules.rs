@@ -1,11 +1,15 @@
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
+use crate::parser::node::ImperativeChoices;
 use crate::parser::rules::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
 use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -25,12 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::ImperativeChoices {
-                choices: dummy(),
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }
-            .id(),
+            merged: ParserNode::ImperativeChoices { choices: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
@@ -40,13 +39,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
-                    choices: {
-                        let mut choices = crate::utils::HeapArrayVec::new();
-                        choices.push(ability.clone());
-                        choices
+                    choices: ImperativeChoices {
+                        choices: {
+                            let mut choices = crate::utils::HeapArrayVec::new();
+                            choices.push(ability.clone());
+                            choices
+                        },
+                        #[cfg(feature = "spanned_tree")]
+                        span: ability.node_span().merge(new_line_span),
                     },
-                    #[cfg(feature = "spanned_tree")]
-                    span: new_line_span.merge(&ability.span),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -55,12 +56,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add choices to choices */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeChoices {
-                    choices: dummy(),
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }
-                .id(),
+                ParserNode::ImperativeChoices { choices: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -73,30 +69,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 .id(),
                 ParserNode::SpellAbility { ability: dummy() }.id(),
             ]),
-            merged: ParserNode::ImperativeChoices {
-                choices: dummy(),
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }
-            .id(),
+            merged: ParserNode::ImperativeChoices { choices: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeChoices {
-                        choices,
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    },
+                    ParserNode::ImperativeChoices { choices },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine { .. })),
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
                         let mut choices = choices.clone();
-                        choices.push(ability.clone());
+                        choices.choices.push(ability.clone());
                         choices
                     },
-                    #[cfg(feature = "spanned_tree")]
-                    span: span.merge(&ability.span),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -116,12 +101,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeChoices {
-                    choices: dummy(),
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }
-                .id(),
+                ParserNode::ImperativeChoices { choices: dummy() }.id(),
             ]),
             merged: ParserNode::Imperative { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -132,19 +112,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
-                    ParserNode::ImperativeChoices {
-                        choices,
-                        #[cfg(feature = "spanned_tree")]
-                            span: choices_span,
-                    },
+                    ParserNode::ImperativeChoices { choices },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::Modal(
                         crate::ability_tree::imperative::ModalImperative {
                             mode_count: number.clone(),
                             can_choose_same_mode: false,
-                            modes: choices.clone(),
+                            modes: choices.choices.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: choose_span.merge(&choices_span),
+                            span: choose_span.merge(&choices.span),
                         },
                     ),
                 }),

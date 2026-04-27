@@ -57,7 +57,7 @@ impl TypeLine {
     }
 
     pub fn creature_token(
-        creature_subtypes: &[crate::ability_tree::object::CreatureSubtype],
+        creature_subtypes: &[mtg_data::CreatureType],
         #[cfg(feature = "spanned_tree")] span: crate::ability_tree::span::TreeSpan,
     ) -> Self {
         use idris::Idris;
@@ -65,7 +65,7 @@ impl TypeLine {
         result.supertypes[mtg_data::Supertype::Token.id()] = true;
         result.card_types[mtg_data::CardType::Creature.id()] = true;
         for subtype in creature_subtypes.iter() {
-            result.creature[subtype.creature_subtype.id()] = true;
+            result.creature[subtype.id()] = true;
         }
         #[cfg(feature = "spanned_tree")]
         {
@@ -75,7 +75,7 @@ impl TypeLine {
     }
 
     pub fn artifact_token(
-        artifact_subtypes: &[crate::ability_tree::object::ArtifactSubtype],
+        artifact_subtypes: &[mtg_data::ArtifactType],
         #[cfg(feature = "spanned_tree")] span: crate::ability_tree::span::TreeSpan,
     ) -> Self {
         use idris::Idris;
@@ -83,7 +83,7 @@ impl TypeLine {
         result.supertypes[mtg_data::Supertype::Token.id()] = true;
         result.card_types[mtg_data::CardType::Artifact.id()] = true;
         for subtype in artifact_subtypes.iter() {
-            result.artifact[subtype.artifact_subtype.id()] = true;
+            result.artifact[subtype.id()] = true;
         }
         #[cfg(feature = "spanned_tree")]
         {
@@ -117,46 +117,11 @@ impl AbilityTreeNode for TypeLine {
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use idris::Idris;
         use std::io::Write;
 
         write!(out, "type line:")?;
         out.push_final_branch()?;
-
-        for supertype in mtg_data::Supertype::all().filter(|s| self.supertypes[s.id()]) {
-            write!(out, "{supertype} ")?;
-        }
-        for card_type in mtg_data::CardType::all().filter(|c| self.card_types[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::ArtifactType::all().filter(|c| self.artifact[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::BattleType::all().filter(|c| self.battle[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::CreatureType::all().filter(|c| self.creature[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::EnchantmentType::all().filter(|c| self.enchantment[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::SpellType::all().filter(|c| self.instant[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::CreatureType::all().filter(|c| self.kindred[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::LandType::all().filter(|c| self.land[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::PlaneswalkerType::all().filter(|c| self.planeswalker[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-        for card_type in mtg_data::SpellType::all().filter(|c| self.sorcery[c.id()]) {
-            write!(out, "{card_type} ")?;
-        }
-
+        write!(out, "{self}")?;
         out.pop_branch();
 
         Ok(())
@@ -169,6 +134,47 @@ impl AbilityTreeNode for TypeLine {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
+    }
+}
+
+impl std::fmt::Display for TypeLine {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use idris::Idris;
+        /* Supertypes first */
+        for supertype in mtg_data::Supertype::all().filter(|s| self.supertypes[s.id()]) {
+            write!(f, "{supertype} ")?;
+        }
+        for card_type in mtg_data::CardType::all().filter(|c| self.card_types[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::ArtifactType::all().filter(|c| self.artifact[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::BattleType::all().filter(|c| self.battle[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::CreatureType::all().filter(|c| self.creature[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::EnchantmentType::all().filter(|c| self.enchantment[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::SpellType::all().filter(|c| self.instant[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::CreatureType::all().filter(|c| self.kindred[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::LandType::all().filter(|c| self.land[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::PlaneswalkerType::all().filter(|c| self.planeswalker[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        for card_type in mtg_data::SpellType::all().filter(|c| self.sorcery[c.id()]) {
+            write!(f, "{card_type} ")?;
+        }
+        Ok(())
     }
 }
 
@@ -200,7 +206,7 @@ impl IntoToken for TypeLine {
 
         /* Parse supertypes first */
         while let Some(token) = spans.peek() {
-            match crate::ability_tree::object::Supertype::try_from_span(token) {
+            match crate::ability_tree::terminals::Supertype::try_from_span(token) {
                 Some(supertype) => {
                     if result.supertypes[supertype.id()] {
                         return None;
@@ -215,7 +221,7 @@ impl IntoToken for TypeLine {
 
         /* Parse all types then */
         while let Some(span) = spans.peek() {
-            match crate::ability_tree::object::CardType::try_from_span(span) {
+            match crate::ability_tree::terminals::CardType::try_from_span(span) {
                 Some(card_type) => {
                     if result.card_types[card_type.id()] {
                         return None; /* Duplicate card type are not allowed */
@@ -231,7 +237,7 @@ impl IntoToken for TypeLine {
         /* Parse subtypes, only allow them if the associated type is found */
         while let Some(token) = spans.next() {
             if result.card_types[mtg_data::CardType::Artifact.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::ArtifactSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::ArtifactSubtype::try_from_span(&token) {
                     if result.artifact[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -241,7 +247,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Battle.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::BattleSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::BattleSubtype::try_from_span(&token) {
                     if result.battle[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -251,7 +257,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Creature.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::CreatureSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::CreatureSubtype::try_from_span(&token) {
                     if result.creature[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -261,7 +267,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Enchantment.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::EnchantmentSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::EnchantmentSubtype::try_from_span(&token) {
                     if result.enchantment[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -271,7 +277,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Instant.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::SpellSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::InstantSorcerySubtype::try_from_span(&token) {
                     if result.instant[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -281,7 +287,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Kindred.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::CreatureSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::CreatureSubtype::try_from_span(&token) {
                     if result.kindred[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -291,7 +297,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Land.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::LandSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::LandSubtype::try_from_span(&token) {
                     if result.land[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -301,7 +307,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Planeswalker.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::PlaneswalkerSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::PlaneswalkerSubtype::try_from_span(&token) {
                     if result.planeswalker[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {
@@ -311,7 +317,7 @@ impl IntoToken for TypeLine {
                 }
             }
             if result.card_types[mtg_data::CardType::Sorcery.id()] {
-                if let Some(new_subtype) = crate::ability_tree::object::SpellSubtype::try_from_span(&token) {
+                if let Some(new_subtype) = crate::ability_tree::terminals::InstantSorcerySubtype::try_from_span(&token) {
                     if result.sorcery[new_subtype.id()] {
                         return None; /* Duplicates are not allowed */
                     } else {

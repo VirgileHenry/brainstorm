@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationEffect {
-    pub applies_to: crate::ability_tree::object::ObjectReference,
+    pub applies_to: crate::ability_tree::object::SpellReference,
     pub modification: CostModification,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

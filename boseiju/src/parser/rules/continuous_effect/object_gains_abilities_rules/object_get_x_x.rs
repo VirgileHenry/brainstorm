@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gets +X/+0, where <x definition>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CreatureReference { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -54,7 +54,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CreatureReference { creature },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
                         #[cfg(feature = "spanned_tree")]
@@ -71,8 +71,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::XDefinition { definition },
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
-                        effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                            object: reference.clone(),
+                        effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(
@@ -96,10 +96,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&reference.node_span()),
+                            span: creature.node_span().merge(&definition.node_span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.node_span().merge(&reference.node_span()),
+                        span: creature.node_span().merge(&definition.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -109,7 +109,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gets +X/+X, where <x_definition>" -> continuous effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CreatureReference { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -150,7 +150,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CreatureReference { creature },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
                         #[cfg(feature = "spanned_tree")]
@@ -170,8 +170,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::XDefinition { definition },
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
-                        effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                            object: reference.clone(),
+                        effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(
@@ -201,10 +201,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&reference.node_span()),
+                            span: creature.node_span().merge(&definition.node_span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.node_span().merge(&reference.node_span()),
+                        span: creature.node_span().merge(&definition.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -214,7 +214,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gets +X/+0 until end of turn", where <x definition>" is a generate continuous effect thingy */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CreatureReference { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -256,7 +256,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CreatureReference { creature },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
                         #[cfg(feature = "spanned_tree")]
@@ -279,8 +279,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
                         crate::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: ContinuousEffect {
-                                effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                                    object: reference.clone(),
+                                effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                                    object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(
@@ -310,14 +310,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: reference.node_span().merge(&reference.node_span()),
+                                    span: creature.node_span().merge(&definition.node_span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: reference.node_span().merge(&reference.node_span()),
+                                span: creature.node_span().merge(&definition.node_span()),
                             },
                             duration: duration.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&reference.node_span()),
+                            span: creature.node_span().merge(&definition.node_span()),
                         },
                     ),
                 }),
@@ -328,7 +328,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gets +X/+X until end of turn", where <x definition>" is a generate continuous effect thingy */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CreatureReference { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -366,7 +366,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CreatureReference { creature },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
                         #[cfg(feature = "spanned_tree")]
@@ -386,8 +386,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
                         crate::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: ContinuousEffect {
-                                effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                                    object: reference.clone(),
+                                effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                                    object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(
@@ -411,14 +411,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: reference.node_span().merge(&reference.node_span()),
+                                    span: creature.node_span().merge(&definition.node_span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: reference.node_span().merge(&reference.node_span()),
+                                span: creature.node_span().merge(&definition.node_span()),
                             },
                             duration: duration.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&reference.node_span()),
+                            span: creature.node_span().merge(&definition.node_span()),
                         },
                     ),
                 }),

@@ -44,30 +44,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<multiple keyword abilities>" is an ab tree */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::MultipleKeywordAbilities {
-                abilities: dummy(),
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }
-            .id()]),
+            expanded: super::RuleLhs::new(&[ParserNode::MultipleKeywordAbilities { abilities: dummy() }.id()]),
             merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::MultipleKeywordAbilities {
-                        abilities,
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    },
-                ] => Ok(ParserNode::AbilityTree {
+                &[ParserNode::MultipleKeywordAbilities { abilities }] => Ok(ParserNode::AbilityTree {
                     tree: {
                         let mut ab_tree = crate::utils::HeapArrayVec::new();
-                        for ab in abilities.iter() {
+                        for ab in abilities.abilities.iter() {
                             ab_tree.push(crate::ability_tree::ability::Ability::KeywordAbility(ab.clone()));
                         }
                         crate::AbilityTree {
                             abilities: ab_tree,
                             #[cfg(feature = "spanned_tree")]
-                            span: *span,
+                            span: abilities.span,
                         }
                     },
                 }),
@@ -127,33 +116,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::MultipleKeywordAbilities {
-                    abilities: dummy(),
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }
-                .id(),
+                ParserNode::MultipleKeywordAbilities { abilities: dummy() }.id(),
             ]),
             merged: ParserNode::AbilityTree { tree: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::AbilityTree { tree },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine { .. })),
-                    ParserNode::MultipleKeywordAbilities {
-                        abilities,
-                        #[cfg(feature = "spanned_tree")]
-                            span: end_span,
-                    },
+                    ParserNode::MultipleKeywordAbilities { abilities },
                 ] => Ok(ParserNode::AbilityTree {
                     tree: {
                         let mut ab_tree = tree.abilities.clone();
-                        for ab in abilities.iter() {
+                        for ab in abilities.abilities.iter() {
                             ab_tree.push(crate::ability_tree::ability::Ability::KeywordAbility(ab.clone()));
                         }
                         crate::AbilityTree {
                             abilities: ab_tree,
                             #[cfg(feature = "spanned_tree")]
-                            span: tree.node_span().merge(end_span),
+                            span: tree.node_span().merge(&abilities.span),
                         }
                     },
                 }),

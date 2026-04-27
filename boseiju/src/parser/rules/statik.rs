@@ -118,7 +118,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -135,14 +135,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         ..
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CardReference { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone },
                 ] => Ok(ParserNode::StaticAbilityKind {
                     kind: crate::ability_tree::ability::statik::StaticAbilityKind::AlternativeCastingPermissions(
                         crate::ability_tree::ability::statik::alterative_casting_permissions::AlternativeCastingPermissions {
                             player: player.clone(),
-                            object: reference.clone(),
+                            object: card.clone(),
                             from_zone: zone.clone(),
                             additional_cost: None,
                             #[cfg(feature = "spanned_tree")]
@@ -169,7 +169,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -199,7 +199,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         ..
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CardReference { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::By { .. })),
@@ -214,7 +214,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     kind: crate::ability_tree::ability::statik::StaticAbilityKind::AlternativeCastingPermissions(
                         crate::ability_tree::ability::statik::alterative_casting_permissions::AlternativeCastingPermissions {
                             player: player.clone(),
-                            object: reference.clone(),
+                            object: card.clone(),
                             from_zone: zone.clone(),
                             additional_cost: Some(inner.clone()),
                             #[cfg(feature = "spanned_tree")]

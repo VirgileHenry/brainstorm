@@ -3,11 +3,11 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 
-/// Imperative to put counters on objects.
+/// Imperative to put counters on permanents.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PutCountersImperative {
-    pub object: crate::ability_tree::object::ObjectReference,
+    pub object: crate::ability_tree::object::PermanentReference,
     pub counters: crate::utils::HeapArrayVec<CounterOnPermanent, MAX_COUNTER_AMOUNT>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

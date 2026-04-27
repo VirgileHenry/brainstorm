@@ -12,7 +12,7 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Put counters on something, "put 2 +1/+1 counters on each creature you control" */
+    /* "remove <number> <counter> from among <permanent ref>": remove counters imperative */
     let remove_counters_rules = terminals::Counter::all()
         .map(|counter| ParserRule {
             expanded: RuleLhs::new(&[
@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
             ]),
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -46,11 +46,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::Counter(counter)),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::RemoveCounters(
                         crate::ability_tree::imperative::RemoveCountersImperative {
-                            object: reference.clone(),
+                            object: permanent.clone(),
                             counters: {
                                 let mut counters = crate::utils::HeapArrayVec::new();
                                 counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
@@ -62,7 +62,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 counters
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: span.merge(&reference.node_span()),
+                            span: span.merge(&permanent.node_span()),
                         },
                     ),
                 }),
@@ -95,7 +95,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::ObjectReference { reference: dummy() }.id(),
+            ParserNode::PermanentReference { permanent: dummy() }.id(),
         ]),
         merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -111,11 +111,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
-                ParserNode::ObjectReference { reference },
+                ParserNode::PermanentReference { permanent },
             ] => Ok(ParserNode::ImperativeKind {
                 imperative: crate::ability_tree::imperative::ImperativeKind::RemoveCounters(
                     crate::ability_tree::imperative::RemoveCountersImperative {
-                        object: reference.clone(),
+                        object: permanent.clone(),
                         counters: {
                             let mut counters = crate::utils::HeapArrayVec::new();
                             counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
@@ -130,7 +130,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             counters
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: remove_span.merge(&reference.node_span()),
+                        span: remove_span.merge(&permanent.node_span()),
                     },
                 ),
             }),

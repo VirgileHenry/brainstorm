@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::ObjectReference { reference: dummy() }.id(),
+            ParserNode::PermanentReference { permanent: dummy() }.id(),
         ]),
         merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -30,13 +30,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     #[cfg(feature = "spanned_tree")]
                     span,
                 })),
-                ParserNode::ObjectReference { reference },
+                ParserNode::PermanentReference { permanent },
             ] => Ok(ParserNode::ImperativeKind {
                 imperative: crate::ability_tree::imperative::ImperativeKind::Tap(
                     crate::ability_tree::imperative::TapImperative {
-                        object: reference.clone(),
+                        object: permanent.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: span.merge(&reference.node_span()),
+                        span: span.merge(&permanent.node_span()),
                     },
                 ),
             }),

@@ -1,6 +1,5 @@
 pub mod intermediates;
 
-use crate::ability_tree::object;
 use crate::ability_tree::terminals;
 use crate::ability_tree::time;
 use crate::ability_tree::zone;
@@ -19,6 +18,7 @@ pub enum Token {
     ActionKeyword(intermediates::ActionKeyword),
     AmbiguousToken(intermediates::AmbiguousToken),
     AnyNumberOfClause { clauses: intermediates::AnyNumberOfClause },
+    AttachedObject(intermediates::AttachedObject),
     BackwardDuration(time::BackwardDuration),
     CardActions(intermediates::CardActions),
     Choice(intermediates::Choice),
@@ -27,7 +27,7 @@ pub enum Token {
     ControlFlow(intermediates::ControlFlow),
     CountSpecifier(intermediates::CountSpecifier),
     Counter(terminals::Counter),
-    DamageKind(intermediates::DamageKind),
+    DamageKind(terminals::DamageKind),
     EnglishKeyword(intermediates::EnglishKeyword),
     ForwardDuration(time::ForwardDuration),
     GlobalZone(intermediates::GlobalZone),
@@ -41,12 +41,12 @@ pub enum Token {
     Number(intermediates::Number),
     NumberOfTimes(intermediates::NumberOfTimes),
     NumberOperation(intermediates::NumberOperation),
-    ObjectKind(object::ObjectKind),
     Order(terminals::Order),
     OwnableZone(zone::OwnableZone),
     OwnerSpecifier(terminals::OwnerSpecifier),
-    CardProperty(terminals::CardProperty),
-    CardState(terminals::CardState),
+    CardProperty(intermediates::CardProperty),
+    CardState(intermediates::CardState),
+    CardOwnName(intermediates::CardOwnName),
     Phase(terminals::Phase),
     PlayerAction(intermediates::PlayerAction),
     PlayerProperties(intermediates::PlayerProperties),
@@ -54,13 +54,21 @@ pub enum Token {
     PowerToughnessModElements(intermediates::PowerToughnessModElements),
     PowerToughness { pt: terminals::PowerToughness },
     SagaChapterNumber { chapter: terminals::SagaChapterNumber },
-    SelfReferencing { reference: object::SelfReferencingObject },
     SpellProperty(terminals::SpellProperty),
     Step(terminals::Step),
     TapUntapCost(intermediates::TapUntapCost),
     UnderControl(intermediates::UnderControl),
     VhyToSortLater(intermediates::VhyToSortLater),
     WinLoseClause(intermediates::WinLoseClause),
+    ArtifactSubtype(terminals::ArtifactSubtype),
+    BattleSubtype(terminals::BattleSubtype),
+    CardType(terminals::CardType),
+    CreatureSubtype(terminals::CreatureSubtype),
+    EnchantmentSubtype(terminals::EnchantmentSubtype),
+    LandSubtype(terminals::LandSubtype),
+    PlaneswalkerSubtype(terminals::PlaneswalkerSubtype),
+    InstantSorcerySubtype(terminals::InstantSorcerySubtype),
+    Supertype(terminals::Supertype),
 }
 
 impl Token {
@@ -71,6 +79,8 @@ impl Token {
             Some(Self::Counter(kind))
         } else if let Some(kind) = intermediates::CountSpecifier::try_from_span(&span) {
             Some(Self::CountSpecifier(kind))
+        } else if let Some(kind) = intermediates::AttachedObject::try_from_span(&span) {
+            Some(Self::AttachedObject(kind))
         } else if let Some(kind) = terminals::OwnerSpecifier::try_from_span(&span) {
             Some(Self::OwnerSpecifier(kind))
         } else if let Some(kind) = terminals::Order::try_from_span(&span) {
@@ -79,9 +89,11 @@ impl Token {
             Some(Self::CardActions(kind))
         } else if let Some(kind) = intermediates::PlayerSpecifier::try_from_span(&span) {
             Some(Self::PlayerSpecifier(kind))
-        } else if let Some(kind) = terminals::CardState::try_from_span(&span) {
+        } else if let Some(kind) = intermediates::CardState::try_from_span(&span) {
             Some(Self::CardState(kind))
-        } else if let Some(kind) = terminals::CardProperty::try_from_span(&span) {
+        } else if let Some(kind) = intermediates::CardOwnName::try_from_span(&span) {
+            Some(Self::CardOwnName(kind))
+        } else if let Some(kind) = intermediates::CardProperty::try_from_span(&span) {
             Some(Self::CardProperty(kind))
         } else if let Some(kind) = terminals::SpellProperty::try_from_span(&span) {
             Some(Self::SpellProperty(kind))
@@ -115,23 +127,19 @@ impl Token {
             Some(Self::KeywordAction(kind))
         } else if let Some(mana) = terminals::Mana::try_from_span(&span) {
             Some(Self::Mana { mana })
-        } else if let Some(kind) = object::ObjectKind::try_from_span(&span) {
-            Some(Self::ObjectKind(kind))
         } else if let Some(kind) = intermediates::ControlFlow::try_from_span(&span) {
             Some(Self::ControlFlow(kind))
         } else if let Some(kind) = intermediates::TapUntapCost::try_from_span(&span) {
             Some(Self::TapUntapCost(kind))
         } else if let Some(kind) = intermediates::EnglishKeyword::try_from_span(&span) {
             Some(Self::EnglishKeyword(kind))
-        } else if let Some(reference) = object::SelfReferencingObject::try_from_span(&span) {
-            Some(Self::SelfReferencing { reference })
         } else if let Some(kind) = intermediates::Number::try_from_span(&span) {
             Some(Self::Number(kind))
         } else if let Some(not) = intermediates::NotOfAKind::try_from_span(&span) {
             Some(Self::NotOfAKind { not })
         } else if let Some(kind) = intermediates::ActionKeyword::try_from_span(&span) {
             Some(Self::ActionKeyword(kind))
-        } else if let Some(kind) = intermediates::DamageKind::try_from_span(&span) {
+        } else if let Some(kind) = terminals::DamageKind::try_from_span(&span) {
             Some(Self::DamageKind(kind))
         } else if let Some(kind) = intermediates::PlayerAction::try_from_span(&span) {
             Some(Self::PlayerAction(kind))
@@ -157,6 +165,24 @@ impl Token {
             Some(Self::GlobalZone(kind))
         } else if let Some(kind) = intermediates::VhyToSortLater::try_from_span(&span) {
             Some(Self::VhyToSortLater(kind))
+        } else if let Some(kind) = terminals::ArtifactSubtype::try_from_span(&span) {
+            Some(Self::ArtifactSubtype(kind))
+        } else if let Some(kind) = terminals::BattleSubtype::try_from_span(&span) {
+            Some(Self::BattleSubtype(kind))
+        } else if let Some(kind) = terminals::CardType::try_from_span(&span) {
+            Some(Self::CardType(kind))
+        } else if let Some(kind) = terminals::CreatureSubtype::try_from_span(&span) {
+            Some(Self::CreatureSubtype(kind))
+        } else if let Some(kind) = terminals::EnchantmentSubtype::try_from_span(&span) {
+            Some(Self::EnchantmentSubtype(kind))
+        } else if let Some(kind) = terminals::LandSubtype::try_from_span(&span) {
+            Some(Self::LandSubtype(kind))
+        } else if let Some(kind) = terminals::PlaneswalkerSubtype::try_from_span(&span) {
+            Some(Self::PlaneswalkerSubtype(kind))
+        } else if let Some(kind) = terminals::InstantSorcerySubtype::try_from_span(&span) {
+            Some(Self::InstantSorcerySubtype(kind))
+        } else if let Some(kind) = terminals::Supertype::try_from_span(&span) {
+            Some(Self::Supertype(kind))
         } else {
             None
         }
@@ -170,15 +196,17 @@ impl Token {
             Self::ActionKeyword(child) => child.span(),
             Self::AmbiguousToken(child) => child.span(),
             Self::AnyNumberOfClause { clauses } => clauses.span,
+            Self::AttachedObject(child) => child.span(),
             Self::BackwardDuration(child) => child.node_span(),
             Self::CardActions(child) => child.span(),
+            Self::CardOwnName(child) => child.span,
             Self::Choice(child) => child.span(),
             Self::ChoiceReference(child) => child.span(),
             Self::Color(child) => child.span,
             Self::ControlFlow(child) => child.span(),
             Self::CountSpecifier(child) => child.span(),
             Self::Counter(child) => child.span,
-            Self::DamageKind(child) => child.span(),
+            Self::DamageKind(child) => child.node_span(),
             Self::EnglishKeyword(child) => child.span(),
             Self::ForwardDuration(child) => child.node_span(),
             Self::GlobalZone(child) => child.span(),
@@ -192,12 +220,11 @@ impl Token {
             Self::Number(child) => child.span(),
             Self::NumberOfTimes(child) => child.span(),
             Self::NumberOperation(child) => child.span(),
-            Self::ObjectKind(child) => child.node_span(),
             Self::Order(child) => child.node_span(),
             Self::OwnableZone(child) => child.node_span(),
             Self::OwnerSpecifier(child) => child.node_span(),
-            Self::CardProperty(child) => child.node_span(),
-            Self::CardState(child) => child.node_span(),
+            Self::CardProperty(child) => child.span(),
+            Self::CardState(child) => child.span(),
             Self::Phase(child) => child.node_span(),
             Self::PlayerAction(child) => child.span(),
             Self::PlayerProperties(child) => child.span(),
@@ -205,13 +232,21 @@ impl Token {
             Self::PowerToughnessModElements(child) => child.span(),
             Self::PowerToughness { pt } => pt.span,
             Self::SagaChapterNumber { chapter } => chapter.span,
-            Self::SelfReferencing { reference } => reference.span,
             Self::SpellProperty(child) => child.node_span(),
             Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),
+            Self::ArtifactSubtype(child) => child.node_span(),
+            Self::BattleSubtype(child) => child.node_span(),
+            Self::CardType(child) => child.node_span(),
+            Self::CreatureSubtype(child) => child.node_span(),
+            Self::EnchantmentSubtype(child) => child.node_span(),
+            Self::LandSubtype(child) => child.node_span(),
+            Self::PlaneswalkerSubtype(child) => child.node_span(),
+            Self::InstantSorcerySubtype(child) => child.node_span(),
+            Self::Supertype(child) => child.node_span(),
         }
     }
 }

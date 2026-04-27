@@ -41,7 +41,7 @@ impl crate::ability_tree::AbilityTreeNode for ConditionEventOccured {
     }
 
     fn node_tag(&self) -> &'static str {
-        "condition: event occured"
+        "event occured"
     }
 
     #[cfg(feature = "spanned_tree")]

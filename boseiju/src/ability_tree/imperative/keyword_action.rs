@@ -1,14 +1,18 @@
 mod adapt;
+mod bolster;
 mod keyword_to_abilities;
 mod mill;
 mod scry;
+mod support;
 mod surveil;
 
 pub use keyword_to_abilities::keyword_action_to_abilities;
 
 pub use adapt::AdaptKeywordAction;
+pub use bolster::BolsterKeywordAction;
 pub use mill::MillKeywordAction;
 pub use scry::ScryKeywordAction;
+pub use support::SupportKeywordAction;
 pub use surveil::SurveilKeywordAction;
 
 use crate::ability_tree::AbilityTreeNode;
@@ -96,9 +100,11 @@ impl crate::utils::DummyInit for KeywordAction {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExpandedKeywordAction {
     Adapt(AdaptKeywordAction),
+    Bolster(BolsterKeywordAction),
     Mill(MillKeywordAction),
     Scry(ScryKeywordAction),
     Standalone(StandaloneKeywordAction),
+    Support(SupportKeywordAction),
     Surveil(SurveilKeywordAction),
 }
 
@@ -112,9 +118,11 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Adapt(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Bolster(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Mill(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Scry(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Standalone(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Support(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Surveil(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -126,9 +134,11 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
         out.push_final_branch()?;
         match self {
             Self::Adapt(child) => child.display(out)?,
+            Self::Bolster(child) => child.display(out)?,
             Self::Mill(child) => child.display(out)?,
             Self::Scry(child) => child.display(out)?,
             Self::Standalone(child) => child.display(out)?,
+            Self::Support(child) => child.display(out)?,
             Self::Surveil(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -143,9 +153,11 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Adapt(child) => child.node_span(),
+            Self::Bolster(child) => child.node_span(),
             Self::Mill(child) => child.node_span(),
             Self::Scry(child) => child.node_span(),
             Self::Standalone(child) => child.node_span(),
+            Self::Support(child) => child.node_span(),
             Self::Surveil(child) => child.node_span(),
         }
     }

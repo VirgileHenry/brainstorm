@@ -1,11 +1,13 @@
 mod event_occured;
 mod number_of_resolution;
 mod object_is_of_kind;
+mod player_controls_permanent;
 mod this_is_your_turn;
 
 pub use event_occured::ConditionEventOccured;
 pub use number_of_resolution::ConditionNumberOfResolutions;
-pub use object_is_of_kind::ConditionObjectMatchSpecifiers;
+pub use object_is_of_kind::ConditionCreatureMatchSpecifier;
+pub use player_controls_permanent::PlayerControlsPermanent;
 pub use this_is_your_turn::ConditionThisIsYourTurn;
 
 use crate::ability_tree::AbilityTreeNode;
@@ -178,7 +180,8 @@ impl crate::utils::DummyInit for ConditionalUnless {
 pub enum Condition {
     EventOccured(ConditionEventOccured),
     NumberOfResolutions(ConditionNumberOfResolutions),
-    ObjectMatchSpecifiers(ConditionObjectMatchSpecifiers),
+    ObjectMatchSpecifiers(ConditionCreatureMatchSpecifier),
+    PlayerControlsObject(PlayerControlsPermanent),
     ThisIsYourTurn(ConditionThisIsYourTurn),
 }
 
@@ -194,6 +197,7 @@ impl AbilityTreeNode for Condition {
             Self::EventOccured(child) => children.push(child as &dyn AbilityTreeNode),
             Self::NumberOfResolutions(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ObjectMatchSpecifiers(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PlayerControlsObject(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ThisIsYourTurn(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -207,6 +211,7 @@ impl AbilityTreeNode for Condition {
             Self::EventOccured(child) => child.display(out)?,
             Self::NumberOfResolutions(child) => child.display(out)?,
             Self::ObjectMatchSpecifiers(child) => child.display(out)?,
+            Self::PlayerControlsObject(child) => child.display(out)?,
             Self::ThisIsYourTurn(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -223,6 +228,7 @@ impl AbilityTreeNode for Condition {
             Self::EventOccured(child) => child.node_span(),
             Self::NumberOfResolutions(child) => child.node_span(),
             Self::ObjectMatchSpecifiers(child) => child.node_span(),
+            Self::PlayerControlsObject(child) => child.node_span(),
             Self::ThisIsYourTurn(child) => child.node_span(),
         }
     }

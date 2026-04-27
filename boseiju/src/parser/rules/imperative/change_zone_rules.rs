@@ -12,7 +12,7 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "return <object> to <zone>" */
+        /* "return <permanent reference> to <zone>" */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -35,16 +35,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
-                            object: reference.clone(),
+                            object: crate::ability_tree::object::CardReference::Permanent(permanent.clone()),
                             from: crate::ability_tree::zone::ZoneReference::TheBattlefield {
                                 #[cfg(feature = "spanned_tree")]
-                                span: reference.node_span().empty_at_end(),
+                                span: permanent.node_span().empty_at_end(),
                             },
                             to: to_zone.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -56,7 +56,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "return <object> from <zone> to <zone>" */
+        /* "return <card reference> from <zone> to <zone>" */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -85,7 +85,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CardReference { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone: from_zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
@@ -93,7 +93,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
-                            object: reference.clone(),
+                            object: card.clone(),
                             from: from_zone.clone(),
                             to: to_zone.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -105,7 +105,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "put <object> from <zone> onto <zone> */
+        /* "put <card reference> from <zone> onto <zone> */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Put {
@@ -113,7 +113,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -134,7 +134,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CardReference { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone: from_zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
@@ -142,7 +142,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
-                            object: reference.clone(),
+                            object: card.clone(),
                             from: from_zone.clone(),
                             to: to_zone.clone(),
                             #[cfg(feature = "spanned_tree")]

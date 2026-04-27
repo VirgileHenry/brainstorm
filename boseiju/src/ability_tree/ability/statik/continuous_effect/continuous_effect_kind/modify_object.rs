@@ -10,17 +10,17 @@ const MAX_OBJECT_MODIFICATIONS: usize = MAX_CHILDREN_PER_NODE - 1;
 /// A continuous effect that grants abilities to objects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ContinuousEffectModifyObject {
-    pub object: crate::ability_tree::object::ObjectReference,
+pub struct ModifyObjectEffect {
+    pub object: crate::ability_tree::object::PermanentReference,
     pub modifications: crate::utils::HeapArrayVec<ObjectAbilitiesModification, MAX_OBJECT_MODIFICATIONS>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl AbilityTreeNode for ContinuousEffectModifyObject {
+impl AbilityTreeNode for ModifyObjectEffect {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::ContinuousEffectModifyObject.id()
+        crate::ability_tree::NodeKind::ModifyObjectEffect.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -34,7 +34,7 @@ impl AbilityTreeNode for ContinuousEffectModifyObject {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "object is modified:")?;
+        write!(out, "modify object effect:")?;
         out.push_inter_branch()?;
         write!(out, "object:")?;
         out.push_final_branch()?;
@@ -56,7 +56,7 @@ impl AbilityTreeNode for ContinuousEffectModifyObject {
     }
 
     fn node_tag(&self) -> &'static str {
-        "continuous effect: modify object"
+        "modify object effect"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -66,7 +66,7 @@ impl AbilityTreeNode for ContinuousEffectModifyObject {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ContinuousEffectModifyObject {
+impl crate::utils::DummyInit for ModifyObjectEffect {
     fn dummy_init() -> Self {
         Self {
             object: crate::utils::dummy(),
@@ -78,10 +78,12 @@ impl crate::utils::DummyInit for ContinuousEffectModifyObject {
 }
 
 /// A modification to an object.
+///
+/// Fixme: some of those only works on creatures, they should be properly separated
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectAbilitiesModification {
-    CharacteristicModification(ObjectCharacteristicModification),
+    CharacteristicModification(ObjectCharacteristicModification), /* Fixme: some of these are only for creatures */
     GainAbility(ObjectGainAbility),
 }
 

@@ -215,7 +215,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Object's controller is a player specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -230,7 +230,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Controller {
                         #[cfg(feature = "spanned_tree")]
@@ -239,9 +239,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Player {
                     player: crate::ability_tree::player::PlayerSpecifier::ObjectController(
                         crate::ability_tree::player::PlayerSpecifierObjectController {
-                            object: Box::new(reference.clone()),
+                            object: Box::new(permanent.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(span),
+                            span: permanent.node_span().merge(span),
                         },
                     ),
                 }),
@@ -252,7 +252,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Object's owner is a player specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -267,7 +267,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::CardReference { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Owner {
                         #[cfg(feature = "spanned_tree")]
@@ -276,9 +276,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Player {
                     player: crate::ability_tree::player::PlayerSpecifier::ObjectOwner(
                         crate::ability_tree::player::PlayerSpecifierObjectOwner {
-                            object: Box::new(reference.clone()),
+                            object: Box::new(card.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(span),
+                            span: card.node_span().merge(span),
                         },
                     ),
                 }),

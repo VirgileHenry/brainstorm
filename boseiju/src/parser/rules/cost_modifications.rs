@@ -147,10 +147,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* Apply cost modification to objects */
+        /* "<card reference> cost <cost modification>" */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::CardReference { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Cost {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -167,15 +167,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::SpellReference { spell },
                     ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Cost { .. })),
                     ParserNode::CostModification { cost_modification },
                 ] => Ok(ParserNode::CostModificationEffect {
                     cost_modification: crate::ability_tree::ability::statik::cost_modification_effect::CostModificationEffect {
-                        applies_to: reference.clone(),
+                        applies_to: spell.clone(),
                         modification: cost_modification.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.node_span().merge(&cost_modification.node_span()),
+                        span: spell.node_span().merge(&cost_modification.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

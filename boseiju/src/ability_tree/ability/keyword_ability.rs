@@ -7,14 +7,19 @@ mod bushido;
 mod cleave;
 mod crew;
 mod cycling;
+mod dash;
+mod disguise;
 mod echo;
 mod enchant;
 mod equip;
 mod flashback;
+mod freerunning;
 mod keyword_to_abilities;
 mod kicker;
 mod megamorph;
+mod morph;
 mod ninjutsu;
+mod outlast;
 mod prototype;
 mod reinforce;
 mod renown;
@@ -35,13 +40,18 @@ pub use bushido::BushidoKeywordAbility;
 pub use cleave::CleaveKeywordAbility;
 pub use crew::CrewKeywordAbility;
 pub use cycling::CyclingKeywordAbility;
+pub use dash::DashKeywordAbility;
+pub use disguise::DisguiseKeywordAbility;
 pub use echo::EchoKeywordAbility;
 pub use enchant::EnchantKeywordAbility;
 pub use equip::EquipKeywordAbility;
 pub use flashback::FlashbackKeywordAbility;
+pub use freerunning::FreerunningKeywordAbility;
 pub use kicker::KickerKeywordAbility;
 pub use megamorph::MegamorphKeywordAbility;
+pub use morph::MorphKeywordAbility;
 pub use ninjutsu::NinjutsuKeywordAbility;
+pub use outlast::OutlastKeywordAbility;
 pub use prototype::PrototypeKeywordAbility;
 pub use reinforce::ReinforceKeywordAbility;
 pub use renown::RenownKeywordAbility;
@@ -71,13 +81,18 @@ pub enum ExpandedKeywordAbility {
     Cleave(CleaveKeywordAbility),
     Crew(CrewKeywordAbility),
     Cycling(CyclingKeywordAbility),
+    Dash(DashKeywordAbility),
+    Disguise(DisguiseKeywordAbility),
     Echo(EchoKeywordAbility),
-    Equip(EquipKeywordAbility),
     Enchant(EnchantKeywordAbility),
+    Equip(EquipKeywordAbility),
     Flashback(FlashbackKeywordAbility),
+    Freerunning(FreerunningKeywordAbility),
     Kicker(KickerKeywordAbility),
     Megamorph(MegamorphKeywordAbility),
+    Morph(MorphKeywordAbility),
     Ninjutsu(NinjutsuKeywordAbility),
+    Outlast(OutlastKeywordAbility),
     Prototype(PrototypeKeywordAbility),
     Reinforce(ReinforceKeywordAbility),
     Renown(RenownKeywordAbility),
@@ -107,13 +122,18 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Cleave(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Crew(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Cycling(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Dash(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Disguise(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Echo(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Equip(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Enchant(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Equip(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Flashback(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Freerunning(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Kicker(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Megamorph(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Morph(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Ninjutsu(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Outlast(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Prototype(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Reinforce(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Renown(child) => children.push(child as &dyn AbilityTreeNode),
@@ -141,13 +161,18 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Cleave(child) => child.display(out)?,
             Self::Crew(child) => child.display(out)?,
             Self::Cycling(child) => child.display(out)?,
+            Self::Dash(child) => child.display(out)?,
+            Self::Disguise(child) => child.display(out)?,
             Self::Echo(child) => child.display(out)?,
-            Self::Equip(child) => child.display(out)?,
             Self::Enchant(child) => child.display(out)?,
+            Self::Equip(child) => child.display(out)?,
             Self::Flashback(child) => child.display(out)?,
+            Self::Freerunning(child) => child.display(out)?,
             Self::Kicker(child) => child.display(out)?,
             Self::Megamorph(child) => child.display(out)?,
+            Self::Morph(child) => child.display(out)?,
             Self::Ninjutsu(child) => child.display(out)?,
+            Self::Outlast(child) => child.display(out)?,
             Self::Prototype(child) => child.display(out)?,
             Self::Reinforce(child) => child.display(out)?,
             Self::Renown(child) => child.display(out)?,
@@ -178,13 +203,18 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Cleave(child) => child.node_span(),
             Self::Crew(child) => child.node_span(),
             Self::Cycling(child) => child.node_span(),
+            Self::Dash(child) => child.node_span(),
+            Self::Disguise(child) => child.node_span(),
             Self::Echo(child) => child.node_span(),
-            Self::Equip(child) => child.node_span(),
             Self::Enchant(child) => child.node_span(),
+            Self::Equip(child) => child.node_span(),
             Self::Flashback(child) => child.node_span(),
+            Self::Freerunning(child) => child.node_span(),
             Self::Kicker(child) => child.node_span(),
             Self::Megamorph(child) => child.node_span(),
+            Self::Morph(child) => child.node_span(),
             Self::Ninjutsu(child) => child.node_span(),
+            Self::Outlast(child) => child.node_span(),
             Self::Prototype(child) => child.node_span(),
             Self::Reinforce(child) => child.node_span(),
             Self::Renown(child) => child.node_span(),

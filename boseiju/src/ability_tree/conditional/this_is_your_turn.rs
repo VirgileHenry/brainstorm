@@ -27,7 +27,7 @@ impl crate::ability_tree::AbilityTreeNode for ConditionThisIsYourTurn {
     }
 
     fn node_tag(&self) -> &'static str {
-        "condition: this is your turn"
+        "this is your turn"
     }
 
     #[cfg(feature = "spanned_tree")]

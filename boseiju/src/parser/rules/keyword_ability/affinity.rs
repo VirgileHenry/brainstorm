@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::ObjectSpecifiers { specifiers: dummy() }.id(),
+            ParserNode::PermanentReference { permanent: dummy() }.id(),
         ]),
         merged: ParserNode::KeywordAbility {
             keyword_ability: dummy(),
@@ -39,24 +39,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span: affinity_span,
                 })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::For { .. })),
-                ParserNode::ObjectSpecifiers { specifiers },
+                ParserNode::PermanentReference { permanent },
             ] => Ok(ParserNode::KeywordAbility {
                 keyword_ability: crate::ability_tree::ability::KeywordAbility {
                     keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Affinity(
                         crate::ability_tree::ability::keyword_ability::AffinityKeywordAbility {
-                            for_object: specifiers.clone(),
+                            for_object: permanent.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: specifiers.node_span().merge(affinity_span),
+                            span: permanent.node_span().merge(affinity_span),
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(crate::ability_tree::ability::spell::SpellAbility {
-                        effects: crate::utils::HeapArrayVec::new(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }),
+                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
+                        crate::ability_tree::ability::spell::SpellAbility {
+                            effects: crate::utils::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                    ),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span().merge(affinity_span),
+                    span: permanent.node_span().merge(affinity_span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

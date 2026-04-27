@@ -6,7 +6,6 @@
 pub enum StandaloneKeywordAction {
     Abandon,
     Activate,
-    Amass,
     Assemble,
     Attach,
     Behold,
@@ -20,7 +19,6 @@ pub enum StandaloneKeywordAction {
     Convert,
     Counter,
     Create,
-    Destroy,
     Detain,
     Discard,
     Discover,
@@ -73,7 +71,6 @@ impl StandaloneKeywordAction {
         [
             Self::Abandon,
             Self::Activate,
-            Self::Amass,
             Self::Assemble,
             Self::Attach,
             Self::Behold,
@@ -87,7 +84,6 @@ impl StandaloneKeywordAction {
             Self::Convert,
             Self::Counter,
             Self::Create,
-            Self::Destroy,
             Self::Detain,
             Self::Discard,
             Self::Discover,
@@ -143,7 +139,6 @@ impl std::fmt::Display for StandaloneKeywordAction {
         match self {
             Self::Abandon => write!(f, "abandon"),
             Self::Activate => write!(f, "activate"),
-            Self::Amass => write!(f, "amass"),
             Self::Assemble => write!(f, "assemble"),
             Self::Attach => write!(f, "attach"),
             Self::Behold => write!(f, "behold"),
@@ -157,7 +152,6 @@ impl std::fmt::Display for StandaloneKeywordAction {
             Self::Convert => write!(f, "convert"),
             Self::Counter => write!(f, "counter"),
             Self::Create => write!(f, "create"),
-            Self::Destroy => write!(f, "destroy"),
             Self::Detain => write!(f, "detain"),
             Self::Discard => write!(f, "discard"),
             Self::Discover => write!(f, "discover"),
@@ -212,7 +206,6 @@ impl From<StandaloneKeywordAction> for mtg_data::KeywordAction {
         match value {
             StandaloneKeywordAction::Abandon => mtg_data::KeywordAction::Abandon,
             StandaloneKeywordAction::Activate => mtg_data::KeywordAction::Activate,
-            StandaloneKeywordAction::Amass => mtg_data::KeywordAction::Amass,
             StandaloneKeywordAction::Assemble => mtg_data::KeywordAction::Assemble,
             StandaloneKeywordAction::Attach => mtg_data::KeywordAction::Attach,
             StandaloneKeywordAction::Behold => mtg_data::KeywordAction::Behold,
@@ -226,7 +219,6 @@ impl From<StandaloneKeywordAction> for mtg_data::KeywordAction {
             StandaloneKeywordAction::Convert => mtg_data::KeywordAction::Convert,
             StandaloneKeywordAction::Counter => mtg_data::KeywordAction::Counter,
             StandaloneKeywordAction::Create => mtg_data::KeywordAction::Create,
-            StandaloneKeywordAction::Destroy => mtg_data::KeywordAction::Destroy,
             StandaloneKeywordAction::Detain => mtg_data::KeywordAction::Detain,
             StandaloneKeywordAction::Discard => mtg_data::KeywordAction::Discard,
             StandaloneKeywordAction::Discover => mtg_data::KeywordAction::Discover,

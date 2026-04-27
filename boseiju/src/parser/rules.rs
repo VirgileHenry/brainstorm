@@ -20,7 +20,6 @@ mod cost;
 mod cost_modifications;
 mod count_specifier;
 mod event;
-mod event_replacement;
 mod imperative;
 mod imperative_list;
 mod instant;
@@ -28,10 +27,13 @@ mod keyword_ability;
 mod keyword_action;
 mod mana;
 mod number;
+mod object_count;
 mod object_references;
 mod object_specifiers;
 mod player;
+mod power_toughness_modifiers;
 mod replacement_effect;
+mod specified_object;
 mod spell_ability;
 mod statement;
 mod statik;
@@ -56,7 +58,6 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(cost_modifications::rules()),
         Box::new(count_specifier::rules()),
         Box::new(event::rules()),
-        Box::new(event_replacement::rules()),
         Box::new(conditional::rules()),
         Box::new(imperative::rules()),
         Box::new(imperative_list::rules()),
@@ -65,10 +66,13 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(keyword_action::rules()),
         Box::new(mana::rules()),
         Box::new(number::rules()),
+        Box::new(object_count::rules()),
         Box::new(object_references::rules()),
         Box::new(object_specifiers::rules()),
         Box::new(player::rules()),
+        Box::new(power_toughness_modifiers::rules()),
         Box::new(replacement_effect::rules()),
+        Box::new(specified_object::rules()),
         Box::new(spell_ability::rules()),
         Box::new(statement::rules()),
         Box::new(statik::rules()),

@@ -31,6 +31,7 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
     let result = remove_comments(&result);
     let result = replace_name(&card_name, &result);
     let result = result.replace("\\n", "\n");
+    let result = result.trim().to_string();
 
     result
 }

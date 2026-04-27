@@ -9,7 +9,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerAttacksAction {
     pub attacked_player: Option<crate::ability_tree::player::PlayerSpecifier>,
-    pub with: Option<crate::ability_tree::object::ObjectReference>,
+    pub with: Option<crate::ability_tree::object::CreatureReference>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

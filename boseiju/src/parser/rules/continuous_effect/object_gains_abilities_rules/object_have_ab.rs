@@ -13,10 +13,10 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<object> have <keyword ability>" is a continuous effect. */
+        /* "<permanent reference> have <keyword ability>" is a continuous effect. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -30,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -38,8 +38,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
-                        effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                            object: reference.clone(),
+                        effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            object: permanent.clone(),
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
@@ -51,10 +51,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&keyword_ability.node_span()),
+                            span: permanent.node_span().merge(&keyword_ability.node_span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.node_span().merge(&keyword_ability.node_span()),
+                        span: permanent.node_span().merge(&keyword_ability.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> have "<ability>"" is a continuous effect. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ObjectReference { reference: dummy() }.id(),
+                ParserNode::PermanentReference { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -85,7 +85,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ObjectReference { reference },
+                    ParserNode::PermanentReference { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -98,8 +98,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
-                        effect: ContinuousEffectKind::ModifyObjectAbilities(ContinuousEffectModifyObject {
-                            object: reference.clone(),
+                        effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            object: permanent.clone(),
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
@@ -111,10 +111,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: reference.node_span().merge(&ability.node_span()),
+                            span: permanent.node_span().merge(&ability.node_span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: reference.node_span().merge(ab_end_span),
+                        span: permanent.node_span().merge(ab_end_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
