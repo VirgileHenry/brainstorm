@@ -14,6 +14,7 @@ mod generate_delayed_triggered_ab_rules;
 mod put_counters_rules;
 mod remove_counters_rules;
 mod sacrifice_rules;
+mod search_rule;
 mod tap_rules;
 
 use crate::parser::rules::ParserNode;
@@ -92,6 +93,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         remove_counters_rules::rules().collect::<Vec<_>>(),
         change_zone_rules::rules().collect::<Vec<_>>(),
         sacrifice_rules::rules().collect::<Vec<_>>(),
+        search_rule::rules().collect::<Vec<_>>(),
         tap_rules::rules().collect::<Vec<_>>(),
     ]
     .into_iter()

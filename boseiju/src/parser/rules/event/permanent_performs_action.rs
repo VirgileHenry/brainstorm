@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent reference> enters the battlefield" is a permanent etb event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -30,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters { .. })),
                     ParserNode::LexerToken(Token::GlobalZone(intermediates::GlobalZone::TheBattlefield {
                         #[cfg(feature = "spanned_tree")]
@@ -58,7 +58,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent reference> enters" is enough for a permanent etb event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -68,7 +68,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Event { event: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
                         #[cfg(feature = "spanned_tree")]
                             span: enters_span,

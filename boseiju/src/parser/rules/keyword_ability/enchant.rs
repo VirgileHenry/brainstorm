@@ -38,32 +38,36 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(Token::CardType(terminals::CardType {
                     card_type: mtg_data::CardType::Creature,
                     #[cfg(feature = "spanned_tree")]
-                        span: end_span,
+                        span: creature_span,
                 })),
             ] => Ok(ParserNode::KeywordAbility {
                 keyword_ability: crate::ability_tree::ability::KeywordAbility {
                     keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Enchant(
                         crate::ability_tree::ability::keyword_ability::EnchantKeywordAbility {
-                            enchantable_object: crate::ability_tree::object::PermanentReference::Creature(
-                                crate::ability_tree::object::CreatureReference::Specified(
-                                    crate::ability_tree::object::specified_object::SpecifiedCreature {
-                                        amount: crate::ability_tree::object::CountSpecifier::Target(
-                                            crate::ability_tree::number::Number::Number(
-                                                crate::ability_tree::number::FixedNumber {
-                                                    number: 1,
-                                                    #[cfg(feature = "spanned_tree")]
-                                                    span: enchant_span.empty_at_end(),
-                                                },
-                                            ),
+                            enchantable_object: crate::ability_tree::object::Permanent::Reference(
+                                crate::ability_tree::object::reference::PermanentReference {
+                                    count: crate::ability_tree::object::CountSpecifier::Target(
+                                        crate::ability_tree::number::Number::Number(crate::ability_tree::number::FixedNumber {
+                                            number: 1,
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: enchant_span.empty_at_end(),
+                                        }),
+                                    ),
+                                    kind: crate::ability_tree::object::kind::PermanentKind::Creature(
+                                        crate::ability_tree::object::kind::CreatureKind::Specified(
+                                            crate::ability_tree::object::specified_object::SpecifiedCreature {
+                                                specifiers: None,
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: *creature_span,
+                                            },
                                         ),
-                                        specifiers: None,
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: *end_span,
-                                    },
-                                ),
+                                    ),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *creature_span,
+                                },
                             ),
                             #[cfg(feature = "spanned_tree")]
-                            span: end_span.merge(enchant_span),
+                            span: creature_span.merge(enchant_span),
                         },
                     ),
                     /* Fixme */
@@ -75,7 +79,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: end_span.merge(enchant_span),
+                    span: creature_span.merge(enchant_span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

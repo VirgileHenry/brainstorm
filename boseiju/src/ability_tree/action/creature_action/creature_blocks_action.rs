@@ -5,8 +5,8 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureBlocksAction {
-    pub creature: crate::ability_tree::object::CreatureReference,
-    pub blocked_creature: Option<crate::ability_tree::object::CreatureReference>,
+    pub creature: crate::ability_tree::object::Creature,
+    pub blocked_creature: Option<crate::ability_tree::object::Creature>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

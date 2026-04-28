@@ -12,7 +12,7 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<creature specifiers> <creature / creature subtype>" makes a specified creature with an implicit "all" */
+    /* "<creature specifiers> <creature / creature subtype>" makes a specified creature */
     /* Examples: "other creatures", "green elves" */
 
     let specifiers_to_specified_creatures = ParserRule {
@@ -36,10 +36,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 })),
             ] => Ok(ParserNode::SpecifiedCreature {
                 creature: object::specified_object::SpecifiedCreature {
-                    amount: object::CountSpecifier::All {
-                        #[cfg(feature = "spanned_tree")]
-                        span: specifiers.node_span().empty_at_start(),
-                    },
                     specifiers: Some(specifiers.clone()),
                     #[cfg(feature = "spanned_tree")]
                     span: specifiers.node_span().merge(creature_span),
@@ -63,10 +59,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(Token::CreatureSubtype(subtype)),
             ] => Ok(ParserNode::SpecifiedCreature {
                 creature: object::specified_object::SpecifiedCreature {
-                    amount: object::CountSpecifier::All {
-                        #[cfg(feature = "spanned_tree")]
-                        span: specifiers.node_span().empty_at_start(),
-                    },
                     specifiers: Some(
                         specifiers.add_factor_specifier(object::specified_object::CreatureSpecifier::Subtype(
                             object::specified_object::CreatureSubtypeSpecifier {

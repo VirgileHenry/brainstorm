@@ -13,10 +13,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* <permanent reference> can make a number of permanents on the battlefield */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::PermanentReference { permanent: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::Permanent { permanent: dummy() }.id()]),
             merged: ParserNode::GameStateNumber { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::PermanentReference { permanent }] => Ok(ParserNode::GameStateNumber {
+                &[ParserNode::Permanent { permanent }] => Ok(ParserNode::GameStateNumber {
                     number: number::GameStateNumber::NumberOfPermanents(number::NumberOfPermanents {
                         permanent: permanent.clone(),
                         #[cfg(feature = "spanned_tree")]

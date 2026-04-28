@@ -14,6 +14,7 @@ mod put_counters_imperative;
 mod remove_counters_imperative;
 mod return_imperative;
 mod sacrifice_imperative;
+mod search_imperative;
 mod tap_imperative;
 mod untap_imperative;
 
@@ -33,6 +34,7 @@ pub use put_counters_imperative::*;
 pub use remove_counters_imperative::*;
 pub use return_imperative::*;
 pub use sacrifice_imperative::*;
+pub use search_imperative::*;
 pub use tap_imperative::*;
 pub use untap_imperative::*;
 
@@ -131,6 +133,7 @@ pub enum ImperativeKind {
     PutCounters(PutCountersImperative),
     RemoveCounters(RemoveCountersImperative),
     Sacrifice(SacrificeImperative),
+    Search(SearchImperative),
     Tap(TapImperative),
     Untap(UntapImperative),
 }
@@ -160,6 +163,7 @@ impl AbilityTreeNode for ImperativeKind {
             Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Sacrifice(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Search(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Tap(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Untap(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -187,6 +191,7 @@ impl AbilityTreeNode for ImperativeKind {
             Self::PutCounters(imperative) => imperative.display(out)?,
             Self::RemoveCounters(imperative) => imperative.display(out)?,
             Self::Sacrifice(imperative) => imperative.display(out)?,
+            Self::Search(imperative) => imperative.display(out)?,
             Self::Tap(imperative) => imperative.display(out)?,
             Self::Untap(imperative) => imperative.display(out)?,
         }
@@ -217,6 +222,7 @@ impl AbilityTreeNode for ImperativeKind {
             Self::PutCounters(child) => child.node_span(),
             Self::RemoveCounters(child) => child.node_span(),
             Self::Sacrifice(child) => child.node_span(),
+            Self::Search(child) => child.node_span(),
             Self::Tap(child) => child.node_span(),
             Self::Untap(child) => child.node_span(),
         }

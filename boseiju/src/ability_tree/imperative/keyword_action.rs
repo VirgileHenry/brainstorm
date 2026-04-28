@@ -2,6 +2,7 @@ mod adapt;
 mod bolster;
 mod keyword_to_abilities;
 mod mill;
+mod plot;
 mod scry;
 mod support;
 mod surveil;
@@ -11,6 +12,7 @@ pub use keyword_to_abilities::keyword_action_to_abilities;
 pub use adapt::AdaptKeywordAction;
 pub use bolster::BolsterKeywordAction;
 pub use mill::MillKeywordAction;
+pub use plot::PlotKeywordAction;
 pub use scry::ScryKeywordAction;
 pub use support::SupportKeywordAction;
 pub use surveil::SurveilKeywordAction;
@@ -102,6 +104,7 @@ pub enum ExpandedKeywordAction {
     Adapt(AdaptKeywordAction),
     Bolster(BolsterKeywordAction),
     Mill(MillKeywordAction),
+    Plot(PlotKeywordAction),
     Scry(ScryKeywordAction),
     Standalone(StandaloneKeywordAction),
     Support(SupportKeywordAction),
@@ -120,6 +123,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
             Self::Adapt(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Bolster(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Mill(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Plot(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Scry(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Standalone(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Support(child) => children.push(child as &dyn AbilityTreeNode),
@@ -136,6 +140,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
             Self::Adapt(child) => child.display(out)?,
             Self::Bolster(child) => child.display(out)?,
             Self::Mill(child) => child.display(out)?,
+            Self::Plot(child) => child.display(out)?,
             Self::Scry(child) => child.display(out)?,
             Self::Standalone(child) => child.display(out)?,
             Self::Support(child) => child.display(out)?,
@@ -155,6 +160,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
             Self::Adapt(child) => child.node_span(),
             Self::Bolster(child) => child.node_span(),
             Self::Mill(child) => child.node_span(),
+            Self::Plot(child) => child.node_span(),
             Self::Scry(child) => child.node_span(),
             Self::Standalone(child) => child.node_span(),
             Self::Support(child) => child.node_span(),

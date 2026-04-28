@@ -1,11 +1,13 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::object::specified_object::ControlSpecifier;
 use crate::ability_tree::object::specified_object::Specifier;
 
 /// Specifiers for lands.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LandSpecifier {
+    Control(ControlSpecifier),
     Subtype(LandSubtypeSpecifier),
 }
 
@@ -20,6 +22,7 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::Control(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Subtype(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -30,6 +33,7 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
         write!(out, "land specifier:")?;
         out.push_final_branch()?;
         match self {
+            Self::Control(child) => child.display(out)?,
             Self::Subtype(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -43,6 +47,7 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Control(child) => child.node_span(),
             Self::Subtype(child) => child.node_span(),
         }
     }

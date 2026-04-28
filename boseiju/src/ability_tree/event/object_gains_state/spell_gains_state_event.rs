@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpellGainsStateEvent {
-    pub spell: crate::ability_tree::object::SpellReference,
+    pub spell: crate::ability_tree::object::Spell,
     pub state: crate::ability_tree::state::StackObjectState, /* Fixme: ambiguous */
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

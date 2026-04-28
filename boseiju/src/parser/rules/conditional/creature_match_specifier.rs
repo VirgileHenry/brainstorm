@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<creature reference> is a <creature specifier>" condition */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureReference { creature: dummy() }.id(),
+                ParserNode::Creature { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Is {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -31,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Condition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CreatureReference { creature },
+                    ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Is { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                     ParserNode::CreatureSpecifier { specifier },
@@ -53,7 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<creature reference>'s a <creature specifier>" condition */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureReference { creature: dummy() }.id(),
+                ParserNode::Creature { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -69,7 +69,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Condition { condition: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CreatureReference { creature },
+                    ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A { .. })),
                     ParserNode::CreatureSpecifier { specifier },

@@ -1,6 +1,7 @@
 mod adapt;
 mod bolster;
 mod mill;
+mod plot;
 mod scry;
 mod support;
 mod surveil;
@@ -41,6 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         adapt::rules().collect::<Vec<_>>(),
         bolster::rules().collect::<Vec<_>>(),
         mill::rules().collect::<Vec<_>>(),
+        plot::rules().collect::<Vec<_>>(),
         scry::rules().collect::<Vec<_>>(),
         support::rules().collect::<Vec<_>>(),
         surveil::rules().collect::<Vec<_>>(),

@@ -49,7 +49,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     cost: crate::ability_tree::cost::Cost::Imperative(crate::ability_tree::imperative::Imperative {
                         kind: crate::ability_tree::imperative::ImperativeKind::Tap(
                             crate::ability_tree::imperative::TapImperative {
-                                object: crate::ability_tree::object::PermanentReference::SelfReferencing(
+                                object: crate::ability_tree::object::Permanent::SelfReferencing(
                                     crate::ability_tree::object::SelfReferencing {
                                         #[cfg(feature = "spanned_tree")]
                                         span: *span,
@@ -91,7 +91,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     cost: crate::ability_tree::cost::Cost::Imperative(crate::ability_tree::imperative::Imperative {
                         kind: crate::ability_tree::imperative::ImperativeKind::Untap(
                             crate::ability_tree::imperative::UntapImperative {
-                                object: crate::ability_tree::object::PermanentReference::SelfReferencing(
+                                object: crate::ability_tree::object::Permanent::SelfReferencing(
                                     crate::ability_tree::object::SelfReferencing {
                                         #[cfg(feature = "spanned_tree")]
                                         span: *span,

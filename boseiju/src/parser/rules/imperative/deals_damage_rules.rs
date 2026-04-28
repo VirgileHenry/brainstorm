@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<card reference> deals <number> damages to <damage receiver>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Card { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -33,17 +33,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::DamageReceiverReference { reference: dummy() }.id(),
+                ParserNode::DamageReceiver { receiver: dummy() }.id(),
             ]),
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CardReference { card: dealer },
+                    ParserNode::Card { card: dealer },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals { .. })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::DamageKind(terminals::DamageKind::Damage { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
-                    ParserNode::DamageReceiverReference { reference: to },
+                    ParserNode::DamageReceiver { receiver: to },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::DealsDamage(
                         crate::ability_tree::imperative::DealsDamageImperative {

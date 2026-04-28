@@ -11,7 +11,7 @@ const MAX_DAMAGES_DEALT: usize = MAX_CHILDREN_PER_NODE - 1;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DealsDamageImperative {
-    pub dealer: crate::ability_tree::object::CardReference,
+    pub dealer: crate::ability_tree::object::Card,
     pub damages: crate::utils::HeapArrayVec<DamagesDealt, MAX_DAMAGES_DEALT>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -84,7 +84,7 @@ impl crate::utils::DummyInit for DealsDamageImperative {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DamagesDealt {
-    pub to: crate::ability_tree::object::DamageReceiverReference,
+    pub to: crate::ability_tree::object::DamageReceiver,
     pub amount: crate::ability_tree::number::Number,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,

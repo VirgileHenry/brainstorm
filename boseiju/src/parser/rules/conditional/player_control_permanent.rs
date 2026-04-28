@@ -20,14 +20,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::PermanentReference { permanent: dummy() }.id(),
+            ParserNode::Permanent { permanent: dummy() }.id(),
         ]),
         merged: ParserNode::Condition { condition: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::Player { player },
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Control { .. })),
-                ParserNode::PermanentReference { permanent },
+                ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::Condition {
                 condition: conditional::Condition::PlayerControlsObject(conditional::PlayerControlsPermanent {
                     player: player.clone(),

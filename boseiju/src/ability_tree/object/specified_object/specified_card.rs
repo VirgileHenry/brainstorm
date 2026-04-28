@@ -4,7 +4,6 @@ pub use card_specifier::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::object::count_specifier::CountSpecifier;
 use crate::ability_tree::object::specified_object::Specifiers;
 
 /// A specified card.
@@ -13,7 +12,6 @@ use crate::ability_tree::object::specified_object::Specifiers;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifiedCard {
-    pub amount: CountSpecifier,
     pub specifiers: Option<Specifiers<CardSpecifier>>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -29,7 +27,6 @@ impl AbilityTreeNode for SpecifiedCard {
         use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
 
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.amount as &dyn AbilityTreeNode);
         match self.specifiers.as_ref() {
             Some(specifiers) => children.push(specifiers as &dyn AbilityTreeNode),
             None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
@@ -40,11 +37,7 @@ impl AbilityTreeNode for SpecifiedCard {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "specified card:")?;
-        out.push_inter_branch()?;
-        write!(out, "amount:")?;
         out.push_final_branch()?;
-        self.amount.display(out)?;
-        out.pop_branch();
         out.next_final_branch()?;
         write!(out, "specifier(s):")?;
         out.push_final_branch()?;
@@ -71,7 +64,6 @@ impl AbilityTreeNode for SpecifiedCard {
 impl crate::utils::DummyInit for SpecifiedCard {
     fn dummy_init() -> Self {
         Self {
-            amount: crate::utils::dummy(),
             specifiers: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

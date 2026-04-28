@@ -1,5 +1,11 @@
-mod count_land;
+mod land;
+mod land_specifiers;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    [count_land::rules().collect::<Vec<_>>()].into_iter().flatten()
+    [
+        land::rules().collect::<Vec<_>>(),
+        land_specifiers::rules().collect::<Vec<_>>(),
+    ]
+    .into_iter()
+    .flatten()
 }

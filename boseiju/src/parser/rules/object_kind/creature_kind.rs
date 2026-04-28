@@ -1,0 +1,63 @@
+use crate::ability_tree::object;
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
+use crate::parser::ParserNode;
+use crate::parser::rules::ParserRule;
+use crate::parser::rules::ParserRuleDeclarationLocation;
+use crate::parser::rules::RuleLhs;
+use crate::utils::dummy;
+use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+    [
+        /* "<specified creature>" can be used as a creature kind */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
+            merged: ParserNode::CreatureKind { creature: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::CreatureKind {
+                    creature: object::kind::CreatureKind::Specified(creature.clone()),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<creature kind> or <creature kind>" makes a one among kind */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::CreatureKind { creature: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::CreatureKind { creature: dummy() }.id(),
+            ]),
+            merged: ParserNode::CreatureKind { creature: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::CreatureKind { creature: c1 },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::CreatureKind { creature: c2 },
+                ] => Ok(ParserNode::CreatureKind {
+                    creature: object::kind::CreatureKind::OneAmong(object::OneAmong {
+                        references: {
+                            let mut references = crate::utils::HeapArrayVec::new();
+                            references.push(c1.clone());
+                            references.push(c2.clone());
+                            references
+                        },
+                        #[cfg(feature = "spanned_tree")]
+                        span: c1.node_span().merge(&c2.node_span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+    ]
+    .into_iter()
+}

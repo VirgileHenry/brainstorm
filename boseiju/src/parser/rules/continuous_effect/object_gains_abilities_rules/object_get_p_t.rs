@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* "<object> get <power toughness modifiers>" */
     [ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::CreatureReference { creature: dummy() }.id(),
+            ParserNode::Creature { creature: dummy() }.id(),
             ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -26,13 +26,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::CreatureReference { creature },
+                ParserNode::Creature { creature },
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                 ParserNode::PowerToughnessModifiers { modifiers },
             ] => Ok(ParserNode::ContinuousEffect {
                 effect: ContinuousEffect {
                     effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
-                        object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
+                        object: creature.to_permanent(),
                         modifications: {
                             let mut modifications = crate::utils::HeapArrayVec::new();
                             let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(

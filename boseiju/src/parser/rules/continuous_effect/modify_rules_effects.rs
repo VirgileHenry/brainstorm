@@ -15,10 +15,10 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<creature reference> can't block" is a rule modification effect */
+        /* "<creature> can't block" is a rule modification effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureReference { creature: dummy() }.id(),
+                ParserNode::Creature { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Cant {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CreatureReference { creature },
+                    ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Cant { .. })),
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Blocks {
                         #[cfg(feature = "spanned_tree")]
@@ -61,10 +61,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<creature reference> can't be blocked" is a rule modification effect */
+        /* "<creature> can't be blocked" is a rule modification effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureReference { creature: dummy() }.id(),
+                ParserNode::Creature { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Cant {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -84,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CreatureReference { creature },
+                    ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Cant { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Be { .. })),
                     ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Blocks {
@@ -96,12 +96,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         effect: continuous_effect::ContinuousEffectKind::ModifyRule(
                             continuous_effect::ModifyRuleEffect::CreatureCantDoAction(continuous_effect::CreatureCantDoAction {
                                 action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
-                                    creature: object::CreatureReference::Specified(object::specified_object::SpecifiedCreature {
-                                        amount: object::CountSpecifier::All {
+                                    creature: object::Creature::Reference(object::reference::CreatureReference {
+                                        count: object::CountSpecifier::All {
                                             #[cfg(feature = "spanned_tree")]
                                             span: block_span.empty_at_end(),
                                         },
-                                        specifiers: None,
+                                        kind: object::kind::CreatureKind::Specified(
+                                            object::specified_object::SpecifiedCreature {
+                                                specifiers: None,
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: block_span.empty_at_end(),
+                                            },
+                                        ),
                                         #[cfg(feature = "spanned_tree")]
                                         span: block_span.empty_at_end(),
                                     }),

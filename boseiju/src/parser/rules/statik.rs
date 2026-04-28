@@ -118,7 +118,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Card { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -135,7 +135,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         ..
                     })),
-                    ParserNode::CardReference { card },
+                    ParserNode::Card { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone },
                 ] => Ok(ParserNode::StaticAbilityKind {
@@ -169,7 +169,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Card { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -199,7 +199,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         ..
                     })),
-                    ParserNode::CardReference { card },
+                    ParserNode::Card { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::By { .. })),

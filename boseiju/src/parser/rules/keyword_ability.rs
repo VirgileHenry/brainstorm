@@ -6,6 +6,7 @@ mod bloodthirst;
 mod bushido;
 mod cleave;
 mod crew;
+mod cumulative_upkeep;
 mod cycling;
 mod dash;
 mod disguise;
@@ -21,9 +22,11 @@ mod multiple_keyword_abilities;
 mod ninjutsu;
 mod outlast;
 mod prototype;
+mod reconfigure;
 mod reinforce;
 mod renown;
 mod ripple;
+mod surge;
 mod suspend;
 mod vanishing;
 mod ward;
@@ -71,6 +74,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         bushido::rules().collect::<Vec<_>>(),
         cleave::rules().collect::<Vec<_>>(),
         crew::rules().collect::<Vec<_>>(),
+        cumulative_upkeep::rules().collect::<Vec<_>>(),
         cycling::rules().collect::<Vec<_>>(),
         dash::rules().collect::<Vec<_>>(),
         disguise::rules().collect::<Vec<_>>(),
@@ -87,8 +91,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         prototype::rules().collect::<Vec<_>>(),
         outlast::rules().collect::<Vec<_>>(),
         reinforce::rules().collect::<Vec<_>>(),
+        reconfigure::rules().collect::<Vec<_>>(),
         renown::rules().collect::<Vec<_>>(),
         ripple::rules().collect::<Vec<_>>(),
+        surge::rules().collect::<Vec<_>>(),
         suspend::rules().collect::<Vec<_>>(),
         vanishing::rules().collect::<Vec<_>>(),
         ward::rules().collect::<Vec<_>>(),

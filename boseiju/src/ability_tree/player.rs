@@ -123,7 +123,7 @@ impl crate::utils::DummyInit for PlayerSpecifier {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSpecifierObjectController {
-    pub object: Box<crate::ability_tree::object::PermanentReference>,
+    pub object: Box<crate::ability_tree::object::Permanent>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -183,7 +183,7 @@ impl crate::utils::DummyInit for PlayerSpecifierObjectController {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSpecifierObjectOwner {
-    pub object: Box<crate::ability_tree::object::CardReference>,
+    pub object: Box<crate::ability_tree::object::Card>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

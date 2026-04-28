@@ -15,10 +15,9 @@ use crate::ability_tree::event::Event;
 use crate::ability_tree::imperative::{CreatedTokenKind, Imperative, ImperativeKind, ManaToAdd};
 use crate::ability_tree::imperative_list::ImperativeList;
 use crate::ability_tree::number::{GameStateNumber, Number, XDefinition};
-use crate::ability_tree::object::{
-    CardReference, CreatureReference, DamageReceiverReference, LandReference, SpellReference, specified_object::*,
-};
-use crate::ability_tree::object::{CountSpecifier, PermanentReference};
+use crate::ability_tree::object::kind::*;
+use crate::ability_tree::object::specified_object::*;
+use crate::ability_tree::object::*;
 use crate::ability_tree::player::PlayerSpecifier;
 use crate::ability_tree::statement::Statement;
 use crate::ability_tree::terminals::{CounterKind, CreatureSubtype, ManaCost};
@@ -36,9 +35,14 @@ pub enum ParserNode {
     AbilityTree { tree: AbilityTree },
     AbilityWord { ability_word: ExpandedAbilityWord },
     AnotherSpecifier { specifier: AnotherObjectSpecifier },
+    Artifact { artifact: Artifact },
+    ArtifactKind { artifact: ArtifactKind },
+    ArtifactSpecifier { specifier: ArtifactSpecifier },
+    ArtifactSpecifiers { specifiers: Specifiers<ArtifactSpecifier> },
+    Card { card: Card },
+    CardKind { card: CardKind },
     CardSpecifier { specifier: CardSpecifier },
     CardSpecifiers { specifiers: Specifiers<CardSpecifier> },
-    CardReference { card: CardReference },
     Colors { colors: Colors },
     ColorSpecifier { specifier: ColorSpecifier },
     Condition { condition: Condition },
@@ -50,12 +54,14 @@ pub enum ParserNode {
     CountSpecifier { count: CountSpecifier },
     CreatedTokenKind { kind: CreatedTokenKind },
     CreatureAction { action: CreatureAction },
-    CreatureReference { creature: CreatureReference },
+    Creature { creature: Creature },
+    CreatureKind { creature: CreatureKind },
     CreatureSpecifier { specifier: CreatureSpecifier },
     CreatureSpecifiers { specifiers: Specifiers<CreatureSpecifier> },
     CreatureSubtype { subtype: CreatureSubtype },
     CreatureTokenTypeLine { type_line: TypeLine },
-    DamageReceiverReference { reference: DamageReceiverReference },
+    DamageReceiver { receiver: DamageReceiver },
+    DamageReceiverKind { receiver: DamageReceiverKind },
     Event { event: Event },
     ForwardDuration { duration: ForwardDuration },
     GameStateNumber { number: GameStateNumber },
@@ -65,7 +71,8 @@ pub enum ParserNode {
     ImperativeList { imperatives: ImperativeList },
     IncomingInstant { instant: IncomingInstant },
     KeywordAbility { keyword_ability: KeywordAbility },
-    LandReference { land: LandReference },
+    Land { land: Land },
+    LandKind { land: LandKind },
     LandSpecifier { specifier: LandSpecifier },
     LandSpecifiers { specifiers: Specifiers<LandSpecifier> },
     LexerToken(crate::lexer::tokens::Token),
@@ -73,20 +80,24 @@ pub enum ParserNode {
     ManaToAdd { mana: ManaToAdd },
     MultipleKeywordAbilities { abilities: MultipleKeywordAbilities },
     Number { number: Number },
-    PermanentReference { permanent: PermanentReference },
+    Permanent { permanent: Permanent },
+    PermanentKind { permanent: PermanentKind },
     PermanentSpecifier { specifier: PermanentSpecifier },
     PermanentSpecifiers { specifiers: Specifiers<PermanentSpecifier> },
+    PlaneswalkerKind { planeswalker: PlaneswalkerKind },
     Player { player: PlayerSpecifier },
     PowerToughnessModifiers { modifiers: PowerToughnessModifiers },
     PutCounterKind { kind: CounterKind },
     RecurrentInstant { instant: RecurrentInstant },
+    SpecifiedArtifact { artifact: SpecifiedArtifact },
     SpecifiedCard { card: SpecifiedCard },
     SpecifiedCreature { creature: SpecifiedCreature },
     SpecifiedLand { land: SpecifiedLand },
     SpecifiedPermanent { permanent: SpecifiedPermanent },
     SpecifiedSpell { spell: SpecifiedSpell },
     SpellAbility { ability: SpellAbility },
-    SpellReference { spell: SpellReference },
+    Spell { spell: Spell },
+    SpellKind { spell: SpellKind },
     SpellSpecifier { specifier: SpellSpecifier },
     SpellSpecifiers { specifiers: Specifiers<SpellSpecifier> },
     Statement { statement: Statement },

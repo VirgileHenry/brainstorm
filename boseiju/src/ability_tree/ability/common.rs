@@ -11,7 +11,7 @@ use crate::ability_tree::imperative::SacrificeImperative;
 use crate::ability_tree::imperative_list::ImperativeList;
 use crate::ability_tree::number::FixedNumber;
 use crate::ability_tree::number::Number;
-use crate::ability_tree::object::PermanentReference;
+use crate::ability_tree::object::Permanent;
 use crate::ability_tree::object::SelfReferencing;
 use crate::ability_tree::statement::Statement;
 use crate::utils::HeapArrayVec;
@@ -70,7 +70,7 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                     let mut costs = HeapArrayVec::new();
                     let sacrifice_self_cost = Cost::Imperative(Imperative {
                         kind: ImperativeKind::Sacrifice(SacrificeImperative {
-                            object: PermanentReference::SelfReferencing(SelfReferencing {
+                            object: Permanent::SelfReferencing(SelfReferencing {
                                 #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
                             }),
