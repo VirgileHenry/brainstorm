@@ -1,10 +1,12 @@
 Abandon
 Activate
 Adapt
+Airbend
 Amass
 Assemble
 Attach
 Behold
+Blight
 Bolster
 Cast
 Clash
@@ -20,6 +22,7 @@ Detain
 Discard
 Discover
 Double
+Earthbend
 Endure
 Exchange
 Exert
@@ -44,6 +47,7 @@ Planeswalk
 Play
 Plot
 Populate
+Prepared
 Proliferate
 Regenerate
 Reveal
@@ -60,6 +64,8 @@ Suspect
 Tap
 Time Travel
 Transform
+Treasure
 Untap
 Venture into the dungeon
 Vote
+Waterbend

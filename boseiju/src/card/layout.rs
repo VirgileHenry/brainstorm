@@ -5,7 +5,7 @@ use crate::ability_tree::card_layout::*;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Layout {
     Normal { layout: NormalLayout },
-    Split {},
+    Split { layout: SplitLayout },
     Flip {},
     Transform {},
     ModalDfc {},
@@ -42,7 +42,7 @@ impl Layout {
     pub fn root(&self) -> &dyn crate::ability_tree::AbilityTreeNode {
         match self {
             Self::Normal { layout } => layout,
-            Self::Split {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Split { layout } => layout,
             Self::Flip {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
             Self::Transform {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
             Self::ModalDfc {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
@@ -67,7 +67,7 @@ impl Layout {
     pub fn mana_value(&self) -> usize {
         match self {
             Self::Normal { layout } => layout.mana_value(),
-            Self::Split {} => 0,
+            Self::Split { layout } => layout.mana_value(),
             Self::Flip {} => 0,
             Self::Transform {} => 0,
             Self::ModalDfc {} => 0,
@@ -92,7 +92,7 @@ impl Layout {
     pub fn card_types(&self) -> crate::ability_tree::type_line::SimplifiedCardTypes {
         match self {
             Self::Normal { layout } => layout.card_types(),
-            Self::Split {} => Default::default(),
+            Self::Split { layout } => layout.card_types(),
             Self::Flip {} => Default::default(),
             Self::Transform {} => Default::default(),
             Self::ModalDfc {} => Default::default(),
@@ -122,6 +122,9 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
         match raw_card.layout.as_str() {
             "normal" => Ok(Layout::Normal {
                 layout: NormalLayout::from_raw_card(raw_card)?,
+            }),
+            "split" => Ok(Layout::Split {
+                layout: SplitLayout::from_raw_card(raw_card)?,
             }),
             "token" => Ok(Self::Token {
                 layout: TokenLayout::from_raw_card(raw_card)?,

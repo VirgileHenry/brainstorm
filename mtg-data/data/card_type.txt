@@ -1,10 +1,12 @@
 Artifact
 Battle
+Boss
 Conspiracy
 Creature
 Dungeon
 Emblem
 Enchantment
+Event
 Hero
 Instant
 Kindred

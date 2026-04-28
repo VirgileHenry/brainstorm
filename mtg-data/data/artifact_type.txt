@@ -1,6 +1,7 @@
 Attraction
 Blood
 Bobblehead
+Book
 Clue
 Contraption
 Equipment

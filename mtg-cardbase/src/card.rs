@@ -28,6 +28,7 @@ pub struct Card {
     pub colors: Option<arrayvec::ArrayVec<String, 5>>,
     pub color_identity: arrayvec::ArrayVec<String, 5>,
     pub keywords: arrayvec::ArrayVec<String, 16>,
+    pub card_faces: Option<arrayvec::ArrayVec<CardFace, 5>>,
     pub produced_mana: Option<arrayvec::ArrayVec<String, 8>>,
     pub loyalty: Option<String>,
     pub legalities: Legalities,
@@ -150,4 +151,21 @@ pub struct PurchaseUris {
     pub tcgplayer: Option<String>,
     pub cardmarket: Option<String>,
     pub cardhoarder: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
+pub struct CardFace {
+    pub object: String,
+    pub name: String,
+    pub mana_cost: Option<String>,
+    pub type_line: Option<String>,
+    pub oracle_text: Option<String>,
+    pub colors: Option<arrayvec::ArrayVec<String, 5>>,
+    pub illustration_id: Option<String>,
+    pub image_uris: Option<ImageUris>,
+    pub watermark: Option<String>,
+    pub artist: Option<String>,
+    pub artist_ids: Option<arrayvec::ArrayVec<String, 8>>,
 }

@@ -14,6 +14,7 @@ Council's dilemma
 Coven
 Delirium
 Descend
+Disappear
 Domain
 Eerie
 Eminence
@@ -28,6 +29,7 @@ Hellbent
 Hero's Reward
 Heroic
 Imprint
+Infusion
 Inspired
 Join forces
 Kinfall
@@ -39,6 +41,7 @@ Lieutenant
 Magecraft
 Metalcraft
 Morbid
+Opus
 Pack tactics
 Paradox
 Parley
@@ -46,6 +49,7 @@ Radiance
 Raid
 Rally
 Renew
+Repartee
 Revolt
 Secret council
 Spell mastery
@@ -59,6 +63,7 @@ Threshold
 Underdog
 Undergrowth
 Valiant
+Vivid
 Void
 Will of the Planeswalkers
 Will of the council

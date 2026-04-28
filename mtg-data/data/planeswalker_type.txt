@@ -16,6 +16,7 @@ Dakkon
 Daretti
 Davriel
 Deb
+Dellian
 Dihada
 Domri
 Dovin
@@ -24,7 +25,6 @@ Dungeon
 Ellywick
 Elminster
 Elspeth
-Equipment
 Ersta
 Estrid
 Freyalise

@@ -140,6 +140,7 @@ pub enum NodeKind {
     ExpandedKeywordAbilityIdMarker,
     ExpandedKeywordAction(crate::ability_tree::terminals::StandaloneKeywordAction),
     ExpandedKeywordActionIdMarker,
+    Face,
     ForEachImperative,
     GainLifeImperative,
     GameStateNumber,

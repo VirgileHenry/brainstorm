@@ -3,6 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::MAX_NODE_DATA_SIZE;
 use crate::lexer::IntoToken;
 use serde_big_array::BigArray;
+use std::ops::Add;
 
 /* Fixme: this shall be a bool array with all possible types.
  * Thanks to idris, it's super easy to do ? And changeling types MUST have all creature types this way.
@@ -361,6 +362,22 @@ impl From<&TypeLine> for SimplifiedCardTypes {
             land: type_line.card_types[mtg_data::CardType::Land.id()],
             planeswalker: type_line.card_types[mtg_data::CardType::Planeswalker.id()],
             sorcery: type_line.card_types[mtg_data::CardType::Sorcery.id()],
+        }
+    }
+}
+
+impl Add for SimplifiedCardTypes {
+    type Output = Self;
+    fn add(self, other: Self) -> Self::Output {
+        Self {
+            artifact: self.artifact | other.artifact,
+            battle: self.battle | other.battle,
+            creature: self.creature | other.creature,
+            enchantment: self.enchantment | other.enchantment,
+            instant: self.instant | other.instant,
+            land: self.land | other.land,
+            planeswalker: self.planeswalker | other.planeswalker,
+            sorcery: self.sorcery | other.sorcery,
         }
     }
 }
