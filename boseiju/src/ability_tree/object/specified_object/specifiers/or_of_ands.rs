@@ -18,7 +18,7 @@ const INNER_LENGTH: usize = MAX_CHILDREN_PER_NODE / OUTER_LENGTH;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifierOrOfAndList<T: Specifier + AbilityTreeNode> {
-    pub specifiers: arrayvec::ArrayVec<arrayvec::ArrayVec<T, INNER_LENGTH>, OUTER_LENGTH>,
+    pub specifiers: crate::utils::HeapArrayVec<arrayvec::ArrayVec<T, INNER_LENGTH>, OUTER_LENGTH>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -92,7 +92,7 @@ impl<T: Specifier + AbilityTreeNode> AbilityTreeNode for SpecifierOrOfAndList<T>
 impl<T: Specifier + AbilityTreeNode> crate::utils::DummyInit for SpecifierOrOfAndList<T> {
     fn dummy_init() -> Self {
         Self {
-            specifiers: arrayvec::ArrayVec::new_const(),
+            specifiers: crate::utils::HeapArrayVec::new(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

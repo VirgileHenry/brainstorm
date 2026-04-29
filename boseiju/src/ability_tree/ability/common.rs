@@ -30,7 +30,7 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                                 let add_mana_imperative = Imperative {
                                     kind: ImperativeKind::AddMana(AddManaImperative {
                                         possibilities: {
-                                            let mut added_mana = arrayvec::ArrayVec::new();
+                                            let mut added_mana = crate::utils::HeapArrayVec::new();
                                             let mana = ManaToAdd::AnyColor(ManaToAddOfAnyColor {
                                                 amount: Number::Number(FixedNumber {
                                                     number: 1,

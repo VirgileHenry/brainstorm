@@ -56,12 +56,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                     ParserNode::CardSpecifier { specifier: s2 },
                 ] => Ok(ParserNode::CardSpecifiers {
                     specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {
-                        specifiers: {
-                            let mut specifiers = arrayvec::ArrayVec::new_const();
-                            specifiers.push(s1.clone());
-                            specifiers.push(s2.clone());
-                            specifiers
-                        },
+                        specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
                         span: s1.node_span().merge(&s2.node_span()),
                     }),

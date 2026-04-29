@@ -30,7 +30,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
                 #[cfg(feature = "spanned_tree")]
                 span: self.node_span().merge(&factor_specifier.node_span()),
                 specifiers: {
-                    let mut specifiers = arrayvec::ArrayVec::new_const();
+                    let mut specifiers = crate::utils::HeapArrayVec::new();
                     specifiers.push(specifier.clone());
                     specifiers.push(factor_specifier);
                     specifiers
@@ -46,7 +46,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
                 },
             }),
             Self::Or(or) => Self::OrOfAnd({
-                let mut or_specifiers = arrayvec::ArrayVec::new_const();
+                let mut or_specifiers = crate::utils::HeapArrayVec::new();
                 for specifier in or.specifiers.iter() {
                     let mut and_specifiers = arrayvec::ArrayVec::new_const();
                     and_specifiers.push(specifier.clone());

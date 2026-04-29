@@ -9,7 +9,7 @@ use crate::ability_tree::object::specified_object::Specifier;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifierAndList<T: Specifier + AbilityTreeNode> {
-    pub specifiers: arrayvec::ArrayVec<T, MAX_CHILDREN_PER_NODE>,
+    pub specifiers: crate::utils::HeapArrayVec<T, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -57,7 +57,7 @@ impl<T: Specifier + AbilityTreeNode> AbilityTreeNode for SpecifierAndList<T> {
 impl<T: Specifier + AbilityTreeNode> crate::utils::DummyInit for SpecifierAndList<T> {
     fn dummy_init() -> Self {
         Self {
-            specifiers: arrayvec::ArrayVec::new_const(),
+            specifiers: crate::utils::HeapArrayVec::new(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

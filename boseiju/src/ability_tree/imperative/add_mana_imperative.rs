@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AddManaImperative {
-    pub possibilities: arrayvec::ArrayVec<ManaToAdd, MAX_CHILDREN_PER_NODE>,
+    pub possibilities: crate::utils::HeapArrayVec<ManaToAdd, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -126,7 +126,7 @@ impl crate::utils::DummyInit for ManaToAdd {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ManaToAddSymbols {
-    pub symbols: arrayvec::ArrayVec<crate::ability_tree::terminals::Mana, MAX_CHILDREN_PER_NODE>,
+    pub symbols: crate::utils::HeapArrayVec<crate::ability_tree::terminals::Mana, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -170,7 +170,7 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAddSymbols {
 impl crate::utils::DummyInit for ManaToAddSymbols {
     fn dummy_init() -> Self {
         Self {
-            symbols: arrayvec::ArrayVec::new_const(),
+            symbols: crate::utils::HeapArrayVec::new(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

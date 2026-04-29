@@ -8,7 +8,7 @@ use crate::lexer::IntoToken;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ManaCost {
-    pub cost: arrayvec::ArrayVec<crate::ability_tree::terminals::Mana, MAX_CHILDREN_PER_NODE>,
+    pub cost: crate::utils::HeapArrayVec<crate::ability_tree::terminals::Mana, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -54,7 +54,7 @@ impl AbilityTreeNode for ManaCost {
 
 impl IntoToken for ManaCost {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        let mut cost = arrayvec::ArrayVec::new_const();
+        let mut cost = crate::utils::HeapArrayVec::new();
         /* Yeah, yeah, it's not that hard and may not need a regex. Whatever for now. */
         lazy_static::lazy_static!(
             static ref mana_cost_regex: regex::Regex = regex::Regex::new(r"(\{[^{}]+\})")
