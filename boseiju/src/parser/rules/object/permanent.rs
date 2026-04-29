@@ -53,6 +53,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        /* "another <permanent kind>" is a + other permanent */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::PermanentKind { permanent: dummy() }.id(),
+            ]),
+            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                        #[cfg(feature = "spanned_tree")]
+                            span: another_span,
+                    })),
+                    ParserNode::PermanentKind { permanent },
+                ] => Ok(ParserNode::Permanent {
+                    permanent: object::Permanent::Reference(object::reference::PermanentReference {
+                        count: object::CountSpecifier::A {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *another_span,
+                        },
+                        kind: permanent.add_factor_specifier(object::specified_object::PermanentSpecifier::Another(
+                            object::specified_object::AnotherObjectSpecifier {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *another_span,
+                            },
+                        )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: permanent.node_span().merge(another_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
         /* "this <permanent kind>" is a self referencing permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
@@ -70,11 +108,40 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::PermanentKind { permanent },
+                    ParserNode::PermanentKind {
+                        #[cfg(feature = "spanned_tree")]
+                        permanent,
+                        ..
+                    },
                 ] => Ok(ParserNode::Permanent {
                     permanent: object::Permanent::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: permanent.node_span().merge(start_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<card own name>" is a self referencing permanent */
+        /* Fixme: this rule shall only be used when parsing permanents, otherwise cards may think they are permanents */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardOwnName(intermediates::CardOwnName {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id()]),
+            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::CardOwnName(intermediates::CardOwnName {
+                        #[cfg(feature = "spanned_tree")]
+                            span: start_span,
+                    })),
+                ] => Ok(ParserNode::Permanent {
+                    permanent: object::Permanent::SelfReferencing(object::SelfReferencing {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *start_span,
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -101,39 +168,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     permanent: object::Permanent::Attached(object::AttachedObject {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* "<permanent> or <permanent>" makes a one among permanents */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Permanent { permanent: dummy() }.id(),
-            ]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Permanent { permanent: p1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
-                    ParserNode::Permanent { permanent: p2 },
-                ] => Ok(ParserNode::Permanent {
-                    permanent: object::Permanent::OneAmong(object::OneAmong {
-                        references: {
-                            let mut references = crate::utils::HeapArrayVec::new();
-                            references.push(p1.clone());
-                            references.push(p2.clone());
-                            references
-                        },
-                        #[cfg(feature = "spanned_tree")]
-                        span: p1.node_span().merge(&p2.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

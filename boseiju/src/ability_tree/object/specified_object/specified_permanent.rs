@@ -1,6 +1,5 @@
 mod permanent_specifier;
 
-pub use permanent_specifier::PermanentKindSpecifier;
 pub use permanent_specifier::PermanentSpecifier;
 
 use crate::ability_tree::AbilityTreeNode;
@@ -8,14 +7,31 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::specified_object::Specifiers;
 
 /// A specified permanent.
-///
-/// This can only reference permanents on the battlefield.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifiedPermanent {
     pub specifiers: Option<Specifiers<PermanentSpecifier>>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl SpecifiedPermanent {
+    pub fn add_factor_specifier(&self, factor_specifier: PermanentSpecifier) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        let factor_specifier_span = factor_specifier.node_span();
+        match &self.specifiers {
+            Some(prev_specifiers) => SpecifiedPermanent {
+                specifiers: Some(prev_specifiers.add_factor_specifier(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+            None => SpecifiedPermanent {
+                specifiers: Some(Specifiers::Single(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+        }
+    }
 }
 
 impl AbilityTreeNode for SpecifiedPermanent {

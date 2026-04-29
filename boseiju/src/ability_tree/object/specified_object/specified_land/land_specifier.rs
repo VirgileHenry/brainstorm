@@ -1,13 +1,19 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
+use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
+use crate::ability_tree::object::specified_object::OwnerSpecifier;
 use crate::ability_tree::object::specified_object::Specifier;
 
 /// Specifiers for lands.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LandSpecifier {
+    Another(AnotherObjectSpecifier),
+    Color(ColorSpecifier),
     Control(ControlSpecifier),
+    Owner(OwnerSpecifier),
     Subtype(LandSubtypeSpecifier),
 }
 
@@ -22,7 +28,10 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::Another(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Color(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Control(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Owner(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Subtype(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -33,7 +42,10 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
         write!(out, "land specifier:")?;
         out.push_final_branch()?;
         match self {
+            Self::Another(child) => child.display(out)?,
+            Self::Color(child) => child.display(out)?,
             Self::Control(child) => child.display(out)?,
+            Self::Owner(child) => child.display(out)?,
             Self::Subtype(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -47,7 +59,10 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Another(child) => child.node_span(),
+            Self::Color(child) => child.node_span(),
             Self::Control(child) => child.node_span(),
+            Self::Owner(child) => child.node_span(),
             Self::Subtype(child) => child.node_span(),
         }
     }

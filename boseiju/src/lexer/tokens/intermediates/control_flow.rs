@@ -26,10 +26,6 @@ pub enum ControlFlow {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    QuotationMark {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -42,7 +38,6 @@ impl ControlFlow {
             Self::Dot { span } => *span,
             Self::LongDash { span } => *span,
             Self::NewLine { span } => *span,
-            Self::QuotationMark { span } => *span,
         }
     }
 }
@@ -71,10 +66,6 @@ impl ControlFlow {
                 span: span.into(),
             }),
             "\n" => Some(ControlFlow::NewLine {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "\"" => Some(ControlFlow::QuotationMark {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

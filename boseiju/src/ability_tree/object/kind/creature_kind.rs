@@ -1,6 +1,7 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::OneAmong;
+use crate::ability_tree::object::specified_object::CreatureSpecifier;
 use crate::ability_tree::object::specified_object::SpecifiedCreature;
 
 /// An object reference is a way to refer to one or more objects in the game.
@@ -13,6 +14,25 @@ use crate::ability_tree::object::specified_object::SpecifiedCreature;
 pub enum CreatureKind {
     OneAmong(OneAmong<Self>),
     Specified(SpecifiedCreature),
+}
+
+impl CreatureKind {
+    pub fn add_factor_specifier(&self, factor_specifier: CreatureSpecifier) -> Self {
+        match self {
+            Self::OneAmong(one_among) => {
+                let mut references = crate::utils::HeapArrayVec::new();
+                for prev in one_among.references.iter() {
+                    references.push(prev.add_factor_specifier(factor_specifier.clone()));
+                }
+                Self::OneAmong(OneAmong {
+                    references,
+                    #[cfg(feature = "spanned_tree")]
+                    span: one_among.node_span().merge(&factor_specifier.node_span()),
+                })
+            }
+            Self::Specified(specified) => Self::Specified(specified.add_factor_specifier(factor_specifier)),
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for CreatureKind {

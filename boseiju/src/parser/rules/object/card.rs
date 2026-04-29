@@ -33,6 +33,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        /* "another <card kind>" is a + other card */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::CardKind { card: dummy() }.id(),
+            ]),
+            merged: ParserNode::Card { card: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                        #[cfg(feature = "spanned_tree")]
+                            span: another_span,
+                    })),
+                    ParserNode::CardKind { card },
+                ] => Ok(ParserNode::Card {
+                    card: object::Card::Reference(object::reference::CardReference {
+                        count: object::CountSpecifier::A {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *another_span,
+                        },
+                        kind: card.add_factor_specifier(object::specified_object::CardSpecifier::Another(
+                            object::specified_object::AnotherObjectSpecifier {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *another_span,
+                            },
+                        )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: card.node_span().merge(another_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
         /* "this <card kind>" can be used as a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
@@ -50,7 +88,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::CardKind { card },
+                    ParserNode::CardKind {
+                        #[cfg(feature = "spanned_tree")]
+                        card,
+                        ..
+                    },
                 ] => Ok(ParserNode::Card {
                     card: object::Card::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
@@ -79,39 +121,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     card: object::Card::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: *start_span,
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* "<card reference> or <card reference>" makes a one among reference */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::Card { card: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Card { card: dummy() }.id(),
-            ]),
-            merged: ParserNode::Card { card: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Card { card: c1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
-                    ParserNode::Card { card: c2 },
-                ] => Ok(ParserNode::Card {
-                    card: object::Card::OneAmong(object::OneAmong {
-                        references: {
-                            let mut references = crate::utils::HeapArrayVec::new();
-                            references.push(c1.clone());
-                            references.push(c2.clone());
-                            references
-                        },
-                        #[cfg(feature = "spanned_tree")]
-                        span: c1.node_span().merge(&c2.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

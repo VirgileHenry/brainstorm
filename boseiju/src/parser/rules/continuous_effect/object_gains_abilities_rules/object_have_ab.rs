@@ -70,17 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
                 ParserNode::Ability { ability: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
             ]),
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -90,12 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark { .. })),
                     ParserNode::Ability { ability },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark {
-                        #[cfg(feature = "spanned_tree")]
-                            span: ab_end_span,
-                    })),
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
                         effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
@@ -114,7 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: permanent.node_span().merge(&ability.node_span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(ab_end_span),
+                        span: permanent.node_span().merge(&ability.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

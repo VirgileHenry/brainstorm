@@ -1,32 +1,31 @@
-mod land_specifier;
+mod enchantment_specifier;
 
-pub use land_specifier::LandSpecifier;
-pub use land_specifier::LandSubtypeSpecifier;
+pub use enchantment_specifier::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::specified_object::Specifiers;
 
-/// A specified land.
+/// A specified Enchantment.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SpecifiedLand {
-    pub specifiers: Option<Specifiers<LandSpecifier>>,
+pub struct SpecifiedEnchantment {
+    pub specifiers: Option<Specifiers<EnchantmentSpecifier>>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl SpecifiedLand {
-    pub fn add_factor_specifier(&self, factor_specifier: LandSpecifier) -> Self {
+impl SpecifiedEnchantment {
+    pub fn add_factor_specifier(&self, factor_specifier: EnchantmentSpecifier) -> Self {
         #[cfg(feature = "spanned_tree")]
         let factor_specifier_span = factor_specifier.node_span();
         match &self.specifiers {
-            Some(prev_specifiers) => SpecifiedLand {
+            Some(prev_specifiers) => SpecifiedEnchantment {
                 specifiers: Some(prev_specifiers.add_factor_specifier(factor_specifier)),
                 #[cfg(feature = "spanned_tree")]
                 span: factor_specifier_span.merge(&self.span),
             },
-            None => SpecifiedLand {
+            None => SpecifiedEnchantment {
                 specifiers: Some(Specifiers::Single(factor_specifier)),
                 #[cfg(feature = "spanned_tree")]
                 span: factor_specifier_span.merge(&self.span),
@@ -35,10 +34,10 @@ impl SpecifiedLand {
     }
 }
 
-impl AbilityTreeNode for SpecifiedLand {
+impl AbilityTreeNode for SpecifiedEnchantment {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::SpecifiedLand.id()
+        crate::ability_tree::NodeKind::SpecifiedEnchantment.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -54,7 +53,7 @@ impl AbilityTreeNode for SpecifiedLand {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "specified land:")?;
+        write!(out, "specified enchantment:")?;
         out.push_final_branch()?;
         write!(out, "specifier(s):")?;
         out.push_final_branch()?;
@@ -68,7 +67,7 @@ impl AbilityTreeNode for SpecifiedLand {
     }
 
     fn node_tag(&self) -> &'static str {
-        "specified land"
+        "specified enchantment"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -78,7 +77,7 @@ impl AbilityTreeNode for SpecifiedLand {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for SpecifiedLand {
+impl crate::utils::DummyInit for SpecifiedEnchantment {
     fn dummy_init() -> Self {
         Self {
             specifiers: crate::utils::dummy(),

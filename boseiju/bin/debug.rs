@@ -1,8 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Artifacts and lands enter tapped.";
-    let card_name = "Gornog, the Red Reaper";
+    let oracle_text = "Artifacts you control have ward {1}.\nWhen Elder Owyn Lyons enters or dies, return target artifact card from your graveyard to your hand.";
+    let card_name = "Elder Owyn Lyons";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;

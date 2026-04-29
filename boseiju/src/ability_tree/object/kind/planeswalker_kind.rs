@@ -1,5 +1,6 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::object::specified_object::PlaneswalkerSpecifier;
 use crate::ability_tree::object::specified_object::SpecifiedPlaneswalker;
 
 /// An object reference is a way to refer to one or more objects in the game.
@@ -11,6 +12,14 @@ use crate::ability_tree::object::specified_object::SpecifiedPlaneswalker;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlaneswalkerKind {
     Specified(SpecifiedPlaneswalker),
+}
+
+impl PlaneswalkerKind {
+    pub fn add_factor_specifier(&self, factor_specifier: PlaneswalkerSpecifier) -> Self {
+        match self {
+            Self::Specified(specified) => Self::Specified(specified.add_factor_specifier(factor_specifier)),
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for PlaneswalkerKind {

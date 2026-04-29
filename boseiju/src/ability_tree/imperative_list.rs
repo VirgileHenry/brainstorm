@@ -32,15 +32,12 @@ impl AbilityTreeNode for ImperativeList {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "imperative list:")?;
-        out.push_final_branch()?;
-        write!(out, "imperatives:")?;
-        for imperative in self.imperatives.iter().take(self.imperatives.len().saturating_sub(1)) {
-            out.push_inter_branch()?;
-            imperative.display(out)?;
-            out.pop_branch();
-        }
-        if let Some(imperative) = self.imperatives.last() {
-            out.push_final_branch()?;
+        for (i, imperative) in self.imperatives.iter().enumerate() {
+            if i == self.imperatives.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
             imperative.display(out)?;
             out.pop_branch();
         }

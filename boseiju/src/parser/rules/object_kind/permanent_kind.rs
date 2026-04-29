@@ -49,6 +49,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        /* "<enchantment kind>" can be used as a permanent kind */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::EnchantmentKind { enchantment: dummy() }.id()]),
+            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::EnchantmentKind { enchantment }] => Ok(ParserNode::PermanentKind {
+                    permanent: object::kind::PermanentKind::Enchantment(enchantment.clone()),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
         /* "<land kind>" can be used as a permanent reference */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LandKind { land: dummy() }.id()]),

@@ -13,27 +13,30 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <artifact kind>" is a artifact */
+        /* "<count> <enchantment kind>" is a enchantment */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::ArtifactKind { artifact: dummy() }.id(),
+                ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
             ]),
-            merged: ParserNode::Artifact { artifact: dummy() }.id(),
+            merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::ArtifactKind { artifact }] => Ok(ParserNode::Artifact {
-                    artifact: object::Artifact::Reference(object::reference::ArtifactReference {
+                &[
+                    ParserNode::CountSpecifier { count },
+                    ParserNode::EnchantmentKind { enchantment },
+                ] => Ok(ParserNode::Enchantment {
+                    enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: count.clone(),
-                        kind: artifact.clone(),
+                        kind: enchantment.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&artifact.node_span()),
+                        span: count.node_span().merge(&enchantment.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <artifact kind>" is a + other artifact */
+        /* "another <enchantment kind>" is a + other enchantment */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -41,57 +44,57 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ArtifactKind { artifact: dummy() }.id(),
+                ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
             ]),
-            merged: ParserNode::Artifact { artifact: dummy() }.id(),
+            merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::ArtifactKind { artifact },
-                ] => Ok(ParserNode::Artifact {
-                    artifact: object::Artifact::Reference(object::reference::ArtifactReference {
+                    ParserNode::EnchantmentKind { enchantment },
+                ] => Ok(ParserNode::Enchantment {
+                    enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: artifact.add_factor_specifier(object::specified_object::ArtifactSpecifier::Another(
+                        kind: enchantment.add_factor_specifier(object::specified_object::EnchantmentSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: artifact.node_span().merge(another_span),
+                        span: enchantment.node_span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<artifact kind>" is a artifact with an implicit "all" */
+        /* "<enchantment kind>" is a enchantment with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ArtifactKind { artifact: dummy() }.id()]),
-            merged: ParserNode::Artifact { artifact: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::EnchantmentKind { enchantment: dummy() }.id()]),
+            merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ArtifactKind { artifact }] => Ok(ParserNode::Artifact {
-                    artifact: object::Artifact::Reference(object::reference::ArtifactReference {
+                &[ParserNode::EnchantmentKind { enchantment }] => Ok(ParserNode::Enchantment {
+                    enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: artifact.node_span().empty_at_start(),
+                            span: enchantment.node_span().empty_at_start(),
                         },
-                        kind: artifact.clone(),
+                        kind: enchantment.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: artifact.node_span(),
+                        span: enchantment.node_span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <artifact kind>" can be used as a artifact reference */
+        /* "this <enchantment kind>" can be used as a enchantment reference */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -99,31 +102,31 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ArtifactKind { artifact: dummy() }.id(),
+                ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
             ]),
-            merged: ParserNode::Artifact { artifact: dummy() }.id(),
+            merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::ArtifactKind {
+                    ParserNode::EnchantmentKind {
                         #[cfg(feature = "spanned_tree")]
-                        artifact,
+                        enchantment,
                         ..
                     },
-                ] => Ok(ParserNode::Artifact {
-                    artifact: object::Artifact::SelfReferencing(object::SelfReferencing {
+                ] => Ok(ParserNode::Enchantment {
+                    enchantment: object::Enchantment::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: artifact.node_span().merge(start_span),
+                        span: enchantment.node_span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "it" makes a previously mentionned artifact */
+        /* "it" makes a previously mentionned enchantment */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
@@ -132,15 +135,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Artifact { artifact: dummy() }.id(),
+            merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Artifact {
-                    artifact: object::Artifact::PreviouslyMentionned(object::PreviouslyMentionned {
+                ] => Ok(ParserNode::Enchantment {
+                    enchantment: object::Enchantment::PreviouslyMentionned(object::PreviouslyMentionned {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
                     }),

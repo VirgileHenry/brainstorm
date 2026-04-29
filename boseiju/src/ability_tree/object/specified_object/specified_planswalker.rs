@@ -7,14 +7,31 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::specified_object::Specifiers;
 
 /// A specified creature.
-///
-/// This can only reference artifacts on the battlefield.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifiedPlaneswalker {
     pub specifiers: Option<Specifiers<PlaneswalkerSpecifier>>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl SpecifiedPlaneswalker {
+    pub fn add_factor_specifier(&self, factor_specifier: PlaneswalkerSpecifier) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        let factor_specifier_span = factor_specifier.node_span();
+        match &self.specifiers {
+            Some(prev_specifiers) => SpecifiedPlaneswalker {
+                specifiers: Some(prev_specifiers.add_factor_specifier(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+            None => SpecifiedPlaneswalker {
+                specifiers: Some(Specifiers::Single(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+        }
+    }
 }
 
 impl AbilityTreeNode for SpecifiedPlaneswalker {

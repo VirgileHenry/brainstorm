@@ -99,16 +99,12 @@ impl<T: Specifier + AbilityTreeNode> crate::ability_tree::AbilityTreeNode for Sp
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
-        write!(out, "object specifiers:")?;
-        out.push_final_branch()?;
         match self {
             Self::Single(child) => child.display(out)?,
             Self::And(child) => child.display(out)?,
             Self::Or(child) => child.display(out)?,
             Self::OrOfAnd(child) => child.display(out)?,
         }
-        out.pop_branch();
         Ok(())
     }
 

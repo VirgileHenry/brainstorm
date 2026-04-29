@@ -12,25 +12,6 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = ParserRule> {
-    /* <card type> is a card type specifier */
-    let card_types_to_specifiers = crate::ability_tree::terminals::CardType::all()
-        .map(|card_type| ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardType(card_type.clone())).id()]),
-            merged: ParserNode::CardSpecifier { specifier: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::CardType(card_type))] => Ok(ParserNode::CardSpecifier {
-                    specifier: object::specified_object::CardSpecifier::CardType(object::specified_object::CardTypeSpecifier {
-                        card_type: card_type.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: card_type.node_span(),
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        })
-        .collect::<Vec<_>>();
-
     let common_specifiers = vec![/* "<color specifier>" is a card specifier */ ParserRule {
         expanded: RuleLhs::new(&[ParserNode::ColorSpecifier { specifier: dummy() }.id()]),
         merged: ParserNode::CardSpecifier { specifier: dummy() }.id(),
@@ -91,7 +72,5 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         },
     ];
 
-    [card_types_to_specifiers, common_specifiers, merging_specifiers]
-        .into_iter()
-        .flatten()
+    [common_specifiers, merging_specifiers].into_iter().flatten()
 }

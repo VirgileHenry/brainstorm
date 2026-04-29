@@ -15,6 +15,25 @@ pub struct SpecifiedSpell {
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
+impl SpecifiedSpell {
+    pub fn add_factor_specifier(&self, factor_specifier: SpellSpecifier) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        let factor_specifier_span = factor_specifier.node_span();
+        match &self.specifiers {
+            Some(prev_specifiers) => SpecifiedSpell {
+                specifiers: Some(prev_specifiers.add_factor_specifier(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+            None => SpecifiedSpell {
+                specifiers: Some(Specifiers::Single(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+        }
+    }
+}
+
 impl AbilityTreeNode for SpecifiedSpell {
     fn node_id(&self) -> usize {
         use idris::Idris;

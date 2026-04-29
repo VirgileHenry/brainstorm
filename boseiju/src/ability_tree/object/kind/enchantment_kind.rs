@@ -1,8 +1,8 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::OneAmong;
-use crate::ability_tree::object::specified_object::ArtifactSpecifier;
-use crate::ability_tree::object::specified_object::SpecifiedArtifact;
+use crate::ability_tree::object::specified_object::EnchantmentSpecifier;
+use crate::ability_tree::object::specified_object::SpecifiedEnchantment;
 
 /// An object reference is a way to refer to one or more objects in the game.
 ///
@@ -11,13 +11,13 @@ use crate::ability_tree::object::specified_object::SpecifiedArtifact;
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ArtifactKind {
+pub enum EnchantmentKind {
     OneAmong(OneAmong<Self>),
-    Specified(SpecifiedArtifact),
+    Specified(SpecifiedEnchantment),
 }
 
-impl ArtifactKind {
-    pub fn add_factor_specifier(&self, factor_specifier: ArtifactSpecifier) -> Self {
+impl EnchantmentKind {
+    pub fn add_factor_specifier(&self, factor_specifier: EnchantmentSpecifier) -> Self {
         match self {
             Self::OneAmong(one_among) => {
                 let mut references = crate::utils::HeapArrayVec::new();
@@ -35,10 +35,10 @@ impl ArtifactKind {
     }
 }
 
-impl crate::ability_tree::AbilityTreeNode for ArtifactKind {
+impl crate::ability_tree::AbilityTreeNode for EnchantmentKind {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::ArtifactKind.id()
+        crate::ability_tree::NodeKind::EnchantmentKind.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -52,7 +52,7 @@ impl crate::ability_tree::AbilityTreeNode for ArtifactKind {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "artifact reference:")?;
+        write!(out, "enchantment reference:")?;
         out.push_final_branch()?;
         match self {
             Self::OneAmong(child) => child.display(out)?,
@@ -63,7 +63,7 @@ impl crate::ability_tree::AbilityTreeNode for ArtifactKind {
     }
 
     fn node_tag(&self) -> &'static str {
-        "artifact reference"
+        "enchantment reference"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -76,7 +76,7 @@ impl crate::ability_tree::AbilityTreeNode for ArtifactKind {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ArtifactKind {
+impl crate::utils::DummyInit for EnchantmentKind {
     fn dummy_init() -> Self {
         Self::Specified(crate::utils::dummy())
     }

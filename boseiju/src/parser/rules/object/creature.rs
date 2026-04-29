@@ -54,6 +54,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        /* "another <creature kind>" is a + other creature */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::CreatureKind { creature: dummy() }.id(),
+            ]),
+            merged: ParserNode::Creature { creature: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                        #[cfg(feature = "spanned_tree")]
+                            span: another_span,
+                    })),
+                    ParserNode::CreatureKind { creature },
+                ] => Ok(ParserNode::Creature {
+                    creature: object::Creature::Reference(object::reference::CreatureReference {
+                        count: object::CountSpecifier::A {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *another_span,
+                        },
+                        kind: creature.add_factor_specifier(object::specified_object::CreatureSpecifier::Another(
+                            object::specified_object::AnotherObjectSpecifier {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *another_span,
+                            },
+                        )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: creature.node_span().merge(another_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
         /* "this <creature kind>" is a self referencing creature */
         ParserRule {
             expanded: RuleLhs::new(&[
@@ -71,7 +109,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::CreatureKind { creature },
+                    ParserNode::CreatureKind {
+                        #[cfg(feature = "spanned_tree")]
+                        creature,
+                        ..
+                    },
                 ] => Ok(ParserNode::Creature {
                     creature: object::Creature::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
@@ -164,39 +206,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     creature: object::Creature::PreviouslyMentionned(object::PreviouslyMentionned {
                         #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* "<creature> or <creature>" makes a one among creatures */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::Creature { creature: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Creature { creature: dummy() }.id(),
-            ]),
-            merged: ParserNode::Creature { creature: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Creature { creature: c1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
-                    ParserNode::Creature { creature: c2 },
-                ] => Ok(ParserNode::Creature {
-                    creature: object::Creature::OneAmong(object::OneAmong {
-                        references: {
-                            let mut references = crate::utils::HeapArrayVec::new();
-                            references.push(c1.clone());
-                            references.push(c2.clone());
-                            references
-                        },
-                        #[cfg(feature = "spanned_tree")]
-                        span: c1.node_span().merge(&c2.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

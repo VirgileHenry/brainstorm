@@ -53,6 +53,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        /* "another <land kind>" is a + other land */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LandKind { land: dummy() }.id(),
+            ]),
+            merged: ParserNode::Land { land: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                        #[cfg(feature = "spanned_tree")]
+                            span: another_span,
+                    })),
+                    ParserNode::LandKind { land },
+                ] => Ok(ParserNode::Land {
+                    land: object::Land::Reference(object::reference::LandReference {
+                        count: object::CountSpecifier::A {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *another_span,
+                        },
+                        kind: land.add_factor_specifier(object::specified_object::LandSpecifier::Another(
+                            object::specified_object::AnotherObjectSpecifier {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *another_span,
+                            },
+                        )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: land.node_span().merge(another_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
         /* "this <land kind>" is a self referencing land */
         ParserRule {
             expanded: RuleLhs::new(&[
@@ -70,7 +108,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LandKind { land },
+                    ParserNode::LandKind {
+                        #[cfg(feature = "spanned_tree")]
+                        land,
+                        ..
+                    },
                 ] => Ok(ParserNode::Land {
                     land: object::Land::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
@@ -101,39 +143,6 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     land: object::Land::Attached(object::AttachedObject {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* "<land> or <land>" makes a one among reference */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::Land { land: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Land { land: dummy() }.id(),
-            ]),
-            merged: ParserNode::Land { land: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::Land { land: l1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
-                    ParserNode::Land { land: l2 },
-                ] => Ok(ParserNode::Land {
-                    land: object::Land::OneAmong(object::OneAmong {
-                        references: {
-                            let mut references = crate::utils::HeapArrayVec::new();
-                            references.push(l1.clone());
-                            references.push(l2.clone());
-                            references
-                        },
-                        #[cfg(feature = "spanned_tree")]
-                        span: l1.node_span().merge(&l2.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

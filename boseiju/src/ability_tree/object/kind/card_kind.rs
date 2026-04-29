@@ -1,9 +1,8 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::OneAmong;
-use crate::ability_tree::object::PreviouslyMentionned;
-use crate::ability_tree::object::SelfReferencing;
 use crate::ability_tree::object::kind::PermanentKind;
+use crate::ability_tree::object::specified_object::CardSpecifier;
 use crate::ability_tree::object::specified_object::SpecifiedCard;
 
 /// An object reference is a way to refer to one or more objects in the game.
@@ -16,9 +15,30 @@ use crate::ability_tree::object::specified_object::SpecifiedCard;
 pub enum CardKind {
     OneAmong(OneAmong<Self>),
     Permanent(PermanentKind),
-    PreviouslyMentionned(PreviouslyMentionned),
-    SelfReferencing(SelfReferencing),
     Specified(SpecifiedCard),
+}
+
+impl CardKind {
+    pub fn add_factor_specifier(&self, factor_specifier: CardSpecifier) -> Self {
+        match self {
+            Self::OneAmong(one_among) => {
+                let mut references = crate::utils::HeapArrayVec::new();
+                for prev in one_among.references.iter() {
+                    references.push(prev.add_factor_specifier(factor_specifier.clone()));
+                }
+                Self::OneAmong(OneAmong {
+                    references,
+                    #[cfg(feature = "spanned_tree")]
+                    span: one_among.node_span().merge(&factor_specifier.node_span()),
+                })
+            }
+            Self::Permanent(permanent) => {
+                let permanent_specifier = factor_specifier.to_permanent_specifier();
+                Self::Permanent(permanent.add_factor_specifier(permanent_specifier))
+            }
+            Self::Specified(specified) => Self::Specified(specified.add_factor_specifier(factor_specifier)),
+        }
+    }
 }
 
 impl crate::ability_tree::AbilityTreeNode for CardKind {
@@ -32,8 +52,6 @@ impl crate::ability_tree::AbilityTreeNode for CardKind {
         match self {
             Self::OneAmong(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Permanent(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::PreviouslyMentionned(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::SelfReferencing(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Specified(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -46,8 +64,6 @@ impl crate::ability_tree::AbilityTreeNode for CardKind {
         match self {
             Self::OneAmong(child) => child.display(out)?,
             Self::Permanent(child) => child.display(out)?,
-            Self::PreviouslyMentionned(child) => child.display(out)?,
-            Self::SelfReferencing(child) => child.display(out)?,
             Self::Specified(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -63,8 +79,6 @@ impl crate::ability_tree::AbilityTreeNode for CardKind {
         match self {
             Self::OneAmong(child) => child.node_span(),
             Self::Permanent(child) => child.node_span(),
-            Self::PreviouslyMentionned(child) => child.node_span(),
-            Self::SelfReferencing(child) => child.node_span(),
             Self::Specified(child) => child.node_span(),
         }
     }
@@ -73,6 +87,6 @@ impl crate::ability_tree::AbilityTreeNode for CardKind {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for CardKind {
     fn dummy_init() -> Self {
-        Self::SelfReferencing(crate::utils::dummy())
+        Self::Specified(crate::utils::dummy())
     }
 }
