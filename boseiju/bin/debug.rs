@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Artifacts you control have ward {1}.\nWhen Elder Owyn Lyons enters or dies, return target artifact card from your graveyard to your hand.";
+    let oracle_text = "{T}: Tap target creature.\nWhenever you cast a white spell, you may untap this creature.";
     let card_name = "Elder Owyn Lyons";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

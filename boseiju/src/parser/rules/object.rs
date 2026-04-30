@@ -5,6 +5,7 @@ mod damage_receiver;
 mod enchantment;
 mod land;
 mod permanent;
+mod spell;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -15,6 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         enchantment::rules().collect::<Vec<_>>(),
         land::rules().collect::<Vec<_>>(),
         permanent::rules().collect::<Vec<_>>(),
+        spell::rules().collect::<Vec<_>>(),
     ]
     .into_iter()
     .flatten()

@@ -1,6 +1,7 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::OneAmong;
+use crate::ability_tree::object::kind::PermanentKind;
 use crate::ability_tree::object::specified_object::SpecifiedSpell;
 use crate::ability_tree::object::specified_object::SpellSpecifier;
 
@@ -13,6 +14,7 @@ use crate::ability_tree::object::specified_object::SpellSpecifier;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SpellKind {
     OneAmong(OneAmong<Self>),
+    Permanent(PermanentKind),
     Specified(SpecifiedSpell),
 }
 
@@ -30,6 +32,9 @@ impl SpellKind {
                     span: one_among.node_span().merge(&factor_specifier.node_span()),
                 })
             }
+            Self::Permanent(permanent) => {
+                unimplemented!()
+            }
             Self::Specified(specified) => Self::Specified(specified.add_factor_specifier(factor_specifier)),
         }
     }
@@ -45,6 +50,7 @@ impl crate::ability_tree::AbilityTreeNode for SpellKind {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::OneAmong(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Permanent(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Specified(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -56,6 +62,7 @@ impl crate::ability_tree::AbilityTreeNode for SpellKind {
         out.push_final_branch()?;
         match self {
             Self::OneAmong(child) => child.display(out)?,
+            Self::Permanent(child) => child.display(out)?,
             Self::Specified(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -70,6 +77,7 @@ impl crate::ability_tree::AbilityTreeNode for SpellKind {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::OneAmong(child) => child.node_span(),
+            Self::Permanent(child) => child.node_span(),
             Self::Specified(child) => child.node_span(),
         }
     }

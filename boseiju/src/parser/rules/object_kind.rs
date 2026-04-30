@@ -5,6 +5,7 @@ mod damage_receiver_kind;
 mod enchantment_kind;
 mod land_kind;
 mod permanent_kind;
+mod spell_kind;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -15,6 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         enchantment_kind::rules().collect::<Vec<_>>(),
         land_kind::rules().collect::<Vec<_>>(),
         permanent_kind::rules().collect::<Vec<_>>(),
+        spell_kind::rules().collect::<Vec<_>>(),
     ]
     .into_iter()
     .flatten()
