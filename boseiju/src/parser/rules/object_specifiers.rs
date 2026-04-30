@@ -5,6 +5,7 @@ mod creature_specifiers;
 mod enchantment_specifiers;
 mod land_specifiers;
 mod permanent_specifiers;
+mod spell_specifiers;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -15,6 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         enchantment_specifiers::rules().collect::<Vec<_>>(),
         land_specifiers::rules().collect::<Vec<_>>(),
         permanent_specifiers::rules().collect::<Vec<_>>(),
+        spell_specifiers::rules().collect::<Vec<_>>(),
     ]
     .into_iter()
     .flatten()

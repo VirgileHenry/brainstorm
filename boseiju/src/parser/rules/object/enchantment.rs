@@ -13,21 +13,21 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <enchantment kind>" is a enchantment */
+        /* "<count> <specified enchantment>" is a enchantment */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
+                ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
             ]),
             merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CountSpecifier { count },
-                    ParserNode::EnchantmentKind { enchantment },
+                    ParserNode::SpecifiedEnchantment { enchantment },
                 ] => Ok(ParserNode::Enchantment {
                     enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: count.clone(),
-                        kind: enchantment.clone(),
+                        enchantment: enchantment.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.node_span().merge(&enchantment.node_span()),
                     }),
@@ -36,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <enchantment kind>" is a + other enchantment */
+        /* "another <specified enchantment>" is a + other enchantment */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
+                ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
             ]),
             merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -53,14 +53,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::EnchantmentKind { enchantment },
+                    ParserNode::SpecifiedEnchantment { enchantment },
                 ] => Ok(ParserNode::Enchantment {
                     enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: enchantment.add_factor_specifier(object::specified_object::EnchantmentSpecifier::Another(
+                        enchantment: enchantment.add_factor_specifier(object::specified_object::EnchantmentSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
@@ -74,18 +74,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<enchantment kind>" is a enchantment with an implicit "all" */
+        /* "<specified enchantment>" is a enchantment with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::EnchantmentKind { enchantment: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id()]),
             merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::EnchantmentKind { enchantment }] => Ok(ParserNode::Enchantment {
+                &[ParserNode::SpecifiedEnchantment { enchantment }] => Ok(ParserNode::Enchantment {
                     enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: enchantment.node_span().empty_at_start(),
                         },
-                        kind: enchantment.clone(),
+                        enchantment: enchantment.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: enchantment.node_span(),
                     }),
@@ -94,7 +94,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <enchantment kind>" can be used as a enchantment reference */
+        /* "this <specified enchantment>" can be used as a enchantment reference */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -102,7 +102,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
+                ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
             ]),
             merged: ParserNode::Enchantment { enchantment: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -111,7 +111,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::EnchantmentKind {
+                    ParserNode::SpecifiedEnchantment {
                         #[cfg(feature = "spanned_tree")]
                         enchantment,
                         ..

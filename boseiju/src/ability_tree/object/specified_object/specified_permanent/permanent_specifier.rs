@@ -16,54 +16,6 @@ pub enum PermanentSpecifier {
     Owner(OwnerSpecifier),
 }
 
-impl PermanentSpecifier {
-    pub fn to_artifact_specifier(&self) -> crate::ability_tree::object::specified_object::ArtifactSpecifier {
-        use crate::ability_tree::object::specified_object::ArtifactSpecifier;
-        match self {
-            Self::Another(another) => ArtifactSpecifier::Another(another.clone()),
-            Self::Color(color) => ArtifactSpecifier::Color(color.clone()),
-            Self::Control(control) => ArtifactSpecifier::Control(control.clone()),
-            Self::Owner(owner) => ArtifactSpecifier::Owner(owner.clone()),
-        }
-    }
-    pub fn to_creature_specifier(&self) -> crate::ability_tree::object::specified_object::CreatureSpecifier {
-        use crate::ability_tree::object::specified_object::CreatureSpecifier;
-        match self {
-            Self::Another(another) => CreatureSpecifier::Another(another.clone()),
-            Self::Color(color) => CreatureSpecifier::Color(color.clone()),
-            Self::Control(control) => CreatureSpecifier::Control(control.clone()),
-            Self::Owner(owner) => CreatureSpecifier::Owner(owner.clone()),
-        }
-    }
-    pub fn to_enchantment_specifier(&self) -> crate::ability_tree::object::specified_object::EnchantmentSpecifier {
-        use crate::ability_tree::object::specified_object::EnchantmentSpecifier;
-        match self {
-            Self::Another(another) => EnchantmentSpecifier::Another(another.clone()),
-            Self::Color(color) => EnchantmentSpecifier::Color(color.clone()),
-            Self::Control(control) => EnchantmentSpecifier::Control(control.clone()),
-            Self::Owner(owner) => EnchantmentSpecifier::Owner(owner.clone()),
-        }
-    }
-    pub fn to_land_specifier(&self) -> crate::ability_tree::object::specified_object::LandSpecifier {
-        use crate::ability_tree::object::specified_object::LandSpecifier;
-        match self {
-            Self::Another(another) => LandSpecifier::Another(another.clone()),
-            Self::Color(color) => LandSpecifier::Color(color.clone()),
-            Self::Control(control) => LandSpecifier::Control(control.clone()),
-            Self::Owner(owner) => LandSpecifier::Owner(owner.clone()),
-        }
-    }
-    pub fn to_planeswalker_specifier(&self) -> crate::ability_tree::object::specified_object::PlaneswalkerSpecifier {
-        use crate::ability_tree::object::specified_object::PlaneswalkerSpecifier;
-        match self {
-            Self::Another(another) => PlaneswalkerSpecifier::Another(another.clone()),
-            Self::Color(color) => PlaneswalkerSpecifier::Color(color.clone()),
-            Self::Control(control) => PlaneswalkerSpecifier::Control(control.clone()),
-            Self::Owner(owner) => PlaneswalkerSpecifier::Owner(owner.clone()),
-        }
-    }
-}
-
 impl Specifier for PermanentSpecifier {}
 
 impl crate::ability_tree::AbilityTreeNode for PermanentSpecifier {

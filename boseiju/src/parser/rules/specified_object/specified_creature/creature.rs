@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,28 +11,18 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<creature / creature subtype>" makes a specified creature  */
+    /* "<creature kind>" makes a specified creature  */
 
     let specifiers_to_specified_creatures = ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardType(terminals::CardType {
-            card_type: mtg_data::CardType::Creature,
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }))
-        .id()]),
+        expanded: RuleLhs::new(&[ParserNode::CreatureKind { creature: dummy() }.id()]),
         merged: ParserNode::SpecifiedCreature { creature: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Creature,
-                    #[cfg(feature = "spanned_tree")]
-                        span: creature_span,
-                })),
-            ] => Ok(ParserNode::SpecifiedCreature {
+            &[ParserNode::CreatureKind { creature }] => Ok(ParserNode::SpecifiedCreature {
                 creature: object::specified_object::SpecifiedCreature {
+                    kind: creature.clone(),
                     specifiers: None,
                     #[cfg(feature = "spanned_tree")]
-                    span: *creature_span,
+                    span: creature.node_span(),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -41,13 +30,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         creation_loc: ParserRuleDeclarationLocation::here(),
     };
 
-    /* Creature subtypes can be used in place of the "creature" marker, adding a specifier */
+    /* creature subtypes can be used in place of the "creature" marker, adding a specifier */
     let subtype_to_creature_specifiers = crate::ability_tree::terminals::CreatureSubtype::all().map(|subtype| ParserRule {
         expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CreatureSubtype(subtype.clone())).id()]),
         merged: ParserNode::SpecifiedCreature { creature: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(Token::CreatureSubtype(subtype))] => Ok(ParserNode::SpecifiedCreature {
                 creature: object::specified_object::SpecifiedCreature {
+                    kind: object::kind::CreatureKind::Creature {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(object::specified_object::Specifiers::Single(
                         object::specified_object::CreatureSpecifier::Subtype(
                             object::specified_object::CreatureSubtypeSpecifier {

@@ -14,18 +14,21 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <creature kind>" is a creature */
+        /* "<count> <specified creature>" is a creature */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::CreatureKind { creature: dummy() }.id(),
+                ParserNode::SpecifiedCreature { creature: dummy() }.id(),
             ]),
             merged: ParserNode::Creature { creature: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::CreatureKind { creature }] => Ok(ParserNode::Creature {
+                &[
+                    ParserNode::CountSpecifier { count },
+                    ParserNode::SpecifiedCreature { creature },
+                ] => Ok(ParserNode::Creature {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
                         count: count.clone(),
-                        kind: creature.clone(),
+                        creature: creature.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.node_span().merge(&creature.node_span()),
                     }),
@@ -34,18 +37,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<creature kind>" is a creature with an implicit "all" */
+        /* "<specified creature>" is a creature with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::CreatureKind { creature: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
             merged: ParserNode::Creature { creature: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CreatureKind { creature }] => Ok(ParserNode::Creature {
+                &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::Creature {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: creature.node_span().empty_at_start(),
                         },
-                        kind: creature.clone(),
+                        creature: creature.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: creature.node_span(),
                     }),
@@ -54,7 +57,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <creature kind>" is a + other creature */
+        /* "another <specified creature>" is a + other creature */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -62,7 +65,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CreatureKind { creature: dummy() }.id(),
+                ParserNode::SpecifiedCreature { creature: dummy() }.id(),
             ]),
             merged: ParserNode::Creature { creature: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -71,14 +74,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::CreatureKind { creature },
+                    ParserNode::SpecifiedCreature { creature },
                 ] => Ok(ParserNode::Creature {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: creature.add_factor_specifier(object::specified_object::CreatureSpecifier::Another(
+                        creature: creature.add_factor_specifier(object::specified_object::CreatureSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
@@ -92,7 +95,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <creature kind>" is a self referencing creature */
+        /* "this <specified creature>" is a self referencing creature */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -100,7 +103,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CreatureKind { creature: dummy() }.id(),
+                ParserNode::SpecifiedCreature { creature: dummy() }.id(),
             ]),
             merged: ParserNode::Creature { creature: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -109,7 +112,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::CreatureKind {
+                    ParserNode::SpecifiedCreature {
                         #[cfg(feature = "spanned_tree")]
                         creature,
                         ..

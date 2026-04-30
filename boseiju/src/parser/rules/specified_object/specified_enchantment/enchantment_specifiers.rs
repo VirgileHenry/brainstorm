@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,32 +11,24 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<count> <enchantment / enchantment subtype> <enchantment specifiers>" makes a specified enchantment  */
-    /* Examples: "a enchantment you control" */
+    /* "<count> <enchantment kind> <enchantment specifiers>" makes a specified enchantment  */
 
     let specifiers_to_specified_enchantments = ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                card_type: mtg_data::CardType::Enchantment,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
+            ParserNode::EnchantmentKind { enchantment: dummy() }.id(),
             ParserNode::EnchantmentSpecifiers { specifiers: dummy() }.id(),
         ]),
         merged: ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Enchantment,
-                    ..
-                })),
+                ParserNode::EnchantmentKind { enchantment },
                 ParserNode::EnchantmentSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedEnchantment {
                 enchantment: object::specified_object::SpecifiedEnchantment {
+                    kind: enchantment.clone(),
                     specifiers: Some(specifiers.clone()),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span(),
+                    span: specifiers.node_span().merge(&enchantment.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -58,6 +49,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::EnchantmentSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedEnchantment {
                 enchantment: object::specified_object::SpecifiedEnchantment {
+                    kind: object::kind::EnchantmentKind::Enchantment {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(
                         specifiers.add_factor_specifier(object::specified_object::EnchantmentSpecifier::Subtype(
                             object::specified_object::EnchantmentSubtypeSpecifier {
@@ -68,7 +63,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         )),
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span(),
+                    span: specifiers.node_span().merge(&subtype.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

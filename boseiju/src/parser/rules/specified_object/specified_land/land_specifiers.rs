@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,32 +11,21 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<count> <land / land subtype> <land specifiers>" makes a specified land  */
-    /* Examples: "a land you control" */
+    /* "<count> <land kind> <land specifiers>" makes a specified land  */
 
     let specifiers_to_specified_lands = ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                card_type: mtg_data::CardType::Land,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
+            ParserNode::LandKind { land: dummy() }.id(),
             ParserNode::LandSpecifiers { specifiers: dummy() }.id(),
         ]),
         merged: ParserNode::SpecifiedLand { land: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Land,
-                    ..
-                })),
-                ParserNode::LandSpecifiers { specifiers },
-            ] => Ok(ParserNode::SpecifiedLand {
+            &[ParserNode::LandKind { land }, ParserNode::LandSpecifiers { specifiers }] => Ok(ParserNode::SpecifiedLand {
                 land: object::specified_object::SpecifiedLand {
+                    kind: land.clone(),
                     specifiers: Some(specifiers.clone()),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span(),
+                    span: specifiers.node_span().merge(&land.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -58,6 +46,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LandSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedLand {
                 land: object::specified_object::SpecifiedLand {
+                    kind: object::kind::LandKind::Land {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(
                         specifiers.add_factor_specifier(object::specified_object::LandSpecifier::Subtype(
                             object::specified_object::LandSubtypeSpecifier {
@@ -68,7 +60,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         )),
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span(),
+                    span: specifiers.node_span().merge(&subtype.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

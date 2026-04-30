@@ -8,7 +8,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PermanentReference {
     pub count: crate::ability_tree::object::CountSpecifier,
-    pub kind: crate::ability_tree::object::kind::PermanentKind,
+    pub permanent: crate::ability_tree::object::specified_object::SpecifiedPermanent,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -22,7 +22,7 @@ impl AbilityTreeNode for PermanentReference {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.count as &dyn AbilityTreeNode);
-        children.push(&self.kind as &dyn AbilityTreeNode);
+        children.push(&self.permanent as &dyn AbilityTreeNode);
         children
     }
 
@@ -35,9 +35,9 @@ impl AbilityTreeNode for PermanentReference {
         self.count.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
-        write!(out, "kind:")?;
+        write!(out, "permanent:")?;
         out.push_final_branch()?;
-        self.kind.display(out)?;
+        self.permanent.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
@@ -58,7 +58,7 @@ impl crate::utils::DummyInit for PermanentReference {
     fn dummy_init() -> Self {
         Self {
             count: crate::utils::dummy(),
-            kind: crate::utils::dummy(),
+            permanent: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

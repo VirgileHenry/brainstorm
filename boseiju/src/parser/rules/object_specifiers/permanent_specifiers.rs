@@ -7,7 +7,7 @@ use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     let common_specifiers = vec![
-        /* "<control specifier>" is a creature specifier */
+        /* "<control specifier>" is a permanent specifier */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::ControlSpecifier { specifier: dummy() }.id()]),
             merged: ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
@@ -19,7 +19,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<color specifier>" is a creature specifier */
+        /* "<color specifier>" is a permanent specifier */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::ColorSpecifier { specifier: dummy() }.id()]),
             merged: ParserNode::PermanentSpecifier { specifier: dummy() }.id(),

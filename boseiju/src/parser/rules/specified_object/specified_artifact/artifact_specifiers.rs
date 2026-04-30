@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,32 +11,24 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<count> <artifact / artifact subtype> <artifact specifiers>" makes a specified artifact  */
-    /* Examples: "a artifact you control" */
+    /* "<count> <artifact kind> <artifact specifiers>" makes a specified artifact  */
 
     let specifiers_to_specified_artifacts = ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                card_type: mtg_data::CardType::Artifact,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
+            ParserNode::ArtifactKind { artifact: dummy() }.id(),
             ParserNode::ArtifactSpecifiers { specifiers: dummy() }.id(),
         ]),
         merged: ParserNode::SpecifiedArtifact { artifact: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Artifact,
-                    ..
-                })),
+                ParserNode::ArtifactKind { artifact },
                 ParserNode::ArtifactSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedArtifact {
                 artifact: object::specified_object::SpecifiedArtifact {
+                    kind: artifact.clone(),
                     specifiers: Some(specifiers.clone()),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span(),
+                    span: specifiers.node_span().merge(&artifact.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -58,6 +49,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::ArtifactSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedArtifact {
                 artifact: object::specified_object::SpecifiedArtifact {
+                    kind: object::kind::ArtifactKind::Artifact {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(
                         specifiers.add_factor_specifier(object::specified_object::ArtifactSpecifier::Subtype(
                             object::specified_object::ArtifactSubtypeSpecifier {
@@ -68,7 +63,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         )),
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span(),
+                    span: specifiers.node_span().merge(&subtype.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

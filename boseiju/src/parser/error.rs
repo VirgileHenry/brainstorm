@@ -81,7 +81,8 @@ impl std::fmt::Display for ParserError {
                 write!(f, "Unexpected token: \"{}\"", found.name,)?;
                 if !expecting.is_empty() {
                     write!(f, "\nExpecting one of:")?;
-                    for expecting in expecting.iter().take(10) {
+                    const MAX_SHOWN_EXPECTING: usize = 15;
+                    for expecting in expecting.iter().take(MAX_SHOWN_EXPECTING) {
                         let node_name = <ParserNode as idris::Idris>::name_from_id(expecting.expected);
                         write!(f, "\n - token \"{node_name}\" to create nodes")?;
                         for (i, (for_node, for_rule)) in expecting.for_nodes.iter().take(3).enumerate() {
@@ -96,8 +97,8 @@ impl std::fmt::Display for ParserError {
                             write!(f, "And {} others", expecting.for_nodes.len() - 3)?;
                         }
                     }
-                    if expecting.len() > 10 {
-                        write!(f, "\nAnd {} others", expecting.len() - 10)?;
+                    if expecting.len() > MAX_SHOWN_EXPECTING {
+                        write!(f, "\nAnd {} others", expecting.len() - MAX_SHOWN_EXPECTING)?;
                     }
                 } else {
                     write!(f, "\nNo tokens were expected !")?;

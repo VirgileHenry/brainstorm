@@ -13,61 +13,87 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<specified permanent>" can be used as a permanent kind */
+        /* "permanent" is the default permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedPermanent { permanent: dummy() }.id()]),
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Permanent {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
             merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpecifiedPermanent { permanent }] => Ok(ParserNode::PermanentKind {
-                    permanent: object::kind::PermanentKind::Specified(permanent.clone()),
+                &[
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Permanent {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::PermanentKind {
+                    permanent: object::kind::PermanentKind::Permanent {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<artifact kind>" can be used as a permanent kind */
+        /* "<specified artifact>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ArtifactKind { artifact: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedArtifact { artifact: dummy() }.id()]),
             merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ArtifactKind { artifact }] => Ok(ParserNode::PermanentKind {
+                &[ParserNode::SpecifiedArtifact { artifact }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Artifact(artifact.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<creature kind>" can be used as a permanent kind */
+        /* "<specified creature>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::CreatureKind { creature: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
             merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CreatureKind { creature }] => Ok(ParserNode::PermanentKind {
+                &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Creature(creature.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<enchantment kind>" can be used as a permanent kind */
+        /* "<specified enchantment>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::EnchantmentKind { enchantment: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id()]),
             merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::EnchantmentKind { enchantment }] => Ok(ParserNode::PermanentKind {
+                &[ParserNode::SpecifiedEnchantment { enchantment }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Enchantment(enchantment.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<land kind>" can be used as a permanent reference */
+        /* "<specified land>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LandKind { land: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedLand { land: dummy() }.id()]),
             merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LandKind { land }] => Ok(ParserNode::PermanentKind {
+                &[ParserNode::SpecifiedLand { land }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Land(land.clone()),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<specified planeswalker>" can be used as a permanent kind */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPlaneswalker { planeswalker: dummy() }.id()]),
+            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::SpecifiedPlaneswalker { planeswalker }] => Ok(ParserNode::PermanentKind {
+                    permanent: object::kind::PermanentKind::Planeswalker(planeswalker.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -87,19 +113,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentKind { permanent: p1 },
+                    ParserNode::PermanentKind { permanent: c1 },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
-                    ParserNode::PermanentKind { permanent: p2 },
+                    ParserNode::PermanentKind { permanent: c2 },
                 ] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::OneAmong(object::OneAmong {
                         references: {
                             let mut references = crate::utils::HeapArrayVec::new();
-                            references.push(p1.clone());
-                            references.push(p2.clone());
+                            references.push(c1.clone());
+                            references.push(c2.clone());
                             references
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: p1.node_span().merge(&p2.node_span()),
+                        span: c1.node_span().merge(&c2.node_span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

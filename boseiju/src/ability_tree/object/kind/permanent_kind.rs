@@ -1,13 +1,11 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::OneAmong;
-use crate::ability_tree::object::kind::CreatureKind;
-use crate::ability_tree::object::kind::EnchantmentKind;
-use crate::ability_tree::object::kind::LandKind;
-use crate::ability_tree::object::kind::PlaneswalkerKind;
-use crate::ability_tree::object::kind::artifact_kind::ArtifactKind;
-use crate::ability_tree::object::specified_object::PermanentSpecifier;
-use crate::ability_tree::object::specified_object::SpecifiedPermanent;
+use crate::ability_tree::object::specified_object::SpecifiedArtifact;
+use crate::ability_tree::object::specified_object::SpecifiedCreature;
+use crate::ability_tree::object::specified_object::SpecifiedEnchantment;
+use crate::ability_tree::object::specified_object::SpecifiedLand;
+use crate::ability_tree::object::specified_object::SpecifiedPlaneswalker;
 
 /// An permanent reference is a way to refer specifically to permanent kinds.
 /// This is useful when the action only makes sense for permanents.
@@ -17,52 +15,16 @@ use crate::ability_tree::object::specified_object::SpecifiedPermanent;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PermanentKind {
-    Artifact(ArtifactKind),
-    Creature(CreatureKind),
-    Enchantment(EnchantmentKind),
-    Land(LandKind),
+    Artifact(SpecifiedArtifact),
+    Creature(SpecifiedCreature),
+    Enchantment(SpecifiedEnchantment),
+    Land(SpecifiedLand),
     OneAmong(OneAmong<Self>),
-    Planeswalker(PlaneswalkerKind),
-    Specified(SpecifiedPermanent),
-}
-
-impl PermanentKind {
-    pub fn add_factor_specifier(&self, factor_specifier: PermanentSpecifier) -> Self {
-        match self {
-            Self::Artifact(artifact) => {
-                let artifact_specifier = factor_specifier.to_artifact_specifier();
-                Self::Artifact(artifact.add_factor_specifier(artifact_specifier))
-            }
-            Self::Creature(artifact) => {
-                let creature_specifier = factor_specifier.to_creature_specifier();
-                Self::Creature(artifact.add_factor_specifier(creature_specifier))
-            }
-            Self::Enchantment(artifact) => {
-                let enchantment_specifier = factor_specifier.to_enchantment_specifier();
-                Self::Enchantment(artifact.add_factor_specifier(enchantment_specifier))
-            }
-            Self::Land(artifact) => {
-                let land_specifier = factor_specifier.to_land_specifier();
-                Self::Land(artifact.add_factor_specifier(land_specifier))
-            }
-            Self::OneAmong(one_among) => {
-                let mut references = crate::utils::HeapArrayVec::new();
-                for prev in one_among.references.iter() {
-                    references.push(prev.add_factor_specifier(factor_specifier.clone()));
-                }
-                Self::OneAmong(OneAmong {
-                    references,
-                    #[cfg(feature = "spanned_tree")]
-                    span: one_among.node_span().merge(&factor_specifier.node_span()),
-                })
-            }
-            Self::Planeswalker(artifact) => {
-                let planeswalker_specifier = factor_specifier.to_planeswalker_specifier();
-                Self::Planeswalker(artifact.add_factor_specifier(planeswalker_specifier))
-            }
-            Self::Specified(specified) => Self::Specified(specified.add_factor_specifier(factor_specifier)),
-        }
-    }
+    Planeswalker(SpecifiedPlaneswalker),
+    Permanent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 impl crate::ability_tree::AbilityTreeNode for PermanentKind {
@@ -72,6 +34,8 @@ impl crate::ability_tree::AbilityTreeNode for PermanentKind {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use idris::Idris;
+
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Artifact(child) => children.push(child as &dyn AbilityTreeNode),
@@ -80,7 +44,11 @@ impl crate::ability_tree::AbilityTreeNode for PermanentKind {
             Self::Land(child) => children.push(child as &dyn AbilityTreeNode),
             Self::OneAmong(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Planeswalker(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Specified(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Permanent { .. } => {
+                let node_id = crate::ability_tree::NodeKind::PermanentBasicKind.id();
+                let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(node_id);
+                children.push(child as &dyn AbilityTreeNode)
+            }
         }
         children
     }
@@ -96,7 +64,7 @@ impl crate::ability_tree::AbilityTreeNode for PermanentKind {
             Self::Land(child) => child.display(out)?,
             Self::OneAmong(child) => child.display(out)?,
             Self::Planeswalker(child) => child.display(out)?,
-            Self::Specified(child) => child.display(out)?,
+            Self::Permanent { .. } => write!(out, "permanent")?,
         }
         out.pop_branch();
         Ok(())
@@ -115,7 +83,7 @@ impl crate::ability_tree::AbilityTreeNode for PermanentKind {
             Self::Land(child) => child.node_span(),
             Self::OneAmong(child) => child.node_span(),
             Self::Planeswalker(child) => child.node_span(),
-            Self::Specified(child) => child.node_span(),
+            Self::Permanent { span } => *span,
         }
     }
 }
@@ -123,6 +91,9 @@ impl crate::ability_tree::AbilityTreeNode for PermanentKind {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for PermanentKind {
     fn dummy_init() -> Self {
-        Self::Specified(crate::utils::dummy())
+        Self::Permanent {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

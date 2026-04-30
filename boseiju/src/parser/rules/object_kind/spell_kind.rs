@@ -13,24 +13,38 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<specified spell>" can be used as a spell kind */
+        /* "spell" is the default spell kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedSpell { spell: dummy() }.id()]),
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Spell {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
             merged: ParserNode::SpellKind { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::SpellKind {
-                    spell: object::kind::SpellKind::Specified(spell.clone()),
+                &[
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Spell {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::SpellKind {
+                    spell: object::kind::SpellKind::Spell {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<permanent kind>" can be used as a spell kind */
+        /* "<specified permanent>" can be used as a spell kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::PermanentKind { permanent: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPermanent { permanent: dummy() }.id()]),
             merged: ParserNode::SpellKind { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::PermanentKind { permanent }] => Ok(ParserNode::SpellKind {
+                &[ParserNode::SpecifiedPermanent { permanent }] => Ok(ParserNode::SpellKind {
                     spell: object::kind::SpellKind::Permanent(permanent.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -1,8 +1,5 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::object::OneAmong;
-use crate::ability_tree::object::specified_object::LandSpecifier;
-use crate::ability_tree::object::specified_object::SpecifiedLand;
 
 /// An object reference is a way to refer to one or more objects in the game.
 ///
@@ -12,27 +9,10 @@ use crate::ability_tree::object::specified_object::SpecifiedLand;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LandKind {
-    OneAmong(OneAmong<Self>),
-    Specified(SpecifiedLand),
-}
-
-impl LandKind {
-    pub fn add_factor_specifier(&self, factor_specifier: LandSpecifier) -> Self {
-        match self {
-            Self::OneAmong(one_among) => {
-                let mut references = crate::utils::HeapArrayVec::new();
-                for prev in one_among.references.iter() {
-                    references.push(prev.add_factor_specifier(factor_specifier.clone()));
-                }
-                Self::OneAmong(OneAmong {
-                    references,
-                    #[cfg(feature = "spanned_tree")]
-                    span: one_among.node_span().merge(&factor_specifier.node_span()),
-                })
-            }
-            Self::Specified(specified) => Self::Specified(specified.add_factor_specifier(factor_specifier)),
-        }
-    }
+    Land {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 impl crate::ability_tree::AbilityTreeNode for LandKind {
@@ -42,35 +22,38 @@ impl crate::ability_tree::AbilityTreeNode for LandKind {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use idris::Idris;
+
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::OneAmong(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Specified(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Land { .. } => {
+                let node_id = crate::ability_tree::NodeKind::LandBasicKind.id();
+                let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(node_id);
+                children.push(child as &dyn AbilityTreeNode)
+            }
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "land reference:")?;
+        write!(out, "land kind:")?;
         out.push_final_branch()?;
         match self {
-            Self::OneAmong(child) => child.display(out)?,
-            Self::Specified(child) => child.display(out)?,
+            Self::Land { .. } => write!(out, "land")?,
         }
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "land reference"
+        "land kind"
     }
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::OneAmong(child) => child.node_span(),
-            Self::Specified(child) => child.node_span(),
+            Self::Land { span } => *span,
         }
     }
 }
@@ -78,6 +61,9 @@ impl crate::ability_tree::AbilityTreeNode for LandKind {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for LandKind {
     fn dummy_init() -> Self {
-        Self::Specified(crate::utils::dummy())
+        Self::Land {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

@@ -13,47 +13,47 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<card kind>" makes a specified card  */
+        /* "<spell kind>" makes a specified spell  */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::CardKind { card: dummy() }.id()]),
-            merged: ParserNode::SpecifiedCard { card: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpellKind { spell: dummy() }.id()]),
+            merged: ParserNode::SpecifiedSpell { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CardKind { card }] => Ok(ParserNode::SpecifiedCard {
-                    card: object::specified_object::SpecifiedCard {
-                        kind: card.clone(),
+                &[ParserNode::SpellKind { spell }] => Ok(ParserNode::SpecifiedSpell {
+                    spell: object::specified_object::SpecifiedSpell {
+                        kind: spell.clone(),
                         specifiers: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: card.node_span(),
+                        span: spell.node_span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<card kind> card" makes a specified card  */
+        /* "<spell kind> spell" makes a specified spell  */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CardKind { card: dummy() }.id(),
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
+                ParserNode::SpellKind { spell: dummy() }.id(),
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Spell {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::SpecifiedCard { card: dummy() }.id(),
+            merged: ParserNode::SpecifiedSpell { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CardKind { card },
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
+                    ParserNode::SpellKind { spell },
+                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Spell {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
-                ] => Ok(ParserNode::SpecifiedCard {
-                    card: object::specified_object::SpecifiedCard {
-                        kind: card.clone(),
+                ] => Ok(ParserNode::SpecifiedSpell {
+                    spell: object::specified_object::SpecifiedSpell {
+                        kind: spell.clone(),
                         specifiers: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: card.node_span().merge(end_span),
+                        span: spell.node_span().merge(end_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

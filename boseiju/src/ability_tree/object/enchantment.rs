@@ -21,37 +21,6 @@ pub enum Enchantment {
     Reference(EnchantmentReference),
 }
 
-impl Enchantment {
-    /// utility function to convert a Enchantment to a permanent.
-    pub fn to_permanent(&self) -> crate::ability_tree::object::Permanent {
-        use crate::ability_tree::object::Permanent;
-        match self {
-            Self::Attached(attached) => Permanent::Attached(attached.clone()),
-            Self::OneAmong(among) => Permanent::OneAmong(OneAmong {
-                references: {
-                    let mut references = crate::utils::HeapArrayVec::new();
-                    for enchantment in among.references.iter() {
-                        references.push(enchantment.to_permanent());
-                    }
-                    references
-                },
-                #[cfg(feature = "spanned_tree")]
-                span: among.span,
-            }),
-            Self::PreviouslyMentionned(previously) => Permanent::PreviouslyMentionned(previously.clone()),
-            Self::SelfReferencing(self_ref) => Permanent::SelfReferencing(self_ref.clone()),
-            Self::Reference(enchantment_ref) => {
-                Permanent::Reference(crate::ability_tree::object::reference::PermanentReference {
-                    count: enchantment_ref.count.clone(),
-                    kind: crate::ability_tree::object::kind::PermanentKind::Enchantment(enchantment_ref.kind.clone()),
-                    #[cfg(feature = "spanned_tree")]
-                    span: enchantment_ref.span,
-                })
-            }
-        }
-    }
-}
-
 impl crate::ability_tree::AbilityTreeNode for Enchantment {
     fn node_id(&self) -> usize {
         use idris::Idris;

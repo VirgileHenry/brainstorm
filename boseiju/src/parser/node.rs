@@ -99,6 +99,7 @@ pub enum ParserNode {
     SpecifiedEnchantment { enchantment: SpecifiedEnchantment },
     SpecifiedLand { land: SpecifiedLand },
     SpecifiedPermanent { permanent: SpecifiedPermanent },
+    SpecifiedPlaneswalker { planeswalker: SpecifiedPlaneswalker },
     SpecifiedSpell { spell: SpecifiedSpell },
     SpellAbility { ability: SpellAbility },
     Spell { spell: Spell },

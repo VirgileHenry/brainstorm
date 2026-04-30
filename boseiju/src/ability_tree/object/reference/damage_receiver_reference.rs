@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DamageReceiverReference {
     pub count: crate::ability_tree::object::CountSpecifier,
-    pub kind: crate::ability_tree::object::kind::DamageReceiverKind,
+    pub kind: crate::ability_tree::object::kind::DamageReceiverKind, /* Fixme: specified */
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

@@ -13,18 +13,21 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <artifact kind>" is a artifact */
+        /* "<count> <specified artifact>" is an artifact */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::ArtifactKind { artifact: dummy() }.id(),
+                ParserNode::SpecifiedArtifact { artifact: dummy() }.id(),
             ]),
             merged: ParserNode::Artifact { artifact: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::ArtifactKind { artifact }] => Ok(ParserNode::Artifact {
+                &[
+                    ParserNode::CountSpecifier { count },
+                    ParserNode::SpecifiedArtifact { artifact },
+                ] => Ok(ParserNode::Artifact {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
                         count: count.clone(),
-                        kind: artifact.clone(),
+                        artifact: artifact.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.node_span().merge(&artifact.node_span()),
                     }),
@@ -33,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <artifact kind>" is a + other artifact */
+        /* "another <specified artifact>" is a + other artifact */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -41,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ArtifactKind { artifact: dummy() }.id(),
+                ParserNode::SpecifiedArtifact { artifact: dummy() }.id(),
             ]),
             merged: ParserNode::Artifact { artifact: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -50,14 +53,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::ArtifactKind { artifact },
+                    ParserNode::SpecifiedArtifact { artifact },
                 ] => Ok(ParserNode::Artifact {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: artifact.add_factor_specifier(object::specified_object::ArtifactSpecifier::Another(
+                        artifact: artifact.add_factor_specifier(object::specified_object::ArtifactSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
@@ -71,18 +74,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<artifact kind>" is a artifact with an implicit "all" */
+        /* "<specified artifact>" is a artifact with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ArtifactKind { artifact: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedArtifact { artifact: dummy() }.id()]),
             merged: ParserNode::Artifact { artifact: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ArtifactKind { artifact }] => Ok(ParserNode::Artifact {
+                &[ParserNode::SpecifiedArtifact { artifact }] => Ok(ParserNode::Artifact {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: artifact.node_span().empty_at_start(),
                         },
-                        kind: artifact.clone(),
+                        artifact: artifact.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: artifact.node_span(),
                     }),
@@ -91,7 +94,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <artifact kind>" can be used as a artifact reference */
+        /* "this <specified artifact>" can be used as a artifact reference */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -99,7 +102,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ArtifactKind { artifact: dummy() }.id(),
+                ParserNode::SpecifiedArtifact { artifact: dummy() }.id(),
             ]),
             merged: ParserNode::Artifact { artifact: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -108,7 +111,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::ArtifactKind {
+                    ParserNode::SpecifiedArtifact {
                         #[cfg(feature = "spanned_tree")]
                         artifact,
                         ..

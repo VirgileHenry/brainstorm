@@ -101,13 +101,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                             #[cfg(feature = "spanned_tree")]
                                             span: block_span.empty_at_end(),
                                         },
-                                        kind: object::kind::CreatureKind::Specified(
-                                            object::specified_object::SpecifiedCreature {
-                                                specifiers: None,
+                                        creature: object::specified_object::SpecifiedCreature {
+                                            kind: object::kind::CreatureKind::Creature {
                                                 #[cfg(feature = "spanned_tree")]
                                                 span: block_span.empty_at_end(),
                                             },
-                                        ),
+                                            specifiers: None,
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: block_span.empty_at_end(),
+                                        },
                                         #[cfg(feature = "spanned_tree")]
                                         span: block_span.empty_at_end(),
                                     }),

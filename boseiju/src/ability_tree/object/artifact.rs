@@ -21,35 +21,6 @@ pub enum Artifact {
     Reference(ArtifactReference),
 }
 
-impl Artifact {
-    /// utility function to convert a Artifact to a permanent.
-    pub fn to_permanent(&self) -> crate::ability_tree::object::Permanent {
-        use crate::ability_tree::object::Permanent;
-        match self {
-            Self::Attached(attached) => Permanent::Attached(attached.clone()),
-            Self::OneAmong(among) => Permanent::OneAmong(OneAmong {
-                references: {
-                    let mut references = crate::utils::HeapArrayVec::new();
-                    for artifact in among.references.iter() {
-                        references.push(artifact.to_permanent());
-                    }
-                    references
-                },
-                #[cfg(feature = "spanned_tree")]
-                span: among.span,
-            }),
-            Self::PreviouslyMentionned(previously) => Permanent::PreviouslyMentionned(previously.clone()),
-            Self::SelfReferencing(self_ref) => Permanent::SelfReferencing(self_ref.clone()),
-            Self::Reference(artifact_ref) => Permanent::Reference(crate::ability_tree::object::reference::PermanentReference {
-                count: artifact_ref.count.clone(),
-                kind: crate::ability_tree::object::kind::PermanentKind::Artifact(artifact_ref.kind.clone()),
-                #[cfg(feature = "spanned_tree")]
-                span: artifact_ref.span,
-            }),
-        }
-    }
-}
-
 impl crate::ability_tree::AbilityTreeNode for Artifact {
     fn node_id(&self) -> usize {
         use idris::Idris;

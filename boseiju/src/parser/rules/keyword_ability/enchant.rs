@@ -53,15 +53,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                             span: enchant_span.empty_at_end(),
                                         }),
                                     ),
-                                    kind: crate::ability_tree::object::kind::PermanentKind::Creature(
-                                        crate::ability_tree::object::kind::CreatureKind::Specified(
+                                    permanent: crate::ability_tree::object::specified_object::SpecifiedPermanent {
+                                        kind: crate::ability_tree::object::kind::PermanentKind::Creature(
                                             crate::ability_tree::object::specified_object::SpecifiedCreature {
+                                                kind: crate::ability_tree::object::kind::CreatureKind::Creature {
+                                                    #[cfg(feature = "spanned_tree")]
+                                                    span: *creature_span,
+                                                },
                                                 specifiers: None,
                                                 #[cfg(feature = "spanned_tree")]
                                                 span: *creature_span,
                                             },
                                         ),
-                                    ),
+                                        specifiers: None,
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *creature_span,
+                                    },
                                     #[cfg(feature = "spanned_tree")]
                                     span: *creature_span,
                                 },

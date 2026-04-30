@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,33 +11,24 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "creature <creature specifiers>" makes a specified creature */
-    /* Examples: "creatures you control", "warriors you control" */
+    /* "<count> <creature kind> <creature specifiers>" makes a specified creature  */
 
     let specifiers_to_specified_creatures = ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                card_type: mtg_data::CardType::Creature,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
+            ParserNode::CreatureKind { creature: dummy() }.id(),
             ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
         ]),
         merged: ParserNode::SpecifiedCreature { creature: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Creature,
-                    #[cfg(feature = "spanned_tree")]
-                        span: creature_span,
-                })),
+                ParserNode::CreatureKind { creature },
                 ParserNode::CreatureSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedCreature {
                 creature: object::specified_object::SpecifiedCreature {
+                    kind: creature.clone(),
                     specifiers: Some(specifiers.clone()),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span().merge(creature_span),
+                    span: specifiers.node_span().merge(&creature.node_span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -46,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         creation_loc: ParserRuleDeclarationLocation::here(),
     };
 
-    /* Creature subtypes can be used in place of the "creature" marker, adding a specifier */
+    /* creature subtypes can be used in place of the "creature" marker, adding a specifier */
     let subtype_to_creature_specifiers = crate::ability_tree::terminals::CreatureSubtype::all().map(|subtype| ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::CreatureSubtype(subtype.clone())).id(),
@@ -59,6 +49,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::CreatureSpecifiers { specifiers },
             ] => Ok(ParserNode::SpecifiedCreature {
                 creature: object::specified_object::SpecifiedCreature {
+                    kind: object::kind::CreatureKind::Creature {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(
                         specifiers.add_factor_specifier(object::specified_object::CreatureSpecifier::Subtype(
                             object::specified_object::CreatureSubtypeSpecifier {

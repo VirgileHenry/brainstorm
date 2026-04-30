@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,29 +11,18 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<enchantment / enchantment subtype>" makes a specified enchantment  */
-    /* Examples: "target enchantment", "all aura" */
+    /* "<enchantment kind>" makes a specified enchantment  */
 
     let specifiers_to_specified_enchantments = ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardType(terminals::CardType {
-            card_type: mtg_data::CardType::Enchantment,
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }))
-        .id()]),
+        expanded: RuleLhs::new(&[ParserNode::EnchantmentKind { enchantment: dummy() }.id()]),
         merged: ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Enchantment,
-                    #[cfg(feature = "spanned_tree")]
-                        span: enchantment_span,
-                })),
-            ] => Ok(ParserNode::SpecifiedEnchantment {
+            &[ParserNode::EnchantmentKind { enchantment }] => Ok(ParserNode::SpecifiedEnchantment {
                 enchantment: object::specified_object::SpecifiedEnchantment {
+                    kind: enchantment.clone(),
                     specifiers: None,
                     #[cfg(feature = "spanned_tree")]
-                    span: *enchantment_span,
+                    span: enchantment.node_span(),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -49,6 +37,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(Token::EnchantmentSubtype(subtype))] => Ok(ParserNode::SpecifiedEnchantment {
                 enchantment: object::specified_object::SpecifiedEnchantment {
+                    kind: object::kind::EnchantmentKind::Enchantment {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(object::specified_object::Specifiers::Single(
                         object::specified_object::EnchantmentSpecifier::Subtype(
                             object::specified_object::EnchantmentSubtypeSpecifier {

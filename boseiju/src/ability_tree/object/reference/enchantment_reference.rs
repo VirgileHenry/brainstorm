@@ -6,7 +6,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EnchantmentReference {
     pub count: crate::ability_tree::object::CountSpecifier,
-    pub kind: crate::ability_tree::object::kind::EnchantmentKind,
+    pub enchantment: crate::ability_tree::object::specified_object::SpecifiedEnchantment,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -20,7 +20,7 @@ impl AbilityTreeNode for EnchantmentReference {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.count as &dyn AbilityTreeNode);
-        children.push(&self.kind as &dyn AbilityTreeNode);
+        children.push(&self.enchantment as &dyn AbilityTreeNode);
         children
     }
 
@@ -33,9 +33,9 @@ impl AbilityTreeNode for EnchantmentReference {
         self.count.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
-        write!(out, "kind:")?;
+        write!(out, "enchantment:")?;
         out.push_final_branch()?;
-        self.kind.display(out)?;
+        self.enchantment.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
@@ -56,7 +56,7 @@ impl crate::utils::DummyInit for EnchantmentReference {
     fn dummy_init() -> Self {
         Self {
             count: crate::utils::dummy(),
-            kind: crate::utils::dummy(),
+            enchantment: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,29 +11,18 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<land / land subtype>" makes a specified land  */
-    /* Examples: "target land", "a mountain" */
+    /* "<land kind>" makes a specified land  */
 
     let specifiers_to_specified_lands = ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardType(terminals::CardType {
-            card_type: mtg_data::CardType::Land,
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }))
-        .id()]),
+        expanded: RuleLhs::new(&[ParserNode::LandKind { land: dummy() }.id()]),
         merged: ParserNode::SpecifiedLand { land: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Land,
-                    #[cfg(feature = "spanned_tree")]
-                        span: land_span,
-                })),
-            ] => Ok(ParserNode::SpecifiedLand {
+            &[ParserNode::LandKind { land }] => Ok(ParserNode::SpecifiedLand {
                 land: object::specified_object::SpecifiedLand {
+                    kind: land.clone(),
                     specifiers: None,
                     #[cfg(feature = "spanned_tree")]
-                    span: *land_span,
+                    span: land.node_span(),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -49,6 +37,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(Token::LandSubtype(subtype))] => Ok(ParserNode::SpecifiedLand {
                 land: object::specified_object::SpecifiedLand {
+                    kind: object::kind::LandKind::Land {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(object::specified_object::Specifiers::Single(
                         object::specified_object::LandSpecifier::Subtype(object::specified_object::LandSubtypeSpecifier {
                             subtype: subtype.clone(),

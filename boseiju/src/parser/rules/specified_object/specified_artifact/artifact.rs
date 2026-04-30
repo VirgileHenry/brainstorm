@@ -1,5 +1,4 @@
 use crate::ability_tree::object;
-use crate::ability_tree::terminals;
 use crate::lexer::tokens::Token;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
@@ -12,29 +11,18 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<artifact / artifact subtype>" makes a specified artifact  */
-    /* Examples: "target artifact", "a mountain" */
+    /* "<artifact kind>" makes a specified artifact  */
 
     let specifiers_to_specified_artifacts = ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardType(terminals::CardType {
-            card_type: mtg_data::CardType::Artifact,
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }))
-        .id()]),
+        expanded: RuleLhs::new(&[ParserNode::ArtifactKind { artifact: dummy() }.id()]),
         merged: ParserNode::SpecifiedArtifact { artifact: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
-                    card_type: mtg_data::CardType::Artifact,
-                    #[cfg(feature = "spanned_tree")]
-                        span: artifact_span,
-                })),
-            ] => Ok(ParserNode::SpecifiedArtifact {
+            &[ParserNode::ArtifactKind { artifact }] => Ok(ParserNode::SpecifiedArtifact {
                 artifact: object::specified_object::SpecifiedArtifact {
+                    kind: artifact.clone(),
                     specifiers: None,
                     #[cfg(feature = "spanned_tree")]
-                    span: *artifact_span,
+                    span: artifact.node_span(),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -49,6 +37,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(Token::ArtifactSubtype(subtype))] => Ok(ParserNode::SpecifiedArtifact {
                 artifact: object::specified_object::SpecifiedArtifact {
+                    kind: object::kind::ArtifactKind::Artifact {
+                        #[cfg(feature = "spanned_tree")]
+                        span: subtype.node_span(),
+                    },
                     specifiers: Some(object::specified_object::Specifiers::Single(
                         object::specified_object::ArtifactSpecifier::Subtype(
                             object::specified_object::ArtifactSubtypeSpecifier {

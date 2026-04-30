@@ -4,12 +4,14 @@ pub use spell_specifier::SpellSpecifier;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::object::kind::SpellKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
 /// A specified spell.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifiedSpell {
+    pub kind: SpellKind,
     pub specifiers: Option<Specifiers<SpellSpecifier>>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -21,11 +23,13 @@ impl SpecifiedSpell {
         let factor_specifier_span = factor_specifier.node_span();
         match &self.specifiers {
             Some(prev_specifiers) => SpecifiedSpell {
+                kind: self.kind.clone(),
                 specifiers: Some(prev_specifiers.add_factor_specifier(factor_specifier)),
                 #[cfg(feature = "spanned_tree")]
                 span: factor_specifier_span.merge(&self.span),
             },
             None => SpecifiedSpell {
+                kind: self.kind.clone(),
                 specifiers: Some(Specifiers::Single(factor_specifier)),
                 #[cfg(feature = "spanned_tree")]
                 span: factor_specifier_span.merge(&self.span),
@@ -44,6 +48,7 @@ impl AbilityTreeNode for SpecifiedSpell {
         use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
 
         let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.kind as &dyn AbilityTreeNode);
         match self.specifiers.as_ref() {
             Some(specifiers) => children.push(specifiers as &dyn AbilityTreeNode),
             None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
@@ -54,7 +59,11 @@ impl AbilityTreeNode for SpecifiedSpell {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "specified spell:")?;
-        out.push_final_branch()?;
+        out.push_inter_branch()?;
+        write!(out, "kind:")?;
+        self.kind.display(out)?;
+        out.pop_branch();
+        out.next_final_branch()?;
         write!(out, "specifier(s):")?;
         out.push_final_branch()?;
         match self.specifiers.as_ref() {
@@ -80,6 +89,7 @@ impl AbilityTreeNode for SpecifiedSpell {
 impl crate::utils::DummyInit for SpecifiedSpell {
     fn dummy_init() -> Self {
         Self {
+            kind: crate::utils::dummy(),
             specifiers: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

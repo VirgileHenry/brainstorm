@@ -13,18 +13,18 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <card kind>" is a card */
+        /* "<count> <specified card>" is a card */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::CardKind { card: dummy() }.id(),
+                ParserNode::SpecifiedCard { card: dummy() }.id(),
             ]),
             merged: ParserNode::Card { card: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::CardKind { card }] => Ok(ParserNode::Card {
+                &[ParserNode::CountSpecifier { count }, ParserNode::SpecifiedCard { card }] => Ok(ParserNode::Card {
                     card: object::Card::Reference(object::reference::CardReference {
                         count: count.clone(),
-                        kind: card.clone(),
+                        card: card.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.node_span().merge(&card.node_span()),
                     }),
@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <card kind>" is a + other card */
+        /* "another <specified card>" is a + other card */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -41,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardKind { card: dummy() }.id(),
+                ParserNode::SpecifiedCard { card: dummy() }.id(),
             ]),
             merged: ParserNode::Card { card: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -50,14 +50,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::CardKind { card },
+                    ParserNode::SpecifiedCard { card },
                 ] => Ok(ParserNode::Card {
                     card: object::Card::Reference(object::reference::CardReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: card.add_factor_specifier(object::specified_object::CardSpecifier::Another(
+                        card: card.add_factor_specifier(object::specified_object::CardSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
@@ -71,7 +71,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <card kind>" can be used as a card reference */
+        /* "this <specified card>" can be used as a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -79,7 +79,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardKind { card: dummy() }.id(),
+                ParserNode::SpecifiedCard { card: dummy() }.id(),
             ]),
             merged: ParserNode::Card { card: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -88,7 +88,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::CardKind {
+                    ParserNode::SpecifiedCard {
                         #[cfg(feature = "spanned_tree")]
                         card,
                         ..

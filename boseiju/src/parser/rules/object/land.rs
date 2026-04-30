@@ -13,18 +13,18 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <land kind>" is a land */
+        /* "<count> <specified land>" is a land */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::LandKind { land: dummy() }.id(),
+                ParserNode::SpecifiedLand { land: dummy() }.id(),
             ]),
             merged: ParserNode::Land { land: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::LandKind { land }] => Ok(ParserNode::Land {
+                &[ParserNode::CountSpecifier { count }, ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
                     land: object::Land::Reference(object::reference::LandReference {
                         count: count.clone(),
-                        kind: land.clone(),
+                        land: land.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.node_span().merge(&land.node_span()),
                     }),
@@ -33,18 +33,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<land kind>" is a land with an implicit "all" */
+        /* "<specified land>" is a land with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LandKind { land: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedLand { land: dummy() }.id()]),
             merged: ParserNode::Land { land: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LandKind { land }] => Ok(ParserNode::Land {
+                &[ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
                     land: object::Land::Reference(object::reference::LandReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: land.node_span().empty_at_start(),
                         },
-                        kind: land.clone(),
+                        land: land.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: land.node_span(),
                     }),
@@ -53,7 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <land kind>" is a + other land */
+        /* "another <specified land>" is a + other land */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LandKind { land: dummy() }.id(),
+                ParserNode::SpecifiedLand { land: dummy() }.id(),
             ]),
             merged: ParserNode::Land { land: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -70,14 +70,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::LandKind { land },
+                    ParserNode::SpecifiedLand { land },
                 ] => Ok(ParserNode::Land {
                     land: object::Land::Reference(object::reference::LandReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: land.add_factor_specifier(object::specified_object::LandSpecifier::Another(
+                        land: land.add_factor_specifier(object::specified_object::LandSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
@@ -91,7 +91,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <land kind>" is a self referencing land */
+        /* "this <specified land>" is a self referencing land */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -99,7 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LandKind { land: dummy() }.id(),
+                ParserNode::SpecifiedLand { land: dummy() }.id(),
             ]),
             merged: ParserNode::Land { land: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -108,7 +108,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LandKind {
+                    ParserNode::SpecifiedLand {
                         #[cfg(feature = "spanned_tree")]
                         land,
                         ..

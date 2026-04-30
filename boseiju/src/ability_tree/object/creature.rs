@@ -22,29 +22,35 @@ pub enum Creature {
 }
 
 impl Creature {
-    /// utility function to convert a creature to a permanent.
     pub fn to_permanent(&self) -> crate::ability_tree::object::Permanent {
         use crate::ability_tree::object::Permanent;
+        use crate::ability_tree::object::kind::PermanentKind;
+        use crate::ability_tree::object::reference::PermanentReference;
+        use crate::ability_tree::object::specified_object::SpecifiedPermanent;
+
         match self {
             Self::Attached(attached) => Permanent::Attached(attached.clone()),
-            Self::OneAmong(among) => Permanent::OneAmong(OneAmong {
-                references: {
-                    let mut references = crate::utils::HeapArrayVec::new();
-                    for creature in among.references.iter() {
-                        references.push(creature.to_permanent());
-                    }
-                    references
+            Self::PreviouslyMentionned(attached) => Permanent::PreviouslyMentionned(attached.clone()),
+            Self::SelfReferencing(attached) => Permanent::SelfReferencing(attached.clone()),
+            Self::OneAmong(one_among) => Permanent::OneAmong(OneAmong {
+                references: one_among
+                    .references
+                    .iter()
+                    .map(|permanent| permanent.to_permanent())
+                    .collect(),
+                #[cfg(feature = "spanned_tree")]
+                span: one_among.span,
+            }),
+            Self::Reference(reference) => Permanent::Reference(PermanentReference {
+                count: reference.count.clone(),
+                permanent: SpecifiedPermanent {
+                    kind: PermanentKind::Creature(reference.creature.clone()),
+                    specifiers: None,
+                    #[cfg(feature = "spanned_tree")]
+                    span: reference.creature.node_span(),
                 },
                 #[cfg(feature = "spanned_tree")]
-                span: among.span,
-            }),
-            Self::PreviouslyMentionned(previously) => Permanent::PreviouslyMentionned(previously.clone()),
-            Self::SelfReferencing(self_ref) => Permanent::SelfReferencing(self_ref.clone()),
-            Self::Reference(creature_ref) => Permanent::Reference(crate::ability_tree::object::reference::PermanentReference {
-                count: creature_ref.count.clone(),
-                kind: crate::ability_tree::object::kind::PermanentKind::Creature(creature_ref.kind.clone()),
-                #[cfg(feature = "spanned_tree")]
-                span: creature_ref.span,
+                span: reference.node_span(),
             }),
         }
     }

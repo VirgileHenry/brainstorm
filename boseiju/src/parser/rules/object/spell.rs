@@ -13,18 +13,18 @@ use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
-        /* "<count> <spell kind>" is a spell */
+        /* "<count> <specified spell>" is a spell */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::SpellKind { spell: dummy() }.id(),
+                ParserNode::SpecifiedSpell { spell: dummy() }.id(),
             ]),
             merged: ParserNode::Spell { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::SpellKind { spell }] => Ok(ParserNode::Spell {
+                &[ParserNode::CountSpecifier { count }, ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
                         count: count.clone(),
-                        kind: spell.clone(),
+                        spell: spell.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.node_span().merge(&spell.node_span()),
                     }),
@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "another <spell kind>" is a + other spell */
+        /* "another <specified spell>" is a + other spell */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
@@ -41,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellKind { spell: dummy() }.id(),
+                ParserNode::SpecifiedSpell { spell: dummy() }.id(),
             ]),
             merged: ParserNode::Spell { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -50,14 +50,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
-                    ParserNode::SpellKind { spell },
+                    ParserNode::SpecifiedSpell { spell },
                 ] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
                         count: object::CountSpecifier::A {
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
                         },
-                        kind: spell.add_factor_specifier(object::specified_object::SpellSpecifier::Another(
+                        spell: spell.add_factor_specifier(object::specified_object::SpellSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,
@@ -71,18 +71,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<spell kind>" is a spell with an implicit "all" */
+        /* "<specified spell>" is a spell with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpellKind { spell: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedSpell { spell: dummy() }.id()]),
             merged: ParserNode::Spell { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpellKind { spell }] => Ok(ParserNode::Spell {
+                &[ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: spell.node_span().empty_at_start(),
                         },
-                        kind: spell.clone(),
+                        spell: spell.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: spell.node_span(),
                     }),
@@ -91,7 +91,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "this <spell kind>" can be used as a spell reference */
+        /* "this <specified spell>" can be used as a spell reference */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
@@ -99,7 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellKind { spell: dummy() }.id(),
+                ParserNode::SpecifiedSpell { spell: dummy() }.id(),
             ]),
             merged: ParserNode::Spell { spell: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -108,7 +108,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::SpellKind {
+                    ParserNode::SpecifiedSpell {
                         #[cfg(feature = "spanned_tree")]
                         spell,
                         ..

@@ -14,17 +14,6 @@ pub enum CardSpecifier {
     Owner(OwnerSpecifier),
 }
 
-impl CardSpecifier {
-    pub fn to_permanent_specifier(&self) -> crate::ability_tree::object::specified_object::PermanentSpecifier {
-        use crate::ability_tree::object::specified_object::PermanentSpecifier;
-        match self {
-            Self::Another(another) => PermanentSpecifier::Another(another.clone()),
-            Self::Color(color) => PermanentSpecifier::Color(color.clone()),
-            Self::Owner(another) => PermanentSpecifier::Owner(another.clone()),
-        }
-    }
-}
-
 impl Specifier for CardSpecifier {}
 
 impl crate::ability_tree::AbilityTreeNode for CardSpecifier {
