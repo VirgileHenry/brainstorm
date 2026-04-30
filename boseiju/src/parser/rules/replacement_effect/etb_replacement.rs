@@ -51,24 +51,85 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     #[cfg(feature = "spanned_tree")]
                                     span: permanent.node_span().merge(enters_span),
                                 },
-                                etb_modifiers: {
-                                    let mut modifiers = crate::utils::HeapArrayVec::new();
-                                    modifiers.push(EtbModifier::WithState(EtbWithState {
-                                        state: crate::ability_tree::state::PermanentState::Tapped {
-                                            #[cfg(feature = "spanned_tree")]
-                                            span: *tapped_span,
-                                        },
+                                etb_modifiers: [EtbModifier::WithState(EtbWithState {
+                                    state: crate::ability_tree::state::PermanentState::Tapped {
                                         #[cfg(feature = "spanned_tree")]
                                         span: *tapped_span,
-                                    }));
-                                    modifiers
-                                },
+                                    },
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *tapped_span,
+                                })]
+                                .into_iter()
+                                .collect(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: permanent.node_span().merge(tapped_span),
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
                         span: permanent.node_span().merge(tapped_span),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "as <permanent reference> enters, <spell ability>" is an etb perform action */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::As {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
+                ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::SpellAbility { ability: dummy() }.id(),
+            ]),
+            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::As {
+                        #[cfg(feature = "spanned_tree")]
+                            span: start_span,
+                    })),
+                    ParserNode::Permanent { permanent },
+                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                        #[cfg(feature = "spanned_tree")]
+                            span: enters_span,
+                    })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::SpellAbility { ability },
+                ] => Ok(ParserNode::ContinuousEffect {
+                    effect: continuous_effect::ContinuousEffect {
+                        effect: continuous_effect::ContinuousEffectKind::ReplacementEffect(ReplacementEffect::Etb(
+                            EtbReplacementEffect {
+                                etb_event: crate::ability_tree::action::PermanentEtbAction {
+                                    permanent: permanent.clone(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: permanent.node_span().merge(enters_span),
+                                },
+                                etb_modifiers: [EtbModifier::PerformAction(EtbPerformAction {
+                                    action: ability.clone(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: ability.node_span().merge(start_span),
+                                })]
+                                .into_iter()
+                                .collect(),
+                                #[cfg(feature = "spanned_tree")]
+                                span: ability.node_span().merge(start_span),
+                            },
+                        )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: ability.node_span().merge(start_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

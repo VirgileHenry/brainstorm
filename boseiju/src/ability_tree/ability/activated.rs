@@ -1,8 +1,6 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-const MAX_COST_COUNT: usize = MAX_CHILDREN_PER_NODE - 1;
-
 /// Activated abilities are abilities that have an activation cost, and an effect.
 ///
 /// From the comprehensive rules:
@@ -14,7 +12,7 @@ const MAX_COST_COUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActivatedAbility {
     pub effect: crate::ability_tree::ability::spell::SpellAbility,
-    pub costs: crate::utils::HeapArrayVec<crate::ability_tree::cost::Cost, MAX_COST_COUNT>,
+    pub cost: crate::ability_tree::cost::Cost,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -28,9 +26,7 @@ impl AbilityTreeNode for ActivatedAbility {
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         children.push(&self.effect as &dyn AbilityTreeNode);
-        for cost in self.costs.iter() {
-            children.push(cost as &dyn AbilityTreeNode);
-        }
+        children.push(&self.cost as &dyn AbilityTreeNode);
         children
     }
 
@@ -38,17 +34,10 @@ impl AbilityTreeNode for ActivatedAbility {
         use std::io::Write;
         write!(out, "activated ability:")?;
         out.push_inter_branch()?;
-        write!(out, "costs:")?;
-        for (i, cost) in self.costs.iter().enumerate() {
-            if i == self.costs.len() - 1 {
-                out.push_final_branch()?;
-            } else {
-                out.push_inter_branch()?;
-            }
-            cost.display(out)?;
-            out.pop_branch();
-        }
-        out.next_final_branch()?;
+        write!(out, "cost:")?;
+        out.push_final_branch()?;
+        self.cost.display(out)?;
+        out.pop_branch();
         write!(out, "effects:")?;
         out.push_final_branch()?;
         self.effect.display(out)?;

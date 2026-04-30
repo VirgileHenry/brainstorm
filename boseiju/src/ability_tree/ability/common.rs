@@ -66,9 +66,8 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
-                costs: {
-                    let mut costs = HeapArrayVec::new();
-                    let sacrifice_self_cost = Cost::Imperative(Imperative {
+                cost: Cost {
+                    costs: [Imperative {
                         kind: ImperativeKind::Sacrifice(SacrificeImperative {
                             object: Permanent::SelfReferencing(SelfReferencing {
                                 #[cfg(feature = "spanned_tree")]
@@ -83,10 +82,11 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                         },
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
-                    });
-
-                    costs.push(sacrifice_self_cost);
-                    costs
+                    }]
+                    .into_iter()
+                    .collect(),
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
                 },
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),

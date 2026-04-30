@@ -1,8 +1,8 @@
-// mod etb_perform_action;
+mod etb_perform_action;
 mod etb_with_counters;
 mod etb_with_state;
 
-// pub use etb_perform_action::EtbPerformAction;
+pub use etb_perform_action::EtbPerformAction;
 pub use etb_with_counters::EtbWithCounters;
 pub use etb_with_state::EtbWithState;
 
@@ -14,6 +14,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 pub enum EtbModifier {
     WithCounters(EtbWithCounters),
     WithState(EtbWithState),
+    PerformAction(EtbPerformAction),
 }
 
 impl AbilityTreeNode for EtbModifier {
@@ -27,6 +28,7 @@ impl AbilityTreeNode for EtbModifier {
         match self {
             Self::WithCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::WithState(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PerformAction(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -38,6 +40,7 @@ impl AbilityTreeNode for EtbModifier {
         match self {
             Self::WithCounters(child) => child.display(out)?,
             Self::WithState(child) => child.display(out)?,
+            Self::PerformAction(child) => child.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -52,6 +55,7 @@ impl AbilityTreeNode for EtbModifier {
         match self {
             Self::WithCounters(child) => child.node_span(),
             Self::WithState(child) => child.node_span(),
+            Self::PerformAction(child) => child.node_span(),
         }
     }
 }

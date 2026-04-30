@@ -70,6 +70,7 @@ pub enum ParserNode {
     ForwardDuration { duration: ForwardDuration },
     GameStateNumber { number: GameStateNumber },
     Imperative { imperative: Imperative },
+    ImperativeAsCost { cost: Imperative },
     ImperativeChoices { choices: ImperativeChoices },
     ImperativeKind { imperative: ImperativeKind },
     ImperativeList { imperatives: ImperativeList },

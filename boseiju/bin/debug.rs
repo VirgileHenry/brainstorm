@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Whenever a Human you control enters, this enchantment deals 1 damage to any target.";
+    let oracle_text = "Return another target Aura or Equipment card from your graveyard to your hand.";
     let card_name = "Elder Owyn Lyons";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

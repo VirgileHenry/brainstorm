@@ -8,7 +8,7 @@ use crate::utils::dummy;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Bestow <mana cost> */
+    /* Bestow <cost> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            ParserNode::Cost { cost: dummy() }.id(),
         ]),
         merged: ParserNode::KeywordAbility {
             keyword_ability: dummy(),
@@ -30,24 +30,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     #[cfg(feature = "spanned_tree")]
                         span: bestow_span,
                 })),
-                ParserNode::ManaCost { mana_cost },
+                ParserNode::Cost { cost },
             ] => Ok(ParserNode::KeywordAbility {
                 keyword_ability: crate::ability_tree::ability::KeywordAbility {
                     keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Bestow(
                         crate::ability_tree::ability::keyword_ability::BestowKeywordAbility {
-                            cost: crate::ability_tree::cost::Cost::ManaCost(mana_cost.clone()),
+                            cost: cost.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: bestow_span.merge(&mana_cost.span),
+                            span: bestow_span.merge(&cost.span),
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(crate::ability_tree::ability::spell::SpellAbility {
-                        effects: crate::utils::HeapArrayVec::new(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }),
+                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
+                        crate::ability_tree::ability::spell::SpellAbility {
+                            effects: crate::utils::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                    ),
                     #[cfg(feature = "spanned_tree")]
-                    span: bestow_span.merge(&mana_cost.span),
+                    span: bestow_span.merge(&cost.span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

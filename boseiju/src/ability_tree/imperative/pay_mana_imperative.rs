@@ -1,49 +1,41 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::imperative::Imperative;
 
-/// A cost is something that need to be paid.
-///
-/// It may be a mana cost (paying mana), or any imperative that requires
-/// the player to do something (discard a card, sacrifice a creature...)
+/// Imperative to pay mana.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Cost {
-    pub costs: crate::utils::HeapArrayVec<Imperative, MAX_CHILDREN_PER_NODE>,
+pub struct PayManaImperative {
+    pub amount: crate::ability_tree::terminals::ManaCost,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl crate::ability_tree::AbilityTreeNode for Cost {
+impl crate::ability_tree::AbilityTreeNode for PayManaImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::Cost.id()
+        crate::ability_tree::NodeKind::PayManaImperative.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        for child in self.costs.iter() {
-            children.push(child as &dyn AbilityTreeNode);
-        }
+        children.push(&self.amount as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "costs:")?;
-        for (i, child) in self.costs.iter().enumerate() {
-            if i == self.costs.len() - 1 {
-                out.push_final_branch()?;
-            } else {
-                out.push_inter_branch()?;
-            }
-            child.display(out)?;
-        }
+        write!(out, "pay mana:")?;
+        out.push_final_branch()?;
+        write!(out, "mana:")?;
+        out.push_final_branch()?;
+        self.amount.display(out)?;
+        out.pop_branch();
+        out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "cost"
+        "pay mana imperative"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -53,10 +45,10 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for Cost {
+impl crate::utils::DummyInit for PayManaImperative {
     fn dummy_init() -> Self {
         Self {
-            costs: crate::utils::dummy(),
+            amount: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
