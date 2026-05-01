@@ -38,6 +38,7 @@ impl AbilityTreeNode for ActivatedAbility {
         out.push_final_branch()?;
         self.cost.display(out)?;
         out.pop_branch();
+        out.next_final_branch()?;
         write!(out, "effects:")?;
         out.push_final_branch()?;
         self.effect.display(out)?;

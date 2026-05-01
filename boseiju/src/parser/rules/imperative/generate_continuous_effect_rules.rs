@@ -134,8 +134,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                             let mut modifications = crate::utils::HeapArrayVec::new();
                                             let gain_ab_mod = continuous_effect::ObjectAbilitiesModification::GainAbility(
                                                 continuous_effect::ObjectGainAbility {
-                                                    ability: crate::ability_tree::ability::Ability::KeywordAbility(
-                                                        keyword_ability.clone(),
+                                                    ability: crate::AbilityTree::from_single_ability(
+                                                        crate::ability_tree::ability::Ability::KeywordAbility(
+                                                            keyword_ability.clone(),
+                                                        ),
                                                     ),
                                                     #[cfg(feature = "spanned_tree")]
                                                     span: keyword_ability.node_span().merge(have_span),

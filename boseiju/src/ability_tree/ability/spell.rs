@@ -35,13 +35,12 @@ impl crate::ability_tree::AbilityTreeNode for SpellAbility {
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "spell ability:")?;
-        for effect in self.effects.iter().take(self.effects.len().saturating_sub(1)) {
-            out.push_inter_branch()?;
-            effect.display(out)?;
-            out.pop_branch();
-        }
-        if let Some(effect) = self.effects.last() {
-            out.push_final_branch()?;
+        for (i, effect) in self.effects.iter().enumerate() {
+            if i == self.effects.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
             effect.display(out)?;
             out.pop_branch();
         }

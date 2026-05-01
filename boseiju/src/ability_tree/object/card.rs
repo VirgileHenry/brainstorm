@@ -1,3 +1,7 @@
+mod top_cards_of_libary;
+
+pub use top_cards_of_libary::TopCardsOfLibrary;
+
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::AttachedObject;
@@ -19,6 +23,7 @@ pub enum Card {
     PreviouslyMentionned(PreviouslyMentionned),
     SelfReferencing(SelfReferencing),
     Reference(CardReference),
+    TopCardsOfLibrary(TopCardsOfLibrary),
 }
 
 impl crate::ability_tree::AbilityTreeNode for Card {
@@ -35,6 +40,7 @@ impl crate::ability_tree::AbilityTreeNode for Card {
             Self::PreviouslyMentionned(child) => children.push(child as &dyn AbilityTreeNode),
             Self::SelfReferencing(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Reference(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::TopCardsOfLibrary(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -49,6 +55,7 @@ impl crate::ability_tree::AbilityTreeNode for Card {
             Self::PreviouslyMentionned(child) => child.display(out)?,
             Self::SelfReferencing(child) => child.display(out)?,
             Self::Reference(child) => child.display(out)?,
+            Self::TopCardsOfLibrary(child) => child.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -66,6 +73,7 @@ impl crate::ability_tree::AbilityTreeNode for Card {
             Self::PreviouslyMentionned(child) => child.node_span(),
             Self::SelfReferencing(child) => child.node_span(),
             Self::Reference(child) => child.node_span(),
+            Self::TopCardsOfLibrary(child) => child.node_span(),
         }
     }
 }

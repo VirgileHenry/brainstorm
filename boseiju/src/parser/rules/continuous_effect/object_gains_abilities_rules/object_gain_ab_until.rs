@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                            ability: ability.clone(),
+                                            ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                             #[cfg(feature = "spanned_tree")]
                                             span: span.merge(&ability.node_span()),
                                         });
@@ -96,7 +96,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                            ability: ability.clone(),
+                                            ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                             #[cfg(feature = "spanned_tree")]
                                             span: span.merge(&ability.node_span()),
                                         });

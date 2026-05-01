@@ -1,26 +1,26 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::object::specified_object::CreaturePowerSpecifier;
+use crate::ability_tree::object::specified_object::CardManaValueSpecifier;
 use crate::ability_tree::object::specified_object::KeywordAbilitySpecifier;
 
 /// The  creature has subtype specifiers.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum CreatureCharacteristicSpecifier {
-    Power(CreaturePowerSpecifier),
+pub enum CardCharacteristicSpecifier {
+    ManaValue(CardManaValueSpecifier),
     KeywordAbility(KeywordAbilitySpecifier),
 }
 
-impl crate::ability_tree::AbilityTreeNode for CreatureCharacteristicSpecifier {
+impl crate::ability_tree::AbilityTreeNode for CardCharacteristicSpecifier {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureCharacteristicSpecifier.id()
+        crate::ability_tree::NodeKind::CardCharacteristicSpecifier.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
-            Self::Power(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ManaValue(child) => children.push(child as &dyn AbilityTreeNode),
             Self::KeywordAbility(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
@@ -31,7 +31,7 @@ impl crate::ability_tree::AbilityTreeNode for CreatureCharacteristicSpecifier {
         write!(out, "creature characteristic specifier:")?;
         out.push_final_branch()?;
         match self {
-            Self::Power(child) => child.display(out)?,
+            Self::ManaValue(child) => child.display(out)?,
             Self::KeywordAbility(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -45,15 +45,15 @@ impl crate::ability_tree::AbilityTreeNode for CreatureCharacteristicSpecifier {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Power(child) => child.node_span(),
+            Self::ManaValue(child) => child.node_span(),
             Self::KeywordAbility(child) => child.node_span(),
         }
     }
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureCharacteristicSpecifier {
+impl crate::utils::DummyInit for CardCharacteristicSpecifier {
     fn dummy_init() -> Self {
-        Self::Power(crate::utils::dummy())
+        Self::ManaValue(crate::utils::dummy())
     }
 }

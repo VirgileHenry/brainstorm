@@ -1,3 +1,7 @@
+mod characteristic_specifier;
+
+pub use characteristic_specifier::*;
+
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
@@ -12,6 +16,7 @@ pub enum CardSpecifier {
     Another(AnotherObjectSpecifier),
     Color(ColorSpecifier),
     Owner(OwnerSpecifier),
+    WithCharacteristic(CardCharacteristicSpecifier),
 }
 
 impl Specifier for CardSpecifier {}
@@ -28,6 +33,7 @@ impl crate::ability_tree::AbilityTreeNode for CardSpecifier {
             Self::Another(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Color(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Owner(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::WithCharacteristic(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -40,6 +46,7 @@ impl crate::ability_tree::AbilityTreeNode for CardSpecifier {
             Self::Another(child) => child.display(out)?,
             Self::Color(child) => child.display(out)?,
             Self::Owner(child) => child.display(out)?,
+            Self::WithCharacteristic(child) => child.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -55,6 +62,7 @@ impl crate::ability_tree::AbilityTreeNode for CardSpecifier {
             Self::Another(child) => child.node_span(),
             Self::Color(child) => child.node_span(),
             Self::Owner(child) => child.node_span(),
+            Self::WithCharacteristic(child) => child.node_span(),
         }
     }
 }

@@ -38,6 +38,7 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
                 out.push_inter_branch()?;
             }
             child.display(out)?;
+            out.pop_branch();
         }
         Ok(())
     }

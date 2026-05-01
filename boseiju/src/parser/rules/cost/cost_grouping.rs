@@ -33,6 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -60,11 +61,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -94,16 +97,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
@@ -135,21 +141,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             expanded: RuleLhs::new(&[
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::ImperativeAsCost { cost: dummy() }.id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),

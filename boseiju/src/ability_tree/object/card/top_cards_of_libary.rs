@@ -1,41 +1,49 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// A specifier for the mana value of a creature.
+/// Card reference that references the top X cards of one's library.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CardManaValuePropertySpecifier {
-    pub mana_value: crate::ability_tree::number::Number,
+pub struct TopCardsOfLibrary {
+    pub amount: crate::ability_tree::number::Number,
+    pub player: crate::ability_tree::player::PlayerSpecifier,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl AbilityTreeNode for CardManaValuePropertySpecifier {
+impl AbilityTreeNode for TopCardsOfLibrary {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CardManaValuePropertySpecifier.id()
+        crate::ability_tree::NodeKind::TopCardsOfLibrary.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.mana_value as &dyn AbilityTreeNode);
+        children.push(&self.amount as &dyn AbilityTreeNode);
+        children.push(&self.player as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "card mana value specifier:")?;
+        write!(out, "top cards of player's library:")?;
+        out.push_inter_branch()?;
+        write!(out, "number of cards:")?;
         out.push_final_branch()?;
-        write!(out, "mana value is:")?;
+        self.amount.display(out)?;
+        out.pop_branch();
+        out.next_inter_branch()?;
+        out.next_final_branch()?;
+        write!(out, "player:")?;
         out.push_final_branch()?;
-        self.mana_value.display(out)?;
+        self.player.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "card mana value specifier"
+        "return imperative"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -45,10 +53,11 @@ impl AbilityTreeNode for CardManaValuePropertySpecifier {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CardManaValuePropertySpecifier {
+impl crate::utils::DummyInit for TopCardsOfLibrary {
     fn dummy_init() -> Self {
         Self {
-            mana_value: crate::utils::dummy(),
+            amount: crate::utils::dummy(),
+            player: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

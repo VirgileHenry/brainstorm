@@ -44,6 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         kind: crate::ability_tree::imperative::ImperativeKind::PayMana(
                                             crate::ability_tree::imperative::PayManaImperative {
                                                 amount: mana_cost.clone(),
+                                                #[cfg(feature = "spanned_tree")]
                                                 span: mana_cost.node_span(),
                                             },
                                         ),

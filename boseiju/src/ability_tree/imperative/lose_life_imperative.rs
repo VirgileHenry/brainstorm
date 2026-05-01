@@ -1,41 +1,41 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// A specifier for the power of a creature.
+/// Imperative to draw cards or make a player draw cards.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CardTotalPowerAndToughnessPropertySpecifier {
-    pub total_power_and_toughness: crate::ability_tree::number::Number,
+pub struct LoseLifeImperative {
+    pub amount: crate::ability_tree::number::Number,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl AbilityTreeNode for CardTotalPowerAndToughnessPropertySpecifier {
+impl crate::ability_tree::AbilityTreeNode for LoseLifeImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CardTotalPowerAndToughnessPropertySpecifier.id()
+        crate::ability_tree::NodeKind::LoseLifeImperative.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.total_power_and_toughness as &dyn AbilityTreeNode);
+        children.push(&self.amount as &dyn AbilityTreeNode);
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "card total power and toughness specifier:")?;
+        write!(out, "lose life:")?;
         out.push_final_branch()?;
-        write!(out, "total power and toughness is:")?;
+        write!(out, "amount:")?;
         out.push_final_branch()?;
-        self.total_power_and_toughness.display(out)?;
+        self.amount.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "card total power and toughness specifier"
+        "lose life imperative"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -45,10 +45,10 @@ impl AbilityTreeNode for CardTotalPowerAndToughnessPropertySpecifier {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CardTotalPowerAndToughnessPropertySpecifier {
+impl crate::utils::DummyInit for LoseLifeImperative {
     fn dummy_init() -> Self {
         Self {
-            total_power_and_toughness: crate::utils::dummy(),
+            amount: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

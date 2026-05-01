@@ -1,3 +1,5 @@
+mod top_cards_of_library;
+
 use crate::ability_tree::object;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
@@ -12,7 +14,7 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    [
+    let default_card_rules = vec![
         /* "<count> <specified card>" is a card */
         ParserRule {
             expanded: RuleLhs::new(&[
@@ -153,6 +155,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-    ]
-    .into_iter()
+    ];
+
+    [default_card_rules, top_cards_of_library::rules().collect::<Vec<_>>()]
+        .into_iter()
+        .flatten()
 }

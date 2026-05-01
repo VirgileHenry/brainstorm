@@ -138,7 +138,7 @@ impl crate::utils::DummyInit for ObjectAbilitiesModification {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ObjectGainAbility {
-    pub ability: crate::ability_tree::ability::Ability,
+    pub ability: crate::AbilityTree,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

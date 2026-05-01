@@ -12,7 +12,7 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "<object> get <power toughness modifiers>" */
+    /* "<creature> get <power toughness modifiers>" */
     [ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::Creature { creature: dummy() }.id(),

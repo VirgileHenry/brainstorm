@@ -19,6 +19,7 @@ pub mod specified_object;
 pub use artifact::Artifact;
 pub use attached_object::AttachedObject;
 pub use card::Card;
+pub use card::TopCardsOfLibrary;
 pub use count_specifier::CountSpecifier;
 pub use creature::Creature;
 pub use damage_receiver::AnyTarget;

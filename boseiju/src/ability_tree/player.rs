@@ -23,11 +23,15 @@ pub enum PlayerSpecifier {
         span: crate::ability_tree::span::TreeSpan,
     },
     ObjectController(PlayerSpecifierObjectController),
+    ObjectOwner(PlayerSpecifierObjectOwner),
+    PerviouslyMentionnedPlayer {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TargetOpponent {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    ObjectOwner(PlayerSpecifierObjectOwner),
     ToYourLeft {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -55,6 +59,7 @@ impl AbilityTreeNode for PlayerSpecifier {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::ObjectController(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::ObjectOwner(child) => children.push(child as &dyn AbilityTreeNode),
             other => children.push(crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(
                 crate::ability_tree::NodeKind::PlayerSpecifier(other.clone()).id(),
             ) as &dyn AbilityTreeNode),
@@ -75,13 +80,14 @@ impl AbilityTreeNode for PlayerSpecifier {
                 child.display(out)?;
                 out.pop_branch();
             }
-            Self::TargetOpponent { .. } => write!(out, "target opponent")?,
             Self::ObjectOwner(child) => {
                 write!(out, "object owner's:")?;
                 out.push_final_branch()?;
                 child.display(out)?;
                 out.pop_branch();
             }
+            Self::TargetOpponent { .. } => write!(out, "target opponent")?,
+            Self::PerviouslyMentionnedPlayer { .. } => write!(out, "target opponent")?,
             Self::ToYourLeft { .. } => write!(out, "the player to your left")?,
             Self::ToYourRight { .. } => write!(out, "the player to your right")?,
             Self::You { .. } => write!(out, "you")?,
@@ -101,8 +107,9 @@ impl AbilityTreeNode for PlayerSpecifier {
             Self::Any { span } => *span,
             Self::EachOpponent { span } => *span,
             Self::ObjectController(child) => child.span,
-            Self::TargetOpponent { span } => *span,
             Self::ObjectOwner(child) => child.span,
+            Self::TargetOpponent { span } => *span,
+            Self::PerviouslyMentionnedPlayer { span } => *span,
             Self::ToYourLeft { span } => *span,
             Self::ToYourRight { span } => *span,
             Self::You { span } => *span,

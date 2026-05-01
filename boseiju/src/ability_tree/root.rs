@@ -21,6 +21,16 @@ impl AbilityTree {
         }
     }
 
+    pub fn from_single_ability(ability: ability::Ability) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        let span = ability.node_span();
+        Self {
+            abilities: [ability].into_iter().collect(),
+            #[cfg(feature = "spanned_tree")]
+            span,
+        }
+    }
+
     pub fn display_from_root<W: std::io::Write>(&self, output: &mut W, prefix: &str) -> std::io::Result<()> {
         let mut tree_formatter = crate::utils::TreeFormatter::new(output, 64, prefix);
         self.display(&mut tree_formatter)

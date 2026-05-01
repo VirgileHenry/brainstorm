@@ -1,5 +1,6 @@
 use crate::ability_tree::object;
 use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
 use crate::parser::ParserNode;
 use crate::parser::rules::ParserRule;
 use crate::parser::rules::ParserRuleDeclarationLocation;
@@ -79,6 +80,56 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::EnchantmentSpecifier { specifier }] => Ok(ParserNode::EnchantmentSpecifiers {
                     specifiers: object::specified_object::Specifiers::Single(specifier.clone()),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<enchantment specifier> <enchantment specifier>" -> and list */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::EnchantmentSpecifier { specifier: dummy() }.id(),
+                ParserNode::EnchantmentSpecifier { specifier: dummy() }.id(),
+            ]),
+            merged: ParserNode::EnchantmentSpecifiers { specifiers: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::EnchantmentSpecifier { specifier: s1 },
+                    ParserNode::EnchantmentSpecifier { specifier: s2 },
+                ] => Ok(ParserNode::EnchantmentSpecifiers {
+                    specifiers: object::specified_object::Specifiers::And(object::specified_object::SpecifierAndList {
+                        specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: s1.node_span().merge(&s2.node_span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<enchantment specifier> or <enchantment specifier>" -> or list */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::EnchantmentSpecifier { specifier: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::EnchantmentSpecifier { specifier: dummy() }.id(),
+            ]),
+            merged: ParserNode::EnchantmentSpecifiers { specifiers: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::EnchantmentSpecifier { specifier: s1 },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::EnchantmentSpecifier { specifier: s2 },
+                ] => Ok(ParserNode::EnchantmentSpecifiers {
+                    specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {
+                        specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: s1.node_span().merge(&s2.node_span()),
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

@@ -74,8 +74,9 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
     }
 
     pub fn merge_specifiers(&self, other: Self) -> Self {
-        match other {
-            Self::Single(single) => self.add_factor_specifier(single),
+        match (self, other) {
+            (current, Self::Single(single)) => current.add_factor_specifier(single),
+            (Self::Single(single), current) => current.add_factor_specifier(single.clone()),
             _ => unimplemented!("fuck me"),
         }
     }

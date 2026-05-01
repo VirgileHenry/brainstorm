@@ -41,7 +41,6 @@ impl AbilityTreeNode for ImperativeList {
             imperative.display(out)?;
             out.pop_branch();
         }
-        out.pop_branch();
         Ok(())
     }
 

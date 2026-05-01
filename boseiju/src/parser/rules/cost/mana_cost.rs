@@ -1,4 +1,3 @@
-use crate::ability_tree::AbilityTreeNode;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::parser::ParserNode;
@@ -7,6 +6,9 @@ use crate::parser::rules::ParserRuleDeclarationLocation;
 use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [

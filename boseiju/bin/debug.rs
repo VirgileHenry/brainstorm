@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Return another target Aura or Equipment card from your graveyard to your hand.";
+    let oracle_text = "Other Cats you control get +2/+1.";
     let card_name = "Elder Owyn Lyons";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

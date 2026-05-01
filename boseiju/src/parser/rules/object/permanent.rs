@@ -177,6 +177,58 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        /* "enchanted creature" and "equipped creature" can be upscaled to enchanted permanents */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
+                intermediates::AttachedObject::AttachedCreature {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::AttachedObject(intermediates::AttachedObject::AttachedCreature {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Permanent {
+                    permanent: object::Permanent::Attached(object::AttachedObject {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "fortified land" can be upscaled to attached permanent */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
+                intermediates::AttachedObject::FortifiedLand {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::AttachedObject(intermediates::AttachedObject::FortifiedLand {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::Permanent {
+                    permanent: object::Permanent::Attached(object::AttachedObject {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
         /* "it" makes a previously mentionned permanent */
         ParserRule {
             expanded: RuleLhs::new(&[

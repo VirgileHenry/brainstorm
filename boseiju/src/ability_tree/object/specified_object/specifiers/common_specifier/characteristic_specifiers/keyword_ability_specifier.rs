@@ -4,16 +4,16 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// The  creature has subtype specifiers.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CreatureKeywordAbilitySpecifier {
+pub struct KeywordAbilitySpecifier {
     pub keyword_ability: Box<crate::ability_tree::ability::KeywordAbility>, /* Fixme: overkill ? */
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl crate::ability_tree::AbilityTreeNode for CreatureKeywordAbilitySpecifier {
+impl crate::ability_tree::AbilityTreeNode for KeywordAbilitySpecifier {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::ability_tree::NodeKind::CreatureKeywordAbilitySpecifier.id()
+        crate::ability_tree::NodeKind::KeywordAbilitySpecifier.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -42,7 +42,7 @@ impl crate::ability_tree::AbilityTreeNode for CreatureKeywordAbilitySpecifier {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for CreatureKeywordAbilitySpecifier {
+impl crate::utils::DummyInit for KeywordAbilitySpecifier {
     fn dummy_init() -> Self {
         Self {
             keyword_ability: Box::new(crate::utils::dummy()),
