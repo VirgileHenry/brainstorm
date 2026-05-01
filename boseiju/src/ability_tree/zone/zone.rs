@@ -9,7 +9,7 @@ use crate::lexer::IntoToken;
 pub enum OwnableZone {
     /// The battlefield is technically not an owned zone.
     ///
-    /// However, "the battlefield under <player> control" can be interpreted
+    /// However, "the battlefield under some player control" can be interpreted
     /// as "your battlefield ?" soo it makes sense
     Battlefield {
         #[cfg(feature = "spanned_tree")]
@@ -80,8 +80,8 @@ impl std::fmt::Display for OwnableZone {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for OwnableZone {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "graveyard" => Some(OwnableZone::Graveyard {

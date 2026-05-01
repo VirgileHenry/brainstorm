@@ -2,11 +2,13 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::ability_tree::AbilityTreeNode;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::utils::dummy;
 use idris::Idris;
+
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
@@ -56,6 +58,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     definition: crate::ability_tree::number::XDefinition::FromGameState(
                         crate::ability_tree::number::XFromGameState {
                             x_value: number.clone(),
+                            #[cfg(feature = "spanned_tree")]
                             span: number.node_span().merge(start_span),
                         },
                     ),

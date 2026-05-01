@@ -11,7 +11,7 @@ const MAX_OBJECT_MODIFICATIONS: usize = MAX_CHILDREN_PER_NODE - 1;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModifyObjectEffect {
-    pub object: crate::ability_tree::object::PermanentReference,
+    pub object: crate::ability_tree::object::Permanent,
     pub modifications: crate::utils::HeapArrayVec<ObjectAbilitiesModification, MAX_OBJECT_MODIFICATIONS>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
@@ -138,7 +138,7 @@ impl crate::utils::DummyInit for ObjectAbilitiesModification {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ObjectGainAbility {
-    pub ability: crate::ability_tree::ability::Ability,
+    pub ability: crate::AbilityTree,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

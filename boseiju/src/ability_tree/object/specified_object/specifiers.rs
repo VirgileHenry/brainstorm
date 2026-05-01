@@ -30,7 +30,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
                 #[cfg(feature = "spanned_tree")]
                 span: self.node_span().merge(&factor_specifier.node_span()),
                 specifiers: {
-                    let mut specifiers = arrayvec::ArrayVec::new_const();
+                    let mut specifiers = crate::utils::HeapArrayVec::new();
                     specifiers.push(specifier.clone());
                     specifiers.push(factor_specifier);
                     specifiers
@@ -46,7 +46,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
                 },
             }),
             Self::Or(or) => Self::OrOfAnd({
-                let mut or_specifiers = arrayvec::ArrayVec::new_const();
+                let mut or_specifiers = crate::utils::HeapArrayVec::new();
                 for specifier in or.specifiers.iter() {
                     let mut and_specifiers = arrayvec::ArrayVec::new_const();
                     and_specifiers.push(specifier.clone());
@@ -74,8 +74,9 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
     }
 
     pub fn merge_specifiers(&self, other: Self) -> Self {
-        match other {
-            Self::Single(single) => self.add_factor_specifier(single),
+        match (self, other) {
+            (current, Self::Single(single)) => current.add_factor_specifier(single),
+            (Self::Single(single), current) => current.add_factor_specifier(single.clone()),
             _ => unimplemented!("fuck me"),
         }
     }
@@ -99,16 +100,12 @@ impl<T: Specifier + AbilityTreeNode> crate::ability_tree::AbilityTreeNode for Sp
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
-        write!(out, "object specifiers:")?;
-        out.push_final_branch()?;
         match self {
             Self::Single(child) => child.display(out)?,
             Self::And(child) => child.display(out)?,
             Self::Or(child) => child.display(out)?,
             Self::OrOfAnd(child) => child.display(out)?,
         }
-        out.pop_branch();
         Ok(())
     }
 

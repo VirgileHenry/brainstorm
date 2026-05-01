@@ -1,10 +1,12 @@
 mod creature_performs_action;
 mod object_gains_state;
 mod permanent_performs_action;
+mod player_performs_action;
 
 pub use creature_performs_action::*;
 pub use object_gains_state::*;
 pub use permanent_performs_action::*;
+pub use player_performs_action::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -24,6 +26,7 @@ pub enum Event {
     CreaturePerformsAction(CreaturePerformsActionEvent),
     ObjectGainsState(ObjectGainsStateEvent),
     PermanentPerformsAction(PermanentPerformsActionEvent),
+    PlayerPerformsAction(PlayerPerformsActionEvent),
 }
 
 impl crate::ability_tree::AbilityTreeNode for Event {
@@ -38,6 +41,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreaturePerformsAction(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ObjectGainsState(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PermanentPerformsAction(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PlayerPerformsAction(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -50,6 +54,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreaturePerformsAction(event) => event.display(out)?,
             Self::ObjectGainsState(event) => event.display(out)?,
             Self::PermanentPerformsAction(event) => event.display(out)?,
+            Self::PlayerPerformsAction(event) => event.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -65,6 +70,7 @@ impl crate::ability_tree::AbilityTreeNode for Event {
             Self::CreaturePerformsAction(child) => child.node_span(),
             Self::ObjectGainsState(child) => child.node_span(),
             Self::PermanentPerformsAction(child) => child.node_span(),
+            Self::PlayerPerformsAction(child) => child.node_span(),
         }
     }
 }

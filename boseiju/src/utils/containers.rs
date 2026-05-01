@@ -38,3 +38,14 @@ impl<T, const CAP: usize> crate::utils::DummyInit for HeapArrayVec<T, CAP> {
         Self::new()
     }
 }
+
+impl<T, const CAP: usize> FromIterator<T> for HeapArrayVec<T, CAP> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        /* Fixme: this can panic. */
+        /* We can fix this by taking the first CAP elems, but then we need to warn somehow ? */
+        /* We can't juste fail silently */
+        Self {
+            inner: Box::new(arrayvec::ArrayVec::from_iter(iter)),
+        }
+    }
+}

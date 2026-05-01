@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gets +n/+n and has <ability>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureReference { creature: dummy() }.id(),
+                ParserNode::Creature { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -38,7 +38,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CreatureReference { creature },
+                    ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::PowerToughnessModifiers { modifiers },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
@@ -50,14 +50,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
                         effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
-                            object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
+                            object: creature.to_permanent(),
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(
                                     ObjectCharacteristicModification::PowerToughnessModifiers(modifiers.clone()),
                                 );
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                    ability: ability.clone(),
+                                    ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                     #[cfg(feature = "spanned_tree")]
                                     span: gain_ab_span.merge(&ability.node_span()),
                                 });
@@ -80,7 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gets +n/+n and has <ability> and <ability> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureReference { creature: dummy() }.id(),
+                ParserNode::Creature { creature: dummy() }.id(),
                 ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -108,7 +108,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CreatureReference { creature },
+                    ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::PowerToughnessModifiers { modifiers },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
@@ -122,19 +122,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
                         effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
-                            object: crate::ability_tree::object::PermanentReference::Creature(creature.clone()),
+                            object: creature.to_permanent(),
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let characteristic_mod = ObjectAbilitiesModification::CharacteristicModification(
                                     ObjectCharacteristicModification::PowerToughnessModifiers(modifiers.clone()),
                                 );
                                 let gain_ab1_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                    ability: ability_1.clone(),
+                                    ability: crate::AbilityTree::from_single_ability(ability_1.clone()),
                                     #[cfg(feature = "spanned_tree")]
                                     span: ab1_span.merge(&ability_1.node_span()),
                                 });
                                 let gain_ab2_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                    ability: ability_2.clone(),
+                                    ability: crate::AbilityTree::from_single_ability(ability_2.clone()),
                                     #[cfg(feature = "spanned_tree")]
                                     span: ability_2.node_span(),
                                 });

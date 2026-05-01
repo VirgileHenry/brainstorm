@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent reference> have <keyword ability>" is a continuous effect. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -30,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -43,7 +43,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                    ability: crate::ability_tree::ability::Ability::KeywordAbility(keyword_ability.clone()),
+                                    ability: crate::AbilityTree::from_single_ability(
+                                        crate::ability_tree::ability::Ability::KeywordAbility(keyword_ability.clone()),
+                                    ),
                                     #[cfg(feature = "spanned_tree")]
                                     span: span.merge(&keyword_ability.node_span()),
                                 });
@@ -61,41 +63,41 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<object> have "<ability>"" is a continuous effect. */
+        /* "<permanent reference> have <keyword ability> and <keyword ability>" is a continuous effect. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark {
+                ParserNode::KeywordAbility {
+                    keyword_ability: dummy(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Ability { ability: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
+                ParserNode::KeywordAbility {
+                    keyword_ability: dummy(),
+                }
                 .id(),
             ]),
             merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
-                    })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark { .. })),
-                    ParserNode::Ability { ability },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::QuotationMark {
-                        #[cfg(feature = "spanned_tree")]
-                            span: ab_end_span,
-                    })),
+                    ParserNode::Permanent { permanent },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::KeywordAbility {
+                        keyword_ability: kw_ab_1,
+                    },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
+                    ParserNode::KeywordAbility {
+                        keyword_ability: kw_ab_2,
+                    },
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
                         effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
@@ -103,7 +105,150 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             modifications: {
                                 let mut modifications = crate::utils::HeapArrayVec::new();
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                    ability: ability.clone(),
+                                    ability: crate::AbilityTree {
+                                        abilities: [
+                                            crate::ability_tree::ability::Ability::KeywordAbility(kw_ab_1.clone()),
+                                            crate::ability_tree::ability::Ability::KeywordAbility(kw_ab_2.clone()),
+                                        ]
+                                        .into_iter()
+                                        .collect(),
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: permanent.node_span().merge(&kw_ab_2.node_span()),
+                                    },
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: permanent.node_span().merge(&kw_ab_2.node_span()),
+                                });
+                                modifications.push(gain_ab_mod);
+                                modifications
+                            },
+                            #[cfg(feature = "spanned_tree")]
+                            span: permanent.node_span().merge(&kw_ab_2.node_span()),
+                        }),
+                        #[cfg(feature = "spanned_tree")]
+                        span: permanent.node_span().merge(&kw_ab_2.node_span()),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<permanent reference> have <keyword ability>, <keyword ability>, and <keyword ability>" is a continuous effect. */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::Permanent { permanent: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::KeywordAbility {
+                    keyword_ability: dummy(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::KeywordAbility {
+                    keyword_ability: dummy(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::KeywordAbility {
+                    keyword_ability: dummy(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Permanent { permanent },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::KeywordAbility {
+                        keyword_ability: kw_ab_1,
+                    },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::KeywordAbility {
+                        keyword_ability: kw_ab_2,
+                    },
+                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
+                    ParserNode::KeywordAbility {
+                        keyword_ability: kw_ab_3,
+                    },
+                ] => Ok(ParserNode::ContinuousEffect {
+                    effect: ContinuousEffect {
+                        effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            object: permanent.clone(),
+                            modifications: {
+                                let mut modifications = crate::utils::HeapArrayVec::new();
+                                let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
+                                    ability: crate::AbilityTree {
+                                        abilities: [
+                                            crate::ability_tree::ability::Ability::KeywordAbility(kw_ab_1.clone()),
+                                            crate::ability_tree::ability::Ability::KeywordAbility(kw_ab_2.clone()),
+                                            crate::ability_tree::ability::Ability::KeywordAbility(kw_ab_3.clone()),
+                                        ]
+                                        .into_iter()
+                                        .collect(),
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: permanent.node_span().merge(&kw_ab_3.node_span()),
+                                    },
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: permanent.node_span().merge(&kw_ab_3.node_span()),
+                                });
+                                modifications.push(gain_ab_mod);
+                                modifications
+                            },
+                            #[cfg(feature = "spanned_tree")]
+                            span: permanent.node_span().merge(&kw_ab_3.node_span()),
+                        }),
+                        #[cfg(feature = "spanned_tree")]
+                        span: permanent.node_span().merge(&kw_ab_3.node_span()),
+                    },
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<object> have "<ability>"" is a continuous effect. */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::Permanent { permanent: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::Ability { ability: dummy() }.id(),
+            ]),
+            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::Permanent { permanent },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                    ParserNode::Ability { ability },
+                ] => Ok(ParserNode::ContinuousEffect {
+                    effect: ContinuousEffect {
+                        effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            object: permanent.clone(),
+                            modifications: {
+                                let mut modifications = crate::utils::HeapArrayVec::new();
+                                let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
+                                    ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                     #[cfg(feature = "spanned_tree")]
                                     span: span.merge(&ability.node_span()),
                                 });
@@ -114,7 +259,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: permanent.node_span().merge(&ability.node_span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(ab_end_span),
+                        span: permanent.node_span().merge(&ability.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

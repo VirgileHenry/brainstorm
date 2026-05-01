@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::PermanentReference { permanent: dummy() }.id(),
+            ParserNode::Permanent { permanent: dummy() }.id(),
         ]),
         merged: ParserNode::KeywordAbility {
             keyword_ability: dummy(),
@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         span: affinity_span,
                 })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::For { .. })),
-                ParserNode::PermanentReference { permanent },
+                ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::KeywordAbility {
                 keyword_ability: crate::ability_tree::ability::KeywordAbility {
                     keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Affinity(

@@ -1,9 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text =
-        "Trample\nWhenever a creature an opponent controls dies, this creature deals 1 damage to that creature's controller.";
-    let card_name = "Gornog, the Red Reaper";
+    let oracle_text = "Other Cats you control get +2/+1.";
+    let card_name = "Elder Owyn Lyons";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;

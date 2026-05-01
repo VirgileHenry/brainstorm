@@ -25,16 +25,14 @@ pub struct Legalities {
 
 impl Legalities {
     pub fn display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()> {
-        let lines: arrayvec::ArrayVec<_, 4> = mtg_data::Legality::all()
-            .map(|legality| {
-                let legals_in: arrayvec::ArrayVec<_, 20> = self.iter().filter(|(_, l)| *l == legality).map(|(f, _)| f).collect();
+        let lines: Vec<_> = mtg_data::Legality::all()
+            .filter_map(|legality| {
+                let legals_in: Vec<_> = self.iter().filter(|(_, l)| *l == legality).map(|(f, _)| f).collect();
                 match legals_in.is_empty() {
                     false => Some((legality, legals_in)),
                     true => None,
                 }
             })
-            .filter(Option::is_some)
-            .map(Option::unwrap)
             .collect();
         for (i, (legality, formats)) in lines.iter().enumerate() {
             let tree_node = if i + 1 == lines.len() { '╰' } else { '├' };

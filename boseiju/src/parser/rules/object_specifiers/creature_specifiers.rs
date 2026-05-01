@@ -97,7 +97,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                 ] => Ok(ParserNode::CreatureSpecifier {
                     specifier: object::specified_object::CreatureSpecifier::WithCharacteristic(
                         object::specified_object::CreatureCharacteristicSpecifier::KeywordAbility(
-                            object::specified_object::CreatureKeywordAbilitySpecifier {
+                            object::specified_object::KeywordAbilitySpecifier {
                                 keyword_ability: Box::new(keyword_ability.clone()),
                                 #[cfg(feature = "spanned_tree")]
                                 span: keyword_ability.node_span().merge(start_span),
@@ -158,6 +158,56 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::CreatureSpecifier { specifier }] => Ok(ParserNode::CreatureSpecifiers {
                     specifiers: object::specified_object::Specifiers::Single(specifier.clone()),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<creature specifier> <creature specifier>" -> and list */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            ]),
+            merged: ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::CreatureSpecifier { specifier: s1 },
+                    ParserNode::CreatureSpecifier { specifier: s2 },
+                ] => Ok(ParserNode::CreatureSpecifiers {
+                    specifiers: object::specified_object::Specifiers::And(object::specified_object::SpecifierAndList {
+                        specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: s1.node_span().merge(&s2.node_span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<creature specifier> or <creature specifier>" -> or list */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            ]),
+            merged: ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::CreatureSpecifier { specifier: s1 },
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::CreatureSpecifier { specifier: s2 },
+                ] => Ok(ParserNode::CreatureSpecifiers {
+                    specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {
+                        specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: s1.node_span().merge(&s2.node_span()),
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

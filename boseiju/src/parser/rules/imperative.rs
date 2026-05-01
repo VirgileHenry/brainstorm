@@ -11,9 +11,11 @@ mod for_each_rules;
 mod gain_life_rules;
 mod generate_continuous_effect_rules;
 mod generate_delayed_triggered_ab_rules;
+mod lose_life_rules;
 mod put_counters_rules;
 mod remove_counters_rules;
 mod sacrifice_rules;
+mod search_rule;
 mod tap_rules;
 
 use crate::parser::rules::ParserNode;
@@ -88,10 +90,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         gain_life_rules::rules().collect::<Vec<_>>(),
         generate_continuous_effect_rules::rules().collect::<Vec<_>>(),
         generate_delayed_triggered_ab_rules::rules().collect::<Vec<_>>(),
+        lose_life_rules::rules().collect::<Vec<_>>(),
         put_counters_rules::rules().collect::<Vec<_>>(),
         remove_counters_rules::rules().collect::<Vec<_>>(),
         change_zone_rules::rules().collect::<Vec<_>>(),
         sacrifice_rules::rules().collect::<Vec<_>>(),
+        search_rule::rules().collect::<Vec<_>>(),
         tap_rules::rules().collect::<Vec<_>>(),
     ]
     .into_iter()

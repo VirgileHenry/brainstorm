@@ -44,7 +44,7 @@ impl ActionKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "put" | "puts" => Some(Self::Put {
+            "put" | "puts" | "putting" => Some(Self::Put {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

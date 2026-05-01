@@ -150,7 +150,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<card reference> cost <cost modification>" */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Spell { spell: dummy() }.id(),
                 ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Cost {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -167,7 +167,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::SpellReference { spell },
+                    ParserNode::Spell { spell },
                     ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Cost { .. })),
                     ParserNode::CostModification { cost_modification },
                 ] => Ok(ParserNode::CostModificationEffect {

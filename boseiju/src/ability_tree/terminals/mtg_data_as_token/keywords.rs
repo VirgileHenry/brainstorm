@@ -43,8 +43,8 @@ impl AbilityTreeNode for AbilityWord {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for AbilityWord {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         use std::str::FromStr;
         Some(Self {

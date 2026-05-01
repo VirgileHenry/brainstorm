@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     /* "<creature reference> attacks" */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::CreatureReference { creature: dummy() }.id(),
+            ParserNode::Creature { creature: dummy() }.id(),
             ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -24,7 +24,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::Event { event: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::CreatureReference { creature },
+                ParserNode::Creature { creature },
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Attack {
                     #[cfg(feature = "spanned_tree")]
                         span: attack_span,

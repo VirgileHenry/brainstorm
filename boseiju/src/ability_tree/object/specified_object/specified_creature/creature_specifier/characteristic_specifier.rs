@@ -1,18 +1,14 @@
-mod keyword_ability_specifier;
-mod power_specifier;
-
-pub use keyword_ability_specifier::CreatureKeywordAbilitySpecifier;
-pub use power_specifier::CreaturePowerSpecifier;
-
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::object::specified_object::CreaturePowerSpecifier;
+use crate::ability_tree::object::specified_object::KeywordAbilitySpecifier;
 
 /// The  creature has subtype specifiers.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CreatureCharacteristicSpecifier {
     Power(CreaturePowerSpecifier),
-    KeywordAbility(CreatureKeywordAbilitySpecifier),
+    KeywordAbility(KeywordAbilitySpecifier),
 }
 
 impl crate::ability_tree::AbilityTreeNode for CreatureCharacteristicSpecifier {

@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -35,13 +35,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::ChangeZone(
                         crate::ability_tree::imperative::ChangeZoneImperative {
-                            object: crate::ability_tree::object::CardReference::Permanent(permanent.clone()),
+                            object: permanent.to_card(),
                             from: crate::ability_tree::zone::ZoneReference::TheBattlefield {
                                 #[cfg(feature = "spanned_tree")]
                                 span: permanent.node_span().empty_at_end(),
@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Card { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -85,7 +85,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::CardReference { card },
+                    ParserNode::Card { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone: from_zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
@@ -113,7 +113,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Card { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -134,7 +134,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::CardReference { card },
+                    ParserNode::Card { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone: from_zone },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),

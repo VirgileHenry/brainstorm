@@ -1,5 +1,6 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::ability_tree::imperative::Imperative;
 
 /// A cost is something that need to be paid.
 ///
@@ -7,9 +8,10 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// the player to do something (discard a card, sacrifice a creature...)
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Cost {
-    ManaCost(crate::ability_tree::terminals::ManaCost),
-    Imperative(crate::ability_tree::imperative::Imperative),
+pub struct Cost {
+    pub costs: crate::utils::HeapArrayVec<Imperative, MAX_CHILDREN_PER_NODE>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl crate::ability_tree::AbilityTreeNode for Cost {
@@ -20,17 +22,23 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        match self {
-            Self::ManaCost(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Imperative(child) => children.push(child as &dyn AbilityTreeNode),
+        for child in self.costs.iter() {
+            children.push(child as &dyn AbilityTreeNode);
         }
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
-        match self {
-            Cost::ManaCost(mana_cost) => mana_cost.display(out)?,
-            Cost::Imperative(cost) => cost.display(out)?,
+        use std::io::Write;
+        write!(out, "costs:")?;
+        for (i, child) in self.costs.iter().enumerate() {
+            if i == self.costs.len() - 1 {
+                out.push_final_branch()?;
+            } else {
+                out.push_inter_branch()?;
+            }
+            child.display(out)?;
+            out.pop_branch();
         }
         Ok(())
     }
@@ -41,16 +49,17 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        match self {
-            Self::ManaCost(child) => child.node_span(),
-            Self::Imperative(child) => child.node_span(),
-        }
+        self.span
     }
 }
 
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for Cost {
     fn dummy_init() -> Self {
-        Self::ManaCost(crate::utils::dummy())
+        Self {
+            costs: crate::utils::dummy(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

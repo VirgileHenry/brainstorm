@@ -10,14 +10,14 @@ use crate::ability_tree::object::specified_object::SpecifierOrOfAndList;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifierOrList<T: Specifier + AbilityTreeNode> {
-    pub specifiers: arrayvec::ArrayVec<T, MAX_CHILDREN_PER_NODE>,
+    pub specifiers: crate::utils::HeapArrayVec<T, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
 impl<T: Specifier + AbilityTreeNode + Clone> SpecifierOrList<T> {
     pub fn add_factor_specifier(&self, factor_specifier: T) -> SpecifierOrOfAndList<T> {
-        let mut or_specifiers = arrayvec::ArrayVec::new_const();
+        let mut or_specifiers = crate::utils::HeapArrayVec::new();
         for prev_specifier in self.specifiers.iter() {
             let mut and_specifiers = arrayvec::ArrayVec::new_const();
             and_specifiers.push(prev_specifier.clone());
@@ -75,7 +75,7 @@ impl<T: Specifier + AbilityTreeNode> AbilityTreeNode for SpecifierOrList<T> {
 impl<T: Specifier + AbilityTreeNode> crate::utils::DummyInit for SpecifierOrList<T> {
     fn dummy_init() -> Self {
         Self {
-            specifiers: arrayvec::ArrayVec::new_const(),
+            specifiers: crate::utils::HeapArrayVec::new(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

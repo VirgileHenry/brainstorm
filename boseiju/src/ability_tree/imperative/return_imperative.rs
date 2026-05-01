@@ -8,7 +8,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChangeZoneImperative {
-    pub object: crate::ability_tree::object::CardReference,
+    pub object: crate::ability_tree::object::Card,
     pub from: crate::ability_tree::zone::ZoneReference,
     pub to: crate::ability_tree::zone::ZoneReference,
     #[cfg(feature = "spanned_tree")]

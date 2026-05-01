@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
             ]),
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -40,7 +40,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::Counter(counter)),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: crate::ability_tree::imperative::ImperativeKind::PutCounters(
                         crate::ability_tree::imperative::PutCountersImperative {

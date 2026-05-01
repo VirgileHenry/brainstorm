@@ -8,7 +8,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerControlsPermanent {
     pub player: crate::ability_tree::player::PlayerSpecifier,
-    pub permanent: crate::ability_tree::object::PermanentReference,
+    pub permanent: crate::ability_tree::object::Permanent,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }

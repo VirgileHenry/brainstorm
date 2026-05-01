@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent reference> gain <ability> <forward duration>" is a generate continuous effect imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                            ability: ability.clone(),
+                                            ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                             #[cfg(feature = "spanned_tree")]
                                             span: span.merge(&ability.node_span()),
                                         });
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<object> gain <ability>" is forever. It usually happens when the object also get sacrificed at some point */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -81,7 +81,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
                         #[cfg(feature = "spanned_tree")]
                         span,
@@ -96,7 +96,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     modifications: {
                                         let mut modifications = crate::utils::HeapArrayVec::new();
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                            ability: ability.clone(),
+                                            ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                             #[cfg(feature = "spanned_tree")]
                                             span: span.merge(&ability.node_span()),
                                         });

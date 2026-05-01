@@ -4,6 +4,10 @@ version.workspace = true
 edition.workspace = true
 workspace = ".."
 
+# VHY debug
+[profile.release]
+debug = true
+
 [dependencies]
 arrayvec = { workspace = true }
 idris = { workspace = true }

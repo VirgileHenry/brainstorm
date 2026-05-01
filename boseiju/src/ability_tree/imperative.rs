@@ -1,5 +1,4 @@
 mod add_mana_imperative;
-mod choose_imperative;
 mod create_token_imperative;
 mod deals_damage_imperative;
 mod destroy_imperative;
@@ -10,15 +9,19 @@ mod gain_life;
 mod generate_continuous_effect_imperative;
 mod generate_delayed_trigger_ab_imperative;
 mod keyword_action;
+mod lose_life_imperative;
+mod modal_imperative;
+mod pay_life_imperative;
+mod pay_mana_imperative;
 mod put_counters_imperative;
 mod remove_counters_imperative;
 mod return_imperative;
 mod sacrifice_imperative;
+mod search_imperative;
 mod tap_imperative;
 mod untap_imperative;
 
 pub use add_mana_imperative::*;
-pub use choose_imperative::*;
 pub use create_token_imperative::*;
 pub use deals_damage_imperative::*;
 pub use destroy_imperative::*;
@@ -29,10 +32,15 @@ pub use gain_life::*;
 pub use generate_continuous_effect_imperative::*;
 pub use generate_delayed_trigger_ab_imperative::*;
 pub use keyword_action::*;
+pub use lose_life_imperative::*;
+pub use modal_imperative::*;
+pub use pay_life_imperative::*;
+pub use pay_mana_imperative::*;
 pub use put_counters_imperative::*;
 pub use remove_counters_imperative::*;
 pub use return_imperative::*;
 pub use sacrifice_imperative::*;
+pub use search_imperative::*;
 pub use tap_imperative::*;
 pub use untap_imperative::*;
 
@@ -127,10 +135,14 @@ pub enum ImperativeKind {
     GenerateContinuousEffect(GenerateContinuousEffectImperative),
     GenerateDelayedTriggeredAbility(GenerateDelayedTriggeredAbilityImperative),
     KeywordAction(KeywordAction),
+    LoseLife(LoseLifeImperative),
     Modal(ModalImperative),
+    PayLife(PayLifeImperative),
+    PayMana(PayManaImperative),
     PutCounters(PutCountersImperative),
     RemoveCounters(RemoveCountersImperative),
     Sacrifice(SacrificeImperative),
+    Search(SearchImperative),
     Tap(TapImperative),
     Untap(UntapImperative),
 }
@@ -156,10 +168,14 @@ impl AbilityTreeNode for ImperativeKind {
             Self::GenerateContinuousEffect(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GenerateDelayedTriggeredAbility(child) => children.push(child as &dyn AbilityTreeNode),
             Self::KeywordAction(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::LoseLife(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Modal(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PayLife(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::PayMana(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Sacrifice(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Search(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Tap(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Untap(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -183,10 +199,14 @@ impl AbilityTreeNode for ImperativeKind {
             Self::GenerateContinuousEffect(imperative) => imperative.display(out)?,
             Self::GenerateDelayedTriggeredAbility(imperative) => imperative.display(out)?,
             Self::KeywordAction(imperative) => imperative.display(out)?,
+            Self::LoseLife(imperative) => imperative.display(out)?,
             Self::Modal(imperative) => imperative.display(out)?,
+            Self::PayLife(imperative) => imperative.display(out)?,
+            Self::PayMana(imperative) => imperative.display(out)?,
             Self::PutCounters(imperative) => imperative.display(out)?,
             Self::RemoveCounters(imperative) => imperative.display(out)?,
             Self::Sacrifice(imperative) => imperative.display(out)?,
+            Self::Search(imperative) => imperative.display(out)?,
             Self::Tap(imperative) => imperative.display(out)?,
             Self::Untap(imperative) => imperative.display(out)?,
         }
@@ -213,10 +233,14 @@ impl AbilityTreeNode for ImperativeKind {
             Self::GenerateContinuousEffect(child) => child.node_span(),
             Self::GenerateDelayedTriggeredAbility(child) => child.node_span(),
             Self::KeywordAction(child) => child.node_span(),
+            Self::LoseLife(child) => child.node_span(),
             Self::Modal(child) => child.node_span(),
+            Self::PayLife(child) => child.node_span(),
+            Self::PayMana(child) => child.node_span(),
             Self::PutCounters(child) => child.node_span(),
             Self::RemoveCounters(child) => child.node_span(),
             Self::Sacrifice(child) => child.node_span(),
+            Self::Search(child) => child.node_span(),
             Self::Tap(child) => child.node_span(),
             Self::Untap(child) => child.node_span(),
         }

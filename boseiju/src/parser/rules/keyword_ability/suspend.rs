@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            ParserNode::Cost { cost: dummy() }.id(),
         ]),
         merged: ParserNode::KeywordAbility {
             keyword_ability: dummy(),
@@ -40,25 +40,27 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 })),
                 ParserNode::Number { number },
                 ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
-                ParserNode::ManaCost { mana_cost },
+                ParserNode::Cost { cost },
             ] => Ok(ParserNode::KeywordAbility {
                 keyword_ability: crate::ability_tree::ability::KeywordAbility {
                     keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Suspend(
                         crate::ability_tree::ability::keyword_ability::SuspendKeywordAbility {
-                            cost: crate::ability_tree::cost::Cost::ManaCost(mana_cost.clone()),
+                            cost: cost.clone(),
                             amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: number.node_span().merge(suspend_span),
+                            span: cost.node_span().merge(suspend_span),
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(crate::ability_tree::ability::spell::SpellAbility {
-                        effects: crate::utils::HeapArrayVec::new(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }),
+                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
+                        crate::ability_tree::ability::spell::SpellAbility {
+                            effects: crate::utils::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                    ),
                     #[cfg(feature = "spanned_tree")]
-                    span: number.node_span().merge(suspend_span),
+                    span: cost.node_span().merge(suspend_span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

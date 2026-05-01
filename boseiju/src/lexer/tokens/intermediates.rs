@@ -80,7 +80,15 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Permanent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Player {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Spell {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -110,7 +118,9 @@ impl VhyToSortLater {
             Self::Source { span } => *span,
             Self::Card { span } => *span,
             Self::Cost { span } => *span,
+            Self::Permanent { span } => *span,
             Self::Player { span } => *span,
+            Self::Spell { span } => *span,
             Self::Turn { span } => *span,
             Self::Mana { span } => *span,
             Self::Ability { span } => *span,
@@ -126,7 +136,15 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "card" => Some(Self::Card {
+            "card" | "cards" => Some(Self::Card {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "cost" | "costs" => Some(Self::Cost {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "effect" => Some(Self::Effect {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -138,19 +156,19 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "permanent" | "permanents" => Some(Self::Permanent {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "player" => Some(Self::Player {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "effect" => Some(Self::Effect {
+            "spell" | "spells" => Some(Self::Spell {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "source" => Some(Self::Source {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "cost" | "costs" => Some(Self::Cost {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

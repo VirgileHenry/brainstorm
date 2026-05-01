@@ -9,6 +9,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
+use crate::ability_tree::object::specified_object::OwnerSpecifier;
 use crate::ability_tree::object::specified_object::Specifier;
 
 /// Specifiers for creatures.
@@ -18,6 +19,7 @@ pub enum CreatureSpecifier {
     Another(AnotherObjectSpecifier),
     Color(ColorSpecifier),
     Control(ControlSpecifier),
+    Owner(OwnerSpecifier),
     Subtype(CreatureSubtypeSpecifier),
     WithCharacteristic(CreatureCharacteristicSpecifier),
 }
@@ -36,6 +38,7 @@ impl crate::ability_tree::AbilityTreeNode for CreatureSpecifier {
             Self::Another(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Color(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Control(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Owner(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Subtype(child) => children.push(child as &dyn AbilityTreeNode),
             Self::WithCharacteristic(child) => children.push(child as &dyn AbilityTreeNode),
         }
@@ -50,6 +53,7 @@ impl crate::ability_tree::AbilityTreeNode for CreatureSpecifier {
             Self::Another(child) => child.display(out)?,
             Self::Color(child) => child.display(out)?,
             Self::Control(child) => child.display(out)?,
+            Self::Owner(child) => child.display(out)?,
             Self::Subtype(child) => child.display(out)?,
             Self::WithCharacteristic(child) => child.display(out)?,
         }
@@ -67,6 +71,7 @@ impl crate::ability_tree::AbilityTreeNode for CreatureSpecifier {
             Self::Another(child) => child.node_span(),
             Self::Color(child) => child.node_span(),
             Self::Control(child) => child.node_span(),
+            Self::Owner(child) => child.node_span(),
             Self::Subtype(child) => child.node_span(),
             Self::WithCharacteristic(child) => child.node_span(),
         }

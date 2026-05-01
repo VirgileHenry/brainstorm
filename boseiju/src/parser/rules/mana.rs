@@ -14,14 +14,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(Token::Mana { mana })] => Ok(ParserNode::ManaCost {
-                    mana_cost: {
-                        let mut cost = arrayvec::ArrayVec::new_const();
-                        cost.push(mana.clone());
-                        terminals::ManaCost {
-                            cost,
-                            #[cfg(feature = "spanned_tree")]
-                            span: mana.node_span(),
-                        }
+                    mana_cost: terminals::ManaCost {
+                        cost: std::iter::once(mana.clone()).collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: mana.node_span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -39,15 +35,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::Mana { mana: m1 }),
                     ParserNode::LexerToken(Token::Mana { mana: m2 }),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: {
-                        let mut cost = arrayvec::ArrayVec::new_const();
-                        cost.push(m1.clone());
-                        cost.push(m2.clone());
-                        terminals::ManaCost {
-                            cost,
-                            #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m2.node_span()),
-                        }
+                    mana_cost: terminals::ManaCost {
+                        cost: [m1.clone(), m2.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: m1.node_span().merge(&m2.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -67,16 +58,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::Mana { mana: m2 }),
                     ParserNode::LexerToken(Token::Mana { mana: m3 }),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: {
-                        let mut cost = arrayvec::ArrayVec::new_const();
-                        cost.push(m1.clone());
-                        cost.push(m2.clone());
-                        cost.push(m3.clone());
-                        terminals::ManaCost {
-                            cost,
-                            #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m3.node_span()),
-                        }
+                    mana_cost: terminals::ManaCost {
+                        cost: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: m1.node_span().merge(&m3.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -98,17 +83,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::Mana { mana: m3 }),
                     ParserNode::LexerToken(Token::Mana { mana: m4 }),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: {
-                        let mut cost = arrayvec::ArrayVec::new_const();
-                        cost.push(m1.clone());
-                        cost.push(m2.clone());
-                        cost.push(m3.clone());
-                        cost.push(m4.clone());
-                        terminals::ManaCost {
-                            cost,
-                            #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m4.node_span()),
-                        }
+                    mana_cost: terminals::ManaCost {
+                        cost: [m1.clone(), m2.clone(), m3.clone(), m4.clone()].into_iter().collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: m1.node_span().merge(&m4.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -132,18 +110,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::Mana { mana: m4 }),
                     ParserNode::LexerToken(Token::Mana { mana: m5 }),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: {
-                        let mut cost = arrayvec::ArrayVec::new_const();
-                        cost.push(m1.clone());
-                        cost.push(m2.clone());
-                        cost.push(m3.clone());
-                        cost.push(m4.clone());
-                        cost.push(m5.clone());
-                        terminals::ManaCost {
-                            cost,
-                            #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m5.node_span()),
-                        }
+                    mana_cost: terminals::ManaCost {
+                        cost: [m1.clone(), m2.clone(), m3.clone(), m4.clone(), m5.clone()]
+                            .into_iter()
+                            .collect(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: m1.node_span().merge(&m5.node_span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

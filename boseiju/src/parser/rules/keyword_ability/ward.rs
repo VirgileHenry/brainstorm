@@ -39,7 +39,27 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     keyword_ability: crate::ability_tree::ability::KeywordAbility {
                         keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Ward(
                             crate::ability_tree::ability::keyword_ability::WardKeywordAbility {
-                                cost: crate::ability_tree::cost::Cost::ManaCost(mana_cost.clone()),
+                                cost: crate::ability_tree::cost::Cost {
+                                    costs: [crate::ability_tree::imperative::Imperative {
+                                        kind: crate::ability_tree::imperative::ImperativeKind::PayMana(
+                                            crate::ability_tree::imperative::PayManaImperative {
+                                                amount: mana_cost.clone(),
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: mana_cost.node_span(),
+                                            },
+                                        ),
+                                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: mana_cost.node_span().empty_at_start(),
+                                        },
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: mana_cost.node_span(),
+                                    }]
+                                    .into_iter()
+                                    .collect(),
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: mana_cost.node_span(),
+                                },
                                 #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&mana_cost.span),
                             },

@@ -215,7 +215,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Object's controller is a player specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::PermanentReference { permanent: dummy() }.id(),
+                ParserNode::Permanent { permanent: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -230,7 +230,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::PermanentReference { permanent },
+                    ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Controller {
                         #[cfg(feature = "spanned_tree")]
@@ -252,7 +252,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Object's owner is a player specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::CardReference { card: dummy() }.id(),
+                ParserNode::Card { card: dummy() }.id(),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -267,7 +267,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::CardReference { card },
+                    ParserNode::Card { card },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Owner {
                         #[cfg(feature = "spanned_tree")]

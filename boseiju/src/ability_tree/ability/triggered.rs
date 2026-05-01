@@ -18,8 +18,9 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TriggeredAbility {
-    pub condition: TriggerCondition,
+    pub trigger_condition: TriggerCondition,
     pub effect: crate::ability_tree::ability::spell::SpellAbility,
+    pub condition: Option<crate::ability_tree::conditional::Conditional>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -32,8 +33,15 @@ impl AbilityTreeNode for TriggeredAbility {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.trigger_condition as &dyn AbilityTreeNode);
         children.push(&self.effect as &dyn AbilityTreeNode);
-        children.push(&self.condition as &dyn AbilityTreeNode);
+        match self.condition.as_ref() {
+            Some(cost) => children.push(cost as &dyn AbilityTreeNode),
+            None => {
+                let none_node = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::none_node();
+                children.push(none_node as &dyn AbilityTreeNode);
+            }
+        }
         children
     }
 
@@ -41,15 +49,25 @@ impl AbilityTreeNode for TriggeredAbility {
         use std::io::Write;
         write!(out, "triggered ability:")?;
         out.push_inter_branch()?;
-        write!(out, "condition:")?;
+        write!(out, "trigger condition:")?;
         out.push_final_branch()?;
-        self.condition.display(out)?;
+        self.trigger_condition.display(out)?;
         out.pop_branch();
-        out.next_final_branch()?;
+        out.next_inter_branch()?;
         write!(out, "effect:")?;
         out.push_final_branch()?;
         self.effect.display(out)?;
         out.pop_branch();
+        out.next_final_branch()?;
+        match self.condition.as_ref() {
+            Some(condition) => {
+                write!(out, "condition:")?;
+                out.push_final_branch()?;
+                condition.display(out)?;
+                out.pop_branch();
+            }
+            None => write!(out, "condition: none")?,
+        }
         out.pop_branch();
         Ok(())
     }

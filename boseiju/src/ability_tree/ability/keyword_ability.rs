@@ -6,6 +6,7 @@ mod bloodthirst;
 mod bushido;
 mod cleave;
 mod crew;
+mod cumulative_upkeep;
 mod cycling;
 mod dash;
 mod disguise;
@@ -21,9 +22,11 @@ mod morph;
 mod ninjutsu;
 mod outlast;
 mod prototype;
+mod reconfigure;
 mod reinforce;
 mod renown;
 mod ripple;
+mod surge;
 mod suspend;
 mod vanishing;
 mod ward;
@@ -39,6 +42,7 @@ pub use bloodthirst::BloodthirstKeywordAbility;
 pub use bushido::BushidoKeywordAbility;
 pub use cleave::CleaveKeywordAbility;
 pub use crew::CrewKeywordAbility;
+pub use cumulative_upkeep::CumulativeUpkeepKeywordAbility;
 pub use cycling::CyclingKeywordAbility;
 pub use dash::DashKeywordAbility;
 pub use disguise::DisguiseKeywordAbility;
@@ -53,9 +57,11 @@ pub use morph::MorphKeywordAbility;
 pub use ninjutsu::NinjutsuKeywordAbility;
 pub use outlast::OutlastKeywordAbility;
 pub use prototype::PrototypeKeywordAbility;
+pub use reconfigure::ReconfigureKeywordAbility;
 pub use reinforce::ReinforceKeywordAbility;
 pub use renown::RenownKeywordAbility;
 pub use ripple::RippleKeywordAbility;
+pub use surge::SurgeKeywordAbility;
 pub use suspend::SuspendKeywordAbility;
 pub use vanishing::VanishingKeywordAbility;
 pub use ward::WardKeywordAbility;
@@ -80,6 +86,7 @@ pub enum ExpandedKeywordAbility {
     Bushido(BushidoKeywordAbility),
     Cleave(CleaveKeywordAbility),
     Crew(CrewKeywordAbility),
+    CumulativeUpkeep(CumulativeUpkeepKeywordAbility),
     Cycling(CyclingKeywordAbility),
     Dash(DashKeywordAbility),
     Disguise(DisguiseKeywordAbility),
@@ -95,9 +102,11 @@ pub enum ExpandedKeywordAbility {
     Outlast(OutlastKeywordAbility),
     Prototype(PrototypeKeywordAbility),
     Reinforce(ReinforceKeywordAbility),
+    Reconfigure(ReconfigureKeywordAbility),
     Renown(RenownKeywordAbility),
     Ripple(RippleKeywordAbility),
     Standalone(StandaloneKeywordAbility),
+    Surge(SurgeKeywordAbility),
     Suspend(SuspendKeywordAbility),
     Vanishing(VanishingKeywordAbility),
     Ward(WardKeywordAbility),
@@ -121,6 +130,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Bushido(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Cleave(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Crew(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::CumulativeUpkeep(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Cycling(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Dash(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Disguise(child) => children.push(child as &dyn AbilityTreeNode),
@@ -136,9 +146,11 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Outlast(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Prototype(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Reinforce(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Reconfigure(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Renown(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Ripple(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Standalone(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Surge(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Suspend(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Vanishing(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Ward(child) => children.push(child as &dyn AbilityTreeNode),
@@ -160,6 +172,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Bushido(child) => child.display(out)?,
             Self::Cleave(child) => child.display(out)?,
             Self::Crew(child) => child.display(out)?,
+            Self::CumulativeUpkeep(child) => child.display(out)?,
             Self::Cycling(child) => child.display(out)?,
             Self::Dash(child) => child.display(out)?,
             Self::Disguise(child) => child.display(out)?,
@@ -175,9 +188,11 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Outlast(child) => child.display(out)?,
             Self::Prototype(child) => child.display(out)?,
             Self::Reinforce(child) => child.display(out)?,
+            Self::Reconfigure(child) => child.display(out)?,
             Self::Renown(child) => child.display(out)?,
             Self::Ripple(child) => child.display(out)?,
             Self::Standalone(child) => child.display(out)?,
+            Self::Surge(child) => child.display(out)?,
             Self::Suspend(child) => child.display(out)?,
             Self::Vanishing(child) => child.display(out)?,
             Self::Ward(child) => child.display(out)?,
@@ -202,6 +217,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Bushido(child) => child.node_span(),
             Self::Cleave(child) => child.node_span(),
             Self::Crew(child) => child.node_span(),
+            Self::CumulativeUpkeep(child) => child.node_span(),
             Self::Cycling(child) => child.node_span(),
             Self::Dash(child) => child.node_span(),
             Self::Disguise(child) => child.node_span(),
@@ -217,9 +233,11 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Outlast(child) => child.node_span(),
             Self::Prototype(child) => child.node_span(),
             Self::Reinforce(child) => child.node_span(),
+            Self::Reconfigure(child) => child.node_span(),
             Self::Renown(child) => child.node_span(),
             Self::Ripple(child) => child.node_span(),
             Self::Standalone(child) => child.node_span(),
+            Self::Surge(child) => child.node_span(),
             Self::Suspend(child) => child.node_span(),
             Self::Vanishing(child) => child.node_span(),
             Self::Ward(child) => child.node_span(),

@@ -128,8 +128,8 @@ impl AbilityTreeNode for ForwardDuration {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for ForwardDuration {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "until end of turn" => Some(Self::UntilEndOfTurn {
@@ -215,8 +215,8 @@ impl AbilityTreeNode for BackwardDuration {
     }
 }
 
+#[cfg(feature = "lexer")]
 impl IntoToken for BackwardDuration {
-    #[cfg(feature = "lexer")]
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "this turn" => Some(Self::ThisTurn {

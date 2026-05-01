@@ -7,7 +7,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionCreatureMatchSpecifier {
-    pub creature: crate::ability_tree::object::CreatureReference,
+    pub creature: crate::ability_tree::object::Creature,
     pub specifier: crate::ability_tree::object::specified_object::CreatureSpecifier,
     pub shall_match: bool,
     #[cfg(feature = "spanned_tree")]

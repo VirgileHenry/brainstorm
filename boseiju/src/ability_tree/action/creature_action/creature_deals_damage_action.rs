@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureDealsDamageAction {
-    pub creature: crate::ability_tree::object::CreatureReference,
+    pub creature: crate::ability_tree::object::Creature,
     pub damage_kind: crate::ability_tree::terminals::DamageKind,
     pub to_player: Option<crate::ability_tree::player::PlayerSpecifier>,
     #[cfg(feature = "spanned_tree")]

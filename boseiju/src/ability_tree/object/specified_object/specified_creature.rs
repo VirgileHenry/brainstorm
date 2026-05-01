@@ -4,19 +4,38 @@ pub use creature_specifier::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::object::count_specifier::CountSpecifier;
+use crate::ability_tree::object::kind::CreatureKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
 /// A specified creature.
-///
-/// This can only reference artifacts on the battlefield.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecifiedCreature {
-    pub amount: CountSpecifier,
+    pub kind: CreatureKind,
     pub specifiers: Option<Specifiers<CreatureSpecifier>>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
+}
+
+impl SpecifiedCreature {
+    pub fn add_factor_specifier(&self, factor_specifier: CreatureSpecifier) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        let factor_specifier_span = factor_specifier.node_span();
+        match &self.specifiers {
+            Some(prev_specifiers) => SpecifiedCreature {
+                kind: self.kind.clone(),
+                specifiers: Some(prev_specifiers.add_factor_specifier(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+            None => SpecifiedCreature {
+                kind: self.kind.clone(),
+                specifiers: Some(Specifiers::Single(factor_specifier)),
+                #[cfg(feature = "spanned_tree")]
+                span: factor_specifier_span.merge(&self.span),
+            },
+        }
+    }
 }
 
 impl AbilityTreeNode for SpecifiedCreature {
@@ -29,7 +48,7 @@ impl AbilityTreeNode for SpecifiedCreature {
         use crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal;
 
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.amount as &dyn AbilityTreeNode);
+        children.push(&self.kind as &dyn AbilityTreeNode);
         match self.specifiers.as_ref() {
             Some(specifiers) => children.push(specifiers as &dyn AbilityTreeNode),
             None => children.push(TreeNodeDummyTerminal::none_node() as &dyn AbilityTreeNode),
@@ -41,9 +60,9 @@ impl AbilityTreeNode for SpecifiedCreature {
         use std::io::Write;
         write!(out, "specified creature:")?;
         out.push_inter_branch()?;
-        write!(out, "amount:")?;
+        write!(out, "kind:")?;
         out.push_final_branch()?;
-        self.amount.display(out)?;
+        self.kind.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "specifier(s):")?;
@@ -71,7 +90,7 @@ impl AbilityTreeNode for SpecifiedCreature {
 impl crate::utils::DummyInit for SpecifiedCreature {
     fn dummy_init() -> Self {
         Self {
-            amount: crate::utils::dummy(),
+            kind: crate::utils::dummy(),
             specifiers: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
