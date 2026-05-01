@@ -39,7 +39,7 @@ impl TreeNodeDummyTerminal {
 
     /// Shortcut to build the Dummy Terminal for the empty node.
     ///
-    /// See [`NodeKind::_EmptyNode`] for more info.
+    /// See [`super::NodeKind::_EmptyNode`] for more info.
     pub fn empty_node() -> &'static Self {
         let dummy_node_id = crate::ability_tree::NodeKind::_EmptyNode.id();
         Self::new(dummy_node_id)
@@ -47,7 +47,7 @@ impl TreeNodeDummyTerminal {
 
     /// Shortcut to build the Dummy Terminal for the none node.
     ///
-    /// See [`NodeKind::_NoneNode`] for more info.
+    /// See [`super::NodeKind::_NoneNode`] for more info.
     pub fn none_node() -> &'static Self {
         let dummy_node_id = crate::ability_tree::NodeKind::_NoneNode.id();
         Self::new(dummy_node_id)

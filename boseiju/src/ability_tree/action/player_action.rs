@@ -7,10 +7,7 @@ pub use player_casts_spell_action::PlayerCastsSpellAction;
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
-/// An action a creature can perform.
-///
-/// These are the actions ONLY creatures can perform, there might be more actions
-/// that can be performed by all permanents under the [`PermanentAction`] node.
+/// An action a player can perform.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlayerAction {

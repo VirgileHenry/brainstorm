@@ -12,9 +12,6 @@ use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
 /// An action a creature can perform.
-///
-/// These are the actions ONLY creatures can perform, there might be more actions
-/// that can be performed by all permanents under the [`PermanentAction`] node.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CreatureAction {

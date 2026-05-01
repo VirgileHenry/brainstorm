@@ -18,7 +18,7 @@ pub enum NodeKind {
     ///
     /// It's sometimes usefull to put "blank spaces" nodes when providing children.
     /// Check the [`crate::ability_tree::AbilityTreeNode::children`] implementation of the
-    /// [`crate::ability_tree::object::SpecifierOrOfAndList`] for an example.
+    /// [`crate::ability_tree::object::specified_object::SpecifierOrOfAndList`] for an example.
     ///
     /// The node is placed first so that idris will give him the symbolic id 0.
     _EmptyNode,

@@ -7,7 +7,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// A kind of ability. Activated abilities are written as “\[Cost\]: \[Effect.\] \[Activation instructions (if any).\]”
 /// See rule 113, “Abilities,” and rule 602, “Activating Activated Abilities.”
 ///
-/// See also https://mtg.fandom.com/wiki/Activated_ability
+/// See also <https://mtg.fandom.com/wiki/Activated_ability>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActivatedAbility {
