@@ -1,6 +1,5 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::MAX_NODE_DATA_SIZE;
 use crate::lexer::IntoToken;
 use serde_big_array::BigArray;
 
@@ -38,7 +37,21 @@ pub struct TypeLine {
 }
 
 impl TypeLine {
-    fn empty() -> TypeLine {
+    pub const FLAT_SIZE: usize = {
+        <mtg_data::Supertype as idris::Idris>::COUNT
+            + <mtg_data::CardType as idris::Idris>::COUNT
+            + <mtg_data::ArtifactType as idris::Idris>::COUNT
+            + <mtg_data::BattleType as idris::Idris>::COUNT
+            + <mtg_data::CreatureType as idris::Idris>::COUNT
+            + <mtg_data::EnchantmentType as idris::Idris>::COUNT
+            + <mtg_data::SpellType as idris::Idris>::COUNT
+            + <mtg_data::CreatureType as idris::Idris>::COUNT
+            + <mtg_data::LandType as idris::Idris>::COUNT
+            + <mtg_data::PlaneswalkerType as idris::Idris>::COUNT
+            + <mtg_data::SpellType as idris::Idris>::COUNT
+    };
+
+    pub fn empty() -> TypeLine {
         TypeLine {
             supertypes: [false; _],
             card_types: [false; _],
@@ -54,6 +67,32 @@ impl TypeLine {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
+    }
+
+    pub fn flat_array(&self) -> [bool; Self::FLAT_SIZE] {
+        let mut result = [false; Self::FLAT_SIZE];
+        let mut offset = 0;
+
+        let segments: &[&[bool]] = &[
+            &self.supertypes,
+            &self.card_types,
+            &self.artifact,
+            &self.battle,
+            &self.creature,
+            &self.enchantment,
+            &self.instant,
+            &self.kindred,
+            &self.land,
+            &self.planeswalker,
+            &self.sorcery,
+        ];
+
+        for segment in segments {
+            result[offset..offset + segment.len()].copy_from_slice(segment);
+            offset += segment.len();
+        }
+
+        result
     }
 
     pub fn creature_token(
@@ -111,9 +150,8 @@ impl AbilityTreeNode for TypeLine {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        /* Fixme: all cards types shall be passed as data here */
-        arrayvec::ArrayVec::new_const()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::TypeLine { value: self.clone() })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

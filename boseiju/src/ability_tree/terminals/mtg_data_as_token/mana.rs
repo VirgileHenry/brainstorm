@@ -1,6 +1,5 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::MAX_NODE_DATA_SIZE;
 use crate::lexer::IntoToken;
 
 /// Wrapper around the mana kind.
@@ -181,8 +180,8 @@ impl AbilityTreeNode for AnyMana {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Numeric { value: self.mana.number as u32 })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -221,8 +220,9 @@ impl AbilityTreeNode for ColoredMana {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        let colors = crate::ability_tree::colors::Colors::from_single(self.mana.color);
+        Some(crate::ability_tree::AbTreeNodeData::Color { value: colors })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -261,8 +261,10 @@ impl AbilityTreeNode for HybridMana {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        let iter = [self.mana.color_1.clone(), self.mana.color_2.clone()].into_iter();
+        let colors = crate::ability_tree::colors::Colors::from_iter(iter);
+        Some(crate::ability_tree::AbTreeNodeData::Color { value: colors })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -301,8 +303,9 @@ impl AbilityTreeNode for MonocoloredHybridMana {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        let colors = crate::ability_tree::colors::Colors::from_single(self.mana.color);
+        Some(crate::ability_tree::AbTreeNodeData::ColorAndNumeric { color: colors, numeric: self.mana.number as u32 })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -341,8 +344,10 @@ impl AbilityTreeNode for PhyrexianMana {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        /* Fixme: we're missing the phyrexian part */
+        let colors = crate::ability_tree::colors::Colors::from_single(self.mana.color);
+        Some(crate::ability_tree::AbTreeNodeData::Color { value: colors })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -381,8 +386,11 @@ impl AbilityTreeNode for HybridPhyrexianMana {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        /* Fixme: we're missing the phyrexian part */
+        let iter = [self.mana.color_1.clone(), self.mana.color_2.clone()].into_iter();
+        let colors = crate::ability_tree::colors::Colors::from_iter(iter);
+        Some(crate::ability_tree::AbTreeNodeData::Color { value: colors })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

@@ -6,7 +6,6 @@ pub use x_definition::*;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
 /// A number.
 ///
@@ -112,9 +111,8 @@ impl AbilityTreeNode for FixedNumber {
         arrayvec::ArrayVec::new()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        /* Fixme: that's terrible for the AI */
-        self.number.to_le_bytes().into_iter().collect()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Numeric{ value: self.number })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -172,9 +170,8 @@ impl AbilityTreeNode for OrMoreNumber {
         arrayvec::ArrayVec::new()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        /* Fixme: that's terrible for the AI */
-        self.minimum.to_le_bytes().into_iter().collect()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Numeric { value: self.minimum })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -221,9 +218,8 @@ impl AbilityTreeNode for UpToNumber {
         arrayvec::ArrayVec::new()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        /* Fixme: that's terrible for the AI */
-        self.maximum.to_le_bytes().into_iter().collect()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Numeric { value: self.maximum })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

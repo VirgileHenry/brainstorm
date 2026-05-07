@@ -61,6 +61,7 @@ impl AbilityTreeNode for SpecifiedSpell {
         write!(out, "specified spell:")?;
         out.push_inter_branch()?;
         write!(out, "kind:")?;
+        out.push_final_branch()?;
         self.kind.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;

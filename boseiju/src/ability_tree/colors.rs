@@ -1,6 +1,5 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -33,6 +32,10 @@ impl Colors {
             && (self.black || !other.black)
             && (self.red || !other.red)
             && (self.green || !other.green)
+    }
+
+    pub fn from_single(color: mtg_data::Color) -> Self {
+        Self::from_iter(std::iter::once(color))
     }
 
     pub fn from_iter<I: Iterator<Item = mtg_data::Color>>(colors: I) -> Self {
@@ -94,8 +97,8 @@ impl AbilityTreeNode for Colors {
         arrayvec::ArrayVec::new_const()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        unimplemented!()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Color { value: self.clone() })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

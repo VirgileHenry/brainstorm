@@ -4,10 +4,6 @@ version.workspace = true
 edition.workspace = true
 workspace = ".."
 
-# VHY debug
-[profile.release]
-debug = true
-
 [dependencies]
 arrayvec = { workspace = true }
 idris = { workspace = true }
@@ -39,8 +35,8 @@ name = "debug"
 path = "bin/debug.rs"
 
 [[bin]]
-name = "export"
-path = "bin/export.rs"
+name = "export_for_urza"
+path = "bin/export_for_urza.rs"
 
 [[bin]]
 name = "card_coverage"

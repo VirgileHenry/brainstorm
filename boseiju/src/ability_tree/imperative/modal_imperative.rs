@@ -1,6 +1,5 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::MAX_NODE_DATA_SIZE;
 
 const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
 
@@ -32,11 +31,8 @@ impl AbilityTreeNode for ModalImperative {
         children
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        /* Fixme: terrible for the ai */
-        let mut data = arrayvec::ArrayVec::new_const();
-        data.push(if self.can_choose_same_mode { 1 } else { 0 });
-        data
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Boolean { value: self.can_choose_same_mode })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

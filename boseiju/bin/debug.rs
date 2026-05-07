@@ -1,8 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Other Cats you control get +2/+1.";
-    let card_name = "Elder Owyn Lyons";
+    let oracle_text = "Tap an untapped creature you control: This creature gains flying until end of turn.";
+    let card_name = "Scorch the Fields";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;
