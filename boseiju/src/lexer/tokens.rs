@@ -1,6 +1,7 @@
 pub mod intermediates;
 
 use crate::ability_tree::conditional;
+use crate::ability_tree::state;
 use crate::ability_tree::terminals;
 use crate::ability_tree::time;
 use crate::ability_tree::zone;
@@ -56,7 +57,7 @@ pub enum Token {
     PowerToughnessModElements(intermediates::PowerToughnessModElements),
     PowerToughness { pt: terminals::PowerToughness },
     SagaChapterNumber { chapter: terminals::SagaChapterNumber },
-    SpellProperty(terminals::SpellProperty),
+    StackObjectState(state::StackObjectState),
     Step(terminals::Step),
     TapUntapCost(intermediates::TapUntapCost),
     UnderControl(intermediates::UnderControl),
@@ -97,8 +98,8 @@ impl Token {
             Some(Self::CardOwnName(kind))
         } else if let Some(kind) = intermediates::CardProperty::try_from_span(&span) {
             Some(Self::CardProperty(kind))
-        } else if let Some(kind) = terminals::SpellProperty::try_from_span(&span) {
-            Some(Self::SpellProperty(kind))
+        } else if let Some(kind) = state::StackObjectState::try_from_span(&span) {
+            Some(Self::StackObjectState(kind))
         } else if let Some(kind) = terminals::Phase::try_from_span(&span) {
             Some(Self::Phase(kind))
         } else if let Some(kind) = terminals::Step::try_from_span(&span) {
@@ -237,7 +238,7 @@ impl Token {
             Self::PowerToughnessModElements(child) => child.span(),
             Self::PowerToughness { pt } => pt.span,
             Self::SagaChapterNumber { chapter } => chapter.span,
-            Self::SpellProperty(child) => child.node_span(),
+            Self::StackObjectState(child) => child.node_span(),
             Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
             Self::UnderControl(child) => child.span(),

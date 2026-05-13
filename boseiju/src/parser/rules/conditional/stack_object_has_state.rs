@@ -12,33 +12,34 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    [/* "<player> controls <permanent reference>" condition */ ParserRule {
+    /* "<spell> is <stack object state>" condition */
+    crate::ability_tree::state::StackObjectState::all().map(|state| ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Player { player: dummy() }.id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Control {
+            ParserNode::Spell { spell: dummy() }.id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Is {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Permanent { permanent: dummy() }.id(),
+            ParserNode::LexerToken(Token::StackObjectState(state)).id(),
         ]),
         merged: ParserNode::Condition { condition: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::Player { player },
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Control { .. })),
-                ParserNode::Permanent { permanent },
+                ParserNode::Spell { spell },
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Is { .. })),
+                ParserNode::LexerToken(Token::StackObjectState(state)),
             ] => Ok(ParserNode::Condition {
-                condition: conditional::Condition::PlayerControlsObject(conditional::ConditionPlayerControlsPermanent {
-                    player: player.clone(),
-                    permanent: permanent.clone(),
+                condition: conditional::Condition::StackObjectHasState(conditional::ConditionStackObjectHasState {
+                    stack_obj: spell.clone(),
+                    state: state.clone(),
+                    has_state: true,
                     #[cfg(feature = "spanned_tree")]
-                    span: player.node_span().merge(&permanent.node_span()),
+                    span: spell.node_span().merge(&state.node_span()),
                 }),
             }),
             _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: ParserRuleDeclarationLocation::here(),
-    }]
-    .into_iter()
+    })
 }

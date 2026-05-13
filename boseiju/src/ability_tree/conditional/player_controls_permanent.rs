@@ -6,14 +6,14 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 /// Examples are, "if you attacked this turn" or "if a creature died this turn".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PlayerControlsPermanent {
+pub struct ConditionPlayerControlsPermanent {
     pub player: crate::ability_tree::player::PlayerSpecifier,
     pub permanent: crate::ability_tree::object::Permanent,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl crate::ability_tree::AbilityTreeNode for PlayerControlsPermanent {
+impl crate::ability_tree::AbilityTreeNode for ConditionPlayerControlsPermanent {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::PlayerControlsPermanent.id()
@@ -51,7 +51,7 @@ impl crate::ability_tree::AbilityTreeNode for PlayerControlsPermanent {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for PlayerControlsPermanent {
+impl crate::utils::DummyInit for ConditionPlayerControlsPermanent {
     fn dummy_init() -> Self {
         Self {
             player: crate::utils::dummy(),

@@ -94,7 +94,7 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusPlus {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "power / toughness mod:")?;
+        write!(out, "+power / +toughness mod:")?;
         out.push_inter_branch()?;
         write!(out, "power mod:")?;
         out.push_final_branch()?;
@@ -168,15 +168,16 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusMinus {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
+        write!(out, "+power / -toughness mod:")?;
         out.push_inter_branch()?;
         write!(out, "power mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "+")?;
         self.power_mod.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "toughness mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "-")?;
         self.toughness_mod.display(out)?;
         out.pop_branch();
@@ -241,15 +242,16 @@ impl AbilityTreeNode for PowerToughnessModifiersMinusMinus {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
+        write!(out, "-power / -toughness mod:")?;
         out.push_inter_branch()?;
         write!(out, "power mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "-")?;
         self.power_mod.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "toughness mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "-")?;
         self.toughness_mod.display(out)?;
         out.pop_branch();
@@ -314,15 +316,16 @@ impl AbilityTreeNode for PowerToughnessModifiersMinusPlus {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
+        write!(out, "-power / +toughness mod:")?;
         out.push_inter_branch()?;
         write!(out, "power mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "-")?;
         self.power_mod.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "toughness mod:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         write!(out, "+")?;
         self.toughness_mod.display(out)?;
         out.pop_branch();
@@ -387,14 +390,15 @@ impl AbilityTreeNode for PowerToughnessModifiersSet {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
+        write!(out, "power / toughness set mod:")?;
         out.push_inter_branch()?;
         write!(out, "power set to:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         self.power.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "toughness set to:")?;
-        out.push_inter_branch()?;
+        out.push_final_branch()?;
         self.toughness.display(out)?;
         out.pop_branch();
         out.pop_branch();

@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Tap an untapped creature you control: This creature gains flying until end of turn.";
+    let oracle_text = "Kicker {G} (You may pay an additional {G} as you cast this spell.)\nIf this spell was kicked, put a +1/+1 counter on a creature you control.\nAll creatures get -2/-2 until end of turn.";
     let card_name = "Scorch the Fields";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

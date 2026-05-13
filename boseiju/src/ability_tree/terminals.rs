@@ -8,7 +8,6 @@ mod owner_specifier;
 mod phase;
 mod power_toughness;
 mod saga_chapter_number;
-mod spell_property;
 mod step;
 
 pub use counter::Counter;
@@ -22,5 +21,4 @@ pub use owner_specifier::OwnerSpecifier;
 pub use phase::Phase;
 pub use power_toughness::PowerToughness;
 pub use saga_chapter_number::SagaChapterNumber;
-pub use spell_property::SpellProperty;
 pub use step::Step;
