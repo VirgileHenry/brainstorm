@@ -6,8 +6,8 @@ use crate::ability_tree::card_layout::*;
 pub enum Layout {
     Normal { layout: NormalLayout },
     Split { layout: SplitLayout },
-    Flip {},
-    Transform {},
+    Flip { layout: FlipLayout },
+    Transform { layout: TransformLayout },
     ModalDfc {},
     Meld {},
     Leveler {},
@@ -43,8 +43,8 @@ impl Layout {
         match self {
             Self::Normal { layout } => layout,
             Self::Split { layout } => layout,
-            Self::Flip {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
-            Self::Transform {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
+            Self::Flip { layout } => layout,
+            Self::Transform { layout } => layout,
             Self::ModalDfc {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
             Self::Meld {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
             Self::Leveler {} => crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::empty_node(),
@@ -68,8 +68,8 @@ impl Layout {
         match self {
             Self::Normal { layout } => layout.mana_value(),
             Self::Split { layout } => layout.mana_value(),
-            Self::Flip {} => 0,
-            Self::Transform {} => 0,
+            Self::Flip { layout } => layout.mana_value(),
+            Self::Transform { layout } => layout.mana_value(),
             Self::ModalDfc {} => 0,
             Self::Meld {} => 0,
             Self::Leveler {} => 0,
@@ -93,8 +93,8 @@ impl Layout {
         match self {
             Self::Normal { layout } => layout.card_types(),
             Self::Split { layout } => layout.card_types(),
-            Self::Flip {} => Default::default(),
-            Self::Transform {} => Default::default(),
+            Self::Flip { layout } => layout.card_types(),
+            Self::Transform { layout } => layout.card_types(),
             Self::ModalDfc {} => Default::default(),
             Self::Meld {} => Default::default(),
             Self::Leveler {} => Default::default(),
@@ -125,6 +125,12 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
             }),
             "split" => Ok(Layout::Split {
                 layout: SplitLayout::from_raw_card(raw_card)?,
+            }),
+            "flip" => Ok(Layout::Flip {
+                layout: FlipLayout::from_raw_card(raw_card)?,
+            }),
+            "transform" => Ok(Layout::Transform {
+                layout: TransformLayout::from_raw_card(raw_card)?,
             }),
             "token" => Ok(Self::Token {
                 layout: TokenLayout::from_raw_card(raw_card)?,

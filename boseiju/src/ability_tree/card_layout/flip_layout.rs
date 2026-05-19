@@ -4,28 +4,23 @@ use crate::ability_tree::type_line::SimplifiedCardTypes;
 
 #[derive(Debug, Clone)]
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct SplitLayout {
-    pub first_split: crate::ability_tree::card_layout::CardFace,
-    pub second_split: crate::ability_tree::card_layout::CardFace,
+pub struct FlipLayout {
+    pub up_face: crate::ability_tree::card_layout::CardFace,
+    pub down_face: crate::ability_tree::card_layout::CardFace,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl super::LayoutImpl for SplitLayout {
+impl super::LayoutImpl for FlipLayout {
     fn card_types(&self) -> crate::ability_tree::type_line::SimplifiedCardTypes {
-        let first_simplified_type: SimplifiedCardTypes = (&self.first_split.card_type).into();
-        let second_simplified_type: SimplifiedCardTypes = (&self.second_split.card_type).into();
+        let first_simplified_type: SimplifiedCardTypes = (&self.up_face.card_type).into();
+        let second_simplified_type: SimplifiedCardTypes = (&self.down_face.card_type).into();
         first_simplified_type + second_simplified_type
     }
 
     fn mana_value(&self) -> usize {
-        let first_cmc = self.first_split.mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0);
-        let second_cmc = self
-            .second_split
-            .mana_cost
-            .as_ref()
-            .map(|cost| cost.mana_value())
-            .unwrap_or(0);
+        let first_cmc = self.up_face.mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0);
+        let second_cmc = self.down_face.mana_cost.as_ref().map(|cost| cost.mana_value()).unwrap_or(0);
         first_cmc + second_cmc
     }
 
@@ -40,12 +35,12 @@ impl super::LayoutImpl for SplitLayout {
 
         let (first_face, second_face) = match faces.as_slice() {
             [first, second] => (first, second),
-            _other => return Err(format!("Split card should have exactly two faces! o(>< )o")),
+            _other => return Err(format!("Flip card should have exactly two faces! o(>< )o")),
         };
 
-        Ok(SplitLayout {
-            first_split: CardFace::from_card_face(first_face)?,
-            second_split: CardFace::from_card_face(second_face)?,
+        Ok(FlipLayout {
+            up_face: CardFace::from_card_face(first_face)?,
+            down_face: CardFace::from_card_face(second_face)?,
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
@@ -56,39 +51,39 @@ impl super::LayoutImpl for SplitLayout {
     }
 }
 
-impl AbilityTreeNode for SplitLayout {
+impl AbilityTreeNode for FlipLayout {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::LayoutNodeKind;
         use idris::Idris;
 
-        crate::ability_tree::NodeKind::Layout(LayoutNodeKind::Split).id()
+        crate::ability_tree::NodeKind::Layout(LayoutNodeKind::Flip).id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::<&dyn AbilityTreeNode, _>::new();
 
         /* ===== First split ===== */
-        children.push(&self.first_split);
+        children.push(&self.up_face);
 
         /* ===== Second split ===== */
-        children.push(&self.second_split);
+        children.push(&self.down_face);
 
         children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "split layout")?;
+        write!(out, "flip layout")?;
         out.push_inter_branch()?;
-        self.first_split.display(out)?;
+        self.up_face.display(out)?;
         out.next_final_branch()?;
-        self.second_split.display(out)?;
+        self.down_face.display(out)?;
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "split layout"
+        "flip layout"
     }
 
     #[cfg(feature = "spanned_tree")]
