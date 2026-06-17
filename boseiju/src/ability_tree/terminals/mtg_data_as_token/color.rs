@@ -1,6 +1,5 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
-use crate::ability_tree::MAX_NODE_DATA_SIZE;
 use crate::lexer::IntoToken;
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -33,10 +32,9 @@ impl AbilityTreeNode for Color {
         arrayvec::ArrayVec::new()
     }
 
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        mtg_data::Color::all()
-            .map(|color| if color == self.color { 1 } else { 0 })
-            .collect()
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        let colors = crate::ability_tree::colors::Colors::from_single(self.color);
+        Some(crate::ability_tree::AbTreeNodeData::Color { value: colors })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {

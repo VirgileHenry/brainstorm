@@ -3,11 +3,14 @@ use crate::ability_tree::ability::WrittenAbility;
 use crate::ability_tree::ability::activated::ActivatedAbility;
 use crate::ability_tree::cost::Cost;
 use crate::ability_tree::imperative::AddManaImperative;
+use crate::ability_tree::imperative::ExpandedKeywordAction;
 use crate::ability_tree::imperative::Imperative;
 use crate::ability_tree::imperative::ImperativeKind;
+use crate::ability_tree::imperative::KeywordAction;
 use crate::ability_tree::imperative::ManaToAdd;
 use crate::ability_tree::imperative::ManaToAddOfAnyColor;
-use crate::ability_tree::imperative::SacrificeImperative;
+use crate::ability_tree::imperative::sacrifice;
+use crate::ability_tree::imperative::sacrifice::SacrificeKeywordAction;
 use crate::ability_tree::imperative_list::ImperativeList;
 use crate::ability_tree::number::FixedNumber;
 use crate::ability_tree::number::Number;
@@ -68,11 +71,23 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                 },
                 cost: Cost {
                     costs: [Imperative {
-                        kind: ImperativeKind::Sacrifice(SacrificeImperative {
-                            object: Permanent::SelfReferencing(SelfReferencing {
+                        kind: ImperativeKind::KeywordAction(KeywordAction {
+                            keyword: ExpandedKeywordAction::Sacrifice(SacrificeKeywordAction {
+                                permanent: Permanent::SelfReferencing(SelfReferencing {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: Default::default(),
+                                }),
                                 #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
                             }),
+                            ability: sacrifice::ability(
+                                &Permanent::SelfReferencing(SelfReferencing {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: Default::default(),
+                                }),
+                                #[cfg(feature = "spanned_tree")]
+                                Default::default(),
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }),

@@ -1,5 +1,7 @@
 mod affinity;
 mod afterlife;
+mod annihilator;
+mod backup;
 mod bestow;
 mod blitz;
 mod bloodthirst;
@@ -13,6 +15,7 @@ mod disguise;
 mod echo;
 mod enchant;
 mod equip;
+mod fabricate;
 mod flashback;
 mod freerunning;
 mod keyword_to_abilities;
@@ -22,6 +25,7 @@ mod morph;
 mod ninjutsu;
 mod outlast;
 mod prototype;
+mod rampage;
 mod reconfigure;
 mod reinforce;
 mod renown;
@@ -36,6 +40,8 @@ pub use keyword_to_abilities::keyword_to_abilities;
 
 pub use affinity::AffinityKeywordAbility;
 pub use afterlife::AfterlifeKeywordAbility;
+pub use annihilator::AnnihilatorKeywordAbility;
+pub use backup::BackupKeywordAbility;
 pub use bestow::BestowKeywordAbility;
 pub use blitz::BlitzKeywordAbility;
 pub use bloodthirst::BloodthirstKeywordAbility;
@@ -49,6 +55,7 @@ pub use disguise::DisguiseKeywordAbility;
 pub use echo::EchoKeywordAbility;
 pub use enchant::EnchantKeywordAbility;
 pub use equip::EquipKeywordAbility;
+pub use fabricate::FabricateKeywordAbility;
 pub use flashback::FlashbackKeywordAbility;
 pub use freerunning::FreerunningKeywordAbility;
 pub use kicker::KickerKeywordAbility;
@@ -57,6 +64,7 @@ pub use morph::MorphKeywordAbility;
 pub use ninjutsu::NinjutsuKeywordAbility;
 pub use outlast::OutlastKeywordAbility;
 pub use prototype::PrototypeKeywordAbility;
+pub use rampage::RampageKeywordAbility;
 pub use reconfigure::ReconfigureKeywordAbility;
 pub use reinforce::ReinforceKeywordAbility;
 pub use renown::RenownKeywordAbility;
@@ -80,6 +88,8 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 pub enum ExpandedKeywordAbility {
     Affinity(AffinityKeywordAbility),
     Afterlife(AfterlifeKeywordAbility),
+    Annihilator(AnnihilatorKeywordAbility),
+    Backup(BackupKeywordAbility),
     Bestow(BestowKeywordAbility),
     Blitz(BlitzKeywordAbility),
     Bloodthirst(BloodthirstKeywordAbility),
@@ -93,6 +103,7 @@ pub enum ExpandedKeywordAbility {
     Echo(EchoKeywordAbility),
     Enchant(EnchantKeywordAbility),
     Equip(EquipKeywordAbility),
+    Fabricate(FabricateKeywordAbility),
     Flashback(FlashbackKeywordAbility),
     Freerunning(FreerunningKeywordAbility),
     Kicker(KickerKeywordAbility),
@@ -101,6 +112,7 @@ pub enum ExpandedKeywordAbility {
     Ninjutsu(NinjutsuKeywordAbility),
     Outlast(OutlastKeywordAbility),
     Prototype(PrototypeKeywordAbility),
+    Rampage(RampageKeywordAbility),
     Reinforce(ReinforceKeywordAbility),
     Reconfigure(ReconfigureKeywordAbility),
     Renown(RenownKeywordAbility),
@@ -124,6 +136,8 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
         match self {
             Self::Affinity(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Afterlife(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Annihilator(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Backup(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Bestow(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Blitz(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Bloodthirst(child) => children.push(child as &dyn AbilityTreeNode),
@@ -137,6 +151,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Echo(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Enchant(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Equip(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Fabricate(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Flashback(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Freerunning(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Kicker(child) => children.push(child as &dyn AbilityTreeNode),
@@ -145,6 +160,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Ninjutsu(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Outlast(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Prototype(child) => children.push(child as &dyn AbilityTreeNode),
+            Self::Rampage(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Reinforce(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Reconfigure(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Renown(child) => children.push(child as &dyn AbilityTreeNode),
@@ -166,6 +182,8 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
         match self {
             Self::Affinity(child) => child.display(out)?,
             Self::Afterlife(child) => child.display(out)?,
+            Self::Annihilator(child) => child.display(out)?,
+            Self::Backup(child) => child.display(out)?,
             Self::Bestow(child) => child.display(out)?,
             Self::Blitz(child) => child.display(out)?,
             Self::Bloodthirst(child) => child.display(out)?,
@@ -179,6 +197,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Echo(child) => child.display(out)?,
             Self::Enchant(child) => child.display(out)?,
             Self::Equip(child) => child.display(out)?,
+            Self::Fabricate(child) => child.display(out)?,
             Self::Flashback(child) => child.display(out)?,
             Self::Freerunning(child) => child.display(out)?,
             Self::Kicker(child) => child.display(out)?,
@@ -187,6 +206,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Ninjutsu(child) => child.display(out)?,
             Self::Outlast(child) => child.display(out)?,
             Self::Prototype(child) => child.display(out)?,
+            Self::Rampage(child) => child.display(out)?,
             Self::Reinforce(child) => child.display(out)?,
             Self::Reconfigure(child) => child.display(out)?,
             Self::Renown(child) => child.display(out)?,
@@ -211,6 +231,8 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
         match self {
             Self::Affinity(child) => child.node_span(),
             Self::Afterlife(child) => child.node_span(),
+            Self::Annihilator(child) => child.node_span(),
+            Self::Backup(child) => child.node_span(),
             Self::Bestow(child) => child.node_span(),
             Self::Blitz(child) => child.node_span(),
             Self::Bloodthirst(child) => child.node_span(),
@@ -224,6 +246,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Echo(child) => child.node_span(),
             Self::Enchant(child) => child.node_span(),
             Self::Equip(child) => child.node_span(),
+            Self::Fabricate(child) => child.node_span(),
             Self::Flashback(child) => child.node_span(),
             Self::Freerunning(child) => child.node_span(),
             Self::Kicker(child) => child.node_span(),
@@ -232,6 +255,7 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
             Self::Ninjutsu(child) => child.node_span(),
             Self::Outlast(child) => child.node_span(),
             Self::Prototype(child) => child.node_span(),
+            Self::Rampage(child) => child.node_span(),
             Self::Reinforce(child) => child.node_span(),
             Self::Reconfigure(child) => child.node_span(),
             Self::Renown(child) => child.node_span(),

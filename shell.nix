@@ -8,6 +8,7 @@ pkgs.mkShell {
     pkgs.rustfmt
     pkgs.python313
     pkgs.python313Packages.requests
+    pkgs.python313Packages.unidecode
     pkgs.graphviz
     pkgs.lld_20
   ];

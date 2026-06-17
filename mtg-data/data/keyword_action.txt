@@ -1,10 +1,12 @@
 Abandon
 Activate
 Adapt
+Airbend
 Amass
 Assemble
 Attach
 Behold
+Blight
 Bolster
 Cast
 Clash
@@ -20,6 +22,7 @@ Detain
 Discard
 Discover
 Double
+Earthbend
 Endure
 Exchange
 Exert
@@ -27,9 +30,9 @@ Exile
 Explore
 Fateseal
 Fight
-Food
 Forage
 Goad
+Harness
 Heist
 Incubate
 Investigate
@@ -47,10 +50,10 @@ Populate
 Proliferate
 Regenerate
 Reveal
-Role token
 Roll to Visit Your Attractions
 Sacrifice
 Scry
+Search
 Seek
 Set in motion
 Shuffle
@@ -63,3 +66,4 @@ Transform
 Untap
 Venture into the dungeon
 Vote
+Waterbend

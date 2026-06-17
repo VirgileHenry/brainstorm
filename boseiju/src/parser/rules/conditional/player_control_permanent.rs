@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Control { .. })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::Condition {
-                condition: conditional::Condition::PlayerControlsObject(conditional::PlayerControlsPermanent {
+                condition: conditional::Condition::PlayerControlsObject(conditional::ConditionPlayerControlsPermanent {
                     player: player.clone(),
                     permanent: permanent.clone(),
                     #[cfg(feature = "spanned_tree")]

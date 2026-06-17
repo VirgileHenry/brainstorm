@@ -27,6 +27,10 @@ impl crate::ability_tree::AbilityTreeNode for ConditionCreatureMatchSpecifier {
         children
     }
 
+    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
+        Some(crate::ability_tree::AbTreeNodeData::Boolean { value: self.shall_match })
+    }
+
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
         write!(out, "object matches specifiers:")?;

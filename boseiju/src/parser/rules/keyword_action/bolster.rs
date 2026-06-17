@@ -11,7 +11,7 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Bolster <mana cost> */
+    /* Bolster <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
@@ -35,18 +35,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                     crate::ability_tree::imperative::KeywordAction {
                         keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Bolster(
-                            crate::ability_tree::imperative::BolsterKeywordAction {
+                            crate::ability_tree::imperative::bolster::BolsterKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: number.node_span().merge(bolster_span),
                             },
                         ),
-                        /* Fixme */
-                        ability: crate::ability_tree::ability::spell::SpellAbility {
-                            effects: crate::utils::HeapArrayVec::new(),
+                        ability: crate::ability_tree::imperative::bolster::ability(
+                            number,
                             #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
-                        },
+                            number.node_span().merge(bolster_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: number.node_span().merge(bolster_span),
                     },

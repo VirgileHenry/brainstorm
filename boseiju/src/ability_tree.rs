@@ -19,12 +19,14 @@ pub mod type_line;
 pub mod zone;
 
 pub mod dummy_terminal;
+mod node_data;
 mod root;
 mod tree_node;
 
 #[cfg(feature = "spanned_tree")]
 pub mod span;
 
+pub use node_data::AbTreeNodeData;
 pub use root::AbilityTree;
 pub use tree_node::NodeKind;
 
@@ -32,9 +34,6 @@ pub use tree_node::NodeKind;
 ///
 /// This constant strongly impact the size of the tree, and is mostly bottom-limited by exisiting MTG cards.
 pub const MAX_CHILDREN_PER_NODE: usize = 12;
-
-/// Maximim size for the node data.
-pub const MAX_NODE_DATA_SIZE: usize = 32;
 
 /// Trait to reunite all the types of the ability trees to a single "node" type.
 ///
@@ -96,8 +95,8 @@ pub trait AbilityTreeNode {
     ///
     /// Some nodes may carry arbitrary data that are not children, like numbers or booleans.
     /// This function allow to retrieve them, although for now an array of bytes may not be the best pick.
-    fn data(&self) -> arrayvec::ArrayVec<u8, MAX_NODE_DATA_SIZE> {
-        arrayvec::ArrayVec::new_const()
+    fn data(&self) -> Option<AbTreeNodeData> {
+        None
     }
 
     /// Display the ability tree in a human readable manner into the given output.

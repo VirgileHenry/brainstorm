@@ -52,10 +52,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     span: permanent.node_span().merge(enters_span),
                                 },
                                 etb_modifiers: [EtbModifier::WithState(EtbWithState {
-                                    state: crate::ability_tree::state::PermanentState::Tapped {
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: *tapped_span,
-                                    },
+                                    state: crate::ability_tree::state::PermanentState::Tapped(
+                                        crate::ability_tree::state::PermanentTappedState {
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: *tapped_span,
+                                        },
+                                    ),
                                     #[cfg(feature = "spanned_tree")]
                                     span: *tapped_span,
                                 })]

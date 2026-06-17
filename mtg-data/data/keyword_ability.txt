@@ -76,6 +76,7 @@ Extort
 Fabricate
 Fading
 Fear
+Firebending
 First strike
 Flanking
 Flash
@@ -104,6 +105,7 @@ Hideaway
 Horsemanship
 Impending
 Improvise
+Increment
 Indestructible
 Infect
 Ingest
@@ -145,6 +147,7 @@ Offering
 Offspring
 Outlast
 Overload
+Paradigm
 Partner
 Partner with
 Persist
@@ -176,6 +179,8 @@ Shadow
 Shroud
 Skulk
 Slivercycling
+Sneak
+Solved
 Soulbond
 Soulshift
 Specialize
@@ -191,6 +196,7 @@ Surge
 Suspend
 Swampcycling
 Swampwalk
+Tiered
 Toxic
 Training
 Trample

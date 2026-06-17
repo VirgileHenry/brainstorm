@@ -125,10 +125,7 @@ impl crate::utils::DummyInit for Imperative {
 pub enum ImperativeKind {
     AddMana(AddManaImperative),
     ChangeZone(ChangeZoneImperative),
-    CreateToken(CreateTokenImperative),
     DealsDamage(DealsDamageImperative),
-    Destroy(DestroyImperative),
-    Discard(DiscardImperative),
     Draw(DrawImperative),
     ForEach(ForEachImperative),
     GainLife(GainLifeImperative),
@@ -141,10 +138,6 @@ pub enum ImperativeKind {
     PayMana(PayManaImperative),
     PutCounters(PutCountersImperative),
     RemoveCounters(RemoveCountersImperative),
-    Sacrifice(SacrificeImperative),
-    Search(SearchImperative),
-    Tap(TapImperative),
-    Untap(UntapImperative),
 }
 
 impl AbilityTreeNode for ImperativeKind {
@@ -158,10 +151,7 @@ impl AbilityTreeNode for ImperativeKind {
         match self {
             Self::AddMana(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ChangeZone(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::CreateToken(child) => children.push(child as &dyn AbilityTreeNode),
             Self::DealsDamage(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Destroy(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Discard(child) => children.push(child as &dyn AbilityTreeNode),
             Self::Draw(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ForEach(child) => children.push(child as &dyn AbilityTreeNode),
             Self::GainLife(child) => children.push(child as &dyn AbilityTreeNode),
@@ -174,10 +164,6 @@ impl AbilityTreeNode for ImperativeKind {
             Self::PayMana(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PutCounters(child) => children.push(child as &dyn AbilityTreeNode),
             Self::RemoveCounters(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Sacrifice(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Search(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Tap(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::Untap(child) => children.push(child as &dyn AbilityTreeNode),
         }
         children
     }
@@ -189,10 +175,7 @@ impl AbilityTreeNode for ImperativeKind {
         match self {
             Self::AddMana(imperative) => imperative.display(out)?,
             Self::ChangeZone(imperative) => imperative.display(out)?,
-            Self::CreateToken(imperative) => imperative.display(out)?,
             Self::DealsDamage(imperative) => imperative.display(out)?,
-            Self::Destroy(imperative) => imperative.display(out)?,
-            Self::Discard(imperative) => imperative.display(out)?,
             Self::Draw(imperative) => imperative.display(out)?,
             Self::ForEach(imperative) => imperative.display(out)?,
             Self::GainLife(imperative) => imperative.display(out)?,
@@ -205,10 +188,6 @@ impl AbilityTreeNode for ImperativeKind {
             Self::PayMana(imperative) => imperative.display(out)?,
             Self::PutCounters(imperative) => imperative.display(out)?,
             Self::RemoveCounters(imperative) => imperative.display(out)?,
-            Self::Sacrifice(imperative) => imperative.display(out)?,
-            Self::Search(imperative) => imperative.display(out)?,
-            Self::Tap(imperative) => imperative.display(out)?,
-            Self::Untap(imperative) => imperative.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -223,10 +202,7 @@ impl AbilityTreeNode for ImperativeKind {
         match self {
             Self::AddMana(child) => child.node_span(),
             Self::ChangeZone(child) => child.node_span(),
-            Self::CreateToken(child) => child.node_span(),
             Self::DealsDamage(child) => child.node_span(),
-            Self::Destroy(child) => child.node_span(),
-            Self::Discard(child) => child.node_span(),
             Self::Draw(child) => child.node_span(),
             Self::ForEach(child) => child.node_span(),
             Self::GainLife(child) => child.node_span(),
@@ -239,10 +215,6 @@ impl AbilityTreeNode for ImperativeKind {
             Self::PayMana(child) => child.node_span(),
             Self::PutCounters(child) => child.node_span(),
             Self::RemoveCounters(child) => child.node_span(),
-            Self::Sacrifice(child) => child.node_span(),
-            Self::Search(child) => child.node_span(),
-            Self::Tap(child) => child.node_span(),
-            Self::Untap(child) => child.node_span(),
         }
     }
 }
@@ -250,6 +222,6 @@ impl AbilityTreeNode for ImperativeKind {
 #[cfg(feature = "parser")]
 impl crate::utils::DummyInit for ImperativeKind {
     fn dummy_init() -> Self {
-        Self::Destroy(crate::utils::dummy())
+        Self::AddMana(crate::utils::dummy())
     }
 }

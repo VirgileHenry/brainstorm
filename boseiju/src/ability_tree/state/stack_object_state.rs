@@ -1,6 +1,9 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 
+#[cfg(feature = "lexer")]
+use crate::lexer::IntoToken;
+
 /// States that only creatures can have.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -16,6 +19,22 @@ pub enum StackObjectState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+}
+
+impl StackObjectState {
+    pub fn all() -> impl Iterator<Item = Self> {
+        [
+            Self::Countered {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::Kicked {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+        ]
+        .into_iter()
+    }
 }
 
 impl AbilityTreeNode for StackObjectState {
@@ -37,18 +56,18 @@ impl AbilityTreeNode for StackObjectState {
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "creature state:")?;
+        write!(out, "stack object state:")?;
         out.push_final_branch()?;
         match self {
-            Self::Countered { .. } => write!(out, "attacking")?,
-            Self::Kicked { .. } => write!(out, "blocking")?,
+            Self::Countered { .. } => write!(out, "countered")?,
+            Self::Kicked { .. } => write!(out, "kicked")?,
         }
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "creature state"
+        "stack object state"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -66,6 +85,23 @@ impl crate::utils::DummyInit for StackObjectState {
         Self::Countered {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
+        }
+    }
+}
+
+#[cfg(feature = "lexer")]
+impl IntoToken for StackObjectState {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "countered" => Some(StackObjectState::Countered {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "kicked" => Some(StackObjectState::Kicked {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            _ => None,
         }
     }
 }

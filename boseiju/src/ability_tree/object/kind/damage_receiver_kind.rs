@@ -1,8 +1,8 @@
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::ability_tree::object::OneAmong;
-use crate::ability_tree::object::kind::CreatureKind;
-use crate::ability_tree::object::kind::PlaneswalkerKind;
+use crate::ability_tree::object::specified_object::SpecifiedCreature;
+use crate::ability_tree::object::specified_object::SpecifiedPlaneswalker;
 use crate::ability_tree::player::PlayerSpecifier;
 
 /// Any object that can receive damages.
@@ -11,9 +11,9 @@ use crate::ability_tree::player::PlayerSpecifier;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DamageReceiverKind {
-    Creature(CreatureKind),
+    Creature(SpecifiedCreature),
     OneAmong(OneAmong<Self>),
-    Planeswalker(PlaneswalkerKind),
+    Planeswalker(SpecifiedPlaneswalker),
     Player(PlayerSpecifier),
 }
 

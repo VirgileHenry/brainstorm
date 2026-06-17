@@ -60,3 +60,15 @@ impl crate::utils::DummyInit for MillKeywordAction {
         }
     }
 }
+
+pub fn ability(
+    _amount: &crate::ability_tree::number::Number,
+    #[cfg(feature = "spanned_tree")] span: crate::ability_tree::span::TreeSpan,
+) -> crate::ability_tree::ability::spell::SpellAbility {
+    /* Fixme: unimplemented */
+    crate::ability_tree::ability::spell::SpellAbility {
+        effects: crate::utils::HeapArrayVec::new(),
+        #[cfg(feature = "spanned_tree")]
+        span,
+    }
+}

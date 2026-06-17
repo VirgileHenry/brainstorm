@@ -1,5 +1,7 @@
 mod affinity;
 mod afterlife;
+mod annihilator;
+mod backup;
 mod bestow;
 mod blitz;
 mod bloodthirst;
@@ -13,6 +15,7 @@ mod disguise;
 mod echo;
 mod enchant;
 mod equip;
+mod fabricate;
 mod flashback;
 mod freerunning;
 mod kicker;
@@ -22,6 +25,7 @@ mod multiple_keyword_abilities;
 mod ninjutsu;
 mod outlast;
 mod prototype;
+mod rampage;
 mod reconfigure;
 mod reinforce;
 mod renown;
@@ -68,6 +72,8 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         standalone_keyword_abilities,
         affinity::rules().collect::<Vec<_>>(),
         afterlife::rules().collect::<Vec<_>>(),
+        annihilator::rules().collect::<Vec<_>>(),
+        backup::rules().collect::<Vec<_>>(),
         bestow::rules().collect::<Vec<_>>(),
         blitz::rules().collect::<Vec<_>>(),
         bloodthirst::rules().collect::<Vec<_>>(),
@@ -81,6 +87,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         echo::rules().collect::<Vec<_>>(),
         enchant::rules().collect::<Vec<_>>(),
         equip::rules().collect::<Vec<_>>(),
+        fabricate::rules().collect::<Vec<_>>(),
         flashback::rules().collect::<Vec<_>>(),
         freerunning::rules().collect::<Vec<_>>(),
         kicker::rules().collect::<Vec<_>>(),
@@ -90,6 +97,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ninjutsu::rules().collect::<Vec<_>>(),
         prototype::rules().collect::<Vec<_>>(),
         outlast::rules().collect::<Vec<_>>(),
+        rampage::rules().collect::<Vec<_>>(),
         reinforce::rules().collect::<Vec<_>>(),
         reconfigure::rules().collect::<Vec<_>>(),
         renown::rules().collect::<Vec<_>>(),

@@ -5,7 +5,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DiscardImperative {
-    pub amount: crate::ability_tree::number::Number,
+    pub card: crate::ability_tree::object::Card,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -18,7 +18,7 @@ impl crate::ability_tree::AbilityTreeNode for DiscardImperative {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.amount as &dyn AbilityTreeNode);
+        children.push(&self.card as &dyn AbilityTreeNode);
         children
     }
 
@@ -26,9 +26,9 @@ impl crate::ability_tree::AbilityTreeNode for DiscardImperative {
         use std::io::Write;
         write!(out, "discard:")?;
         out.push_final_branch()?;
-        write!(out, "amount:")?;
+        write!(out, "cards:")?;
         out.push_final_branch()?;
-        self.amount.display(out)?;
+        self.card.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
@@ -48,7 +48,7 @@ impl crate::ability_tree::AbilityTreeNode for DiscardImperative {
 impl crate::utils::DummyInit for DiscardImperative {
     fn dummy_init() -> Self {
         Self {
-            amount: crate::utils::dummy(),
+            card: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

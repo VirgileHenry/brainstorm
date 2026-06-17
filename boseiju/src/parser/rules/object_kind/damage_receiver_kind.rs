@@ -10,10 +10,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* "<creature kind>" can be used as a damage receiver kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::CreatureKind { creature: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
             merged: ParserNode::DamageReceiverKind { receiver: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CreatureKind { creature }] => Ok(ParserNode::DamageReceiverKind {
+                &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::DamageReceiverKind {
                     receiver: object::kind::DamageReceiverKind::Creature(creature.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -22,10 +22,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<planeswalker kind>" can be used as a damage receiver kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::PlaneswalkerKind { planeswalker: dummy() }.id()]),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPlaneswalker { planeswalker: dummy() }.id()]),
             merged: ParserNode::DamageReceiverKind { receiver: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::PlaneswalkerKind { planeswalker }] => Ok(ParserNode::DamageReceiverKind {
+                &[ParserNode::SpecifiedPlaneswalker { planeswalker }] => Ok(ParserNode::DamageReceiverKind {
                     receiver: object::kind::DamageReceiverKind::Planeswalker(planeswalker.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

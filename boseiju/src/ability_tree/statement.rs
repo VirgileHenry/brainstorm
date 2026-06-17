@@ -8,7 +8,7 @@ use crate::ability_tree::imperative_list::ImperativeList;
 pub enum Statement {
     Imperatives(ImperativeList),
     May(MayAbility),
-    ReplacableImperatives(ReplacableImperatives),
+    ConditionalImperative(ConditionalImperative),
 }
 
 impl crate::ability_tree::AbilityTreeNode for Statement {
@@ -22,7 +22,7 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
         match self {
             Self::Imperatives(ability) => abilities.push(ability as &dyn AbilityTreeNode),
             Self::May(ability) => abilities.push(ability as &dyn AbilityTreeNode),
-            Self::ReplacableImperatives(ability) => abilities.push(ability as &dyn AbilityTreeNode),
+            Self::ConditionalImperative(ability) => abilities.push(ability as &dyn AbilityTreeNode),
         };
         abilities
     }
@@ -34,7 +34,7 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
         match self {
             Statement::Imperatives(imp) => imp.display(out)?,
             Statement::May(may) => may.display(out)?,
-            Statement::ReplacableImperatives(may) => may.display(out)?,
+            Statement::ConditionalImperative(may) => may.display(out)?,
         }
         out.pop_branch();
         Ok(())
@@ -49,7 +49,7 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
         match self {
             Self::Imperatives(child) => child.node_span(),
             Self::May(child) => child.node_span(),
-            Self::ReplacableImperatives(child) => child.node_span(),
+            Self::ConditionalImperative(child) => child.node_span(),
         }
     }
 }
@@ -153,52 +153,61 @@ impl crate::utils::DummyInit for MayAbility {
 /// Fixme: own file
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ReplacableImperatives {
-    pub first_clause: crate::ability_tree::imperative_list::ImperativeList,
+pub struct ConditionalImperative {
     pub condition: crate::ability_tree::conditional::Conditional,
-    pub replacing_clause: crate::ability_tree::imperative_list::ImperativeList,
+    pub condition_met_clause: crate::ability_tree::imperative_list::ImperativeList,
+    pub cond_not_met_clause: Option<crate::ability_tree::imperative_list::ImperativeList>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl crate::ability_tree::AbilityTreeNode for ReplacableImperatives {
+impl crate::ability_tree::AbilityTreeNode for ConditionalImperative {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::ReplacableImperatives.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        let mut abilities = arrayvec::ArrayVec::new_const();
-        abilities.push(&self.condition as &dyn AbilityTreeNode);
-        abilities.push(&self.first_clause as &dyn AbilityTreeNode);
-        abilities.push(&self.replacing_clause as &dyn AbilityTreeNode);
-        abilities
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.condition as &dyn AbilityTreeNode);
+        children.push(&self.condition_met_clause as &dyn AbilityTreeNode);
+        match self.cond_not_met_clause.as_ref() {
+            Some(child) => children.push(child as &dyn AbilityTreeNode),
+            None => {
+                let dummy_node = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::none_node();
+                children.push(dummy_node as &dyn AbilityTreeNode)
+            }
+        }
+        children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "replacable imperative")?;
+        write!(out, "conditional imperative")?;
         out.push_inter_branch()?;
-        write!(out, "first imperative:")?;
-        out.push_final_branch()?;
-        self.first_clause.display(out)?;
-        out.pop_branch();
-        out.next_inter_branch()?;
-        write!(out, "replacing condition:")?;
+        write!(out, "condition:")?;
         out.push_final_branch()?;
         self.condition.display(out)?;
         out.pop_branch();
-        out.next_final_branch()?;
-        write!(out, "replacing imperative:")?;
+        out.next_inter_branch()?;
+        write!(out, "if condition met imperative:")?;
         out.push_final_branch()?;
-        self.replacing_clause.display(out)?;
+        self.condition_met_clause.display(out)?;
+        out.pop_branch();
+        out.next_final_branch()?;
+        write!(out, "if condition not met imperative:")?;
+        out.push_final_branch()?;
+        match self.cond_not_met_clause.as_ref() {
+            Some(child) => child.display(out)?,
+            None => write!(out, "none")?,
+        }
         out.pop_branch();
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "replacable imperative"
+        "conditional imperative"
     }
 
     #[cfg(feature = "spanned_tree")]
@@ -208,12 +217,12 @@ impl crate::ability_tree::AbilityTreeNode for ReplacableImperatives {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for ReplacableImperatives {
+impl crate::utils::DummyInit for ConditionalImperative {
     fn dummy_init() -> Self {
         Self {
-            first_clause: crate::utils::dummy(),
+            condition_met_clause: crate::utils::dummy(),
             condition: crate::utils::dummy(),
-            replacing_clause: crate::utils::dummy(),
+            cond_not_met_clause: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
