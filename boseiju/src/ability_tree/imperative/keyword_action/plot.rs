@@ -4,7 +4,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlotKeywordAction {
-    pub cost: Box<crate::ability_tree::cost::Cost>,
+    pub cost: crate::ability_tree::cost::Cost,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -19,7 +19,7 @@ impl crate::ability_tree::AbilityTreeNode for PlotKeywordAction {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(self.cost.as_ref() as &dyn AbilityTreeNode);
+        children.push(&self.cost as &dyn AbilityTreeNode);
         children
     }
 
@@ -54,9 +54,21 @@ impl idris::Idris for PlotKeywordAction {
 impl crate::utils::DummyInit for PlotKeywordAction {
     fn dummy_init() -> PlotKeywordAction {
         Self {
-            cost: Box::new(crate::utils::dummy()),
+            cost: crate::utils::dummy(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
+    }
+}
+
+pub fn ability(
+    _cost: &crate::ability_tree::cost::Cost,
+    #[cfg(feature = "spanned_tree")] span: crate::ability_tree::span::TreeSpan,
+) -> crate::ability_tree::ability::spell::SpellAbility {
+    /* Fixme: unimplemented */
+    crate::ability_tree::ability::spell::SpellAbility {
+        effects: crate::utils::HeapArrayVec::new(),
+        #[cfg(feature = "spanned_tree")]
+        span,
     }
 }

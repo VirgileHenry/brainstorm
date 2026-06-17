@@ -26,13 +26,29 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::ImperativeAsCost {
                     cost: crate::ability_tree::imperative::Imperative {
-                        kind: crate::ability_tree::imperative::ImperativeKind::Tap(
-                            crate::ability_tree::imperative::TapImperative {
-                                object: crate::ability_tree::object::Permanent::SelfReferencing(
-                                    crate::ability_tree::object::SelfReferencing {
+                        kind: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                            crate::ability_tree::imperative::KeywordAction {
+                                keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Tap(
+                                    crate::ability_tree::imperative::tap::TapKeywordAction {
+                                        permanent: crate::ability_tree::object::Permanent::SelfReferencing(
+                                            crate::ability_tree::object::SelfReferencing {
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: *span,
+                                            },
+                                        ),
                                         #[cfg(feature = "spanned_tree")]
                                         span: *span,
                                     },
+                                ),
+                                ability: crate::ability_tree::imperative::tap::ability(
+                                    &crate::ability_tree::object::Permanent::SelfReferencing(
+                                        crate::ability_tree::object::SelfReferencing {
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: *span,
+                                        },
+                                    ),
+                                    #[cfg(feature = "spanned_tree")]
+                                    *span,
                                 ),
                                 #[cfg(feature = "spanned_tree")]
                                 span: *span,
@@ -68,13 +84,29 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::ImperativeAsCost {
                     cost: crate::ability_tree::imperative::Imperative {
-                        kind: crate::ability_tree::imperative::ImperativeKind::Untap(
-                            crate::ability_tree::imperative::UntapImperative {
-                                object: crate::ability_tree::object::Permanent::SelfReferencing(
-                                    crate::ability_tree::object::SelfReferencing {
+                        kind: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                            crate::ability_tree::imperative::KeywordAction {
+                                keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Untap(
+                                    crate::ability_tree::imperative::untap::UntapKeywordAction {
+                                        permanent: crate::ability_tree::object::Permanent::SelfReferencing(
+                                            crate::ability_tree::object::SelfReferencing {
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: *span,
+                                            },
+                                        ),
                                         #[cfg(feature = "spanned_tree")]
                                         span: *span,
                                     },
+                                ),
+                                ability: crate::ability_tree::imperative::untap::ability(
+                                    &crate::ability_tree::object::Permanent::SelfReferencing(
+                                        crate::ability_tree::object::SelfReferencing {
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: *span,
+                                        },
+                                    ),
+                                    #[cfg(feature = "spanned_tree")]
+                                    *span,
                                 ),
                                 #[cfg(feature = "spanned_tree")]
                                 span: *span,

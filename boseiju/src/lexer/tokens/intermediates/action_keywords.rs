@@ -15,10 +15,6 @@ pub enum ActionKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Reveal {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -28,7 +24,6 @@ impl ActionKeyword {
             Self::Deals { span } => *span,
             Self::Get { span } => *span,
             Self::Put { span } => *span,
-            Self::Reveal { span } => *span,
         }
     }
 }
@@ -45,10 +40,6 @@ impl ActionKeyword {
                 span: span.into(),
             }),
             "put" | "puts" | "putting" => Some(Self::Put {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "reveal" | "reveals" => Some(Self::Reveal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

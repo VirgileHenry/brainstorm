@@ -30,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Mill,
                     #[cfg(feature = "spanned_tree")]
-                        span: start_span,
+                        span: mill_span,
                 })),
                 ParserNode::Number { number },
                 ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
@@ -41,20 +41,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                     crate::ability_tree::imperative::KeywordAction {
                         keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Mill(
-                            crate::ability_tree::imperative::MillKeywordAction {
+                            crate::ability_tree::imperative::mill::MillKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: start_span.merge(end_span),
+                                span: mill_span.merge(end_span),
                             },
                         ),
-                        /* Fixme */
-                        ability: crate::ability_tree::ability::spell::SpellAbility {
-                            effects: crate::utils::HeapArrayVec::new(),
+                        ability: crate::ability_tree::imperative::mill::ability(
+                            number,
                             #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
-                        },
+                            mill_span.merge(end_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(end_span),
+                        span: mill_span.merge(end_span),
                     },
                 ),
             }),

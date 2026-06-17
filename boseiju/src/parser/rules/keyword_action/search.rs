@@ -1,3 +1,4 @@
+use crate::ability_tree::zone;
 use crate::lexer::tokens::Token;
 use crate::lexer::tokens::intermediates;
 use crate::parser::rules::ParserNode;
@@ -11,10 +12,11 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "search your library for <card refrence>" makes a search imperative */
+    /* Search you library for <card> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Search {
+            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                keyword_action: mtg_data::KeywordAction::Search,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
@@ -24,7 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::OwnableZone(crate::ability_tree::zone::OwnableZone::Library {
+            ParserNode::LexerToken(Token::OwnableZone(zone::OwnableZone::Library {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
@@ -39,20 +41,32 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Search {
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Search,
                     #[cfg(feature = "spanned_tree")]
-                        span: start_span,
+                        span: search_span,
                 })),
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your { .. })),
-                ParserNode::LexerToken(Token::OwnableZone(crate::ability_tree::zone::OwnableZone::Library { .. })),
+                ParserNode::LexerToken(Token::OwnableZone(zone::OwnableZone::Library { .. })),
                 ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::For { .. })),
                 ParserNode::Card { card },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::Search(
-                    crate::ability_tree::imperative::SearchImperative {
-                        card: card.clone(),
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    crate::ability_tree::imperative::KeywordAction {
+                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Search(
+                            crate::ability_tree::imperative::search::SearchKeywordAction {
+                                card: card.clone(),
+                                #[cfg(feature = "spanned_tree")]
+                                span: card.node_span().merge(search_span),
+                            },
+                        ),
+                        ability: crate::ability_tree::imperative::search::ability(
+                            card,
+                            #[cfg(feature = "spanned_tree")]
+                            card.node_span().merge(search_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
-                        span: card.node_span().merge(start_span),
+                        span: card.node_span().merge(search_span),
                     },
                 ),
             }),

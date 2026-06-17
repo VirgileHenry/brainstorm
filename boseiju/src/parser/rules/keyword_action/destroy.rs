@@ -11,43 +11,43 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Destroy any object reference */
+    /* Destroy <permanent> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Create,
+                keyword_action: mtg_data::KeywordAction::Destroy,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Number { number: dummy() }.id(),
-            ParserNode::TokenDefinition { token: dummy() }.id(),
+            ParserNode::Permanent { permanent: dummy() }.id(),
         ]),
         merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Create,
+                    keyword_action: mtg_data::KeywordAction::Destroy,
                     #[cfg(feature = "spanned_tree")]
-                    span,
+                        span: destroy_span,
                 })),
-                ParserNode::Number { number },
-                ParserNode::TokenDefinition { token },
+                ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::CreateToken(
-                    crate::ability_tree::imperative::CreateTokenImperative {
-                        tokens: {
-                            let mut tokens = crate::utils::HeapArrayVec::new();
-                            tokens.push(crate::ability_tree::imperative::TokenCreation {
-                                amount: number.clone(),
-                                token: crate::ability_tree::imperative::CreatedTokenKind::NewToken(token.clone()),
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    crate::ability_tree::imperative::KeywordAction {
+                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Destroy(
+                            crate::ability_tree::imperative::destroy::DestroyKeywordAction {
+                                permanent: permanent.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(&token.node_span()),
-                            });
-                            tokens
-                        },
+                                span: permanent.node_span().merge(destroy_span),
+                            },
+                        ),
+                        ability: crate::ability_tree::imperative::destroy::ability(
+                            permanent,
+                            #[cfg(feature = "spanned_tree")]
+                            permanent.node_span().merge(destroy_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
-                        span: span.merge(&token.node_span()),
+                        span: permanent.node_span().merge(destroy_span),
                     },
                 ),
             }),

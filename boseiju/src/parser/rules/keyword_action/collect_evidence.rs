@@ -7,42 +7,47 @@ use crate::parser::rules::RuleLhs;
 use crate::utils::dummy;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use crate::ability_tree::AbilityTreeNode;
+
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* "Discard <number> cards" makes a discard card imperative */
+    /* Collect evidence <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Discard,
+                keyword_action: mtg_data::KeywordAction::CollectEvidence,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
             ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
         ]),
         merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Discard,
+                    keyword_action: mtg_data::KeywordAction::CollectEvidence,
                     #[cfg(feature = "spanned_tree")]
-                        span: start_span,
+                        span: collect_evidence_span,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
-                    #[cfg(feature = "spanned_tree")]
-                        span: end_span,
-                })),
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::Discard(
-                    crate::ability_tree::imperative::DiscardImperative {
-                        amount: number.clone(),
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    crate::ability_tree::imperative::KeywordAction {
+                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::CollectEvidence(
+                            crate::ability_tree::imperative::collect_evidence::CollectEvidenceKeywordAction {
+                                amount: number.clone(),
+                                #[cfg(feature = "spanned_tree")]
+                                span: number.node_span().merge(collect_evidence_span),
+                            },
+                        ),
+                        ability: crate::ability_tree::imperative::collect_evidence::ability(
+                            number,
+                            #[cfg(feature = "spanned_tree")]
+                            number.node_span().merge(collect_evidence_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(end_span),
+                        span: number.node_span().merge(collect_evidence_span),
                     },
                 ),
             }),

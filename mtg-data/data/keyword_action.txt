@@ -30,9 +30,9 @@ Exile
 Explore
 Fateseal
 Fight
-Food
 Forage
 Goad
+Harness
 Heist
 Incubate
 Investigate
@@ -47,14 +47,13 @@ Planeswalk
 Play
 Plot
 Populate
-Prepared
 Proliferate
 Regenerate
 Reveal
-Role token
 Roll to Visit Your Attractions
 Sacrifice
 Scry
+Search
 Seek
 Set in motion
 Shuffle
@@ -64,7 +63,6 @@ Suspect
 Tap
 Time Travel
 Transform
-Treasure
 Untap
 Venture into the dungeon
 Vote

@@ -35,18 +35,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
                     crate::ability_tree::imperative::KeywordAction {
                         keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Scry(
-                            crate::ability_tree::imperative::ScryKeywordAction {
+                            crate::ability_tree::imperative::scry::ScryKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: number.node_span().merge(scry_span),
                             },
                         ),
-                        /* Fixme */
-                        ability: crate::ability_tree::ability::spell::SpellAbility {
-                            effects: crate::utils::HeapArrayVec::new(),
+                        ability: crate::ability_tree::imperative::scry::ability(
+                            number,
                             #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
-                        },
+                            number.node_span().merge(scry_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: number.node_span().merge(scry_span),
                     },

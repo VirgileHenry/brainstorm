@@ -11,11 +11,11 @@ use idris::Idris;
 use crate::ability_tree::AbilityTreeNode;
 
 pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    /* Destroy any object reference */
+    /* Convert <permanent> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Destroy,
+                keyword_action: mtg_data::KeywordAction::Convert,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
@@ -26,17 +26,28 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Destroy,
+                    keyword_action: mtg_data::KeywordAction::Convert,
                     #[cfg(feature = "spanned_tree")]
-                    span,
+                        span: convert_span,
                 })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::Destroy(
-                    crate::ability_tree::imperative::DestroyImperative {
-                        object: permanent.clone(),
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    crate::ability_tree::imperative::KeywordAction {
+                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Convert(
+                            crate::ability_tree::imperative::convert::ConvertKeywordAction {
+                                permanent: permanent.clone(),
+                                #[cfg(feature = "spanned_tree")]
+                                span: permanent.node_span().merge(convert_span),
+                            },
+                        ),
+                        ability: crate::ability_tree::imperative::convert::ability(
+                            permanent,
+                            #[cfg(feature = "spanned_tree")]
+                            permanent.node_span().merge(convert_span),
+                        ),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(span),
+                        span: permanent.node_span().merge(convert_span),
                     },
                 ),
             }),
