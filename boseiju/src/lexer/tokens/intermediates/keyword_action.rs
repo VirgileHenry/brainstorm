@@ -12,11 +12,24 @@ pub struct KeywordAction {
 #[cfg(feature = "lexer")]
 impl IntoToken for KeywordAction {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        Some(Self {
-            keyword_action: crate::utils::from_str_singular_or_plural(&span.text)?,
-            #[cfg(feature = "spanned_tree")]
-            span: span.into(),
-        })
+        /* Not a fan of "from_str_singular_or_plural" for a places where "s" are tense forms */
+        if let Some(keyword_action) = crate::utils::from_str_singular_or_plural(span.text) {
+            Some(Self {
+                keyword_action,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })
+        } else {
+            /* Some special cases for past tenses, etc. */
+            match span.text {
+                "activated" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Activate,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                _ => None,
+            }
+        }
     }
 }
 

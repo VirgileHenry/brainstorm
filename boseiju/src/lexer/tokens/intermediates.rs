@@ -4,6 +4,7 @@ mod ambiguous_tokens;
 mod any_number_of_clause;
 mod attached_permanent;
 mod card_actions;
+mod card_face;
 mod card_own_name;
 mod card_property;
 mod card_state;
@@ -35,6 +36,7 @@ pub use ambiguous_tokens::AmbiguousToken;
 pub use any_number_of_clause::AnyNumberOfClause;
 pub use attached_permanent::AttachedObject;
 pub use card_actions::CardActions;
+pub use card_face::CardFace;
 pub use card_own_name::CardOwnName;
 pub use card_property::CardProperty;
 pub use card_state::CardState;
@@ -64,6 +66,14 @@ pub use win_lose_clauses::WinLoseClause;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
+    AnyTime {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NextTime {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Life {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -73,6 +83,14 @@ pub enum VhyToSortLater {
         span: crate::ability_tree::span::TreeSpan,
     },
     Card {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ComeUpHead {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ComeUpTails {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -114,9 +132,13 @@ pub enum VhyToSortLater {
 impl VhyToSortLater {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::AnyTime { span } => *span,
+            Self::NextTime { span } => *span,
             Self::Life { span } => *span,
             Self::Source { span } => *span,
             Self::Card { span } => *span,
+            Self::ComeUpHead { span } => *span,
+            Self::ComeUpTails { span } => *span,
             Self::Cost { span } => *span,
             Self::Permanent { span } => *span,
             Self::Player { span } => *span,
@@ -132,11 +154,27 @@ impl VhyToSortLater {
 impl VhyToSortLater {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "ability" => Some(Self::Ability {
+            "any time" => Some(Self::AnyTime {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the next time" => Some(Self::NextTime {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "ability" | "abilities" => Some(Self::Ability {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "card" | "cards" => Some(Self::Card {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "come up heads" | "comes up heads" => Some(Self::ComeUpHead {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "come up tails" | "comes up tails" => Some(Self::ComeUpTails {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

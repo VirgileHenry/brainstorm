@@ -22,6 +22,10 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TurnedFaceUp {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -33,6 +37,7 @@ impl CardActions {
             Self::Enters { span } => *span,
             Self::Fight { span } => *span,
             Self::Leave { span } => *span,
+            Self::TurnedFaceUp { span } => *span,
         }
     }
 }
@@ -57,6 +62,10 @@ impl CardActions {
                 span: span.into(),
             }),
             "leave" | "leaves" | "left" => Some(Self::Leave {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "turned face up" => Some(Self::TurnedFaceUp {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

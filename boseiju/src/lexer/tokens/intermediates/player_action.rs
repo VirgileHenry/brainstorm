@@ -146,7 +146,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "spend" | "spends" => Some(Self::Spend {
+            "spend" | "spends" | "spent" => Some(Self::Spend {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
