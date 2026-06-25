@@ -6,6 +6,12 @@ use rayon::prelude::*;
 use std::collections::HashMap;
 use std::sync::Mutex;
 
+#[derive(Default)]
+struct MostRequiredToken {
+    count: usize,
+    as_in: Vec<String>,
+}
+
 fn main() {
     const SHOWN_TOKENS: usize = 20;
     let cards = mtg_cardbase::AllCardsIter::hexxed_v1_cards();
@@ -32,10 +38,10 @@ fn main() {
         })
         .collect();
 
-    let most_required_tokens: Mutex<HashMap<String, usize>> = Mutex::new(HashMap::new());
+    let most_required_tokens: Mutex<HashMap<String, MostRequiredToken>> = Mutex::new(HashMap::new());
 
     chunks.par_iter().zip(bars.par_iter()).for_each(|(chunk, pb)| {
-        let mut local: HashMap<String, usize> = HashMap::new();
+        let mut local: HashMap<String, MostRequiredToken> = HashMap::new();
         let total = chunk.len();
         let mut last_shown_percentage = 0usize;
 
@@ -51,8 +57,8 @@ fn main() {
                 Some(text) => text,
                 None => continue,
             };
-            let oracle_text = lexer::preprocess(card_name.as_str(), oracle_text);
-            let lexer_error = match lexer::lex(&oracle_text) {
+            let preprocessed = lexer::preprocess(card_name.as_str(), oracle_text);
+            let lexer_error = match lexer::lex(&preprocessed) {
                 Ok(_) => continue,
                 Err(err) => err,
             };
@@ -63,7 +69,9 @@ fn main() {
                 },
             };
 
-            *local.entry(token).or_default() += 1;
+            let entry = local.entry(token).or_default();
+            entry.count += 1;
+            entry.as_in.push(oracle_text.clone());
         }
 
         let done_template = "Thread {prefix:>2} [{bar:40.green/white}] {pos:>6}/{len:6} ({percent}%)";
@@ -76,13 +84,18 @@ fn main() {
         // Single lock per thread: drain local counts into the shared map.
         let mut shared = most_required_tokens.lock().unwrap();
         for (key, count) in local {
-            *shared.entry(key).or_default() += count;
+            let entry = shared.entry(key).or_default();
+            entry.count += count.count;
+            entry.as_in.extend_from_slice(&count.as_in);
         }
     });
 
     let most_required_tokens = most_required_tokens.into_inner().unwrap();
     let mut most_required_tokens: Vec<_> = most_required_tokens.into_iter().collect();
-    most_required_tokens.sort_by(|(_, a), (_, b)| b.cmp(a));
+    most_required_tokens.sort_by(|(_, a), (_, b)| b.count.cmp(&a.count));
+
+    const UNDERLINE_ON: &str = "\x1b[4m";
+    const UNDERLINE_RESET: &str = "\x1b[24m";
 
     println!("");
     println!(
@@ -90,6 +103,10 @@ fn main() {
         most_required_tokens.len()
     );
     for (token, count) in most_required_tokens.iter().take(SHOWN_TOKENS) {
-        println!("{token} ({count} cards)");
+        println!("{UNDERLINE_ON}{token}{UNDERLINE_RESET} ({} cards) as in", count.count);
+        for as_in in count.as_in.iter().take(5) {
+            println!(" - {as_in:?}");
+        }
+        println!();
     }
 }

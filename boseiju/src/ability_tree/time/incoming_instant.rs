@@ -10,6 +10,7 @@ pub enum IncomingInstant {
     NextStepOrPhase(IncomingNextStepOrPhase),
     /// A step or phase in player the next turn, "end of your next turn"
     StepInNextTurn(IncomingStepInNextTurn),
+    /* Next time <event> */
 }
 
 impl AbilityTreeNode for IncomingInstant {

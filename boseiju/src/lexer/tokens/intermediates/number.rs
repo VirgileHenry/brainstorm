@@ -33,6 +33,10 @@ pub enum Number {
         span: crate::ability_tree::span::TreeSpan,
         num: u32,
     },
+    UpToX {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     X {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -50,6 +54,7 @@ impl Number {
             Self::ThatMany { span } => *span,
             Self::TwiceThatMany { span } => *span,
             Self::UpTo { span, .. } => *span,
+            Self::UpToX { span } => *span,
             Self::X { span } => *span,
         }
     }
@@ -78,12 +83,20 @@ impl Number {
                 span: span.into(),
             })
         } else if let Some(stripped) = span.text.strip_prefix("up to ") {
-            let num = crate::utils::parse_num(stripped)?;
-            Some(Self::UpTo {
-                num,
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            })
+            /* Special "up to x" token */
+            if stripped == "x" {
+                Some(Self::UpToX {
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                })
+            } else {
+                let num = crate::utils::parse_num(stripped)?;
+                Some(Self::UpTo {
+                    num,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                })
+            }
         } else {
             match span.text {
                 "x" => Some(Self::X {

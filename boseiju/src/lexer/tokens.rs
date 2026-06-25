@@ -23,6 +23,7 @@ pub enum Token {
     AttachedObject(intermediates::AttachedObject),
     BackwardDuration(time::BackwardDuration),
     CardActions(intermediates::CardActions),
+    CardFace(intermediates::CardFace),
     Choice(intermediates::Choice),
     ChoiceReference(intermediates::ChoiceReference),
     Color(terminals::Color),
@@ -90,6 +91,8 @@ impl Token {
             Some(Self::Order(kind))
         } else if let Some(kind) = intermediates::CardActions::try_from_span(&span) {
             Some(Self::CardActions(kind))
+        } else if let Some(kind) = intermediates::CardFace::try_from_span(&span) {
+            Some(Self::CardFace(kind))
         } else if let Some(kind) = intermediates::PlayerSpecifier::try_from_span(&span) {
             Some(Self::PlayerSpecifier(kind))
         } else if let Some(kind) = intermediates::CardState::try_from_span(&span) {
@@ -204,6 +207,7 @@ impl Token {
             Self::AttachedObject(child) => child.span(),
             Self::BackwardDuration(child) => child.node_span(),
             Self::CardActions(child) => child.span(),
+            Self::CardFace(child) => child.span(),
             Self::CardOwnName(child) => child.span,
             Self::Choice(child) => child.span(),
             Self::ChoiceReference(child) => child.span(),

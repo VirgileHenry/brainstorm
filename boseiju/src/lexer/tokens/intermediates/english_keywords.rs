@@ -83,6 +83,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Both {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Bottom {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -433,6 +437,7 @@ impl EnglishKeyword {
             Self::Be { span } => *span,
             Self::Become { span } => *span,
             Self::Beginning { span } => *span,
+            Self::Both { span } => *span,
             Self::Bottom { span } => *span,
             Self::By { span } => *span,
             Self::Can { span } => *span,
@@ -601,6 +606,10 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "both" => Some(Self::Both {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "bottom" => Some(Self::Bottom {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -649,7 +658,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "don't" | "doesn't" => Some(Self::Dont {
+            "don't" | "doesn't" | "didn't" => Some(Self::Dont {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
