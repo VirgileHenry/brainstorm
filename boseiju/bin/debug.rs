@@ -1,8 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text =
-        "Trample\nWhenever a creature an opponent controls dies, Gimli deals 1 damage to that creature's controller.";
+    let oracle_text = "{B}: Regenerate this creature.";
     let card_name = "Gimli";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

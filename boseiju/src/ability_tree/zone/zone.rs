@@ -84,15 +84,15 @@ impl std::fmt::Display for OwnableZone {
 impl IntoToken for OwnableZone {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "graveyard" => Some(OwnableZone::Graveyard {
+            "graveyard" | "graveyards" => Some(OwnableZone::Graveyard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "hand" => Some(OwnableZone::Hand {
+            "hand" | "hands" => Some(OwnableZone::Hand {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "library" => Some(OwnableZone::Library {
+            "library" | "libraries" => Some(OwnableZone::Library {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

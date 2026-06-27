@@ -19,6 +19,8 @@ def sanitize(name: str) -> str:
     ascii_name = unidecode(name)
     # avoid 's to be a capital S
     ascii_name = ascii_name.replace("'", "")
+    # replace ellipsis, as they can be determining (throw / throw ... flavor word)
+    ascii_name = ascii_name.replace("...", "Ellipsis")
     # Split on anything that isn't a letter or digit
     parts = re.split(r"[^A-Za-z0-9]+", ascii_name)
     pascal = "".join(p[:1].upper() + p[1:].lower() for p in parts if p)

@@ -86,6 +86,10 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    FlipACoin {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     ComeUpHead {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -126,6 +130,30 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ChaosEnsue {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Triggers {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Devotion {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    StartingWithYou {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    RoundedUp {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    RoundedDown {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -137,6 +165,7 @@ impl VhyToSortLater {
             Self::Life { span } => *span,
             Self::Source { span } => *span,
             Self::Card { span } => *span,
+            Self::FlipACoin { span } => *span,
             Self::ComeUpHead { span } => *span,
             Self::ComeUpTails { span } => *span,
             Self::Cost { span } => *span,
@@ -147,6 +176,12 @@ impl VhyToSortLater {
             Self::Mana { span } => *span,
             Self::Ability { span } => *span,
             Self::Effect { span } => *span,
+            Self::ChaosEnsue { span } => *span,
+            Self::Triggers { span } => *span,
+            Self::Devotion { span } => *span,
+            Self::StartingWithYou { span } => *span,
+            Self::RoundedUp { span } => *span,
+            Self::RoundedDown { span } => *span,
         }
     }
 }
@@ -167,6 +202,10 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "card" | "cards" => Some(Self::Card {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "flip a coin" => Some(Self::FlipACoin {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -211,6 +250,30 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "turn" | "turns" => Some(Self::Turn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "chaos ensue" | "chaos ensues" => Some(Self::ChaosEnsue {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "triggers" => Some(Self::Triggers {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "devotion" => Some(Self::Devotion {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "starting with you" => Some(Self::StartingWithYou {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rounded up" => Some(Self::RoundedUp {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rounded down" => Some(Self::RoundedDown {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

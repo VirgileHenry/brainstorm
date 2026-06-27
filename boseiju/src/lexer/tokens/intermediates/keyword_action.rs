@@ -27,6 +27,16 @@ impl IntoToken for KeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "discarded" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Discard,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "regenerated" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Regenerate,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 _ => None,
             }
         }

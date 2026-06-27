@@ -98,7 +98,7 @@ impl IntoToken for PlayerSpecifier {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "owner" => Some(Self::Owner {
+            "owner" | "owners'" => Some(Self::Owner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

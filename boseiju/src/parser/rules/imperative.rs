@@ -4,7 +4,7 @@ mod choose_rules;
 mod deals_damage_rules;
 mod draw_rules;
 mod exile_rules;
-mod for_each_rules;
+// mod for_each_rules;
 mod gain_life_rules;
 mod generate_continuous_effect_rules;
 mod generate_delayed_triggered_ab_rules;
@@ -77,7 +77,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         deals_damage_rules::rules().collect::<Vec<_>>(),
         draw_rules::rules().collect::<Vec<_>>(),
         exile_rules::rules().collect::<Vec<_>>(),
-        for_each_rules::rules().collect::<Vec<_>>(),
+        // for_each_rules::rules().collect::<Vec<_>>(),
         gain_life_rules::rules().collect::<Vec<_>>(),
         generate_continuous_effect_rules::rules().collect::<Vec<_>>(),
         generate_delayed_triggered_ab_rules::rules().collect::<Vec<_>>(),

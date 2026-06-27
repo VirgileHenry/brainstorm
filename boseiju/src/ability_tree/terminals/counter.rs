@@ -75,7 +75,7 @@ impl IntoToken for Counter {
             "-2/-2 counter" | "-2/-2 counters" => Some(CounterKind::MinusTwoMinusTwo),
             "charge counter" | "charge counters" => Some(CounterKind::Charge),
             "defense counter" | "defense counters" => Some(CounterKind::Defense),
-            "energy counter" | "energy counters" => Some(CounterKind::Energy),
+            "energy counter" | "energy counters" | "{e}" => Some(CounterKind::Energy),
             "finality counter" | "finality counters" => Some(CounterKind::Finality),
             "lore counter" | "lore counters" => Some(CounterKind::Lore),
             "loyalty counter" | "loyalty counters" => Some(CounterKind::Loyalty),

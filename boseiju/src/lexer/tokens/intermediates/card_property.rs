@@ -16,11 +16,23 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Color {
+    Commander {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Historic {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Level {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     ManaValue {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Multicolored {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -45,26 +57,14 @@ impl CardProperty {
             Self::BasePower { span } => *span,
             Self::BasePowerAndToughness { span } => *span,
             Self::BaseToughness { span } => *span,
-            Self::Color { span } => *span,
+            Self::Commander { span } => *span,
+            Self::Historic { span } => *span,
+            Self::Level { span } => *span,
             Self::ManaValue { span } => *span,
+            Self::Multicolored { span } => *span,
             Self::Name { span } => *span,
             Self::Power { span } => *span,
             Self::Toughness { span } => *span,
-        }
-    }
-}
-
-impl std::fmt::Display for CardProperty {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CardProperty::BasePower { .. } => write!(f, "base power"),
-            CardProperty::BasePowerAndToughness { .. } => write!(f, "base power and toughness"),
-            CardProperty::BaseToughness { .. } => write!(f, "base toughness"),
-            CardProperty::Color { .. } => write!(f, "color"),
-            CardProperty::ManaValue { .. } => write!(f, "mana value"),
-            CardProperty::Name { .. } => write!(f, "name"),
-            CardProperty::Power { .. } => write!(f, "power"),
-            CardProperty::Toughness { .. } => write!(f, "touhness"),
         }
     }
 }
@@ -85,7 +85,23 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "commander" => Some(CardProperty::Commander {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "historic" => Some(CardProperty::Historic {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "level" => Some(CardProperty::Level {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "mana cost" | "mana value" => Some(CardProperty::ManaValue {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "multicolored" => Some(CardProperty::Multicolored {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -44,7 +44,20 @@ impl AllCardsIter {
 
     pub fn hexxed_v1_cards() -> Self {
         let cards = Self::new();
-        let filter = |card: &crate::Card| card.set_type != "funny" && card.set_type != "alchemy";
+
+        fn filter(card: &crate::Card) -> bool {
+            if card.set_type == "funny" {
+                return false;
+            }
+            if card.set_type == "alchemy" || card.name.starts_with("A-") {
+                return false;
+            }
+            if card.layout == "scheme" {
+                return false;
+            }
+
+            return true;
+        }
         let commander_legal_cards = cards.0.into_iter().filter(filter);
         Self(commander_legal_cards.collect())
     }
