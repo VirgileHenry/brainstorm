@@ -32,6 +32,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Remains {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Revealed {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -81,6 +85,10 @@ impl CardState {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
+            Self::Remains {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
             Self::Revealed {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -109,28 +117,11 @@ impl CardState {
             Self::Enchanted { span } => *span,
             Self::Equipped { span } => *span,
             Self::Exiled { span, .. } => *span,
+            Self::Remains { span } => *span,
             Self::Revealed { span } => *span,
             Self::Sacrificed { span } => *span,
             Self::Tapped { span } => *span,
             Self::Untapped { span } => *span,
-        }
-    }
-}
-
-impl std::fmt::Display for CardState {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CardState::Attached { .. } => write!(f, "attached"),
-            CardState::Attacking { .. } => write!(f, "attacking"),
-            CardState::Blocking { .. } => write!(f, "blocking"),
-            CardState::Blocked { .. } => write!(f, "blocked"),
-            CardState::Enchanted { .. } => write!(f, "enchanted"),
-            CardState::Equipped { .. } => write!(f, "equipped"),
-            CardState::Exiled { .. } => write!(f, "exiled"),
-            CardState::Revealed { .. } => write!(f, "revealed"),
-            CardState::Sacrificed { .. } => write!(f, "sacrificed"),
-            CardState::Tapped { .. } => write!(f, "tapped"),
-            CardState::Untapped { .. } => write!(f, "untapped"),
         }
     }
 }
@@ -164,6 +155,10 @@ impl IntoToken for CardState {
                 span: span.into(),
             }),
             "exiled" => Some(CardState::Exiled {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "remains" => Some(CardState::Remains {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

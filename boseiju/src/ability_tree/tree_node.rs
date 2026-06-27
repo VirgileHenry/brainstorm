@@ -311,6 +311,8 @@ pub enum MtgDataNodeKind {
     CreatureSubtype(mtg_data::CreatureType),
     EnchantmentSubtypeIdMarker,
     EnchantmentSubtype(mtg_data::EnchantmentType),
+    FlavorWordIdMarker,
+    FlavorWord(mtg_data::FlavorWord),
     InstantSorcerySubtypeIdMarker,
     InstantSorcerySubtype(mtg_data::SpellType),
     LandSubtypeIdMarker,

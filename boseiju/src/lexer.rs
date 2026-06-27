@@ -74,6 +74,12 @@ fn replace_name(card_name: &str, lowercase_oracle_text: &str) -> String {
         None => result,
     };
 
+    let mut result = result;
+    /* Some (funny) special cases */
+    if card_name_lowercase == "vial smasher the fierce" {
+        result = result.replace("vial smasher", "~");
+    }
+
     result
 }
 

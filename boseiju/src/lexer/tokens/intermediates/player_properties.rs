@@ -48,7 +48,7 @@ impl PlayerProperties {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "maxmimum hand size" => Some(Self::MaximumHandSize {
+            "maximum hand size" => Some(Self::MaximumHandSize {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

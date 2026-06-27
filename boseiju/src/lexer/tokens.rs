@@ -33,6 +33,7 @@ pub enum Token {
     DamageKind(terminals::DamageKind),
     EnglishKeyword(intermediates::EnglishKeyword),
     ForwardDuration(time::ForwardDuration),
+    FlavorWord(terminals::FlavorWord),
     GlobalZone(intermediates::GlobalZone),
     InAdditionToPayingItsOtherCost(intermediates::InAdditionToPayingItsOtherCost),
     KeywordAbility(intermediates::KeywordAbility),
@@ -117,6 +118,8 @@ impl Token {
             Some(Self::InAdditionToPayingItsOtherCost(kind))
         } else if let Some(kind) = crate::ability_tree::time::ForwardDuration::try_from_span(&span) {
             Some(Self::ForwardDuration(kind))
+        } else if let Some(kind) = terminals::FlavorWord::try_from_span(&span) {
+            Some(Self::FlavorWord(kind))
         } else if let Some(kind) = crate::ability_tree::time::BackwardDuration::try_from_span(&span) {
             Some(Self::BackwardDuration(kind))
         } else if let Some(kind) = terminals::NamedToken::try_from_span(&span) {
@@ -218,6 +221,7 @@ impl Token {
             Self::DamageKind(child) => child.node_span(),
             Self::EnglishKeyword(child) => child.span(),
             Self::ForwardDuration(child) => child.node_span(),
+            Self::FlavorWord(child) => child.node_span(),
             Self::GlobalZone(child) => child.span(),
             Self::InAdditionToPayingItsOtherCost(child) => child.span,
             Self::KeywordAbility(child) => child.span,

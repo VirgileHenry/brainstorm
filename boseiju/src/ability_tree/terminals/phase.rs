@@ -94,7 +94,7 @@ impl IntoToken for Phase {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "precombat main phase" => Some(Phase::PrecombatMain {
+            "precombat main phase" | "first main phase" => Some(Phase::PrecombatMain {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -102,7 +102,7 @@ impl IntoToken for Phase {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "postcombat main phase" => Some(Phase::PostcombatMain {
+            "postcombat main phase" | "second main phase" => Some(Phase::PostcombatMain {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -18,6 +18,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Cycle {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Distribute {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -72,6 +76,7 @@ impl PlayerAction {
             Self::Attach { span } => *span,
             Self::Change { span } => *span,
             Self::Choose { span } => *span,
+            Self::Cycle { span } => *span,
             Self::Distribute { span } => *span,
             Self::Draw { span } => *span,
             Self::LookAt { span } => *span,
@@ -103,6 +108,10 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "choose" | "chooses" | "choice" => Some(Self::Choose {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "cycle" => Some(Self::Cycle {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

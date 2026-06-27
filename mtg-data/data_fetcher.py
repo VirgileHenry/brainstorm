@@ -29,6 +29,7 @@ def fetch_and_save(target_file, url):
 
 
 fetch_and_save("data/ability_word.txt",         "https://api.scryfall.com/catalog/ability-words")
+fetch_and_save("data/flavor_word.txt",          "https://api.scryfall.com/catalog/flavor-words")
 fetch_and_save("data/artifact_type.txt",        "https://api.scryfall.com/catalog/artifact-types")
 fetch_and_save("data/battle_type.txt",          "https://api.scryfall.com/catalog/battle-types")
 fetch_and_save("data/card_type.txt",            "https://api.scryfall.com/catalog/card-types")
