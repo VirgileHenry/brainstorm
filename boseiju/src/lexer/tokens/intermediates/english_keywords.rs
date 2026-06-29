@@ -52,6 +52,7 @@ pub enum EnglishKeyword {
         span: crate::ability_tree::span::TreeSpan,
     },
     Are {
+        /* Fixme: Is ? */
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -323,6 +324,10 @@ pub enum EnglishKeyword {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Pile {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     RatherThan {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -549,6 +554,7 @@ impl EnglishKeyword {
             Self::Or { span } => *span,
             Self::Other { span } => *span,
             Self::Otherwise { span } => *span,
+            Self::Pile { span } => *span,
             Self::RatherThan { span } => *span,
             Self::Random { span } => *span,
             Self::Same { span } => *span,
@@ -823,7 +829,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "isn't" | "wasn't" => Some(Self::Isnt {
+            "isn't" | "wasn't" | "weren't" => Some(Self::Isnt {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -908,6 +914,10 @@ impl EnglishKeyword {
                 span: span.into(),
             }),
             "otherwise" => Some(Self::Otherwise {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "pile" | "piles" => Some(Self::Pile {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

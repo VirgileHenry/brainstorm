@@ -465,6 +465,8 @@ pub enum TerminalNodeKind {
     SelfReferencing,
     Step(crate::ability_tree::terminals::Step),
     StepIdMarker,
+    TokenNameIdMarker,
+    TokenName(crate::ability_tree::terminals::TokenName),
 }
 
 #[derive(idris_derive::Idris)]

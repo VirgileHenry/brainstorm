@@ -97,16 +97,20 @@ fn main() {
     const UNDERLINE_ON: &str = "\x1b[4m";
     const UNDERLINE_RESET: &str = "\x1b[24m";
 
-    println!("");
-    println!(
-        "Most required tokens: (showing {SHOWN_TOKENS} out of {})",
-        most_required_tokens.len()
-    );
-    for (token, count) in most_required_tokens.iter().take(SHOWN_TOKENS) {
-        println!("{UNDERLINE_ON}{token}{UNDERLINE_RESET} ({} cards) as in", count.count);
-        for as_in in count.as_in.iter().take(5) {
-            println!(" - {as_in:?}");
+    if most_required_tokens.is_empty() {
+        println!("You're all good my guy, no tokens required :)")
+    } else {
+        println!("");
+        println!(
+            "Most required tokens: (showing {SHOWN_TOKENS} out of {})",
+            most_required_tokens.len()
+        );
+        for (token, count) in most_required_tokens.iter().take(SHOWN_TOKENS) {
+            println!("{UNDERLINE_ON}{token}{UNDERLINE_RESET} ({} cards) as in", count.count);
+            for as_in in count.as_in.iter().take(5) {
+                println!(" - {as_in:?}");
+            }
+            println!();
         }
-        println!();
     }
 }

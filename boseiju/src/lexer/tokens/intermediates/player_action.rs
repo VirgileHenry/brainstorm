@@ -10,6 +10,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    BeginTheGameWith {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Change {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -66,6 +70,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Separate {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Shuffle {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -106,6 +114,7 @@ impl PlayerAction {
         match self {
             Self::Add { span } => *span,
             Self::Attach { span } => *span,
+            Self::BeginTheGameWith { span } => *span,
             Self::Change { span } => *span,
             Self::Choose { span } => *span,
             Self::ChooseAnyNumber { span } => *span,
@@ -120,6 +129,7 @@ impl PlayerAction {
             Self::Remove { span } => *span,
             Self::Roll { span } => *span,
             Self::Search { span } => *span,
+            Self::Separate { span } => *span,
             Self::Shuffle { span } => *span,
             Self::Spend { span } => *span,
             Self::StartYourEngines { span } => *span,
@@ -140,6 +150,10 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "attach" | "attaches" => Some(Self::Attach {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "begin the game with" => Some(Self::BeginTheGameWith {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -196,6 +210,10 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "search" | "searchs" => Some(Self::Search {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "separate" => Some(Self::Separate {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

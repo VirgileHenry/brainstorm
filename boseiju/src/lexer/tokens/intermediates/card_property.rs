@@ -105,7 +105,7 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "name" => Some(CardProperty::Name {
+            "name" | "names" => Some(CardProperty::Name {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

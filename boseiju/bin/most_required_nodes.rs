@@ -96,16 +96,20 @@ fn main() {
     const UNDERLINE_ON: &str = "\x1b[4m";
     const UNDERLINE_RESET: &str = "\x1b[24m";
 
-    println!("");
-    println!(
-        "\nMost required nodes: (showing {SHOWN_NODES} out of {})",
-        most_required_tokens.len()
-    );
-    for (token, node) in most_required_tokens.iter().take(SHOWN_NODES) {
-        println!("{UNDERLINE_ON}{token}{UNDERLINE_RESET} ({} cards) as in:", node.count);
-        for as_in in node.as_in.iter().take(5) {
-            println!(" - {as_in:?}");
+    if most_required_tokens.is_empty() {
+        println!("You're all good my guy, no nodes required :)")
+    } else {
+        println!("");
+        println!(
+            "\nMost required nodes: (showing {SHOWN_NODES} out of {})",
+            most_required_tokens.len()
+        );
+        for (token, node) in most_required_tokens.iter().take(SHOWN_NODES) {
+            println!("{UNDERLINE_ON}{token}{UNDERLINE_RESET} ({} cards) as in:", node.count);
+            for as_in in node.as_in.iter().take(5) {
+                println!(" - {as_in:?}");
+            }
+            println!();
         }
-        println!();
     }
 }

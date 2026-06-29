@@ -140,6 +140,10 @@ impl IntoToken for ForwardDuration {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }),
+            "for the rest of the game" => Some(Self::Forever {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
             _ => None,
         }
     }

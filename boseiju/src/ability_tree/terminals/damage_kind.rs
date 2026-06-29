@@ -14,6 +14,10 @@ pub enum DamageKind {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ExcessDamage {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NoncombatDamage {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -28,6 +32,10 @@ impl DamageKind {
                 span: Default::default(),
             },
             Self::Damage {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
+            Self::ExcessDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
@@ -77,6 +85,7 @@ impl AbilityTreeNode for DamageKind {
         match self {
             Self::CombatDamage { span } => *span,
             Self::Damage { span } => *span,
+            Self::ExcessDamage { span } => *span,
             Self::NoncombatDamage { span } => *span,
         }
     }
@@ -87,6 +96,7 @@ impl std::fmt::Display for DamageKind {
         match self {
             Self::CombatDamage { .. } => write!(f, "combat damage"),
             Self::Damage { .. } => write!(f, "any damage"),
+            Self::ExcessDamage { .. } => write!(f, "excess damage"),
             Self::NoncombatDamage { .. } => write!(f, "non combat damage"),
         }
     }
@@ -95,11 +105,15 @@ impl std::fmt::Display for DamageKind {
 impl IntoToken for DamageKind {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
+            "combat damage" => Some(Self::CombatDamage {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "damage" | "damages" => Some(Self::Damage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "combat damage" => Some(Self::CombatDamage {
+            "excess damage" => Some(Self::NoncombatDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
