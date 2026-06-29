@@ -79,6 +79,9 @@ fn replace_name(card_name: &str, lowercase_oracle_text: &str) -> String {
     if card_name_lowercase == "vial smasher the fierce" {
         result = result.replace("vial smasher", "~");
     }
+    if card_name_lowercase == "arcanis the omnipotent" {
+        result = result.replace("arcanis", "~");
+    }
 
     result
 }

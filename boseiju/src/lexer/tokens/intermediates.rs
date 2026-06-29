@@ -174,6 +174,14 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Step {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Phase {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -207,6 +215,8 @@ impl VhyToSortLater {
             Self::RoundedUp { span } => *span,
             Self::RoundedDown { span } => *span,
             Self::InAnyCombinationOfColors { span } => *span,
+            Self::Step { span } => *span,
+            Self::Phase { span } => *span,
         }
     }
 }
@@ -286,7 +296,7 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "source" => Some(Self::Source {
+            "source" | "sources" => Some(Self::Source {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -319,6 +329,14 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "in any combination of colors" => Some(Self::InAnyCombinationOfColors {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "step" | "steps" => Some(Self::Step {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "phase" | "phases" => Some(Self::Phase {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

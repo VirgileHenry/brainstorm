@@ -62,6 +62,7 @@ pub enum Token {
     StackObjectState(state::StackObjectState),
     Step(terminals::Step),
     TapUntapCost(intermediates::TapUntapCost),
+    TokenName(terminals::TokenName),
     UnderControl(intermediates::UnderControl),
     VhyToSortLater(intermediates::VhyToSortLater),
     WinLoseClause(intermediates::WinLoseClause),
@@ -140,6 +141,8 @@ impl Token {
             Some(Self::ControlFlow(kind))
         } else if let Some(kind) = intermediates::TapUntapCost::try_from_span(&span) {
             Some(Self::TapUntapCost(kind))
+        } else if let Some(kind) = terminals::TokenName::try_from_span(&span) {
+            Some(Self::TokenName(kind))
         } else if let Some(kind) = intermediates::EnglishKeyword::try_from_span(&span) {
             Some(Self::EnglishKeyword(kind))
         } else if let Some(kind) = intermediates::Number::try_from_span(&span) {
@@ -249,6 +252,7 @@ impl Token {
             Self::StackObjectState(child) => child.node_span(),
             Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
+            Self::TokenName(child) => child.node_span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),
