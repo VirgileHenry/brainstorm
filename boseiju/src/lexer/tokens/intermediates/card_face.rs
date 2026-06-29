@@ -26,11 +26,11 @@ impl CardFace {
 impl CardFace {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "face down" => Some(Self::FaceDown {
+            "face down" | "face-down" => Some(Self::FaceDown {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "face up" => Some(Self::FaceUp {
+            "face up" | "face-up" => Some(Self::FaceUp {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

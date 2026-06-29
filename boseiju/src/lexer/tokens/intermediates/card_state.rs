@@ -32,6 +32,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Modified {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Remains {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -85,6 +89,10 @@ impl CardState {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
+            Self::Modified {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            },
             Self::Remains {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -117,6 +125,7 @@ impl CardState {
             Self::Enchanted { span } => *span,
             Self::Equipped { span } => *span,
             Self::Exiled { span, .. } => *span,
+            Self::Modified { span, .. } => *span,
             Self::Remains { span } => *span,
             Self::Revealed { span } => *span,
             Self::Sacrificed { span } => *span,
@@ -155,6 +164,10 @@ impl IntoToken for CardState {
                 span: span.into(),
             }),
             "exiled" => Some(CardState::Exiled {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "modified" => Some(CardState::Modified {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -18,6 +18,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ChooseAnyNumber {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Cycle {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -46,6 +50,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Repeat {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Remove {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -66,6 +74,30 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    StartYourEngines {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TakeAnExtraTurn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TakeTheInitiative {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TakeTwoExtraTurns {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TheRingTemptsYou {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    YouBecomeTheMonarch {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -76,6 +108,7 @@ impl PlayerAction {
             Self::Attach { span } => *span,
             Self::Change { span } => *span,
             Self::Choose { span } => *span,
+            Self::ChooseAnyNumber { span } => *span,
             Self::Cycle { span } => *span,
             Self::Distribute { span } => *span,
             Self::Draw { span } => *span,
@@ -83,11 +116,18 @@ impl PlayerAction {
             Self::Pay { span } => *span,
             Self::Prevent { span } => *span,
             Self::Return { span } => *span,
+            Self::Repeat { span } => *span,
             Self::Remove { span } => *span,
             Self::Roll { span } => *span,
             Self::Search { span } => *span,
             Self::Shuffle { span } => *span,
             Self::Spend { span } => *span,
+            Self::StartYourEngines { span } => *span,
+            Self::TakeAnExtraTurn { span } => *span,
+            Self::TakeTheInitiative { span } => *span,
+            Self::TakeTwoExtraTurns { span } => *span,
+            Self::TheRingTemptsYou { span } => *span,
+            Self::YouBecomeTheMonarch { span } => *span,
         }
     }
 }
@@ -111,6 +151,10 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "choose any number" => Some(Self::ChooseAnyNumber {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "cycle" => Some(Self::Cycle {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -119,7 +163,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "draw" | "draws" => Some(Self::Draw {
+            "draw" | "draws" | "drawn" => Some(Self::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -127,7 +171,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "pay" | "pays" | "paying" => Some(Self::Pay {
+            "pay" | "pays" | "paying" | "paid" => Some(Self::Pay {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -139,7 +183,11 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "remove" | "removing" => Some(Self::Remove {
+            "repeat" => Some(Self::Repeat {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "remove" | "removing" | "removed" => Some(Self::Remove {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -156,6 +204,26 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "spend" | "spends" | "spent" => Some(Self::Spend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "take an extra turn" => Some(Self::TakeAnExtraTurn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "take the initiative" => Some(Self::TakeTheInitiative {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "take two extra turns" => Some(Self::TakeTwoExtraTurns {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the ring tempts you" => Some(Self::TheRingTemptsYou {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "you become the monarch" => Some(Self::YouBecomeTheMonarch {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

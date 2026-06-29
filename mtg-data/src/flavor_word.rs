@@ -2614,7 +2614,6 @@ impl FlavorWord {
             Self::WraithForm,
             Self::XenosCunning,
             Self::Zantetsuken,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

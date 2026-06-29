@@ -2,11 +2,15 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum GlobalZone {
-    TheBattlefield {
+    Anywhere {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Anywhere {
+    CommandZone {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TheBattlefield {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -16,8 +20,9 @@ pub enum GlobalZone {
 impl GlobalZone {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::TheBattlefield { span } => *span,
             Self::Anywhere { span } => *span,
+            Self::CommandZone { span } => *span,
+            Self::TheBattlefield { span } => *span,
         }
     }
 }
@@ -25,11 +30,15 @@ impl GlobalZone {
 impl GlobalZone {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "the battlefield" => Some(Self::TheBattlefield {
+            "anywhere" => Some(Self::Anywhere {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "anywhere" => Some(Self::Anywhere {
+            "command zone" => Some(Self::CommandZone {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the battlefield" => Some(Self::TheBattlefield {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

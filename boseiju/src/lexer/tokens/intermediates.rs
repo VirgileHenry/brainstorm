@@ -98,6 +98,14 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    WinTheFlip {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    LoseTheFlip {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Cost {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -123,6 +131,14 @@ pub enum VhyToSortLater {
         span: crate::ability_tree::span::TreeSpan,
     },
     Ability {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TriggeredAbility {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ActivatedAbility {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -154,6 +170,10 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    InAnyCombinationOfColors {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -168,6 +188,8 @@ impl VhyToSortLater {
             Self::FlipACoin { span } => *span,
             Self::ComeUpHead { span } => *span,
             Self::ComeUpTails { span } => *span,
+            Self::WinTheFlip { span } => *span,
+            Self::LoseTheFlip { span } => *span,
             Self::Cost { span } => *span,
             Self::Permanent { span } => *span,
             Self::Player { span } => *span,
@@ -175,6 +197,8 @@ impl VhyToSortLater {
             Self::Turn { span } => *span,
             Self::Mana { span } => *span,
             Self::Ability { span } => *span,
+            Self::TriggeredAbility { span } => *span,
+            Self::ActivatedAbility { span } => *span,
             Self::Effect { span } => *span,
             Self::ChaosEnsue { span } => *span,
             Self::Triggers { span } => *span,
@@ -182,6 +206,7 @@ impl VhyToSortLater {
             Self::StartingWithYou { span } => *span,
             Self::RoundedUp { span } => *span,
             Self::RoundedDown { span } => *span,
+            Self::InAnyCombinationOfColors { span } => *span,
         }
     }
 }
@@ -201,6 +226,14 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "triggered ability" | "triggered abilities" => Some(Self::TriggeredAbility {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "activated ability" | "activated abilities" => Some(Self::ActivatedAbility {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "card" | "cards" => Some(Self::Card {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -214,6 +247,14 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "come up tails" | "comes up tails" => Some(Self::ComeUpTails {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "win the flip" => Some(Self::WinTheFlip {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "lose the flip" => Some(Self::LoseTheFlip {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -274,6 +315,10 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "rounded down" => Some(Self::RoundedDown {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "in any combination of colors" => Some(Self::InAnyCombinationOfColors {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

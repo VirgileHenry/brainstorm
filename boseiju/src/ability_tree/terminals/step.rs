@@ -126,15 +126,15 @@ impl std::fmt::Display for Step {
 impl IntoToken for Step {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "untap step" => Some(Step::Untap {
+            "untap step" | "untap steps" => Some(Step::Untap {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "upkeep" => Some(Step::Upkeep {
+            "upkeep" | "upkeeps" => Some(Step::Upkeep {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "draw step" => Some(Step::Draw {
+            "draw step" | "draw steps" => Some(Step::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -142,11 +142,11 @@ impl IntoToken for Step {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "declare attackers step" => Some(Step::DeclareAttackers {
+            "declare attackers step" | "declare attackers steps" => Some(Step::DeclareAttackers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "declare blockers step" => Some(Step::DeclareBlockers {
+            "declare blockers step" | "declare blockers steps" => Some(Step::DeclareBlockers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -162,7 +162,7 @@ impl IntoToken for Step {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "end step" => Some(Step::End {
+            "end step" | "end steps" => Some(Step::End {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

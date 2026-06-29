@@ -1,7 +1,7 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "{B}: Regenerate this creature.";
+    let oracle_text = "start your engines!";
     let card_name = "Gimli";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);

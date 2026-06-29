@@ -11,7 +11,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     let terminal_player_rules = vec![
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
-                intermediates::PlayerSpecifier::All {
+                intermediates::PlayerSpecifier::AllPlayers {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::All {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::AllPlayers {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -36,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
-                intermediates::PlayerSpecifier::AnOpponent {
+                intermediates::PlayerSpecifier::AnyOpponent {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
@@ -45,7 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::AnOpponent {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::AnyOpponent {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
-                intermediates::PlayerSpecifier::Any {
+                intermediates::PlayerSpecifier::AnyPlayer {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::Any {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::AnyPlayer {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -86,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
-                intermediates::PlayerSpecifier::EachOpponent {
+                intermediates::PlayerSpecifier::AllOpponent {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
@@ -95,7 +95,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Player { player: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::EachOpponent {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::AllOpponent {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
