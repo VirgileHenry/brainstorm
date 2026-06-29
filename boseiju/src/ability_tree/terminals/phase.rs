@@ -10,15 +10,11 @@ pub enum Phase {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    PrecombatMain {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     Combat {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    PostcombatMain {
+    Current {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -26,7 +22,15 @@ pub enum Phase {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Current {
+    MainPhase {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    PostcombatMain {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    PrecombatMain {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -64,11 +68,12 @@ impl AbilityTreeNode for Phase {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Beginning { span } => *span,
-            Self::PrecombatMain { span } => *span,
             Self::Combat { span } => *span,
-            Self::PostcombatMain { span } => *span,
-            Self::End { span } => *span,
             Self::Current { span } => *span,
+            Self::End { span } => *span,
+            Self::MainPhase { span } => *span,
+            Self::PostcombatMain { span } => *span,
+            Self::PrecombatMain { span } => *span,
         }
     }
 }
@@ -77,11 +82,12 @@ impl std::fmt::Display for Phase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Phase::Beginning { .. } => write!(f, "beginning phase"),
-            Phase::PrecombatMain { .. } => write!(f, "precombat main phase"),
-            Phase::Combat { .. } => write!(f, "combat phase"),
-            Phase::PostcombatMain { .. } => write!(f, "postcombat main phase"),
-            Phase::End { .. } => write!(f, "end phase"),
-            Phase::Current { .. } => write!(f, "this phase"),
+            Phase::Combat { .. } => write!(f, "precombat main phase"),
+            Phase::Current { .. } => write!(f, "combat phase"),
+            Phase::End { .. } => write!(f, "postcombat main phase"),
+            Phase::MainPhase { .. } => write!(f, "end phase"),
+            Phase::PostcombatMain { .. } => write!(f, "this phase"),
+            Phase::PrecombatMain { .. } => write!(f, "this phase"),
         }
     }
 }
@@ -91,6 +97,10 @@ impl IntoToken for Phase {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "beginning phase" => Some(Phase::Beginning {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "main phase" => Some(Phase::MainPhase {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

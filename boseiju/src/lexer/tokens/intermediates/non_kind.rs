@@ -22,6 +22,10 @@ pub enum NonKind {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    NonArtifact {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NonBasic {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -31,6 +35,10 @@ pub enum NonKind {
         span: crate::ability_tree::span::TreeSpan,
     },
     NonLand {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NonLegendary {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -49,9 +57,11 @@ impl NonKind {
             Self::NonGreen { span } => *span,
             Self::NonRed { span } => *span,
             Self::NonWhite { span } => *span,
+            Self::NonArtifact { span } => *span,
             Self::NonBasic { span } => *span,
             Self::NonCreature { span } => *span,
             Self::NonLand { span } => *span,
+            Self::NonLegendary { span } => *span,
             Self::NonToken { span } => *span,
         }
     }
@@ -80,6 +90,10 @@ impl NonKind {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "nonartifact" => Some(Self::NonArtifact {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "nonbasic" => Some(Self::NonBasic {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -89,6 +103,10 @@ impl NonKind {
                 span: span.into(),
             }),
             "nonland" => Some(Self::NonLand {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "nonlegendary" => Some(Self::NonLegendary {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
