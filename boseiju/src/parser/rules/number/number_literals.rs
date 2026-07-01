@@ -64,34 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "up to <number>" number */
-        ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::UpTo {
-                num: 0,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id()]),
-            merged: ParserNode::Number { number: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::Number(intermediates::Number::UpTo {
-                        num: fixed_number,
-                        #[cfg(feature = "spanned_tree")]
-                            span: number_span,
-                    })),
-                ] => Ok(ParserNode::Number {
-                    number: number::Number::UpTo(number::UpToNumber {
-                        maximum: *fixed_number,
-                        #[cfg(feature = "spanned_tree")]
-                        span: *number_span,
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* "up to <number>" number */
+        /* "any number" number */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::AnyNumber {
                 #[cfg(feature = "spanned_tree")]
@@ -117,6 +90,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "each of up to" is an english formulation for the logical "up to" */
         /* Fixme: a bit of a shortcut, but is it fine ? */
+        /*
         ParserRule {
             expanded: RuleLhs::new(&[
                 /* Fixme: each is parsed as an "all" ? */
@@ -161,6 +135,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+        */
         /* "that many" number */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::ThatMany {

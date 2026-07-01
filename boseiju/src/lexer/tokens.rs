@@ -31,6 +31,8 @@ pub enum Token {
     CountSpecifier(intermediates::CountSpecifier),
     Counter(terminals::Counter),
     DamageKind(terminals::DamageKind),
+    DayNight(intermediates::DayNight),
+    Die(intermediates::Die),
     EnglishKeyword(intermediates::EnglishKeyword),
     ForwardDuration(time::ForwardDuration),
     FlavorWord(terminals::FlavorWord),
@@ -39,6 +41,7 @@ pub enum Token {
     KeywordAbility(intermediates::KeywordAbility),
     KeywordAction(intermediates::KeywordAction),
     Mana { mana: terminals::Mana },
+    MayChooseTheSameModeMoreThanOnce(intermediates::MayChooseTheSameModeMoreThanOnce),
     NamedToken(terminals::NamedToken),
     NonKind(intermediates::NonKind),
     NotOfAKind { not: intermediates::NotOfAKind },
@@ -54,6 +57,7 @@ pub enum Token {
     CardOwnName(intermediates::CardOwnName),
     Phase(terminals::Phase),
     PlayerAction(intermediates::PlayerAction),
+    PlayerDesignation(intermediates::PlayerDesignation),
     PlayerProperties(intermediates::PlayerProperties),
     PlayerSpecifier(intermediates::PlayerSpecifier),
     PowerToughnessModElements(intermediates::PowerToughnessModElements),
@@ -62,6 +66,7 @@ pub enum Token {
     StackObjectState(state::StackObjectState),
     Step(terminals::Step),
     TapUntapCost(intermediates::TapUntapCost),
+    TheSameIsTrueFor(intermediates::TheSameIsTrueFor),
     TokenName(terminals::TokenName),
     UnderControl(intermediates::UnderControl),
     VhyToSortLater(intermediates::VhyToSortLater),
@@ -137,10 +142,14 @@ impl Token {
             Some(Self::KeywordAction(kind))
         } else if let Some(mana) = terminals::Mana::try_from_span(&span) {
             Some(Self::Mana { mana })
+        } else if let Some(kind) = intermediates::MayChooseTheSameModeMoreThanOnce::try_from_span(&span) {
+            Some(Self::MayChooseTheSameModeMoreThanOnce(kind))
         } else if let Some(kind) = intermediates::ControlFlow::try_from_span(&span) {
             Some(Self::ControlFlow(kind))
         } else if let Some(kind) = intermediates::TapUntapCost::try_from_span(&span) {
             Some(Self::TapUntapCost(kind))
+        } else if let Some(kind) = intermediates::TheSameIsTrueFor::try_from_span(&span) {
+            Some(Self::TheSameIsTrueFor(kind))
         } else if let Some(kind) = terminals::TokenName::try_from_span(&span) {
             Some(Self::TokenName(kind))
         } else if let Some(kind) = intermediates::EnglishKeyword::try_from_span(&span) {
@@ -155,8 +164,14 @@ impl Token {
             Some(Self::ActionKeyword(kind))
         } else if let Some(kind) = terminals::DamageKind::try_from_span(&span) {
             Some(Self::DamageKind(kind))
+        } else if let Some(kind) = intermediates::DayNight::try_from_span(&span) {
+            Some(Self::DayNight(kind))
+        } else if let Some(kind) = intermediates::Die::try_from_span(&span) {
+            Some(Self::Die(kind))
         } else if let Some(kind) = intermediates::PlayerAction::try_from_span(&span) {
             Some(Self::PlayerAction(kind))
+        } else if let Some(kind) = intermediates::PlayerDesignation::try_from_span(&span) {
+            Some(Self::PlayerDesignation(kind))
         } else if let Some(kind) = intermediates::NonKind::try_from_span(&span) {
             Some(Self::NonKind(kind))
         } else if let Some(kind) = intermediates::UnderControl::try_from_span(&span) {
@@ -222,6 +237,8 @@ impl Token {
             Self::CountSpecifier(child) => child.span(),
             Self::Counter(child) => child.span,
             Self::DamageKind(child) => child.node_span(),
+            Self::DayNight(child) => child.span(),
+            Self::Die(child) => child.span(),
             Self::EnglishKeyword(child) => child.span(),
             Self::ForwardDuration(child) => child.node_span(),
             Self::FlavorWord(child) => child.node_span(),
@@ -230,6 +247,7 @@ impl Token {
             Self::KeywordAbility(child) => child.span,
             Self::KeywordAction(child) => child.span,
             Self::Mana { mana } => mana.node_span(),
+            Self::MayChooseTheSameModeMoreThanOnce(child) => child.span,
             Self::NamedToken(child) => child.node_span(),
             Self::NonKind(child) => child.span(),
             Self::NotOfAKind { not } => not.span,
@@ -244,6 +262,7 @@ impl Token {
             Self::CardState(child) => child.span(),
             Self::Phase(child) => child.node_span(),
             Self::PlayerAction(child) => child.span(),
+            Self::PlayerDesignation(child) => child.span(),
             Self::PlayerProperties(child) => child.span(),
             Self::PlayerSpecifier(child) => child.span(),
             Self::PowerToughnessModElements(child) => child.span(),
@@ -252,6 +271,7 @@ impl Token {
             Self::StackObjectState(child) => child.node_span(),
             Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
+            Self::TheSameIsTrueFor(child) => child.span,
             Self::TokenName(child) => child.node_span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),

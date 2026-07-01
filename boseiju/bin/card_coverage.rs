@@ -106,7 +106,7 @@ fn main() -> std::io::Result<()> {
     /* Create the different coverage categories */
     let categories = vec![
         CoverageTestCase::new("Foundation set (FDN)", Box::new(|card| card.set == "fdn")),
-        CoverageTestCase::new("Last set (ECL)", Box::new(|card| card.set == "ecl")), // Fixme: fetch last set ?
+        CoverageTestCase::new("Last set (MSH)", Box::new(|card| card.set == "msh")), // Fixme: fetch last set ?
         CoverageTestCase::new(
             "Standard-legal cards",
             Box::new(|card| card_legal_in(card, mtg_data::Format::Standard)),
@@ -115,7 +115,7 @@ fn main() -> std::io::Result<()> {
             "Commander-legal cards",
             Box::new(|card| card_legal_in(card, mtg_data::Format::Commander)),
         ),
-        CoverageTestCase::new("All (except uncards)", Box::new(|card| card.set_type != "funny")),
+        CoverageTestCase::new("All (except uncards)", Box::new(|_| true)),
     ];
 
     let categories_results = categories

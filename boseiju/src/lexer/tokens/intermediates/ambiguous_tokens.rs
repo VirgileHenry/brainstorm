@@ -81,7 +81,7 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "color" | "colors" => Some(Self::Color {
+            "color" | "colors" | "colored" => Some(Self::Color {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

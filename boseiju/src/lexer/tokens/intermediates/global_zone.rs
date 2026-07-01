@@ -10,6 +10,10 @@ pub enum GlobalZone {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    OutsideTheGame {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TheBattlefield {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -22,6 +26,7 @@ impl GlobalZone {
         match self {
             Self::Anywhere { span } => *span,
             Self::CommandZone { span } => *span,
+            Self::OutsideTheGame { span } => *span,
             Self::TheBattlefield { span } => *span,
         }
     }
@@ -35,6 +40,10 @@ impl GlobalZone {
                 span: span.into(),
             }),
             "command zone" => Some(Self::CommandZone {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "outside the game" => Some(Self::OutsideTheGame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

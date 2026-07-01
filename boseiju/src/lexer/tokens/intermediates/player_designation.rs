@@ -1,62 +1,54 @@
+/// <https://mtg.fandom.com/wiki/Marker#Designations>
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum NumberOperation {
-    Between {
+pub enum PlayerDesignation {
+    TheCitysBlessing {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Difference {
+    TheInitiative {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Minus {
+    TheMonarch {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Plus {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    Reduce {
+    YourParty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl NumberOperation {
+impl PlayerDesignation {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Between { span } => *span,
-            Self::Difference { span } => *span,
-            Self::Minus { span } => *span,
-            Self::Plus { span } => *span,
-            Self::Reduce { span } => *span,
+            Self::TheCitysBlessing { span } => *span,
+            Self::TheInitiative { span } => *span,
+            Self::TheMonarch { span } => *span,
+            Self::YourParty { span } => *span,
         }
     }
 }
 
-impl NumberOperation {
+impl PlayerDesignation {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "between" => Some(Self::Between {
+            "the city's blessing" => Some(Self::TheCitysBlessing {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "difference" => Some(Self::Difference {
+            "the initiative" => Some(Self::TheInitiative {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "minus" => Some(Self::Minus {
+            "the monarch" => Some(Self::TheMonarch {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "plus" => Some(Self::Plus {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "reduce" | "reduced" | "reduces" => Some(Self::Reduce {
+            "your party" => Some(Self::YourParty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

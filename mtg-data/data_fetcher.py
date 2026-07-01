@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # This python script will fetch the latest data on scryfall,
 # a MTG card database with a suitable API to update the various
 # files in the data/ directory.

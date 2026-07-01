@@ -1,75 +1,97 @@
+/// Fixme: what's this ? we can do better
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum PlayerProperties {
-    HandSize {
+pub enum Die {
+    D4 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    LifeTotal {
+    D6 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    MaximumHandSize {
+    D8 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    StartingDeck {
+    D12 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    StartingLifeTotal {
+    D20 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    OpeningHand {
+    DieRange {
+        start: usize,
+        end: usize,
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Result {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerProperties {
+impl Die {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::HandSize { span } => *span,
-            Self::LifeTotal { span } => *span,
-            Self::MaximumHandSize { span } => *span,
-            Self::StartingDeck { span } => *span,
-            Self::StartingLifeTotal { span } => *span,
-            Self::OpeningHand { span } => *span,
+            Self::D4 { span } => *span,
+            Self::D6 { span } => *span,
+            Self::D8 { span } => *span,
+            Self::D12 { span } => *span,
+            Self::D20 { span } => *span,
+            Self::DieRange { span, .. } => *span,
+            Self::Result { span } => *span,
         }
     }
 }
 
-impl PlayerProperties {
+impl Die {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "hand size" => Some(Self::HandSize {
+            "d4" => Some(Self::D4 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "life total" => Some(Self::LifeTotal {
+            "d6" => Some(Self::D6 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "maximum hand size" => Some(Self::MaximumHandSize {
+            "d8" => Some(Self::D8 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "starting deck" => Some(Self::StartingDeck {
+            "d12" => Some(Self::D12 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "starting life total" => Some(Self::StartingLifeTotal {
+            "d20" => Some(Self::D20 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "opening hand" => Some(Self::OpeningHand {
+            "result" => Some(Self::Result {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            _ => None,
+            other => {
+                let split: Vec<&str> = other.split('—').collect();
+                match split.as_slice() {
+                    &[start, end] => match (start.parse::<usize>(), end.parse::<usize>()) {
+                        (Ok(start), Ok(end)) => Some(Self::DieRange {
+                            start,
+                            end,
+                            #[cfg(feature = "spanned_tree")]
+                            span: span.into(),
+                        }),
+                        _ => None,
+                    },
+                    _ => None,
+                }
+            }
         }
     }
 }

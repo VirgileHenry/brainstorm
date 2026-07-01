@@ -1,0 +1,2 @@
+Artifact subtypes: missing lander, mutagen, vibranium, terminus should not be there
+Keyword ability: to solve (as per the wiki, not in CR ?)

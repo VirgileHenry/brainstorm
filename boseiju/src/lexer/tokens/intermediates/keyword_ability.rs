@@ -13,11 +13,22 @@ pub struct KeywordAbility {
 impl IntoToken for KeywordAbility {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         use std::str::FromStr;
-        Some(Self {
-            keyword_ability: mtg_data::KeywordAbility::from_str(&span.text).ok()?,
-            #[cfg(feature = "spanned_tree")]
-            span: span.into(),
-        })
+        if let Ok(keyword_ability) = mtg_data::KeywordAbility::from_str(&span.text) {
+            Some(Self {
+                keyword_ability,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })
+        } else {
+            match span.text {
+                "crews" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Crew,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                _ => None,
+            }
+        }
     }
 }
 

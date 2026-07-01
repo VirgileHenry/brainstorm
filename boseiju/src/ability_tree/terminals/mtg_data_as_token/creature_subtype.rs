@@ -68,11 +68,12 @@ impl crate::lexer::IntoToken for CreatureSubtype {
             creature_subtype: {
                 if let Some(subtype) = crate::utils::from_str_singular_or_plural(&span.text) {
                     Some(subtype)
-                } else if span.text == "elves" {
-                    /* Weird special case with the plural of elf being elves */
-                    Some(mtg_data::CreatureType::Elf)
                 } else {
-                    None
+                    match span.text {
+                        "elves" => Some(mtg_data::CreatureType::Elf),
+                        "heroes" => Some(mtg_data::CreatureType::Hero),
+                        _ => None,
+                    }
                 }
             }?,
             #[cfg(feature = "spanned_tree")]

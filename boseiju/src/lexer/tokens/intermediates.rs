@@ -12,21 +12,26 @@ mod choice;
 mod choice_reference;
 mod control_flow;
 mod count_specifier;
+mod day_night;
+mod die;
 mod english_keywords;
 mod global_zone;
 mod in_addition_to_paying_its_other_costs;
 mod keyword_ability;
 mod keyword_action;
+mod may_choose_the_same_mode;
 mod non_kind;
 mod not_of_a_kind;
 mod number;
 mod number_of_times;
 mod number_operation;
 mod player_action;
+mod player_designation;
 mod player_properties;
 mod player_specifier;
 mod plus_minus;
 mod tap_untap_cost;
+mod the_same_is_true_for;
 mod under_control;
 mod win_lose_clauses;
 
@@ -44,21 +49,26 @@ pub use choice::Choice;
 pub use choice_reference::ChoiceReference;
 pub use control_flow::ControlFlow;
 pub use count_specifier::CountSpecifier;
+pub use day_night::DayNight;
+pub use die::Die;
 pub use english_keywords::EnglishKeyword;
 pub use global_zone::GlobalZone;
 pub use in_addition_to_paying_its_other_costs::InAdditionToPayingItsOtherCost;
 pub use keyword_ability::KeywordAbility;
 pub use keyword_action::KeywordAction;
+pub use may_choose_the_same_mode::MayChooseTheSameModeMoreThanOnce;
 pub use non_kind::NonKind;
 pub use not_of_a_kind::NotOfAKind;
 pub use number::Number;
 pub use number_of_times::NumberOfTimes;
 pub use number_operation::NumberOperation;
 pub use player_action::PlayerAction;
+pub use player_designation::PlayerDesignation;
 pub use player_properties::PlayerProperties;
 pub use player_specifier::PlayerSpecifier;
 pub use plus_minus::PowerToughnessModElements;
 pub use tap_untap_cost::TapUntapCost;
+pub use the_same_is_true_for::TheSameIsTrueFor;
 pub use under_control::UnderControl;
 pub use win_lose_clauses::WinLoseClause;
 
@@ -110,6 +120,10 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ActivationCost {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Permanent {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -139,6 +153,10 @@ pub enum VhyToSortLater {
         span: crate::ability_tree::span::TreeSpan,
     },
     ActivatedAbility {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    LoyaltyAbility {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -182,6 +200,18 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Unspent {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Perpetually {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Team {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -199,6 +229,7 @@ impl VhyToSortLater {
             Self::WinTheFlip { span } => *span,
             Self::LoseTheFlip { span } => *span,
             Self::Cost { span } => *span,
+            Self::ActivationCost { span } => *span,
             Self::Permanent { span } => *span,
             Self::Player { span } => *span,
             Self::Spell { span } => *span,
@@ -207,6 +238,7 @@ impl VhyToSortLater {
             Self::Ability { span } => *span,
             Self::TriggeredAbility { span } => *span,
             Self::ActivatedAbility { span } => *span,
+            Self::LoyaltyAbility { span } => *span,
             Self::Effect { span } => *span,
             Self::ChaosEnsue { span } => *span,
             Self::Triggers { span } => *span,
@@ -217,6 +249,9 @@ impl VhyToSortLater {
             Self::InAnyCombinationOfColors { span } => *span,
             Self::Step { span } => *span,
             Self::Phase { span } => *span,
+            Self::Unspent { span } => *span,
+            Self::Perpetually { span } => *span,
+            Self::Team { span } => *span,
         }
     }
 }
@@ -241,6 +276,10 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "activated ability" | "activated abilities" => Some(Self::ActivatedAbility {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "loyalty ability" => Some(Self::LoyaltyAbility {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -269,6 +308,10 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "cost" | "costs" => Some(Self::Cost {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "activation cost" => Some(Self::ActivationCost {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -308,7 +351,7 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "triggers" => Some(Self::Triggers {
+            "trigger" | "triggers" => Some(Self::Triggers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -337,6 +380,18 @@ impl VhyToSortLater {
                 span: span.into(),
             }),
             "phase" | "phases" => Some(Self::Phase {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unspent" => Some(Self::Unspent {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "perpetually" => Some(Self::Perpetually {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "team" => Some(Self::Team {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

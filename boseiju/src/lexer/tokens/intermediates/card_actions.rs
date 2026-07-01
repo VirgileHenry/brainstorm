@@ -6,10 +6,6 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    AttacksAlone {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     Blocks {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -18,7 +14,19 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    DoSo {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Enters {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Escape {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Exploits {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -38,6 +46,10 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Produce {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TurnedFaceUp {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -49,14 +61,17 @@ impl CardActions {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AssignsDamage { span } => *span,
-            Self::AttacksAlone { span } => *span,
             Self::Blocks { span } => *span,
             Self::Dies { span } => *span,
+            Self::DoSo { span } => *span,
             Self::Enters { span } => *span,
+            Self::Escape { span } => *span,
+            Self::Exploits { span } => *span,
             Self::Fight { span } => *span,
             Self::Leave { span } => *span,
             Self::Mutates { span } => *span,
             Self::PhaseOut { span } => *span,
+            Self::Produce { span } => *span,
             Self::TurnedFaceUp { span } => *span,
         }
     }
@@ -65,11 +80,7 @@ impl CardActions {
 impl CardActions {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "assigns" => Some(Self::AssignsDamage {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "attacks alone" => Some(Self::AttacksAlone {
+            "assign" | "assigns" => Some(Self::AssignsDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -81,7 +92,19 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "enter" | "enters" | "entered" => Some(Self::Enters {
+            "do so" => Some(Self::DoSo {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "enter" | "enters" | "entered" | "entering" => Some(Self::Enters {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "escapes" => Some(Self::Escape {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "exploits" => Some(Self::Exploits {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -98,6 +121,10 @@ impl CardActions {
                 span: span.into(),
             }),
             "phase out" | "phases out" => Some(Self::PhaseOut {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "produce" | "produced" | "produces" => Some(Self::Produce {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

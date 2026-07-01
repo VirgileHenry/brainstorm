@@ -1,4 +1,4 @@
-# This python script will generate the rust source code from the data directory.
+#!/usr/bin/env python3
 
 import re
 import sys

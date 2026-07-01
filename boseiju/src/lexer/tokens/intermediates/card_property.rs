@@ -28,7 +28,15 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Loyalty {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     ManaValue {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Monocolored {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -41,6 +49,10 @@ pub enum CardProperty {
         span: crate::ability_tree::span::TreeSpan,
     },
     Power {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Text {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -60,10 +72,13 @@ impl CardProperty {
             Self::Commander { span } => *span,
             Self::Historic { span } => *span,
             Self::Level { span } => *span,
+            Self::Loyalty { span } => *span,
             Self::ManaValue { span } => *span,
+            Self::Monocolored { span } => *span,
             Self::Multicolored { span } => *span,
             Self::Name { span } => *span,
             Self::Power { span } => *span,
+            Self::Text { span } => *span,
             Self::Toughness { span } => *span,
         }
     }
@@ -97,7 +112,15 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "mana cost" | "mana value" => Some(CardProperty::ManaValue {
+            "loyalty" => Some(CardProperty::Loyalty {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "mana cost" | "mana costs" | "mana value" | "mana values" => Some(CardProperty::ManaValue {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "monocolored" => Some(CardProperty::Monocolored {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -109,7 +132,11 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "power" => Some(CardProperty::Power {
+            "power" | "powers" => Some(CardProperty::Power {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "text" => Some(CardProperty::Text {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
