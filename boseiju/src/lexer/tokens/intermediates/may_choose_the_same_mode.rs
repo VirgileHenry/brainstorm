@@ -1,15 +1,16 @@
+/// Special non terminal token for the clause that is seen quite a bit,
+/// "in addition to paying its other cost".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct CardOwnName {
+pub struct MayChooseTheSameModeMoreThanOnce {
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl CardOwnName {
+impl MayChooseTheSameModeMoreThanOnce {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            /* Fixme: big mistake, he / him / itself can reference some other card */
-            "~" | "he" | "she" | "him" | "her" | "itself" => Some(Self {
+            "may choose the same mode more than once" => Some(Self {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -18,12 +19,12 @@ impl CardOwnName {
     }
 }
 
-impl idris::Idris for CardOwnName {
+impl idris::Idris for MayChooseTheSameModeMoreThanOnce {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "CardOwnName"
+        "MayChooseTheSameModeMoreThanOnce"
     }
 }

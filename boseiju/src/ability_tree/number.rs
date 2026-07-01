@@ -112,7 +112,7 @@ impl AbilityTreeNode for FixedNumber {
     }
 
     fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
-        Some(crate::ability_tree::AbTreeNodeData::Numeric{ value: self.number })
+        Some(crate::ability_tree::AbTreeNodeData::Numeric { value: self.number })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -203,7 +203,7 @@ impl idris::Idris for OrMoreNumber {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpToNumber {
-    pub maximum: u32,
+    pub maximum: Box<Number>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -215,16 +215,16 @@ impl AbilityTreeNode for UpToNumber {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
-        arrayvec::ArrayVec::new()
-    }
-
-    fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
-        Some(crate::ability_tree::AbTreeNodeData::Numeric { value: self.maximum })
+        let mut children = arrayvec::ArrayVec::new();
+        children.push(self.maximum.as_ref() as &dyn AbilityTreeNode);
+        children
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "up to {}", self.maximum)
+        write!(out, "up to:")?;
+        self.maximum.display(out)?;
+        Ok(())
     }
 
     fn node_tag(&self) -> &'static str {

@@ -3,6 +3,7 @@ use crate::ability_tree::MAX_CHILDREN_PER_NODE;
 use crate::lexer::IntoToken;
 
 /// Fixme: doc
+/// Fixme: is this bullshit ?
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]

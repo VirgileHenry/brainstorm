@@ -1,35 +1,35 @@
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum WinLoseClause {
-    WinTheGame {
+pub enum DayNight {
+    Day {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    LoseTheGame {
+    Night {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl WinLoseClause {
+impl DayNight {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::WinTheGame { span } => *span,
-            Self::LoseTheGame { span } => *span,
+            Self::Day { span } => *span,
+            Self::Night { span } => *span,
         }
     }
 }
 
-impl WinLoseClause {
+impl DayNight {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "win the game" | "wins the game" => Some(Self::WinTheGame {
+            "day" => Some(Self::Day {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "lose the game" | "loses the game" => Some(Self::LoseTheGame {
+            "night" => Some(Self::Night {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

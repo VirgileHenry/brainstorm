@@ -15,6 +15,11 @@ pub enum OwnableZone {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// A Deck is a owned zone that exist before a game starts.
+    Deck {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Graveyard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -63,6 +68,7 @@ impl AbilityTreeNode for OwnableZone {
         match self {
             Self::Battlefield { span } => *span,
             Self::Graveyard { span } => *span,
+            Self::Deck { span } => *span,
             Self::Hand { span } => *span,
             Self::Library { span } => *span,
         }
@@ -73,6 +79,7 @@ impl std::fmt::Display for OwnableZone {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             OwnableZone::Battlefield { .. } => write!(f, "graveyard"),
+            OwnableZone::Deck { .. } => write!(f, "graveyard"),
             OwnableZone::Graveyard { .. } => write!(f, "graveyard"),
             OwnableZone::Hand { .. } => write!(f, "hand"),
             OwnableZone::Library { .. } => write!(f, "library"),
@@ -84,6 +91,10 @@ impl std::fmt::Display for OwnableZone {
 impl IntoToken for OwnableZone {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
+            "deck" => Some(OwnableZone::Deck {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "graveyard" | "graveyards" => Some(OwnableZone::Graveyard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),

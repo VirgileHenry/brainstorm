@@ -17,13 +17,15 @@ pub enum ArtifactType {
     Incubator,
     Infinity,
     Junk,
+    Lander,
     Map,
+    Mutagen,
     Powerstone,
     Spacecraft,
     Stone,
-    Terminus,
     Treasure,
     Vehicle,
+    Vibranium,
 }
 
 impl std::str::FromStr for ArtifactType {
@@ -43,13 +45,15 @@ impl std::str::FromStr for ArtifactType {
             "incubator" => Ok(Self::Incubator),
             "infinity" => Ok(Self::Infinity),
             "junk" => Ok(Self::Junk),
+            "lander" => Ok(Self::Lander),
             "map" => Ok(Self::Map),
+            "mutagen" => Ok(Self::Mutagen),
             "powerstone" => Ok(Self::Powerstone),
             "spacecraft" => Ok(Self::Spacecraft),
             "stone" => Ok(Self::Stone),
-            "terminus" => Ok(Self::Terminus),
             "treasure" => Ok(Self::Treasure),
             "vehicle" => Ok(Self::Vehicle),
+            "vibranium" => Ok(Self::Vibranium),
             _ => Err(crate::ParsingError {
                 item: "ArtifactType",
                 message: "provided source does not match",
@@ -74,13 +78,15 @@ impl ArtifactType {
             Self::Incubator => "incubator",
             Self::Infinity => "infinity",
             Self::Junk => "junk",
+            Self::Lander => "lander",
             Self::Map => "map",
+            Self::Mutagen => "mutagen",
             Self::Powerstone => "powerstone",
             Self::Spacecraft => "spacecraft",
             Self::Stone => "stone",
-            Self::Terminus => "terminus",
             Self::Treasure => "treasure",
             Self::Vehicle => "vehicle",
+            Self::Vibranium => "vibranium",
         }
     }
 }
@@ -107,13 +113,15 @@ impl ArtifactType {
             Self::Incubator,
             Self::Infinity,
             Self::Junk,
+            Self::Lander,
             Self::Map,
+            Self::Mutagen,
             Self::Powerstone,
             Self::Spacecraft,
             Self::Stone,
-            Self::Terminus,
             Self::Treasure,
             Self::Vehicle,
+            Self::Vibranium,
         ].into_iter()
     }
 }

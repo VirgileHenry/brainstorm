@@ -89,6 +89,7 @@ Elephant
 Elf
 Elk
 Employee
+Eternal
 Eye
 Faerie
 Ferret
@@ -99,6 +100,7 @@ Fractal
 Frog
 Fungus
 Gamer
+Gamma
 Gargoyle
 Germ
 Giant
@@ -136,6 +138,7 @@ Hyena
 Illusion
 Imp
 Incarnation
+Inhuman
 Inkling
 Inquisitor
 Insect
@@ -150,6 +153,7 @@ Knight
 Kobold
 Kor
 Kraken
+Kree
 Lamia
 Lammasu
 Leech
@@ -192,6 +196,7 @@ Noggle
 Nomad
 Nymph
 Octopus
+Officer
 Ogre
 Ooze
 Orb
@@ -255,6 +260,7 @@ Shaman
 Shapeshifter
 Shark
 Sheep
+Shi'ar
 Siren
 Skeleton
 Skrull
