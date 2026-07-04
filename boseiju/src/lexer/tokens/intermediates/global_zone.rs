@@ -6,6 +6,10 @@ pub enum GlobalZone {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    AnywhereElse {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     CommandZone {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -25,6 +29,7 @@ impl GlobalZone {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Anywhere { span } => *span,
+            Self::AnywhereElse { span } => *span,
             Self::CommandZone { span } => *span,
             Self::OutsideTheGame { span } => *span,
             Self::TheBattlefield { span } => *span,
@@ -35,7 +40,11 @@ impl GlobalZone {
 impl GlobalZone {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "anywhere" => Some(Self::Anywhere {
+            "anywhere" | "any zone" => Some(Self::Anywhere {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "anywhere else" => Some(Self::AnywhereElse {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

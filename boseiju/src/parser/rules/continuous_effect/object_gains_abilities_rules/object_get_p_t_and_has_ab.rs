@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::PowerToughnessModifiers { modifiers },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                         #[cfg(feature = "spanned_tree")]
                             span: gain_ab_span,
                     })),
@@ -92,7 +92,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -112,7 +112,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
                     ParserNode::PowerToughnessModifiers { modifiers },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                         #[cfg(feature = "spanned_tree")]
                             span: ab1_span,
                     })),

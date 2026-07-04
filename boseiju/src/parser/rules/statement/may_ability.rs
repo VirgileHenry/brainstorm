@@ -328,7 +328,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -340,7 +340,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
                 ] => Ok(ParserNode::Statement {
                     statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
@@ -369,7 +369,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -410,7 +410,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: start_span,
                     })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
@@ -444,7 +444,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -482,7 +482,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
@@ -517,7 +517,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -558,7 +558,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: start_span,
                     })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
@@ -592,7 +592,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -630,7 +630,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),

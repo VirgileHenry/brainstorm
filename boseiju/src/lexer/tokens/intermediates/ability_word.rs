@@ -12,11 +12,22 @@ pub struct AbilityWord {
 #[cfg(feature = "lexer")]
 impl IntoToken for AbilityWord {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        Some(Self {
-            ability_word: crate::utils::from_str_singular_or_plural(&span.text)?,
-            #[cfg(feature = "spanned_tree")]
-            span: span.into(),
-        })
+        if let Some(ability_word) = crate::utils::from_str_singular_or_plural(&span.text) {
+            Some(Self {
+                ability_word,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })
+        } else {
+            match span.text {
+                "descended" => Some(Self {
+                    ability_word: mtg_data::AbilityWord::Descend,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                _ => None,
+            }
+        }
     }
 }
 

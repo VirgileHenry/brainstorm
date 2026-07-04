@@ -1,63 +1,71 @@
-/// <https://mtg.fandom.com/wiki/Marker#Designations>
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum PlayerDesignation {
-    Monarch {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum Bid {
+    BiddingEnds {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Poisoned {
+    HighBid {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    TheCitysBlessing {
+    HighBidder {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    TheInitiative {
+    Stands {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    YourParty {
+    StartTheBidding {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    WinTheBidding {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerDesignation {
+impl Bid {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Monarch { span } => *span,
-            Self::Poisoned { span } => *span,
-            Self::TheCitysBlessing { span } => *span,
-            Self::TheInitiative { span } => *span,
-            Self::YourParty { span } => *span,
+            Self::BiddingEnds { span } => *span,
+            Self::HighBid { span } => *span,
+            Self::HighBidder { span } => *span,
+            Self::Stands { span } => *span,
+            Self::StartTheBidding { span } => *span,
+            Self::WinTheBidding { span } => *span,
         }
     }
 }
 
-impl PlayerDesignation {
+impl Bid {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "monarch" => Some(Self::Monarch {
+            "bidding ends" => Some(Self::BiddingEnds {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "poisoned" => Some(Self::Poisoned {
+            "high bid" => Some(Self::HighBid {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "the city's blessing" => Some(Self::TheCitysBlessing {
+            "high bidder" => Some(Self::HighBidder {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "the initiative" => Some(Self::TheInitiative {
+            "stands" => Some(Self::Stands {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "your party" => Some(Self::YourParty {
+            "start the bidding" => Some(Self::StartTheBidding {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "win the bidding" => Some(Self::WinTheBidding {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

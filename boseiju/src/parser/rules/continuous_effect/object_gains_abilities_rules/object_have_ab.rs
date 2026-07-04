@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -31,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -90,7 +90,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_1,
                     },
@@ -136,7 +136,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -173,7 +173,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_1,
                     },
@@ -225,7 +225,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -236,7 +236,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Have {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),

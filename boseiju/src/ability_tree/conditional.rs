@@ -1,12 +1,10 @@
 mod event_occured;
-mod number_of_resolution;
 mod object_is_of_kind;
 mod player_controls_permanent;
 mod stack_object_has_state;
 mod this_is_your_turn;
 
 pub use event_occured::ConditionEventOccured;
-pub use number_of_resolution::ConditionNumberOfResolutions;
 pub use object_is_of_kind::ConditionCreatureMatchSpecifier;
 pub use player_controls_permanent::ConditionPlayerControlsPermanent;
 pub use stack_object_has_state::ConditionStackObjectHasState;
@@ -181,7 +179,6 @@ impl crate::utils::DummyInit for ConditionalUnless {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Condition {
     EventOccured(ConditionEventOccured),
-    NumberOfResolutions(ConditionNumberOfResolutions),
     ObjectMatchSpecifiers(ConditionCreatureMatchSpecifier),
     PlayerControlsObject(ConditionPlayerControlsPermanent),
     StackObjectHasState(ConditionStackObjectHasState),
@@ -198,7 +195,6 @@ impl AbilityTreeNode for Condition {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::EventOccured(child) => children.push(child as &dyn AbilityTreeNode),
-            Self::NumberOfResolutions(child) => children.push(child as &dyn AbilityTreeNode),
             Self::ObjectMatchSpecifiers(child) => children.push(child as &dyn AbilityTreeNode),
             Self::PlayerControlsObject(child) => children.push(child as &dyn AbilityTreeNode),
             Self::StackObjectHasState(child) => children.push(child as &dyn AbilityTreeNode),
@@ -213,7 +209,6 @@ impl AbilityTreeNode for Condition {
         out.push_final_branch()?;
         match self {
             Self::EventOccured(child) => child.display(out)?,
-            Self::NumberOfResolutions(child) => child.display(out)?,
             Self::ObjectMatchSpecifiers(child) => child.display(out)?,
             Self::PlayerControlsObject(child) => child.display(out)?,
             Self::StackObjectHasState(child) => child.display(out)?,
@@ -231,7 +226,6 @@ impl AbilityTreeNode for Condition {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::EventOccured(child) => child.node_span(),
-            Self::NumberOfResolutions(child) => child.node_span(),
             Self::ObjectMatchSpecifiers(child) => child.node_span(),
             Self::PlayerControlsObject(child) => child.node_span(),
             Self::StackObjectHasState(child) => child.node_span(),

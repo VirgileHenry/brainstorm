@@ -1,63 +1,54 @@
-/// <https://mtg.fandom.com/wiki/Marker#Designations>
+/// Fixme: what's this ? we can do better
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum PlayerDesignation {
-    Monarch {
+pub enum PartnerKind {
+    CharacterSelect {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Poisoned {
+    FatherAndSon {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    TheCitysBlessing {
+    FriendsForever {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    TheInitiative {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
-    YourParty {
+    Survivors {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerDesignation {
+impl PartnerKind {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Monarch { span } => *span,
-            Self::Poisoned { span } => *span,
-            Self::TheCitysBlessing { span } => *span,
-            Self::TheInitiative { span } => *span,
-            Self::YourParty { span } => *span,
+            Self::CharacterSelect { span } => *span,
+            Self::FatherAndSon { span } => *span,
+            Self::FriendsForever { span } => *span,
+            Self::Survivors { span } => *span,
         }
     }
 }
 
-impl PlayerDesignation {
+impl PartnerKind {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "monarch" => Some(Self::Monarch {
+            "character select" => Some(Self::CharacterSelect {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "poisoned" => Some(Self::Poisoned {
+            "father & son" => Some(Self::FatherAndSon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "the city's blessing" => Some(Self::TheCitysBlessing {
+            "friends forever" => Some(Self::FriendsForever {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "the initiative" => Some(Self::TheInitiative {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "your party" => Some(Self::YourParty {
+            "survivor" => Some(Self::Survivors {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

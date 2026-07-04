@@ -34,7 +34,15 @@ pub enum PlayerSpecifier {
     },
 
     /* Context related players */
+    ActivePlayer {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     DefendingPlayer {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NearestOpponent {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -54,6 +62,10 @@ pub enum PlayerSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Voter {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -65,11 +77,14 @@ impl PlayerSpecifier {
             Self::Opponent { span } => *span,
             Self::Controller { span } => *span,
             Self::Owner { span } => *span,
+            Self::ActivePlayer { span } => *span,
             Self::DefendingPlayer { span } => *span,
+            Self::NearestOpponent { span } => *span,
             Self::StartingPlayer { span } => *span,
             Self::TheMonarch { span } => *span,
             Self::ToYourLeft { span } => *span,
             Self::ToYourRight { span } => *span,
+            Self::Voter { span } => *span,
         }
     }
 }
@@ -101,13 +116,21 @@ impl IntoToken for PlayerSpecifier {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "owner" | "owners'" => Some(Self::Owner {
+            "owner" | "owners" | "owners'" => Some(Self::Owner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
 
             /* Context related players */
+            "active player" => Some(Self::ActivePlayer {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "defending player" => Some(Self::DefendingPlayer {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "nearest opponent" => Some(Self::NearestOpponent {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -124,6 +147,10 @@ impl IntoToken for PlayerSpecifier {
                 span: span.into(),
             }),
             "the player to your right" => Some(Self::ToYourRight {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "voter" => Some(Self::Voter {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

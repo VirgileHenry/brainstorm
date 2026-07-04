@@ -1,3 +1,4 @@
+mod epithets;
 mod error;
 mod span;
 pub mod tokens;
@@ -9,7 +10,7 @@ pub use tokens::IntoToken;
 /// Preprocess a card oracle text to properly lex it.
 pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
     let card_name = card_name.to_lowercase();
-    let result = oracle_text.to_lowercase();
+    let oracle_text = oracle_text.to_lowercase();
 
     /* replace all raw unicode char points by they values */
     lazy_static::lazy_static!(
@@ -22,14 +23,14 @@ pub fn preprocess(card_name: &str, oracle_text: &str) -> String {
         let ch = char::from_u32(point).expect("Regex matched a non valid unicode point!");
         ch.to_string()
     };
-    let result = unicode_regex.replace_all(&result, &replacement);
+    let result = unicode_regex.replace_all(&oracle_text, &replacement);
 
     /* Use lowercase for parsing */
     let result = result.to_ascii_lowercase();
 
     /* Actual text modifications preprocessing */
-    let result = remove_comments(&result);
     let result = replace_name(&card_name, &result);
+    let result = remove_comments(&result);
     let result = result.replace("\\n", "\n");
     let result = result.trim().to_string();
 
@@ -63,25 +64,36 @@ fn remove_parens<I: Iterator<Item = char>>(chars: &mut I) {
     }
 }
 
-fn replace_name(card_name: &str, lowercase_oracle_text: &str) -> String {
-    let card_name_lowercase = card_name.to_ascii_lowercase();
-    let card_name_without_epithet = card_name_lowercase.split(',').next();
+fn replace_name(card_name: &str, oracle_text: &str) -> String {
+    /* The known epithet map  */
+    lazy_static::lazy_static!(
+        static ref epithet_map: std::collections::BTreeMap<&'static str, &'static str> = epithets::EPITHETS.iter().cloned().collect();
+    );
 
-    let result = lowercase_oracle_text;
-    let result = result.replace(&card_name_lowercase, "~");
-    let result = match card_name_without_epithet {
-        Some(card_name) => result.replace(card_name, "~"),
-        None => result,
+    /* We need to replace the name by the ~ char, keeping boundary character */
+    fn replacer(cap: &regex::Captures) -> String {
+        let (_, [start_boundary, end_boundary]) = cap.extract();
+        format!("{start_boundary}~{end_boundary}")
+    }
+
+    /* For boundaries, we use either any non alphabetic character (\W) or start / end flags (^ / $) */
+    let start_boundary = r"(^|\W)";
+    let end_boundary = r"($|\W)";
+
+    let result = match epithet_map.get(card_name) {
+        /* If the card contains a known name without epithet, replace it */
+        Some(without_epithet) => {
+            /* Building a regex for each card is not cheap, perhaps a manual scan will be better */
+            let card_name_regex = regex::Regex::new(&format!("{start_boundary}{without_epithet}{end_boundary}")).unwrap();
+            card_name_regex.replace_all(oracle_text, replacer).to_string()
+        }
+        /* Use the name otherwise */
+        None => {
+            /* Building a regex for each card is not cheap, perhaps a manual scan will be better */
+            let card_name_regex = regex::Regex::new(&format!("{start_boundary}{card_name}{end_boundary}")).unwrap();
+            card_name_regex.replace_all(oracle_text, replacer).to_string()
+        }
     };
-
-    let mut result = result;
-    /* Some (funny) special cases */
-    if card_name_lowercase == "vial smasher the fierce" {
-        result = result.replace("vial smasher", "~");
-    }
-    if card_name_lowercase == "arcanis the omnipotent" {
-        result = result.replace("arcanis", "~");
-    }
 
     result
 }
@@ -92,7 +104,7 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
         static ref raw_token_regex: regex::Regex = {
             /* List of non words token we also want to match */
             const MATCHABLE_NON_WORDS: &[&'static str] = &[
-                "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n", "!",
+                "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n", "!", "?",
             ];
             let matchable_non_words: String = MATCHABLE_NON_WORDS.iter().cloned().collect();
             let raw_token_pattern = format!("(\\b\\w+\\b)|([{}])", matchable_non_words);

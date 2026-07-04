@@ -175,6 +175,10 @@ impl std::fmt::Display for ForwardDuration {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BackwardDuration {
+    ThisGame {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     /* Fixme: weird one */
     ThisTurn {
         #[cfg(feature = "spanned_tree")]
@@ -214,6 +218,7 @@ impl AbilityTreeNode for BackwardDuration {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::ThisGame { span } => *span,
             Self::ThisTurn { span } => *span,
         }
     }
@@ -223,7 +228,11 @@ impl AbilityTreeNode for BackwardDuration {
 impl IntoToken for BackwardDuration {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "this turn" => Some(Self::ThisTurn {
+            "this game" => Some(Self::ThisGame {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }),
+            "this turn" | "so far this turn" => Some(Self::ThisTurn {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }),
@@ -245,6 +254,7 @@ impl crate::utils::DummyInit for BackwardDuration {
 impl std::fmt::Display for BackwardDuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::ThisGame { .. } => write!(f, "this game"),
             Self::ThisTurn { .. } => write!(f, "this turn"),
         }
     }

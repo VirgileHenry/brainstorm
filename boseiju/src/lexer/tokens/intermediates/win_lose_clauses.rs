@@ -10,6 +10,10 @@ pub enum WinLoseClause {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TheGameIsADraw {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -18,6 +22,7 @@ impl WinLoseClause {
         match self {
             Self::WinTheGame { span } => *span,
             Self::LoseTheGame { span } => *span,
+            Self::TheGameIsADraw { span } => *span,
         }
     }
 }
@@ -30,6 +35,10 @@ impl WinLoseClause {
                 span: span.into(),
             }),
             "lose the game" | "loses the game" => Some(Self::LoseTheGame {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the game is a draw" => Some(Self::TheGameIsADraw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

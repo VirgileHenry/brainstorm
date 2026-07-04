@@ -64,6 +64,7 @@ Suspect
 Tap
 Time Travel
 Transform
+Triple
 Untap
 Venture into the dungeon
 Vote

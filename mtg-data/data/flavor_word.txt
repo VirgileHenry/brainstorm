@@ -114,6 +114,7 @@ Consume Anomaly
 Continue the Pilgrimage
 Corrupted Metalcraft
 Coruscating Flames
+Cosmic Awareness
 Cosmo Memory
 Cosplay
 Crash Land
@@ -160,6 +161,7 @@ Distract the Guard
 Distract the Horde
 Divine Intervention
 Do Homework
+Do You Like Squirrels?
 Dominate Monster
 Double Overdrive
 Drag Below
@@ -201,6 +203,7 @@ Feeder Mandibles
 Fend Them Off
 Field Reprogramming
 Fierce Punch
+Fight
 Fight Crime
 Fight the Current
 Final Heaven
@@ -387,6 +390,7 @@ Negative Energy Cone
 Neurotraumal Rod
 Nitro-9
 No Mercy
+No One Dies!
 Nosh
 Oblivion
 Omnislash
@@ -602,6 +606,7 @@ Transdimensional Scout
 Translocation Protocols
 Trapped!
 Treasure Hunter
+Trick Arrows
 Tunnel Snakes Rule!
 Two-Headed Coin
 Two-Weapon Fighting

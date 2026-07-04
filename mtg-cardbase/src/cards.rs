@@ -45,19 +45,49 @@ impl AllCardsIter {
     pub fn hexxed_v1_cards() -> Self {
         let cards = Self::new();
 
+        /// Scryfall cards are "everything printed", even stuff like art cards.
+        /// This filter gets only cards that are somhow playable (or banned, but was playable at some point)
+        fn legal_somewhere(legalities: &crate::Legalities) -> bool {
+            legalities.standard != "not_legal"
+                || legalities.future != "not_legal"
+                || legalities.historic != "not_legal"
+                || legalities.timeless != "not_legal"
+                || legalities.gladiator != "not_legal"
+                || legalities.pioneer != "not_legal"
+                || legalities.modern != "not_legal"
+                || legalities.legacy != "not_legal"
+                || legalities.pauper != "not_legal"
+                || legalities.vintage != "not_legal"
+                || legalities.penny != "not_legal"
+                || legalities.commander != "not_legal"
+                || legalities.oathbreaker != "not_legal"
+                || legalities.standardbrawl != "not_legal"
+                || legalities.brawl != "not_legal"
+                || legalities.alchemy != "not_legal"
+                || legalities.paupercommander != "not_legal"
+                || legalities.duel != "not_legal"
+                || legalities.oldschool != "not_legal"
+                || legalities.premodern != "not_legal"
+                || legalities.predh != "not_legal"
+        }
+
         fn filter(card: &crate::Card) -> bool {
             if card.set_type == "funny" {
                 return false;
             }
-            if card.set_type == "alchemy" || card.name.starts_with("A-") {
+            if !card.games.iter().any(|game| game == "paper") {
                 return false;
             }
             if card.layout == "scheme" {
                 return false;
             }
+            if !legal_somewhere(&card.legalities) {
+                return false;
+            }
 
             return true;
         }
+
         let commander_legal_cards = cards.0.into_iter().filter(filter);
         Self(commander_legal_cards.collect())
     }

@@ -6,40 +6,34 @@ use crate::lexer::IntoToken;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum OwnableZone {
-    /// The battlefield is technically not an owned zone.
-    ///
-    /// However, "the battlefield under some player control" can be interpreted
-    /// as "your battlefield ?" soo it makes sense
-    Battlefield {
+pub enum NamedChoice {
+    Brotherhood {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    /// A Deck is a owned zone that exist before a game starts.
-    Deck {
+    Enclave {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Graveyard {
+    Foe {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Hand {
+    Friend {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Library {
+    Khans {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
-impl AbilityTreeNode for OwnableZone {
+impl AbilityTreeNode for NamedChoice {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;
         use idris::Idris;
-
-        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::OwnableZoneIdMarker).id()
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NamedChoiceIdMarker).id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +42,7 @@ impl AbilityTreeNode for OwnableZone {
         use idris::Idris;
 
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = NodeKind::Terminal(TerminalNodeKind::OwnableZone(*self)).id();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedChoice(*self)).id();
         let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn AbilityTreeNode);
         children
@@ -60,64 +54,58 @@ impl AbilityTreeNode for OwnableZone {
     }
 
     fn node_tag(&self) -> &'static str {
-        "zone"
+        "named choice"
     }
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Battlefield { span } => *span,
-            Self::Graveyard { span } => *span,
-            Self::Deck { span } => *span,
-            Self::Hand { span } => *span,
-            Self::Library { span } => *span,
+            Self::Brotherhood { span } => *span,
+            Self::Enclave { span } => *span,
+            Self::Foe { span } => *span,
+            Self::Friend { span } => *span,
+            Self::Khans { span } => *span,
         }
     }
 }
 
-impl std::fmt::Display for OwnableZone {
+impl std::fmt::Display for NamedChoice {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OwnableZone::Battlefield { .. } => write!(f, "graveyard"),
-            OwnableZone::Deck { .. } => write!(f, "graveyard"),
-            OwnableZone::Graveyard { .. } => write!(f, "graveyard"),
-            OwnableZone::Hand { .. } => write!(f, "hand"),
-            OwnableZone::Library { .. } => write!(f, "library"),
+            NamedChoice::Brotherhood { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Enclave { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Foe { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Friend { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Khans { .. } => write!(f, "legitimate businessperson"),
         }
     }
 }
 
 #[cfg(feature = "lexer")]
-impl IntoToken for OwnableZone {
+impl IntoToken for NamedChoice {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "deck" | "starting deck" => Some(OwnableZone::Deck {
+            "brotherhood" => Some(NamedChoice::Brotherhood {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "graveyard" | "graveyards" => Some(OwnableZone::Graveyard {
+            "enclave" => Some(NamedChoice::Enclave {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "hand" | "hands" => Some(OwnableZone::Hand {
+            "foe" => Some(NamedChoice::Foe {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "library" | "libraries" => Some(OwnableZone::Library {
+            "friend" => Some(NamedChoice::Friend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "khans" => Some(NamedChoice::Khans {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             _ => None,
-        }
-    }
-}
-
-#[cfg(feature = "parser")]
-impl crate::utils::DummyInit for OwnableZone {
-    fn dummy_init() -> Self {
-        Self::Library {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
         }
     }
 }

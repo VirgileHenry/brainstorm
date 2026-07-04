@@ -4,6 +4,7 @@ pub fn is_digits(input: &str) -> bool {
 
 pub fn parse_num(input: &str) -> Option<u32> {
     match input {
+        "zero" => Some(0),
         "one" => Some(1),
         "two" => Some(2),
         "three" => Some(3),
@@ -14,8 +15,13 @@ pub fn parse_num(input: &str) -> Option<u32> {
         "eight" => Some(8),
         "nine" => Some(9),
         "ten" => Some(10),
+        "twelve" => Some(12),
         "thirteen" => Some(13),
+        "fourteen" => Some(14),
+        "fifteen" => Some(15),
         "twenty" => Some(20),
+        "thirty" => Some(30),
+        "fifty" => Some(50),
         other => {
             /* Reject numbers with +/- signs, as we want separate tokens for those */
             if other.starts_with('+') || other.starts_with('-') {

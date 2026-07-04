@@ -6,20 +6,22 @@ use crate::lexer::IntoToken;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum NamedToken {
-    KomasCoil {
+pub enum NamedExpansion {
+    Antiquities {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Homelands {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
-impl AbilityTreeNode for NamedToken {
+impl AbilityTreeNode for NamedExpansion {
     fn node_id(&self) -> usize {
-        use crate::ability_tree::NodeKind;
         use crate::ability_tree::tree_node::TerminalNodeKind;
         use idris::Idris;
-
-        NodeKind::Terminal(TerminalNodeKind::NamedTokenIdMarker).id()
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NamedExpansionIdMarker).id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -28,7 +30,7 @@ impl AbilityTreeNode for NamedToken {
         use idris::Idris;
 
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedToken(*self)).id();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedExpansion(*self)).id();
         let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn AbilityTreeNode);
         children
@@ -40,48 +42,40 @@ impl AbilityTreeNode for NamedToken {
     }
 
     fn node_tag(&self) -> &'static str {
-        "named token"
+        "named extension"
     }
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::KomasCoil { span } => *span,
+            Self::Antiquities { span } => *span,
+            Self::Homelands { span } => *span,
+        }
+    }
+}
+
+impl std::fmt::Display for NamedExpansion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NamedExpansion::Antiquities { .. } => write!(f, "legitimate businessperson"),
+            NamedExpansion::Homelands { .. } => write!(f, "legitimate businessperson"),
         }
     }
 }
 
 #[cfg(feature = "lexer")]
-impl IntoToken for NamedToken {
+impl IntoToken for NamedExpansion {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "koma's coil" => Some(Self::KomasCoil {
+            "antiquities expansion" => Some(NamedExpansion::Antiquities {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "~'s coil" => Some(Self::KomasCoil {
+            "homelands expansion" => Some(NamedExpansion::Homelands {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }), /* Weird case for koma creating koma's coil */
+            }),
             _ => None,
-        }
-    }
-}
-
-impl std::fmt::Display for NamedToken {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::KomasCoil { .. } => write!(f, "koma's coil"),
-        }
-    }
-}
-
-#[cfg(feature = "parser")]
-impl crate::utils::DummyInit for NamedToken {
-    fn dummy_init() -> Self {
-        Self::KomasCoil {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
         }
     }
 }

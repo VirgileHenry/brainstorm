@@ -10,7 +10,7 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Dies {
+    Beheld {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -34,10 +34,6 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Leave {
-        #[cfg(feature = "spanned_tree")]
-        span: crate::ability_tree::span::TreeSpan,
-    },
     Mutates {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -50,7 +46,19 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Resolve {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Touch {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TurnedFaceUp {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TurnsOverCompletely {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -62,17 +70,19 @@ impl CardActions {
         match self {
             Self::AssignsDamage { span } => *span,
             Self::Blocks { span } => *span,
-            Self::Dies { span } => *span,
+            Self::Beheld { span } => *span,
             Self::DoSo { span } => *span,
             Self::Enters { span } => *span,
             Self::Escape { span } => *span,
             Self::Exploits { span } => *span,
             Self::Fight { span } => *span,
-            Self::Leave { span } => *span,
             Self::Mutates { span } => *span,
             Self::PhaseOut { span } => *span,
             Self::Produce { span } => *span,
+            Self::Resolve { span } => *span,
+            Self::Touch { span } => *span,
             Self::TurnedFaceUp { span } => *span,
+            Self::TurnsOverCompletely { span } => *span,
         }
     }
 }
@@ -88,7 +98,7 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "die" | "dies" | "died" => Some(Self::Dies {
+            "beheld" => Some(Self::Beheld {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -112,10 +122,6 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "leave" | "leaves" | "left" => Some(Self::Leave {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "mutates" => Some(Self::Mutates {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -128,7 +134,19 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "resolve" | "resolves" | "resolved" => Some(Self::Resolve {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "touch" | "touches" => Some(Self::Touch {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "turned face up" => Some(Self::TurnedFaceUp {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "turns over completely" => Some(Self::TurnsOverCompletely {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

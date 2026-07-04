@@ -26,11 +26,23 @@ pub enum NonKind {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    NonAttacking {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NonBasic {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    NonCommander {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NonCreature {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NonEnchantment {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -39,6 +51,10 @@ pub enum NonKind {
         span: crate::ability_tree::span::TreeSpan,
     },
     NonLegendary {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NonSnow {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -58,10 +74,14 @@ impl NonKind {
             Self::NonRed { span } => *span,
             Self::NonWhite { span } => *span,
             Self::NonArtifact { span } => *span,
+            Self::NonAttacking { span } => *span,
             Self::NonBasic { span } => *span,
+            Self::NonCommander { span } => *span,
             Self::NonCreature { span } => *span,
+            Self::NonEnchantment { span } => *span,
             Self::NonLand { span } => *span,
             Self::NonLegendary { span } => *span,
+            Self::NonSnow { span } => *span,
             Self::NonToken { span } => *span,
         }
     }
@@ -94,11 +114,23 @@ impl NonKind {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "nonattacking" => Some(Self::NonAttacking {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "nonbasic" => Some(Self::NonBasic {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "noncommander" => Some(Self::NonCommander {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "noncreature" => Some(Self::NonCreature {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "nonenchantment" => Some(Self::NonEnchantment {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -107,6 +139,10 @@ impl NonKind {
                 span: span.into(),
             }),
             "nonlegendary" => Some(Self::NonLegendary {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "nonsnow" => Some(Self::NonSnow {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

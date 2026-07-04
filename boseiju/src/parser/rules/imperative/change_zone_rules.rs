@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "return <permanent reference> to <zone>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Return {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -31,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Return {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "return <card reference> from <zone> to <zone>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Return {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -81,7 +81,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Return {
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Return {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),

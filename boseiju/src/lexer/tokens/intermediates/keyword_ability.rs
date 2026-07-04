@@ -21,8 +21,33 @@ impl IntoToken for KeywordAbility {
             })
         } else {
             match span.text {
-                "crews" => Some(Self {
+                "bands" | "banded" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Banding,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "crews" | "crewed" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Crew,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "enchanting" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Enchant,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "evolves" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Evolve,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "haunts" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Haunt,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "suspended" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Suspend,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),

@@ -23,6 +23,7 @@ flamegraph.svg
 
 # exports and all
 boseiju_export.json
+epithets.txt
 
 # Debug files, visualization, etc
 *.dot
