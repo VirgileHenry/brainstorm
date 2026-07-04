@@ -1,102 +1,124 @@
+/// Fixme: what's this ? we can do better
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum PlayerProperties {
-    HandSize {
+pub enum DieRoll {
+    D4 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    LifeTotal {
+    D6 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    MaximumHandSize {
+    D8 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    MinimumDeckSize {
+    D10 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Speed {
+    D12 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    StartingDeck {
+    D20 {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    StartingHandSize {
+    DieRange {
+        start: usize,
+        end: usize,
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    StartingLifeTotal {
+    NaturalResult {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    OpeningHand {
+    PlanarDie {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Result {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerProperties {
+impl DieRoll {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::HandSize { span } => *span,
-            Self::LifeTotal { span } => *span,
-            Self::MaximumHandSize { span } => *span,
-            Self::MinimumDeckSize { span } => *span,
-            Self::Speed { span } => *span,
-            Self::StartingDeck { span } => *span,
-            Self::StartingHandSize { span } => *span,
-            Self::StartingLifeTotal { span } => *span,
-            Self::OpeningHand { span } => *span,
+            Self::D4 { span } => *span,
+            Self::D6 { span } => *span,
+            Self::D8 { span } => *span,
+            Self::D10 { span } => *span,
+            Self::D12 { span } => *span,
+            Self::D20 { span } => *span,
+            Self::DieRange { span, .. } => *span,
+            Self::NaturalResult { span } => *span,
+            Self::PlanarDie { span } => *span,
+            Self::Result { span } => *span,
         }
     }
 }
 
-impl PlayerProperties {
+impl DieRoll {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "hand size" => Some(Self::HandSize {
+            "d4" | "four-sided die" => Some(Self::D4 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "life total" => Some(Self::LifeTotal {
+            "d6" | "six-sided die" => Some(Self::D6 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "maximum hand size" => Some(Self::MaximumHandSize {
+            "d8" | "eight-sided die" => Some(Self::D8 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "minimum deck size" => Some(Self::MinimumDeckSize {
+            "d10" | "ten-sided die" => Some(Self::D10 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "speed" => Some(Self::Speed {
+            "d12" | "twelve-sided die" => Some(Self::D12 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "starting deck" => Some(Self::StartingDeck {
+            "d20" | "twenty-sided die" => Some(Self::D20 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "starting hand size" => Some(Self::StartingHandSize {
+            "natural result" => Some(Self::NaturalResult {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "starting life total" => Some(Self::StartingLifeTotal {
+            "planar die" | "planar dice" => Some(Self::PlanarDie {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "opening hand" => Some(Self::OpeningHand {
+            "result" | "results" => Some(Self::Result {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            _ => None,
+            other => {
+                let split: Vec<&str> = other.split('—').collect();
+                match split.as_slice() {
+                    &[start, end] => match (start.parse::<usize>(), end.parse::<usize>()) {
+                        (Ok(start), Ok(end)) => Some(Self::DieRange {
+                            start,
+                            end,
+                            #[cfg(feature = "spanned_tree")]
+                            span: span.into(),
+                        }),
+                        _ => None,
+                    },
+                    _ => None,
+                }
+            }
         }
     }
 }

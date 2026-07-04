@@ -202,6 +202,7 @@ To Solve
 Toxic
 Training
 Trample
+Trample over planeswalkers
 Transfigure
 Transmute
 Tribute

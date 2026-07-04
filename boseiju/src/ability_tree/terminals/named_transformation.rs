@@ -6,22 +6,26 @@ use crate::lexer::IntoToken;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum TokenName {
-    LegitimateBuisnessperson {
+pub enum NamedTransformation {
+    Fenric {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    ScionOfTheDeep {
+    HumbleMerchant {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    LegitimateBuisnessperson {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
 }
 
-impl AbilityTreeNode for TokenName {
+impl AbilityTreeNode for NamedTransformation {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;
         use idris::Idris;
-        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::TokenNameIdMarker).id()
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NamedTransformationIdMarker).id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -30,7 +34,7 @@ impl AbilityTreeNode for TokenName {
         use idris::Idris;
 
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = NodeKind::Terminal(TerminalNodeKind::TokenName(*self)).id();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedTransformation(*self)).id();
         let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn AbilityTreeNode);
         children
@@ -42,36 +46,42 @@ impl AbilityTreeNode for TokenName {
     }
 
     fn node_tag(&self) -> &'static str {
-        "token name"
+        "named transformation"
     }
 
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Fenric { span } => *span,
+            Self::HumbleMerchant { span } => *span,
             Self::LegitimateBuisnessperson { span } => *span,
-            Self::ScionOfTheDeep { span } => *span,
         }
     }
 }
 
-impl std::fmt::Display for TokenName {
+impl std::fmt::Display for NamedTransformation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            TokenName::LegitimateBuisnessperson { .. } => write!(f, "legitimate businessperson"),
-            TokenName::ScionOfTheDeep { .. } => write!(f, "scion of the deep"),
+            NamedTransformation::Fenric { .. } => write!(f, "legitimate businessperson"),
+            NamedTransformation::HumbleMerchant { .. } => write!(f, "legitimate businessperson"),
+            NamedTransformation::LegitimateBuisnessperson { .. } => write!(f, "legitimate businessperson"),
         }
     }
 }
 
 #[cfg(feature = "lexer")]
-impl IntoToken for TokenName {
+impl IntoToken for NamedTransformation {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "legitimate businessperson" => Some(TokenName::LegitimateBuisnessperson {
+            "fenric" => Some(NamedTransformation::Fenric {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "scion of the deep" => Some(TokenName::ScionOfTheDeep {
+            "humble merchant" => Some(NamedTransformation::HumbleMerchant {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "legitimate businessperson" => Some(NamedTransformation::LegitimateBuisnessperson {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

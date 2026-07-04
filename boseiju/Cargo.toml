@@ -54,6 +54,10 @@ path = "bin/most_required_tokens.rs"
 name = "most_required_nodes"
 path = "bin/most_required_nodes.rs"
 
+[[bin]]
+name = "generate_epithet_map"
+path = "bin/generate_epithet_map.rs"
+
 [[test]]
 name = "lexer"
 path = "tests/lexer.rs"

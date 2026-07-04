@@ -1,6 +1,5 @@
 pub mod intermediates;
 
-use crate::ability_tree::conditional;
 use crate::ability_tree::state;
 use crate::ability_tree::terminals;
 use crate::ability_tree::time;
@@ -22,17 +21,21 @@ pub enum Token {
     AnyNumberOfClause { clauses: intermediates::AnyNumberOfClause },
     AttachedObject(intermediates::AttachedObject),
     BackwardDuration(time::BackwardDuration),
+    Bid(intermediates::Bid),
     CardActions(intermediates::CardActions),
     CardFace(intermediates::CardFace),
+    CreatureGrouping(intermediates::CreatureGrouping),
     Choice(intermediates::Choice),
     ChoiceReference(intermediates::ChoiceReference),
+    CoinFlip(intermediates::CoinFlip),
     Color(terminals::Color),
     ControlFlow(intermediates::ControlFlow),
     CountSpecifier(intermediates::CountSpecifier),
     Counter(terminals::Counter),
     DamageKind(terminals::DamageKind),
     DayNight(intermediates::DayNight),
-    Die(intermediates::Die),
+    Die(intermediates::DieRoll),
+    Direction(intermediates::Direction),
     EnglishKeyword(intermediates::EnglishKeyword),
     ForwardDuration(time::ForwardDuration),
     FlavorWord(terminals::FlavorWord),
@@ -42,11 +45,16 @@ pub enum Token {
     KeywordAction(intermediates::KeywordAction),
     Mana { mana: terminals::Mana },
     MayChooseTheSameModeMoreThanOnce(intermediates::MayChooseTheSameModeMoreThanOnce),
+    NamedCard(terminals::NamedCard),
+    NamedChoice(terminals::NamedChoice),
+    NamedExpansion(terminals::NamedExpansion),
+    NamedPartners(terminals::NamedPartners),
     NamedToken(terminals::NamedToken),
+    NamedTransformation(terminals::NamedTransformation),
+    NamedVotes(terminals::NamedVotes),
     NonKind(intermediates::NonKind),
     NotOfAKind { not: intermediates::NotOfAKind },
     Number(intermediates::Number),
-    NumberOfResolutions(conditional::ConditionNumberOfResolutions),
     NumberOfTimes(intermediates::NumberOfTimes),
     NumberOperation(intermediates::NumberOperation),
     Order(terminals::Order),
@@ -55,6 +63,7 @@ pub enum Token {
     CardProperty(intermediates::CardProperty),
     CardState(intermediates::CardState),
     CardOwnName(intermediates::CardOwnName),
+    PartnerKind(intermediates::PartnerKind),
     Phase(terminals::Phase),
     PlayerAction(intermediates::PlayerAction),
     PlayerDesignation(intermediates::PlayerDesignation),
@@ -63,11 +72,11 @@ pub enum Token {
     PowerToughnessModElements(intermediates::PowerToughnessModElements),
     PowerToughness { pt: terminals::PowerToughness },
     SagaChapterNumber { chapter: terminals::SagaChapterNumber },
+    SpecialCost(intermediates::SpecialCost),
     StackObjectState(state::StackObjectState),
     Step(terminals::Step),
     TapUntapCost(intermediates::TapUntapCost),
     TheSameIsTrueFor(intermediates::TheSameIsTrueFor),
-    TokenName(terminals::TokenName),
     UnderControl(intermediates::UnderControl),
     VhyToSortLater(intermediates::VhyToSortLater),
     WinLoseClause(intermediates::WinLoseClause),
@@ -96,10 +105,14 @@ impl Token {
             Some(Self::OwnerSpecifier(kind))
         } else if let Some(kind) = terminals::Order::try_from_span(&span) {
             Some(Self::Order(kind))
+        } else if let Some(kind) = intermediates::Bid::try_from_span(&span) {
+            Some(Self::Bid(kind))
         } else if let Some(kind) = intermediates::CardActions::try_from_span(&span) {
             Some(Self::CardActions(kind))
         } else if let Some(kind) = intermediates::CardFace::try_from_span(&span) {
             Some(Self::CardFace(kind))
+        } else if let Some(kind) = intermediates::CreatureGrouping::try_from_span(&span) {
+            Some(Self::CreatureGrouping(kind))
         } else if let Some(kind) = intermediates::PlayerSpecifier::try_from_span(&span) {
             Some(Self::PlayerSpecifier(kind))
         } else if let Some(kind) = intermediates::CardState::try_from_span(&span) {
@@ -110,8 +123,12 @@ impl Token {
             Some(Self::CardProperty(kind))
         } else if let Some(kind) = state::StackObjectState::try_from_span(&span) {
             Some(Self::StackObjectState(kind))
+        } else if let Some(kind) = intermediates::SpecialCost::try_from_span(&span) {
+            Some(Self::SpecialCost(kind))
         } else if let Some(kind) = terminals::Phase::try_from_span(&span) {
             Some(Self::Phase(kind))
+        } else if let Some(kind) = intermediates::PartnerKind::try_from_span(&span) {
+            Some(Self::PartnerKind(kind))
         } else if let Some(kind) = terminals::Step::try_from_span(&span) {
             Some(Self::Step(kind))
         } else if let Some(pt) = terminals::PowerToughness::try_from_span(&span) {
@@ -128,6 +145,14 @@ impl Token {
             Some(Self::FlavorWord(kind))
         } else if let Some(kind) = crate::ability_tree::time::BackwardDuration::try_from_span(&span) {
             Some(Self::BackwardDuration(kind))
+        } else if let Some(kind) = terminals::NamedCard::try_from_span(&span) {
+            Some(Self::NamedCard(kind))
+        } else if let Some(kind) = terminals::NamedChoice::try_from_span(&span) {
+            Some(Self::NamedChoice(kind))
+        } else if let Some(kind) = terminals::NamedExpansion::try_from_span(&span) {
+            Some(Self::NamedExpansion(kind))
+        } else if let Some(kind) = terminals::NamedPartners::try_from_span(&span) {
+            Some(Self::NamedPartners(kind))
         } else if let Some(kind) = terminals::NamedToken::try_from_span(&span) {
             Some(Self::NamedToken(kind))
         } else if let Some(kind) = zone::OwnableZone::try_from_span(&span) {
@@ -150,14 +175,14 @@ impl Token {
             Some(Self::TapUntapCost(kind))
         } else if let Some(kind) = intermediates::TheSameIsTrueFor::try_from_span(&span) {
             Some(Self::TheSameIsTrueFor(kind))
-        } else if let Some(kind) = terminals::TokenName::try_from_span(&span) {
-            Some(Self::TokenName(kind))
+        } else if let Some(kind) = terminals::NamedTransformation::try_from_span(&span) {
+            Some(Self::NamedTransformation(kind))
+        } else if let Some(kind) = terminals::NamedVotes::try_from_span(&span) {
+            Some(Self::NamedVotes(kind))
         } else if let Some(kind) = intermediates::EnglishKeyword::try_from_span(&span) {
             Some(Self::EnglishKeyword(kind))
         } else if let Some(kind) = intermediates::Number::try_from_span(&span) {
             Some(Self::Number(kind))
-        } else if let Some(kind) = conditional::ConditionNumberOfResolutions::try_from_span(&span) {
-            Some(Self::NumberOfResolutions(kind))
         } else if let Some(not) = intermediates::NotOfAKind::try_from_span(&span) {
             Some(Self::NotOfAKind { not })
         } else if let Some(kind) = intermediates::ActionKeyword::try_from_span(&span) {
@@ -166,8 +191,10 @@ impl Token {
             Some(Self::DamageKind(kind))
         } else if let Some(kind) = intermediates::DayNight::try_from_span(&span) {
             Some(Self::DayNight(kind))
-        } else if let Some(kind) = intermediates::Die::try_from_span(&span) {
+        } else if let Some(kind) = intermediates::DieRoll::try_from_span(&span) {
             Some(Self::Die(kind))
+        } else if let Some(kind) = intermediates::Direction::try_from_span(&span) {
+            Some(Self::Direction(kind))
         } else if let Some(kind) = intermediates::PlayerAction::try_from_span(&span) {
             Some(Self::PlayerAction(kind))
         } else if let Some(kind) = intermediates::PlayerDesignation::try_from_span(&span) {
@@ -184,6 +211,8 @@ impl Token {
             Some(Self::NumberOperation(kind))
         } else if let Some(kind) = intermediates::ChoiceReference::try_from_span(&span) {
             Some(Self::ChoiceReference(kind))
+        } else if let Some(kind) = intermediates::CoinFlip::try_from_span(&span) {
+            Some(Self::CoinFlip(kind))
         } else if let Some(kind) = intermediates::Choice::try_from_span(&span) {
             Some(Self::Choice(kind))
         } else if let Some(clauses) = intermediates::AnyNumberOfClause::try_from_span(&span) {
@@ -227,11 +256,14 @@ impl Token {
             Self::AnyNumberOfClause { clauses } => clauses.span,
             Self::AttachedObject(child) => child.span(),
             Self::BackwardDuration(child) => child.node_span(),
+            Self::Bid(child) => child.span(),
             Self::CardActions(child) => child.span(),
             Self::CardFace(child) => child.span(),
+            Self::CreatureGrouping(child) => child.span(),
             Self::CardOwnName(child) => child.span,
             Self::Choice(child) => child.span(),
             Self::ChoiceReference(child) => child.span(),
+            Self::CoinFlip(child) => child.span(),
             Self::Color(child) => child.span,
             Self::ControlFlow(child) => child.span(),
             Self::CountSpecifier(child) => child.span(),
@@ -239,6 +271,7 @@ impl Token {
             Self::DamageKind(child) => child.node_span(),
             Self::DayNight(child) => child.span(),
             Self::Die(child) => child.span(),
+            Self::Direction(child) => child.span(),
             Self::EnglishKeyword(child) => child.span(),
             Self::ForwardDuration(child) => child.node_span(),
             Self::FlavorWord(child) => child.node_span(),
@@ -248,11 +281,14 @@ impl Token {
             Self::KeywordAction(child) => child.span,
             Self::Mana { mana } => mana.node_span(),
             Self::MayChooseTheSameModeMoreThanOnce(child) => child.span,
+            Self::NamedCard(child) => child.node_span(),
+            Self::NamedChoice(child) => child.node_span(),
+            Self::NamedExpansion(child) => child.node_span(),
+            Self::NamedPartners(child) => child.node_span(),
             Self::NamedToken(child) => child.node_span(),
             Self::NonKind(child) => child.span(),
             Self::NotOfAKind { not } => not.span,
             Self::Number(child) => child.span(),
-            Self::NumberOfResolutions(child) => child.node_span(),
             Self::NumberOfTimes(child) => child.span(),
             Self::NumberOperation(child) => child.span(),
             Self::Order(child) => child.node_span(),
@@ -260,6 +296,7 @@ impl Token {
             Self::OwnerSpecifier(child) => child.node_span(),
             Self::CardProperty(child) => child.span(),
             Self::CardState(child) => child.span(),
+            Self::PartnerKind(child) => child.span(),
             Self::Phase(child) => child.node_span(),
             Self::PlayerAction(child) => child.span(),
             Self::PlayerDesignation(child) => child.span(),
@@ -269,10 +306,12 @@ impl Token {
             Self::PowerToughness { pt } => pt.span,
             Self::SagaChapterNumber { chapter } => chapter.span,
             Self::StackObjectState(child) => child.node_span(),
+            Self::SpecialCost(child) => child.span(),
             Self::Step(child) => child.node_span(),
             Self::TapUntapCost(child) => child.span(),
             Self::TheSameIsTrueFor(child) => child.span,
-            Self::TokenName(child) => child.node_span(),
+            Self::NamedTransformation(child) => child.node_span(),
+            Self::NamedVotes(child) => child.node_span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),

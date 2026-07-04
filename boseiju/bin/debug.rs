@@ -1,8 +1,8 @@
 use boseiju::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "start your engines!";
-    let card_name = "Gimli";
+    let oracle_text = "Whenever Syr Carah or an instant or sorcery spell you control deals damage to a player, exile the top card of your library. You may play that card this turn.\n{T}: Syr Carah deals 1 damage to any target.";
+    let card_name = "Syr Carah, the Bold";
 
     let preprocessed = lexer::preprocess(card_name, oracle_text);
     let tokens = lexer::lex(&preprocessed)?;

@@ -13,6 +13,11 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// Flavor word / named vote
+    Chaos {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     /// Color can either be for mana or cards
     Color {
         #[cfg(feature = "spanned_tree")]
@@ -21,6 +26,11 @@ pub enum AmbiguousToken {
     /// Counter can either be a counter that we put on a permanent,
     /// or the action to counter a spell.
     Counter {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    /// Creature dying, or a die roll
+    Die {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -36,9 +46,19 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// Leave the battlefield, left or right
+    Left {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     /// Creatures can lost abilities
     /// Players can lose life, lose the game
     Lose {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    /// player action / named vote
+    Return {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -63,11 +83,15 @@ impl AmbiguousToken {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Attack { span } => *span,
+            Self::Chaos { span } => *span,
             Self::Color { span } => *span,
             Self::Counter { span } => *span,
+            Self::Die { span } => *span,
             Self::Exile { span } => *span,
             Self::Gain { span } => *span,
+            Self::Left { span } => *span,
             Self::Lose { span } => *span,
+            Self::Return { span } => *span,
             Self::Type { span } => *span,
             Self::Your { span } => *span,
         }
@@ -81,6 +105,10 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "chaos" => Some(Self::Chaos {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "color" | "colors" | "colored" => Some(Self::Color {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -89,7 +117,11 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "exile" => Some(Self::Exile {
+            "die" | "dies" | "died" | "dying" | "dice" => Some(Self::Die {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "exile" | "exiling" => Some(Self::Exile {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -97,7 +129,15 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "left" | "leave" | "leaves" => Some(Self::Left {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "lose" | "loses" | "lost" => Some(Self::Lose {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "return" | "returns" | "returned" => Some(Self::Return {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

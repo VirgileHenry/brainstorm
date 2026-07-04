@@ -12,7 +12,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     [
         /* "<number>" number */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::Number {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::NumberLiteral {
                 num: 0,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -21,7 +21,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             merged: ParserNode::Number { number: dummy() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::Number(intermediates::Number::Number {
+                    ParserNode::LexerToken(Token::Number(intermediates::Number::NumberLiteral {
                         num: fixed_number,
                         #[cfg(feature = "spanned_tree")]
                             span: number_span,
@@ -38,6 +38,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
         /* "<number> or more" number */
+        /*
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::OrMore {
                 num: 0,
@@ -64,6 +65,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
+         */
         /* "any number" number */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediates::Number::AnyNumber {

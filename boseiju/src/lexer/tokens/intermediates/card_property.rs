@@ -16,7 +16,15 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ColorIdentity {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Commander {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    DoubleFaced {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -48,11 +56,27 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    OriginallyPrintedIn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Ownership {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Power {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    StartingLoyalty {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Text {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TotalToxicValue {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -69,7 +93,9 @@ impl CardProperty {
             Self::BasePower { span } => *span,
             Self::BasePowerAndToughness { span } => *span,
             Self::BaseToughness { span } => *span,
+            Self::ColorIdentity { span } => *span,
             Self::Commander { span } => *span,
+            Self::DoubleFaced { span } => *span,
             Self::Historic { span } => *span,
             Self::Level { span } => *span,
             Self::Loyalty { span } => *span,
@@ -77,8 +103,12 @@ impl CardProperty {
             Self::Monocolored { span } => *span,
             Self::Multicolored { span } => *span,
             Self::Name { span } => *span,
+            Self::OriginallyPrintedIn { span } => *span,
+            Self::Ownership { span } => *span,
             Self::Power { span } => *span,
+            Self::StartingLoyalty { span } => *span,
             Self::Text { span } => *span,
+            Self::TotalToxicValue { span } => *span,
             Self::Toughness { span } => *span,
         }
     }
@@ -100,7 +130,15 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "commander" => Some(CardProperty::Commander {
+            "color identity" => Some(CardProperty::ColorIdentity {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "commander" | "commanders" => Some(CardProperty::Commander {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "double-faced" => Some(CardProperty::DoubleFaced {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -132,11 +170,27 @@ impl IntoToken for CardProperty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "originally printed in" => Some(CardProperty::OriginallyPrintedIn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "ownership" => Some(CardProperty::Ownership {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "power" | "powers" => Some(CardProperty::Power {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "starting loyalty" => Some(CardProperty::StartingLoyalty {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "text" => Some(CardProperty::Text {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "total toxic value" => Some(CardProperty::TotalToxicValue {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

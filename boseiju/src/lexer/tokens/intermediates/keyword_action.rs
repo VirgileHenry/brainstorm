@@ -22,8 +22,13 @@ impl IntoToken for KeywordAction {
         } else {
             /* Some special cases for past tenses, etc. */
             match span.text {
-                "activated" => Some(Self {
+                "activated" | "activating" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Activate,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "casting" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Cast,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
@@ -37,8 +42,23 @@ impl IntoToken for KeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
-                "discarded" => Some(Self {
+                "discarded" | "discarding" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Discard,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "exerted" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Exert,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "manifested" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Manifest,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "manifests dread" | "manifested dread" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::ManifestDread,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
@@ -47,13 +67,38 @@ impl IntoToken for KeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "played" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Play,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "regenerated" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Regenerate,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
-                "searches" | "searched" => Some(Self {
+                "sacrificed" | "sacrificing" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Search,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "scrying" | "scries" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Scry,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "searches" | "searched" | "searching" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Search,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "surveilled" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Surveil,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "voted" | "voting" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Vote,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
