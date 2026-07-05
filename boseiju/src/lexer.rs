@@ -77,22 +77,19 @@ fn replace_name(card_name: &str, oracle_text: &str) -> String {
     }
 
     /* For boundaries, we use either any non alphabetic character (\W) or start / end flags (^ / $) */
-    let start_boundary = r"(^|\W)";
-    let end_boundary = r"($|\W)";
+    const START_BOUNDARY: &'static str = r"(^|\W)";
+    const END_BOUNDARY: &'static str = r"($|\W)";
 
-    let result = match epithet_map.get(card_name) {
+    /* Building a regex for each card is not cheap, perhaps a manual scan will be better */
+    let card_name_regex = regex::Regex::new(&format!("{START_BOUNDARY}{card_name}{END_BOUNDARY}")).unwrap();
+    let result = card_name_regex.replace_all(oracle_text, replacer).to_string();
+
+    let result = if let Some(without_epithet) = epithet_map.get(card_name) {
         /* If the card contains a known name without epithet, replace it */
-        Some(without_epithet) => {
-            /* Building a regex for each card is not cheap, perhaps a manual scan will be better */
-            let card_name_regex = regex::Regex::new(&format!("{start_boundary}{without_epithet}{end_boundary}")).unwrap();
-            card_name_regex.replace_all(oracle_text, replacer).to_string()
-        }
-        /* Use the name otherwise */
-        None => {
-            /* Building a regex for each card is not cheap, perhaps a manual scan will be better */
-            let card_name_regex = regex::Regex::new(&format!("{start_boundary}{card_name}{end_boundary}")).unwrap();
-            card_name_regex.replace_all(oracle_text, replacer).to_string()
-        }
+        let card_name_regex = regex::Regex::new(&format!("{START_BOUNDARY}{without_epithet}{END_BOUNDARY}")).unwrap();
+        card_name_regex.replace_all(oracle_text, replacer).to_string()
+    } else {
+        result
     };
 
     result
@@ -104,7 +101,7 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
         static ref raw_token_regex: regex::Regex = {
             /* List of non words token we also want to match */
             const MATCHABLE_NON_WORDS: &[&'static str] = &[
-                "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n", "!", "?",
+                "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n", "!", "?", "ˣ",
             ];
             let matchable_non_words: String = MATCHABLE_NON_WORDS.iter().cloned().collect();
             let raw_token_pattern = format!("(\\b\\w+\\b)|([{}])", matchable_non_words);

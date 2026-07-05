@@ -7,6 +7,10 @@ use crate::lexer::IntoToken;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NamedTransformation {
+    EverflameHeroesLegacy {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Fenric {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -16,6 +20,14 @@ pub enum NamedTransformation {
         span: crate::ability_tree::span::TreeSpan,
     },
     LegitimateBuisnessperson {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    MilevaTheStalwart {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Moon {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -52,9 +64,12 @@ impl AbilityTreeNode for NamedTransformation {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::EverflameHeroesLegacy { span } => *span,
             Self::Fenric { span } => *span,
             Self::HumbleMerchant { span } => *span,
             Self::LegitimateBuisnessperson { span } => *span,
+            Self::MilevaTheStalwart { span } => *span,
+            Self::Moon { span } => *span,
         }
     }
 }
@@ -62,9 +77,12 @@ impl AbilityTreeNode for NamedTransformation {
 impl std::fmt::Display for NamedTransformation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            NamedTransformation::EverflameHeroesLegacy { .. } => write!(f, "legitimate businessperson"),
             NamedTransformation::Fenric { .. } => write!(f, "legitimate businessperson"),
             NamedTransformation::HumbleMerchant { .. } => write!(f, "legitimate businessperson"),
             NamedTransformation::LegitimateBuisnessperson { .. } => write!(f, "legitimate businessperson"),
+            NamedTransformation::MilevaTheStalwart { .. } => write!(f, "legitimate businessperson"),
+            NamedTransformation::Moon { .. } => write!(f, "legitimate businessperson"),
         }
     }
 }
@@ -73,6 +91,10 @@ impl std::fmt::Display for NamedTransformation {
 impl IntoToken for NamedTransformation {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
+            "everflame, heroes' legacy" => Some(NamedTransformation::EverflameHeroesLegacy {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "fenric" => Some(NamedTransformation::Fenric {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -82,6 +104,14 @@ impl IntoToken for NamedTransformation {
                 span: span.into(),
             }),
             "legitimate businessperson" => Some(NamedTransformation::LegitimateBuisnessperson {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "mileva, the stalwart" => Some(NamedTransformation::MilevaTheStalwart {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "moon" => Some(NamedTransformation::Moon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

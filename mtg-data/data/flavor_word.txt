@@ -31,6 +31,7 @@ Astral Projection
 Atomic Transmutation
 Attack
 Avalanche!
+Avian Telepathy
 Avoidance
 Bad Breath
 Bad Wolf
@@ -65,6 +66,7 @@ Blue Magic
 Body Thief
 Body-print
 Boil
+Boomerang
 Brand-new Sky
 Brave Heart
 Break Their Chains
@@ -86,6 +88,7 @@ Call for Aid
 Camouflage
 Ceaseless Tempest
 Ceremorphosis
+Chain
 Chainsword
 Chaos
 Chaos Control
@@ -130,6 +133,7 @@ Curaga
 Cure
 Cure Wounds
 Curse of the Walking Pox
+Cybernetic Senses
 Daemon Sword
 Dance
 Dark One's Own Luck
@@ -144,6 +148,8 @@ Death Ray
 Death Sickle
 Decimate
 Defense!
+Density Control
+Designed Only for Killing
 Detonate
 Devastating Charge
 Devour Intellect
@@ -178,6 +184,7 @@ Echo of the Lost
 Ecliptic Growl
 Electric Thunder
 Elite Troops
+Embiggen Fist
 Endless Swarm
 Endurant
 Engulf
@@ -189,6 +196,7 @@ Everypony's Invited
 Ew-minance
 Executioner Round
 Exile Cannon
+Explosive
 Exterminate!
 Fabricator Claw Array
 Fallen Warrior
@@ -203,7 +211,7 @@ Feeder Mandibles
 Fend Them Off
 Field Reprogramming
 Fierce Punch
-Fight
+Fight!
 Fight Crime
 Fight the Current
 Final Heaven
@@ -292,6 +300,7 @@ Hunters for Hire
 Hyperfrag Round
 Hyperphase Threshers
 Hypertoxic Miasma
+I LOVE Squirrels!
 I. AM. TALKING!
 Ice
 Immune
@@ -300,6 +309,7 @@ Impound
 In You, All Things Are Possible
 Infesting Spores
 Inquisition Agents
+Intangibility
 Interrogate Them
 Intimidate Them
 Into the TARDIS
@@ -366,6 +376,7 @@ Matter Absorption
 Medicus Ministorum
 Meet in Reverse
 Mega Flare
+Mental Organism
 Mesmerize
 Meteor Strikes
 Midnight Entity
@@ -387,6 +398,7 @@ Natural Recovery
 Natural Shelter
 Negative
 Negative Energy Cone
+Net
 Neurotraumal Rod
 Nitro-9
 No Mercy
@@ -409,6 +421,7 @@ Perseus’s Bow
 Phaeron
 Phalanx Commander
 Pheromone Trail
+Photographic Reflexes
 Phyrexian Victory
 Pick a Perk
 Pizza
@@ -438,6 +451,7 @@ Psychic Blades
 Psychic Defense
 Psychic Stimulus
 Puff Piece
+Radar Sense
 RadAway
 Rage
 Rage Beyond Death
@@ -483,6 +497,7 @@ Search the Room
 Sec
 Secrets of the Soul
 See a Show
+Seismic Takedown
 Selfie Shot
 Sell Contraband
 Sensational Save
@@ -508,9 +523,11 @@ Smash the Chest
 Smear Campaign
 Sneak Attack
 Sokratic Dialogue
+Solar Beam
 Somersault
 Song of Rest
 Song of the Ood
+Sonic Attack
 Sonic Blast
 Sonic Blaster
 Sonic Boom
@@ -565,6 +582,7 @@ Take the Elevator
 Targeting Relay
 Tax
 Team TARDIS
+Technopathy
 Teleport
 Temporal Foresight
 Terror from the Deep
@@ -632,6 +650,7 @@ Wark
 Warp Blast
 Warp Vortex
 Warp-Strike
+Wasp's Sting
 Water Always Wins
 Wave Cannon
 Web Support

@@ -6,7 +6,7 @@ use crate::lexer::IntoToken;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum NamedVotes {
+pub enum NamedVote {
     Aid {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -91,6 +91,10 @@ pub enum NamedVotes {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    MinesOfMoria {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Money {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -124,6 +128,10 @@ pub enum NamedVotes {
         span: crate::ability_tree::span::TreeSpan,
     },
     Quill {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    RedhornPass {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -169,7 +177,7 @@ pub enum NamedVotes {
     },
 }
 
-impl AbilityTreeNode for NamedVotes {
+impl AbilityTreeNode for NamedVote {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;
         use idris::Idris;
@@ -221,6 +229,7 @@ impl AbilityTreeNode for NamedVotes {
             Self::Homage { span } => *span,
             Self::Innocent { span } => *span,
             Self::Knowledge { span } => *span,
+            Self::MinesOfMoria { span } => *span,
             Self::Money { span } => *span,
             Self::Nah { span } => *span,
             Self::Numbers { span } => *span,
@@ -230,6 +239,7 @@ impl AbilityTreeNode for NamedVotes {
             Self::Profit { span } => *span,
             Self::Psychosis { span } => *span,
             Self::Quill { span } => *span,
+            Self::RedhornPass { span } => *span,
             Self::Security { span } => *span,
             Self::Sickness { span } => *span,
             Self::Sprout { span } => *span,
@@ -244,214 +254,224 @@ impl AbilityTreeNode for NamedVotes {
     }
 }
 
-impl std::fmt::Display for NamedVotes {
+impl std::fmt::Display for NamedVote {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            NamedVotes::Aid { .. } => write!(f, "aid"),
-            NamedVotes::Bribery { .. } => write!(f, "bribery"),
-            NamedVotes::Carnage { .. } => write!(f, "carnage"),
-            NamedVotes::Condemnation { .. } => write!(f, "condemnation"),
-            NamedVotes::Consequences { .. } => write!(f, "consequences"),
-            NamedVotes::Death { .. } => write!(f, "death"),
-            NamedVotes::Denial { .. } => write!(f, "denial"),
-            NamedVotes::Dominion { .. } => write!(f, "dominion"),
-            NamedVotes::Duplication { .. } => write!(f, "duplication"),
-            NamedVotes::Embark { .. } => write!(f, "embark"),
-            NamedVotes::Evidence { .. } => write!(f, "evidence"),
-            NamedVotes::Feather { .. } => write!(f, "feather"),
-            NamedVotes::Fellowship { .. } => write!(f, "fellowship"),
-            NamedVotes::Free { .. } => write!(f, "free"),
-            NamedVotes::Grace { .. } => write!(f, "grace"),
-            NamedVotes::Guidance { .. } => write!(f, "guidance"),
-            NamedVotes::Guilty { .. } => write!(f, "guilty"),
-            NamedVotes::Harvest { .. } => write!(f, "harvest"),
-            NamedVotes::Homage { .. } => write!(f, "homage"),
-            NamedVotes::Innocent { .. } => write!(f, "innocent"),
-            NamedVotes::Knowledge { .. } => write!(f, "knowledge"),
-            NamedVotes::Money { .. } => write!(f, "money"),
-            NamedVotes::Nah { .. } => write!(f, "nah"),
-            NamedVotes::Numbers { .. } => write!(f, "numbers"),
-            NamedVotes::Past { .. } => write!(f, "past"),
-            NamedVotes::Planeswalk { .. } => write!(f, "planeswalk"),
-            NamedVotes::Present { .. } => write!(f, "present"),
-            NamedVotes::Profit { .. } => write!(f, "profit"),
-            NamedVotes::Psychosis { .. } => write!(f, "psychosis"),
-            NamedVotes::Quill { .. } => write!(f, "quill"),
-            NamedVotes::Security { .. } => write!(f, "security"),
-            NamedVotes::Sickness { .. } => write!(f, "sickness"),
-            NamedVotes::Sprout { .. } => write!(f, "sprout"),
-            NamedVotes::Strength { .. } => write!(f, "strength"),
-            NamedVotes::Taxes { .. } => write!(f, "taxes"),
-            NamedVotes::Time { .. } => write!(f, "time"),
-            NamedVotes::Torture { .. } => write!(f, "torture"),
-            NamedVotes::Truth { .. } => write!(f, "truth"),
-            NamedVotes::Wild { .. } => write!(f, "wild"),
-            NamedVotes::Yeah { .. } => write!(f, "yeah"),
+            NamedVote::Aid { .. } => write!(f, "aid"),
+            NamedVote::Bribery { .. } => write!(f, "bribery"),
+            NamedVote::Carnage { .. } => write!(f, "carnage"),
+            NamedVote::Condemnation { .. } => write!(f, "condemnation"),
+            NamedVote::Consequences { .. } => write!(f, "consequences"),
+            NamedVote::Death { .. } => write!(f, "death"),
+            NamedVote::Denial { .. } => write!(f, "denial"),
+            NamedVote::Dominion { .. } => write!(f, "dominion"),
+            NamedVote::Duplication { .. } => write!(f, "duplication"),
+            NamedVote::Embark { .. } => write!(f, "embark"),
+            NamedVote::Evidence { .. } => write!(f, "evidence"),
+            NamedVote::Feather { .. } => write!(f, "feather"),
+            NamedVote::Fellowship { .. } => write!(f, "fellowship"),
+            NamedVote::Free { .. } => write!(f, "free"),
+            NamedVote::Grace { .. } => write!(f, "grace"),
+            NamedVote::Guidance { .. } => write!(f, "guidance"),
+            NamedVote::Guilty { .. } => write!(f, "guilty"),
+            NamedVote::Harvest { .. } => write!(f, "harvest"),
+            NamedVote::Homage { .. } => write!(f, "homage"),
+            NamedVote::Innocent { .. } => write!(f, "innocent"),
+            NamedVote::Knowledge { .. } => write!(f, "knowledge"),
+            NamedVote::MinesOfMoria { .. } => write!(f, "mines of moria"),
+            NamedVote::Money { .. } => write!(f, "money"),
+            NamedVote::Nah { .. } => write!(f, "nah"),
+            NamedVote::Numbers { .. } => write!(f, "numbers"),
+            NamedVote::Past { .. } => write!(f, "past"),
+            NamedVote::Planeswalk { .. } => write!(f, "planeswalk"),
+            NamedVote::Present { .. } => write!(f, "present"),
+            NamedVote::Profit { .. } => write!(f, "profit"),
+            NamedVote::Psychosis { .. } => write!(f, "psychosis"),
+            NamedVote::Quill { .. } => write!(f, "quill"),
+            NamedVote::RedhornPass { .. } => write!(f, "readhorn pass"),
+            NamedVote::Security { .. } => write!(f, "security"),
+            NamedVote::Sickness { .. } => write!(f, "sickness"),
+            NamedVote::Sprout { .. } => write!(f, "sprout"),
+            NamedVote::Strength { .. } => write!(f, "strength"),
+            NamedVote::Taxes { .. } => write!(f, "taxes"),
+            NamedVote::Time { .. } => write!(f, "time"),
+            NamedVote::Torture { .. } => write!(f, "torture"),
+            NamedVote::Truth { .. } => write!(f, "truth"),
+            NamedVote::Wild { .. } => write!(f, "wild"),
+            NamedVote::Yeah { .. } => write!(f, "yeah"),
         }
     }
 }
 
 #[cfg(feature = "lexer")]
-impl IntoToken for NamedVotes {
+impl IntoToken for NamedVote {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "aid" => Some(NamedVotes::Aid {
+            "aid" => Some(NamedVote::Aid {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "bribery" => Some(NamedVotes::Bribery {
+            "bribery" => Some(NamedVote::Bribery {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "carnage" => Some(NamedVotes::Carnage {
+            "carnage" => Some(NamedVote::Carnage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "condemnation" => Some(NamedVotes::Condemnation {
+            "condemnation" => Some(NamedVote::Condemnation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "consequences" => Some(NamedVotes::Consequences {
+            "consequences" => Some(NamedVote::Consequences {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "death" => Some(NamedVotes::Death {
+            "death" => Some(NamedVote::Death {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "denial" => Some(NamedVotes::Denial {
+            "denial" => Some(NamedVote::Denial {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "dominion" => Some(NamedVotes::Dominion {
+            "dominion" => Some(NamedVote::Dominion {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "duplication" => Some(NamedVotes::Duplication {
+            "duplication" => Some(NamedVote::Duplication {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "embark" => Some(NamedVotes::Embark {
+            "embark" => Some(NamedVote::Embark {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "evidence" => Some(NamedVotes::Evidence {
+            "evidence" => Some(NamedVote::Evidence {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "feather" => Some(NamedVotes::Feather {
+            "feather" => Some(NamedVote::Feather {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "fellowship" => Some(NamedVotes::Fellowship {
+            "fellowship" => Some(NamedVote::Fellowship {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "free" => Some(NamedVotes::Free {
+            "free" => Some(NamedVote::Free {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "grace" => Some(NamedVotes::Grace {
+            "grace" => Some(NamedVote::Grace {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "guidance" => Some(NamedVotes::Guidance {
+            "guidance" => Some(NamedVote::Guidance {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "guilty" => Some(NamedVotes::Guilty {
+            "guilty" => Some(NamedVote::Guilty {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "harvest" => Some(NamedVotes::Harvest {
+            "harvest" => Some(NamedVote::Harvest {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "homage" => Some(NamedVotes::Homage {
+            "homage" => Some(NamedVote::Homage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "innocent" => Some(NamedVotes::Innocent {
+            "innocent" => Some(NamedVote::Innocent {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "knowledge" => Some(NamedVotes::Knowledge {
+            "knowledge" => Some(NamedVote::Knowledge {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "money" => Some(NamedVotes::Money {
+            "mines of moria" => Some(NamedVote::MinesOfMoria {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "nah" => Some(NamedVotes::Nah {
+            "money" => Some(NamedVote::Money {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "numbers" => Some(NamedVotes::Numbers {
+            "nah" => Some(NamedVote::Nah {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "past" => Some(NamedVotes::Past {
+            "numbers" => Some(NamedVote::Numbers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "planeswalk" => Some(NamedVotes::Planeswalk {
+            "past" => Some(NamedVote::Past {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "present" => Some(NamedVotes::Present {
+            "planeswalk" => Some(NamedVote::Planeswalk {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "profit" => Some(NamedVotes::Profit {
+            "present" => Some(NamedVote::Present {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "psychosis" => Some(NamedVotes::Psychosis {
+            "profit" => Some(NamedVote::Profit {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "quill" => Some(NamedVotes::Quill {
+            "psychosis" => Some(NamedVote::Psychosis {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "security" => Some(NamedVotes::Security {
+            "quill" => Some(NamedVote::Quill {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "sickness" => Some(NamedVotes::Sickness {
+            "readhorn pass" => Some(NamedVote::RedhornPass {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "sprout" => Some(NamedVotes::Sprout {
+            "security" => Some(NamedVote::Security {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "strength" => Some(NamedVotes::Strength {
+            "sickness" => Some(NamedVote::Sickness {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "taxes" => Some(NamedVotes::Taxes {
+            "sprout" => Some(NamedVote::Sprout {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "time" => Some(NamedVotes::Time {
+            "strength" => Some(NamedVote::Strength {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "torture" => Some(NamedVotes::Torture {
+            "taxes" => Some(NamedVote::Taxes {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "truth" => Some(NamedVotes::Truth {
+            "time" => Some(NamedVote::Time {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "wild" => Some(NamedVotes::Wild {
+            "torture" => Some(NamedVote::Torture {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "yeah" => Some(NamedVotes::Yeah {
+            "truth" => Some(NamedVote::Truth {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "wild" => Some(NamedVote::Wild {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "yeah" => Some(NamedVote::Yeah {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

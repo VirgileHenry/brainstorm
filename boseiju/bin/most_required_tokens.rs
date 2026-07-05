@@ -13,7 +13,7 @@ struct MostRequiredToken {
 }
 
 fn main() {
-    const SHOWN_TOKENS: usize = 20;
+    const SHOWN_TOKENS: usize = 50;
     let cards = mtg_cardbase::AllCardsIter::hexxed_v1_cards();
     let cards_vec: Vec<_> = cards.iter().collect();
 

@@ -44,6 +44,10 @@ pub enum Number {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    PrimeNumber {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     ThatMany {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -112,6 +116,7 @@ impl Number {
             Self::NumberOf { span } => *span,
             Self::Ordinal { span, .. } => *span,
             Self::OrMore { span, .. } => *span,
+            Self::PrimeNumber { span, .. } => *span,
             Self::ThatMany { span } => *span,
             Self::ThatNumber { span } => *span,
             Self::TheGreatestNumber { span } => *span,
@@ -167,6 +172,11 @@ impl Number {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "tenth" => Some(Self::Ordinal {
+                num: 4,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "amount" => Some(Self::Amount {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -192,6 +202,10 @@ impl Number {
                 span: span.into(),
             }),
             "or more" | "or greater" => Some(Self::OrMore {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "prime number" => Some(Self::PrimeNumber {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

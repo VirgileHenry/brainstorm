@@ -12,6 +12,17 @@ const EXCLUDED_WORDS: &'static [&'static str] = &["+2", "The", "This"];
 const HARD_CODED_EPITHETS: &'static [(&'static str, &'static str)] = &[
     ("Rosie Cotton of South Lane", "Rosie Cotton"),
     ("Sidar Jabari of Zhalfir", "Sidar Jabari"),
+    ("General Kudro of Drannith", "General Kudro"),
+    ("Lazav, Dimir Mastermind", "Lazav"),
+    ("Lazav, the Multifarious", "Lazav"),
+    ("Grothama, All-Devouring", "Grothama"),
+    ("Maarika, Brutal Gladiator", "Maarika"),
+    ("Enkira, Hostile Scavenger", "Enkira"),
+    ("Ozox, the Clattering King", "Ozox"),
+    ("Chameleon, Master of Disguise", "Chameleon"),
+    ("King Darien XLVIII", "King Darien"),
+    ("Tor Wauki the Younger", "Tor Wauki"),
+    ("Gogo, Mysterious Mime", "Gogo"),
 ];
 
 fn main() {

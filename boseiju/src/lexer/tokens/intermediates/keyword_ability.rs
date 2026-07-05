@@ -26,6 +26,11 @@ impl IntoToken for KeywordAbility {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "championed" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Champion,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "crews" | "crewed" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Crew,
                     #[cfg(feature = "spanned_tree")]
@@ -36,13 +41,38 @@ impl IntoToken for KeywordAbility {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "enlists" | "enlisted" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Enlist,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "evolves" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Evolve,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "foretelling" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Foretell,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "haunts" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Haunt,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "mentors" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Mentor,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "spliced" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Splice,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "stations" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Station,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),

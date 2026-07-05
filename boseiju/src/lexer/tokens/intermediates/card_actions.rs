@@ -50,6 +50,10 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    StopsBlocking {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Touch {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -58,7 +62,7 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    TurnsOverCompletely {
+    TurnsCompletelyOver {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -80,9 +84,10 @@ impl CardActions {
             Self::PhaseOut { span } => *span,
             Self::Produce { span } => *span,
             Self::Resolve { span } => *span,
+            Self::StopsBlocking { span } => *span,
             Self::Touch { span } => *span,
             Self::TurnedFaceUp { span } => *span,
-            Self::TurnsOverCompletely { span } => *span,
+            Self::TurnsCompletelyOver { span } => *span,
         }
     }
 }
@@ -126,7 +131,7 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "phase out" | "phases out" => Some(Self::PhaseOut {
+            "phase out" | "phases out" | "phased out" => Some(Self::PhaseOut {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -138,6 +143,10 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "stops blocking" => Some(Self::StopsBlocking {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "touch" | "touches" => Some(Self::Touch {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -146,7 +155,7 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "turns over completely" => Some(Self::TurnsOverCompletely {
+            "turns completely over" => Some(Self::TurnsCompletelyOver {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

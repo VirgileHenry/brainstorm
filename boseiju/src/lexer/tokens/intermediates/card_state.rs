@@ -92,6 +92,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    MostRecentlyCast {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Mutated {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -160,6 +164,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Unprepared {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Untapped {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -196,6 +204,7 @@ impl CardState {
             Self::LookedAt { span } => *span,
             Self::Modified { span } => *span,
             Self::Monstrous { span } => *span,
+            Self::MostRecentlyCast { span } => *span,
             Self::Mutated { span } => *span,
             Self::Paired { span } => *span,
             Self::Plotted { span } => *span,
@@ -213,6 +222,7 @@ impl CardState {
             Self::Transformed { span } => *span,
             Self::Unattached { span } => *span,
             Self::Unblocked { span } => *span,
+            Self::Unprepared { span } => *span,
             Self::Untapped { span } => *span,
             Self::Warped { span } => *span,
         }
@@ -311,6 +321,10 @@ impl IntoToken for CardState {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "most recently cast" => Some(CardState::MostRecentlyCast {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "mutated" => Some(CardState::Mutated {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -376,6 +390,10 @@ impl IntoToken for CardState {
                 span: span.into(),
             }),
             "unblocked" => Some(CardState::Unblocked {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unprepared" => Some(CardState::Unprepared {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
