@@ -6,6 +6,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Ante {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Begin {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -118,6 +122,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Pass {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Pay {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -127,6 +135,10 @@ pub enum PlayerAction {
         span: crate::ability_tree::span::TreeSpan,
     },
     Redistribute {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Remove {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -142,11 +154,15 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Remove {
+    Reselect {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Reselect {
+    RestartTheGame {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ReverseTheTurnOrder {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -175,6 +191,10 @@ pub enum PlayerAction {
         span: crate::ability_tree::span::TreeSpan,
     },
     Skip {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    SolveACase {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -221,6 +241,7 @@ impl PlayerAction {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Add { span } => *span,
+            Self::Ante { span } => *span,
             Self::Begin { span } => *span,
             Self::BeginTheGameWith { span } => *span,
             Self::Bid { span } => *span,
@@ -249,6 +270,7 @@ impl PlayerAction {
             Self::Move { span } => *span,
             Self::Mulligan { span } => *span,
             Self::Note { span } => *span,
+            Self::Pass { span } => *span,
             Self::Pay { span } => *span,
             Self::Prevent { span } => *span,
             Self::Redistribute { span } => *span,
@@ -257,6 +279,8 @@ impl PlayerAction {
             Self::Reorder { span } => *span,
             Self::Remove { span } => *span,
             Self::Reselect { span } => *span,
+            Self::RestartTheGame { span } => *span,
+            Self::ReverseTheTurnOrder { span } => *span,
             Self::Roll { span } => *span,
             Self::SecretlyChoose { span } => *span,
             Self::SecretlyVote { span } => *span,
@@ -264,6 +288,7 @@ impl PlayerAction {
             Self::Shuffle { span } => *span,
             Self::Simultaneously { span } => *span,
             Self::Skip { span } => *span,
+            Self::SolveACase { span } => *span,
             Self::Spend { span } => *span,
             Self::StartTheBidding { span } => *span,
             Self::Switch { span } => *span,
@@ -280,11 +305,15 @@ impl PlayerAction {
 impl PlayerAction {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "add" | "adds" => Some(Self::Add {
+            "add" | "adds" | "added" => Some(Self::Add {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "begin" | "begins" => Some(Self::Begin {
+            "antes" => Some(Self::Ante {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "begin" | "begins" | "began" => Some(Self::Begin {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -312,7 +341,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "complete a dungeon" | "completed a dungeon" => Some(Self::CompletedADungeon {
+            "complete" | "completed" => Some(Self::CompletedADungeon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -328,7 +357,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "draft" | "drafted" => Some(Self::Draft {
+            "draft" | "drafts" | "drafted" | "drafting" => Some(Self::Draft {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -344,7 +373,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "face a villanous choice" | "faces a villainous choice" => Some(Self::FaceAVillanousChoice {
+            "face a villanous choice" | "faces a villainous choice" | "face that choice" => Some(Self::FaceAVillanousChoice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -384,7 +413,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "move" | "moves" => Some(Self::Move {
+            "move" | "moves" | "moved" => Some(Self::Move {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -393,6 +422,10 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "note" | "noted" => Some(Self::Note {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "pass" => Some(Self::Pass {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -428,7 +461,15 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "roll" | "rolls" => Some(Self::Roll {
+            "restart the game" => Some(Self::RestartTheGame {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "reverse the game's turn order" => Some(Self::ReverseTheTurnOrder {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "roll" | "rolls" | "rolled" => Some(Self::Roll {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -453,6 +494,10 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "skip" | "skips" => Some(Self::Skip {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "solve a case" => Some(Self::SolveACase {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

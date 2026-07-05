@@ -94,7 +94,7 @@ impl IntoToken for PlayerSpecifier {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             /* You */
-            "you" => Some(Self::You {
+            "you" | "yourself" => Some(Self::You {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -1,0 +1,71 @@
+use crate::ability_tree::AbilityTreeNode;
+use crate::ability_tree::MAX_CHILDREN_PER_NODE;
+use crate::lexer::IntoToken;
+
+/// Fixme: doc
+#[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum NamedMeld {
+    RagnarokDivineDeliverance {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+}
+
+impl AbilityTreeNode for NamedMeld {
+    fn node_id(&self) -> usize {
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NamedMeldIdMarker).id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
+        use crate::ability_tree::NodeKind;
+        use crate::ability_tree::tree_node::TerminalNodeKind;
+        use idris::Idris;
+
+        let mut children = arrayvec::ArrayVec::new_const();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedMeld(*self)).id();
+        let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
+        children.push(child as &dyn AbilityTreeNode);
+        children
+    }
+
+    fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "named meld"
+    }
+
+    #[cfg(feature = "spanned_tree")]
+    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+        match self {
+            Self::RagnarokDivineDeliverance { span } => *span,
+        }
+    }
+}
+
+impl std::fmt::Display for NamedMeld {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NamedMeld::RagnarokDivineDeliverance { .. } => write!(f, "ragnarok, divine deliverance"),
+        }
+    }
+}
+
+#[cfg(feature = "lexer")]
+impl IntoToken for NamedMeld {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+        match span.text {
+            "ragnarok, divine deliverance" => Some(NamedMeld::RagnarokDivineDeliverance {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            _ => None,
+        }
+    }
+}

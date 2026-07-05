@@ -129,7 +129,7 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "left" | "leave" | "leaves" => Some(Self::Left {
+            "left" | "leave" | "leaves" | "leaving" => Some(Self::Left {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

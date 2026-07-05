@@ -33,6 +33,10 @@ pub enum DieRoll {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Natural20 {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NaturalResult {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -58,6 +62,7 @@ impl DieRoll {
             Self::D12 { span } => *span,
             Self::D20 { span } => *span,
             Self::DieRange { span, .. } => *span,
+            Self::Natural20 { span, .. } => *span,
             Self::NaturalResult { span } => *span,
             Self::PlanarDie { span } => *span,
             Self::Result { span } => *span,
@@ -68,27 +73,31 @@ impl DieRoll {
 impl DieRoll {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "d4" | "four-sided die" => Some(Self::D4 {
+            "d4" | "four-sided die" | "four-sided dice" => Some(Self::D4 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "d6" | "six-sided die" => Some(Self::D6 {
+            "d6" | "six-sided die" | "six-sided dice" => Some(Self::D6 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "d8" | "eight-sided die" => Some(Self::D8 {
+            "d8" | "eight-sided die" | "eight-sided dice" => Some(Self::D8 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "d10" | "ten-sided die" => Some(Self::D10 {
+            "d10" | "ten-sided die" | "ten-sided dice" => Some(Self::D10 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "d12" | "twelve-sided die" => Some(Self::D12 {
+            "d12" | "twelve-sided die" | "twelve-sided dice" => Some(Self::D12 {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "d20" | "twenty-sided die" => Some(Self::D20 {
+            "d20" | "twenty-sided die" | "twenty-sided dice" => Some(Self::D20 {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "natural 20" => Some(Self::NaturalResult {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

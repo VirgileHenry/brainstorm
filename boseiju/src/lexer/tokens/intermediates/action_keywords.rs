@@ -31,11 +31,11 @@ impl ActionKeyword {
 impl ActionKeyword {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "deal" | "deals" | "dealt" => Some(Self::Deals {
+            "deal" | "deals" | "dealt" | "dealing" => Some(Self::Deals {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "get" | "gets" => Some(Self::Get {
+            "get" | "gets" | "got" => Some(Self::Get {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -9,7 +9,7 @@ impl CardOwnName {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             /* Fixme: big mistake, he / him / itself can reference some other card */
-            "~" | "he" | "she" | "him" | "her" | "itself" => Some(Self {
+            "~" | "he" | "she" | "him" | "himself" | "her" | "itself" => Some(Self {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

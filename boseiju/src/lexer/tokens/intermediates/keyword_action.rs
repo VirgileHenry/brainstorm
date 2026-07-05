@@ -27,6 +27,11 @@ impl IntoToken for KeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "attaches" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Attach,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "casting" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Cast,
                     #[cfg(feature = "spanned_tree")]
@@ -49,6 +54,16 @@ impl IntoToken for KeywordAction {
                 }),
                 "exerted" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Exert,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "investigated" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Investigate,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "fought" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Fight,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
@@ -97,8 +112,18 @@ impl IntoToken for KeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "tapping" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Tap,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "voted" | "voting" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Vote,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "waterbending" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Waterbend,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),

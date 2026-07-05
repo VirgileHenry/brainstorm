@@ -897,7 +897,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "come" | "comes" => Some(Self::Come {
+            "come" | "comes" | "came" => Some(Self::Come {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -933,7 +933,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "do" | "does" => Some(Self::Do {
+            "do" | "does" | "done" => Some(Self::Do {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -1005,7 +1005,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "hasn't" | "haven't" => Some(Self::Hasnt {
+            "hasn't" | "haven't" | "hadn't" => Some(Self::Hasnt {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -1241,11 +1241,11 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "tied" => Some(Self::Tied {
+            "tie" | "tied" => Some(Self::Tied {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "times" => Some(Self::Times {
+            "times" | "previous time" => Some(Self::Times {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -1333,7 +1333,7 @@ impl EnglishKeyword {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "word" => Some(Self::Word {
+            "word" | "words" => Some(Self::Word {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

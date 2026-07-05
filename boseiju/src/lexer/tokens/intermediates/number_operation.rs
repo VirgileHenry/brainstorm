@@ -2,6 +2,10 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NumberOperation {
+    Below {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Between {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -31,6 +35,10 @@ pub enum NumberOperation {
         span: crate::ability_tree::span::TreeSpan,
     },
     Increased {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Lower {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -70,12 +78,21 @@ pub enum NumberOperation {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Smaller {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Substract {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
 impl NumberOperation {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Below { span } => *span,
             Self::Between { span } => *span,
             Self::Difference { span } => *span,
             Self::Divide { span } => *span,
@@ -84,6 +101,7 @@ impl NumberOperation {
             Self::Higher { span } => *span,
             Self::Highest { span } => *span,
             Self::Increased { span } => *span,
+            Self::Lower { span } => *span,
             Self::Lowest { span } => *span,
             Self::Match { span } => *span,
             Self::Minus { span } => *span,
@@ -93,6 +111,8 @@ impl NumberOperation {
             Self::Reduce { span } => *span,
             Self::RoundDown { span } => *span,
             Self::RoundUp { span } => *span,
+            Self::Smaller { span } => *span,
+            Self::Substract { span } => *span,
         }
     }
 }
@@ -100,6 +120,10 @@ impl NumberOperation {
 impl NumberOperation {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
+            "below" => Some(Self::Below {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "between" => Some(Self::Between {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -108,7 +132,7 @@ impl NumberOperation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "divide" => Some(Self::Divide {
+            "divide" | "divides" => Some(Self::Divide {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -129,6 +153,10 @@ impl NumberOperation {
                 span: span.into(),
             }),
             "increased" => Some(Self::Increased {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "lower" => Some(Self::Lower {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -165,6 +193,14 @@ impl NumberOperation {
                 span: span.into(),
             }),
             "round up" => Some(Self::RoundUp {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "smaller" => Some(Self::Smaller {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "substract" => Some(Self::Substract {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

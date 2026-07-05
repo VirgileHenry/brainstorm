@@ -72,10 +72,12 @@ impl crate::lexer::IntoToken for CreatureSubtype {
                     match span.text {
                         "elves" => Some(mtg_data::CreatureType::Elf),
                         "dwarves" => Some(mtg_data::CreatureType::Dwarf),
+                        "fungi" => Some(mtg_data::CreatureType::Fungus),
                         "heroes" => Some(mtg_data::CreatureType::Hero),
                         "mercenaries" => Some(mtg_data::CreatureType::Mercenary),
                         "mice" => Some(mtg_data::CreatureType::Mouse),
                         "octopuses" => Some(mtg_data::CreatureType::Octopus),
+                        "oxen" => Some(mtg_data::CreatureType::Ox),
                         "werewolves" => Some(mtg_data::CreatureType::Werewolf),
                         "wolves" => Some(mtg_data::CreatureType::Wolf),
                         _ => None,

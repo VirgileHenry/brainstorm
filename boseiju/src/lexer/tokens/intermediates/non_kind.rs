@@ -34,6 +34,10 @@ pub enum NonKind {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    NonBlocking {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     NonCommander {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -76,6 +80,7 @@ impl NonKind {
             Self::NonArtifact { span } => *span,
             Self::NonAttacking { span } => *span,
             Self::NonBasic { span } => *span,
+            Self::NonBlocking { span } => *span,
             Self::NonCommander { span } => *span,
             Self::NonCreature { span } => *span,
             Self::NonEnchantment { span } => *span,
@@ -119,6 +124,10 @@ impl NonKind {
                 span: span.into(),
             }),
             "nonbasic" => Some(Self::NonBasic {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "nonblocking" => Some(Self::NonBlocking {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

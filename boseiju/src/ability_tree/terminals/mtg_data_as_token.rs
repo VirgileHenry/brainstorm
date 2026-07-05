@@ -9,7 +9,6 @@ mod instant_sorcery_subtype;
 mod keywords;
 mod land_subtype;
 mod mana;
-mod partners;
 mod planeswalker_subtype;
 mod standalone_ab_word;
 mod standalone_kw_ab;

@@ -132,6 +132,10 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Modal {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Turn {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -212,6 +216,10 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Teammate {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     PlanarDeck {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -256,7 +264,11 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Booster {
+    BoosterPack {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    UnopenedBoosterPack {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -340,6 +352,10 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    UnlockedDoor {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     CardPool {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -349,6 +365,46 @@ pub enum VhyToSortLater {
         span: crate::ability_tree::span::TreeSpan,
     },
     Received {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ColorPair {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Multiple {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    PhyrexianSymbol {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    ChangedTo {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    MagicSubgame {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Previously {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TheValueOf {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Radiation {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Immediatly {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Heal {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -369,6 +425,7 @@ impl VhyToSortLater {
             Self::Permanent { span } => *span,
             Self::Player { span } => *span,
             Self::Spell { span } => *span,
+            Self::Modal { span } => *span,
             Self::Turn { span } => *span,
             Self::Mana { span } => *span,
             Self::Ability { span } => *span,
@@ -389,6 +446,7 @@ impl VhyToSortLater {
             Self::Unspent { span } => *span,
             Self::Perpetually { span } => *span,
             Self::Team { span } => *span,
+            Self::Teammate { span } => *span,
             Self::PlanarDeck { span } => *span,
             Self::FollowedBy { span } => *span,
             Self::LegendRule { span } => *span,
@@ -400,7 +458,8 @@ impl VhyToSortLater {
             Self::Mode { span } => *span,
             Self::TheGame { span } => *span,
             Self::Continuously { span } => *span,
-            Self::Booster { span } => *span,
+            Self::BoosterPack { span } => *span,
+            Self::UnopenedBoosterPack { span } => *span,
             Self::ExtraTurn { span } => *span,
             Self::WorthOfModes { span } => *span,
             Self::DraftRound { span } => *span,
@@ -421,9 +480,20 @@ impl VhyToSortLater {
             Self::JustBeneath { span } => *span,
             Self::Marked { span } => *span,
             Self::Door { span } => *span,
+            Self::UnlockedDoor { span } => *span,
             Self::CardPool { span } => *span,
             Self::GenericManaCost { span } => *span,
             Self::Received { span } => *span,
+            Self::ColorPair { span } => *span,
+            Self::Multiple { span } => *span,
+            Self::PhyrexianSymbol { span } => *span,
+            Self::ChangedTo { span } => *span,
+            Self::MagicSubgame { span } => *span,
+            Self::Previously { span } => *span,
+            Self::TheValueOf { span } => *span,
+            Self::Radiation { span } => *span,
+            Self::Immediatly { span } => *span,
+            Self::Heal { span } => *span,
         }
     }
 }
@@ -499,11 +569,16 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "modal" => Some(Self::Modal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "source" | "sources" => Some(Self::Source {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "turn" | "turns" | "turned" => Some(Self::Turn {
+            /* Fixme: what a mess */
+            "turn" | "turns" | "turned" | "turning" | "most recent turn" => Some(Self::Turn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -555,6 +630,10 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "teammate" | "teammates" => Some(Self::Teammate {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "planar deck" => Some(Self::PlanarDeck {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -599,7 +678,11 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "booster pack" => Some(Self::Booster {
+            "booster pack" => Some(Self::BoosterPack {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unopened booster pack" => Some(Self::UnopenedBoosterPack {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -627,7 +710,7 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "start the game" => Some(Self::StartTheGame {
+            "start the game" | "started the game" => Some(Self::StartTheGame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -683,15 +766,59 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "unlocked door" | "unlocked doors" => Some(Self::UnlockedDoor {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "card pool" => Some(Self::CardPool {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "generic mana cost" => Some(Self::GenericManaCost {
+            "generic mana costs" => Some(Self::GenericManaCost {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "received" => Some(Self::Received {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "color pair" | "color pairs" => Some(Self::ColorPair {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "multiple" => Some(Self::Multiple {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "{h}" => Some(Self::PhyrexianSymbol {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "changed to" => Some(Self::ChangedTo {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "magic subgame" => Some(Self::MagicSubgame {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "previously" => Some(Self::Previously {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the value of" => Some(Self::TheValueOf {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "radiation" => Some(Self::Radiation {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "immediatly" => Some(Self::Immediatly {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "healed" => Some(Self::Heal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

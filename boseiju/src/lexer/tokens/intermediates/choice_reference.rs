@@ -47,7 +47,7 @@ impl ChoiceReference {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "chosen quality" => Some(Self::Quality {
+            "quality" => Some(Self::Quality {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

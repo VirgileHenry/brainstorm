@@ -6,7 +6,7 @@ use crate::lexer::IntoToken;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum NamedPartners {
+pub enum NamedPartner {
     AlisaieLeveilleur {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -217,11 +217,11 @@ pub enum NamedPartners {
     },
 }
 
-impl AbilityTreeNode for NamedPartners {
+impl AbilityTreeNode for NamedPartner {
     fn node_id(&self) -> usize {
         use crate::ability_tree::tree_node::TerminalNodeKind;
         use idris::Idris;
-        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NamedPartnersIdMarker).id()
+        crate::ability_tree::NodeKind::Terminal(TerminalNodeKind::NamedPartnerIdMarker).id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {
@@ -230,7 +230,7 @@ impl AbilityTreeNode for NamedPartners {
         use idris::Idris;
 
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedPartners(*self)).id();
+        let child_id = NodeKind::Terminal(TerminalNodeKind::NamedPartner(*self)).id();
         let child = crate::ability_tree::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn AbilityTreeNode);
         children
@@ -304,7 +304,7 @@ impl AbilityTreeNode for NamedPartners {
     }
 }
 
-impl std::fmt::Display for NamedPartners {
+impl std::fmt::Display for NamedPartner {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::AlisaieLeveilleur { .. } => write!(f, "alisaie leveilleur"),
@@ -364,214 +364,214 @@ impl std::fmt::Display for NamedPartners {
 }
 
 #[cfg(feature = "lexer")]
-impl IntoToken for NamedPartners {
+impl IntoToken for NamedPartner {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "alisaie leveilleur" => Some(NamedPartners::AlisaieLeveilleur {
+            "alisaie leveilleur" => Some(NamedPartner::AlisaieLeveilleur {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "alphinaud leveilleur" => Some(NamedPartners::AlphinaudLeveilleur {
+            "alphinaud leveilleur" => Some(NamedPartner::AlphinaudLeveilleur {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "amy pond" => Some(NamedPartners::AmyPond {
+            "amy pond" => Some(NamedPartner::AmyPond {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "bebop skull" => Some(NamedPartners::BebopSkull {
+            "bebop skull" => Some(NamedPartner::BebopSkull {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "blaring captain" => Some(NamedPartners::BlaringCaptain {
+            "blaring captain" => Some(NamedPartner::BlaringCaptain {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "blaring recruiter" => Some(NamedPartners::BlaringRecruiter {
+            "blaring recruiter" => Some(NamedPartner::BlaringRecruiter {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "blue, loyal raptor" => Some(NamedPartners::BlueLoyalRaptor {
+            "blue, loyal raptor" => Some(NamedPartner::BlueLoyalRaptor {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "brallin, skyshark rider" => Some(NamedPartners::BrallinSkysharkRider {
+            "brallin, skyshark rider" => Some(NamedPartner::BrallinSkysharkRider {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "cazur, ruthless stalker" => Some(NamedPartners::CazurRuthlessStalker {
+            "cazur, ruthless stalker" => Some(NamedPartner::CazurRuthlessStalker {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "chakram retriever" => Some(NamedPartners::ChakramRetriever {
+            "chakram retriever" => Some(NamedPartner::ChakramRetriever {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "chakram slinger" => Some(NamedPartners::ChakramSlinger {
+            "chakram slinger" => Some(NamedPartner::ChakramSlinger {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "evie frye" => Some(NamedPartners::EvieFrye {
+            "evie frye" => Some(NamedPartner::EvieFrye {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "frodo, adventurous hobbit" => Some(NamedPartners::FrodoAdventurousHobbit {
+            "frodo, adventurous hobbit" => Some(NamedPartner::FrodoAdventurousHobbit {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "gormthe great" => Some(NamedPartners::GormtheGreat {
+            "gorm the great" => Some(NamedPartner::GormtheGreat {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "haldan, avid arcanist" => Some(NamedPartners::HaldanAvidArcanist {
+            "haldan, avid arcanist" => Some(NamedPartner::HaldanAvidArcanist {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "impetuous protege" => Some(NamedPartners::ImpetuousProtege {
+            "impetuous protege" => Some(NamedPartner::ImpetuousProtege {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "jacob frye" => Some(NamedPartners::JacobFrye {
+            "jacob frye" => Some(NamedPartner::JacobFrye {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "jenny flint" => Some(NamedPartners::JennyFlint {
+            "jenny flint" => Some(NamedPartner::JennyFlint {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "kamberthe plunderer" => Some(NamedPartners::KamberthePlunderer {
+            "kamberthe plunderer" => Some(NamedPartner::KamberthePlunderer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "khorvath brightflame" => Some(NamedPartners::KhorvathBrightflame {
+            "khorvath brightflame" => Some(NamedPartner::KhorvathBrightflame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "kravthe unredeemed" => Some(NamedPartners::KravtheUnredeemed {
+            "krav the unredeemed" => Some(NamedPartner::KravtheUnredeemed {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "laurinethe diversion" => Some(NamedPartners::LaurinetheDiversion {
+            "laurinethe diversion" => Some(NamedPartner::LaurinetheDiversion {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "ley weaver" => Some(NamedPartners::LeyWeaver {
+            "ley weaver" => Some(NamedPartner::LeyWeaver {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "lore weaver" => Some(NamedPartners::LoreWeaver {
+            "lore weaver" => Some(NamedPartner::LoreWeaver {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "madame vastra" => Some(NamedPartners::MadameVastra {
+            "madame vastra" => Some(NamedPartner::MadameVastra {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "merry, warden of isengard" => Some(NamedPartners::MerryWardenofIsengard {
+            "merry, warden of isengard" => Some(NamedPartner::MerryWardenofIsengard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "nikara, lair scavenger" => Some(NamedPartners::NikaraLairScavenger {
+            "nikara, lair scavenger" => Some(NamedPartner::NikaraLairScavenger {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "okaun, eyeof chaos" => Some(NamedPartners::OkaunEyeofChaos {
+            "okaun, eyeof chaos" => Some(NamedPartner::OkaunEyeofChaos {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "owen, grady raptor trainer" => Some(NamedPartners::OwenGradyRaptorTrainer {
+            "owen grady, raptor trainer" => Some(NamedPartner::OwenGradyRaptorTrainer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "pako, arcane retriever" => Some(NamedPartners::PakoArcaneRetriever {
+            "pako, arcane retriever" => Some(NamedPartner::PakoArcaneRetriever {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "pippin, warden of isengard" => Some(NamedPartners::PippinWardenofIsengard {
+            "pippin, warden of isengard" => Some(NamedPartner::PippinWardenofIsengard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "pir, imaginative rascal" => Some(NamedPartners::PirImaginativeRascal {
+            "pir, imaginative rascal" => Some(NamedPartner::PirImaginativeRascal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "proud mentor" => Some(NamedPartners::ProudMentor {
+            "proud mentor" => Some(NamedPartner::ProudMentor {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "regnathe redeemer" => Some(NamedPartners::RegnatheRedeemer {
+            "regnathe redeemer" => Some(NamedPartner::RegnatheRedeemer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "rhoda, geist avenger" => Some(NamedPartners::RhodaGeistAvenger {
+            "rhoda, geist avenger" => Some(NamedPartner::RhodaGeistAvenger {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "rocksteady, mutant marauder" => Some(NamedPartners::RocksteadyMutantMarauder {
+            "rocksteady, mutant marauder" => Some(NamedPartner::RocksteadyMutantMarauder {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "rory williams" => Some(NamedPartners::RoryWilliams {
+            "rory williams" => Some(NamedPartner::RoryWilliams {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "rowan kenrith" => Some(NamedPartners::RowanKenrith {
+            "rowan kenrith" => Some(NamedPartner::RowanKenrith {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "sam, loyal attendant" => Some(NamedPartners::SamLoyalAttendant {
+            "sam, loyal attendant" => Some(NamedPartner::SamLoyalAttendant {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "shabrazthe skyshark" => Some(NamedPartners::ShabraztheSkyshark {
+            "shabraz, the skyshark" => Some(NamedPartner::ShabraztheSkyshark {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "silvar, devourer of the free" => Some(NamedPartners::SilvarDevoureroftheFree {
+            "silvar, devourer of the free" => Some(NamedPartner::SilvarDevoureroftheFree {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "soulblade corrupter" => Some(NamedPartners::SoulbladeCorrupter {
+            "soulblade corrupter" => Some(NamedPartner::SoulbladeCorrupter {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "soulblade renewer" => Some(NamedPartners::SoulbladeRenewer {
+            "soulblade renewer" => Some(NamedPartner::SoulbladeRenewer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "sylvia brightspear" => Some(NamedPartners::SylviaBrightspear {
+            "sylvia brightspear" => Some(NamedPartner::SylviaBrightspear {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "timin, youthful geist" => Some(NamedPartners::TiminYouthfulGeist {
+            "timin, youthful geist" => Some(NamedPartner::TiminYouthfulGeist {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "toothy imaginary friend" => Some(NamedPartners::ToothyImaginaryFriend {
+            "toothy, imaginary friend" => Some(NamedPartner::ToothyImaginaryFriend {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "trynn champion of freedom" => Some(NamedPartners::TrynnChampionofFreedom {
+            "trynn champion of freedom" => Some(NamedPartner::TrynnChampionofFreedom {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "ukkima, stalking shadow" => Some(NamedPartners::UkkimaStalkingShadow {
+            "ukkima, stalking shadow" => Some(NamedPartner::UkkimaStalkingShadow {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "virtusthe veiled" => Some(NamedPartners::VirtustheVeiled {
+            "virtus the veiled" => Some(NamedPartner::VirtustheVeiled {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "will kenrith" => Some(NamedPartners::WillKenrith {
+            "will kenrith" => Some(NamedPartner::WillKenrith {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "yannik, scavenging sentinel" => Some(NamedPartners::YannikScavengingSentinel {
+            "yannik, scavenging sentinel" => Some(NamedPartner::YannikScavengingSentinel {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "zndrsplt, eyeof wisdom" => Some(NamedPartners::ZndrspltEyeofWisdom {
+            "zndrsplt, eyeof wisdom" => Some(NamedPartner::ZndrspltEyeofWisdom {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

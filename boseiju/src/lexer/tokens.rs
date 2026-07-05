@@ -47,11 +47,13 @@ pub enum Token {
     MayChooseTheSameModeMoreThanOnce(intermediates::MayChooseTheSameModeMoreThanOnce),
     NamedCard(terminals::NamedCard),
     NamedChoice(terminals::NamedChoice),
+    NamedDungeon(terminals::NamedDungeon),
     NamedExpansion(terminals::NamedExpansion),
-    NamedPartners(terminals::NamedPartners),
+    NamedMeld(terminals::NamedMeld),
+    NamedPartner(terminals::NamedPartner),
     NamedToken(terminals::NamedToken),
     NamedTransformation(terminals::NamedTransformation),
-    NamedVotes(terminals::NamedVotes),
+    NamedVote(terminals::NamedVote),
     NonKind(intermediates::NonKind),
     NotOfAKind { not: intermediates::NotOfAKind },
     Number(intermediates::Number),
@@ -149,10 +151,14 @@ impl Token {
             Some(Self::NamedCard(kind))
         } else if let Some(kind) = terminals::NamedChoice::try_from_span(&span) {
             Some(Self::NamedChoice(kind))
+        } else if let Some(kind) = terminals::NamedDungeon::try_from_span(&span) {
+            Some(Self::NamedDungeon(kind))
         } else if let Some(kind) = terminals::NamedExpansion::try_from_span(&span) {
             Some(Self::NamedExpansion(kind))
-        } else if let Some(kind) = terminals::NamedPartners::try_from_span(&span) {
-            Some(Self::NamedPartners(kind))
+        } else if let Some(kind) = terminals::NamedMeld::try_from_span(&span) {
+            Some(Self::NamedMeld(kind))
+        } else if let Some(kind) = terminals::NamedPartner::try_from_span(&span) {
+            Some(Self::NamedPartner(kind))
         } else if let Some(kind) = terminals::NamedToken::try_from_span(&span) {
             Some(Self::NamedToken(kind))
         } else if let Some(kind) = zone::OwnableZone::try_from_span(&span) {
@@ -177,8 +183,8 @@ impl Token {
             Some(Self::TheSameIsTrueFor(kind))
         } else if let Some(kind) = terminals::NamedTransformation::try_from_span(&span) {
             Some(Self::NamedTransformation(kind))
-        } else if let Some(kind) = terminals::NamedVotes::try_from_span(&span) {
-            Some(Self::NamedVotes(kind))
+        } else if let Some(kind) = terminals::NamedVote::try_from_span(&span) {
+            Some(Self::NamedVote(kind))
         } else if let Some(kind) = intermediates::EnglishKeyword::try_from_span(&span) {
             Some(Self::EnglishKeyword(kind))
         } else if let Some(kind) = intermediates::Number::try_from_span(&span) {
@@ -283,8 +289,10 @@ impl Token {
             Self::MayChooseTheSameModeMoreThanOnce(child) => child.span,
             Self::NamedCard(child) => child.node_span(),
             Self::NamedChoice(child) => child.node_span(),
+            Self::NamedDungeon(child) => child.node_span(),
             Self::NamedExpansion(child) => child.node_span(),
-            Self::NamedPartners(child) => child.node_span(),
+            Self::NamedMeld(child) => child.node_span(),
+            Self::NamedPartner(child) => child.node_span(),
             Self::NamedToken(child) => child.node_span(),
             Self::NonKind(child) => child.span(),
             Self::NotOfAKind { not } => not.span,
@@ -311,7 +319,7 @@ impl Token {
             Self::TapUntapCost(child) => child.span(),
             Self::TheSameIsTrueFor(child) => child.span,
             Self::NamedTransformation(child) => child.node_span(),
-            Self::NamedVotes(child) => child.node_span(),
+            Self::NamedVote(child) => child.node_span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),
