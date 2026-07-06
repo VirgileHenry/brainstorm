@@ -23,7 +23,7 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    ArchnusWeb {
+    ArachnusWeb {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -43,7 +43,23 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    BloodArtist {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    BogbrewWitch {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    BoulderbornDragon {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Braingeyser {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    BrambleweftBehemoth {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -63,6 +79,10 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ChandraBoldPyromancer {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     ChandraFlamesCatalyst {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -72,6 +92,10 @@ pub enum NamedCard {
         span: crate::ability_tree::span::TreeSpan,
     },
     ChandraPyrogenius {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    CommandTower {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -87,11 +111,23 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    DovinArchitectOfLaw {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    DragonstormGlobe {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     EightAndAHalfTails {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     EivorBattleReady {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    EmpyrialArchangel {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -119,11 +155,19 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    GarrukSavageHerald {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     GideonMartialParagon {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     GideonTheOathsworn {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    GodPharaohsGift {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -147,11 +191,23 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    HanweirGarrison {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     HeartPiercerBow {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    HellkiteOverlord {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     HelmOfKaldra {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    IgneousCur {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -195,7 +251,7 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    MidnightScavenger {
+    MidnightScavengers {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -204,6 +260,10 @@ pub enum NamedCard {
         span: crate::ability_tree::span::TreeSpan,
     },
     MonkOfTheOpenHand {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    MuscleBurst {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -216,6 +276,10 @@ pub enum NamedCard {
         span: crate::ability_tree::span::TreeSpan,
     },
     NicolBolasTheDeceiver {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NissaGenesisMage {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -239,6 +303,10 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    PrinceOfThralls {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     RalCallerOfStorms {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -248,6 +316,10 @@ pub enum NamedCard {
         span: crate::ability_tree::span::TreeSpan,
     },
     Regrowth {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    RowanFearlessSparkmage {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -263,15 +335,27 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    SorinVampireLord {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     SphinxSovereign {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    SunlitHoplit {
+    SpittingDrake {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    SunlitHoplite {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     SwordOfKaldra {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Tardis {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -287,11 +371,23 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TezzeretMasterOfMetal {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TheAnimus {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TheMightstoneAndWeakstone {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TheSpearOfLeonidas {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    TheUnderworldCookbook {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -315,11 +411,19 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    ViashivanDragon {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     VivienNaturesAvenger {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     VraskaRegalGorgon {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    VraskaSchemingGorgon {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -364,39 +468,53 @@ impl AbilityTreeNode for NamedCard {
             Self::AjaniInspiringLeader { span } => *span,
             Self::AlpineWatchdog { span } => *span,
             Self::AltanakTheThriceCalled { span } => *span,
-            Self::ArchnusWeb { span } => *span,
+            Self::ArachnusWeb { span } => *span,
             Self::ArgothSanctumOfNature { span } => *span,
             Self::AshiokSculptorOfFears { span } => *span,
             Self::BasriDevotedPaladin { span } => *span,
             Self::BlackLotus { span } => *span,
+            Self::BloodArtist { span } => *span,
+            Self::BogbrewWitch { span } => *span,
+            Self::BoulderbornDragon { span } => *span,
             Self::Braingeyser { span } => *span,
+            Self::BrambleweftBehemoth { span } => *span,
             Self::Breathstealer { span } => *span,
             Self::BridesGown { span } => *span,
             Self::BrunaTheFadingLight { span } => *span,
             Self::BubblingCauldron { span } => *span,
+            Self::ChandraBoldPyromancer { span } => *span,
             Self::ChandraFlamesCatalyst { span } => *span,
             Self::ChandraFlamesFury { span } => *span,
             Self::ChandraPyrogenius { span } => *span,
+            Self::CommandTower { span } => *span,
             Self::CrownOfEmpires { span } => *span,
             Self::Disenchant { span } => *span,
             Self::DomriCitySmasher { span } => *span,
+            Self::DovinArchitectOfLaw { span } => *span,
+            Self::DragonstormGlobe { span } => *span,
             Self::EightAndAHalfTails { span } => *span,
             Self::EivorBattleReady { span } => *span,
+            Self::EmpyrialArchangel { span } => *span,
             Self::EyeOfVecna { span } => *span,
             Self::EzioBladeOfVengeance { span } => *span,
             Self::FangFearlessLCie { span } => *span,
             Self::FeralShadow { span } => *span,
             Self::FesteringNewt { span } => *span,
             Self::FlameBurst { span } => *span,
+            Self::GarrukSavageHerald { span } => *span,
             Self::GideonMartialParagon { span } => *span,
             Self::GideonTheOathsworn { span } => *span,
+            Self::GodPharaohsGift { span } => *span,
             Self::Godsire { span } => *span,
             Self::GroomsFinery { span } => *span,
             Self::HalvarGodOfBattle { span } => *span,
             Self::HammerOfNazahn { span } => *span,
             Self::HandOfVecna { span } => *span,
+            Self::HanweirGarrison { span } => *span,
             Self::HeartPiercerBow { span } => *span,
+            Self::HellkiteOverlord { span } => *span,
             Self::HelmOfKaldra { span } => *span,
+            Self::IgneousCur { span } => *span,
             Self::JaceArcaneStrategist { span } => *span,
             Self::JaceIngeniousMindMage { span } => *span,
             Self::JiangYanggu { span } => *span,
@@ -407,38 +525,50 @@ impl AbilityTreeNode for NamedCard {
             Self::LilianaDeathWielder { span } => *span,
             Self::MagnifyingGlass { span } => *span,
             Self::MidnightClock { span } => *span,
-            Self::MidnightScavenger { span } => *span,
+            Self::MidnightScavengers { span } => *span,
             Self::MineWorker { span } => *span,
             Self::MonkOfTheOpenHand { span } => *span,
+            Self::MuscleBurst { span } => *span,
             Self::MuYanling { span } => *span,
             Self::MuYanlingCelestialWind { span } => *span,
             Self::NicolBolasTheDeceiver { span } => *span,
+            Self::NissaGenesisMage { span } => *span,
             Self::NissaNaturesArtisan { span } => *span,
             Self::OkoTheTrickster { span } => *span,
             Self::PeerThroughDepths { span } => *span,
             Self::PhyrexianDragonEngine { span } => *span,
             Self::PlantWorker { span } => *span,
+            Self::PrinceOfThralls { span } => *span,
             Self::RalCallerOfStorms { span } => *span,
             Self::ReachThroughMists { span } => *span,
             Self::Regrowth { span } => *span,
+            Self::RowanFearlessSparkmage { span } => *span,
             Self::ScepterOfEmpires { span } => *span,
             Self::ShieldOfKaldra { span } => *span,
             Self::ShivanDragon { span } => *span,
+            Self::SorinVampireLord { span } => *span,
             Self::SphinxSovereign { span } => *span,
-            Self::SunlitHoplit { span } => *span,
+            Self::SpittingDrake { span } => *span,
+            Self::SunlitHoplite { span } => *span,
             Self::SwordOfKaldra { span } => *span,
+            Self::Tardis { span } => *span,
             Self::TeferiTimebender { span } => *span,
             Self::TeferiTimelessVoyager { span } => *span,
             Self::Terror { span } => *span,
+            Self::TezzeretMasterOfMetal { span } => *span,
             Self::TheAnimus { span } => *span,
+            Self::TheMightstoneAndWeakstone { span } => *span,
             Self::TheSpearOfLeonidas { span } => *span,
+            Self::TheUnderworldCookbook { span } => *span,
             Self::TheUnspeakable { span } => *span,
             Self::ThinkingCap { span } => *span,
             Self::ThroneOfEmpires { span } => *span,
             Self::TowerWorker { span } => *span,
             Self::VialOfDragonfire { span } => *span,
+            Self::ViashivanDragon { span } => *span,
             Self::VivienNaturesAvenger { span } => *span,
             Self::VraskaRegalGorgon { span } => *span,
+            Self::VraskaSchemingGorgon { span } => *span,
             Self::Wastes { span } => *span,
         }
     }
@@ -451,39 +581,53 @@ impl std::fmt::Display for NamedCard {
             Self::AjaniInspiringLeader { .. } => write!(f, "accumulated knowledge"),
             Self::AlpineWatchdog { .. } => write!(f, "accumulated knowledge"),
             Self::AltanakTheThriceCalled { .. } => write!(f, "accumulated knowledge"),
-            Self::ArchnusWeb { .. } => write!(f, "accumulated knowledge"),
+            Self::ArachnusWeb { .. } => write!(f, "accumulated knowledge"),
             Self::ArgothSanctumOfNature { .. } => write!(f, "accumulated knowledge"),
             Self::AshiokSculptorOfFears { .. } => write!(f, "accumulated knowledge"),
             Self::BasriDevotedPaladin { .. } => write!(f, "accumulated knowledge"),
             Self::BlackLotus { .. } => write!(f, "accumulated knowledge"),
+            Self::BloodArtist { .. } => write!(f, "accumulated knowledge"),
+            Self::BogbrewWitch { .. } => write!(f, "accumulated knowledge"),
+            Self::BoulderbornDragon { .. } => write!(f, "accumulated knowledge"),
             Self::Braingeyser { .. } => write!(f, "accumulated knowledge"),
+            Self::BrambleweftBehemoth { .. } => write!(f, "accumulated knowledge"),
             Self::Breathstealer { .. } => write!(f, "accumulated knowledge"),
             Self::BridesGown { .. } => write!(f, "accumulated knowledge"),
             Self::BrunaTheFadingLight { .. } => write!(f, "accumulated knowledge"),
             Self::BubblingCauldron { .. } => write!(f, "accumulated knowledge"),
+            Self::ChandraBoldPyromancer { .. } => write!(f, "accumulated knowledge"),
             Self::ChandraFlamesCatalyst { .. } => write!(f, "accumulated knowledge"),
             Self::ChandraFlamesFury { .. } => write!(f, "accumulated knowledge"),
             Self::ChandraPyrogenius { .. } => write!(f, "accumulated knowledge"),
+            Self::CommandTower { .. } => write!(f, "accumulated knowledge"),
             Self::CrownOfEmpires { .. } => write!(f, "accumulated knowledge"),
             Self::Disenchant { .. } => write!(f, "accumulated knowledge"),
             Self::DomriCitySmasher { .. } => write!(f, "accumulated knowledge"),
+            Self::DovinArchitectOfLaw { .. } => write!(f, "accumulated knowledge"),
+            Self::DragonstormGlobe { .. } => write!(f, "accumulated knowledge"),
             Self::EightAndAHalfTails { .. } => write!(f, "accumulated knowledge"),
             Self::EivorBattleReady { .. } => write!(f, "accumulated knowledge"),
+            Self::EmpyrialArchangel { .. } => write!(f, "accumulated knowledge"),
             Self::EyeOfVecna { .. } => write!(f, "accumulated knowledge"),
             Self::EzioBladeOfVengeance { .. } => write!(f, "accumulated knowledge"),
             Self::FangFearlessLCie { .. } => write!(f, "accumulated knowledge"),
             Self::FeralShadow { .. } => write!(f, "accumulated knowledge"),
             Self::FesteringNewt { .. } => write!(f, "accumulated knowledge"),
             Self::FlameBurst { .. } => write!(f, "accumulated knowledge"),
+            Self::GarrukSavageHerald { .. } => write!(f, "accumulated knowledge"),
             Self::GideonMartialParagon { .. } => write!(f, "accumulated knowledge"),
             Self::GideonTheOathsworn { .. } => write!(f, "accumulated knowledge"),
+            Self::GodPharaohsGift { .. } => write!(f, "accumulated knowledge"),
             Self::Godsire { .. } => write!(f, "accumulated knowledge"),
             Self::GroomsFinery { .. } => write!(f, "accumulated knowledge"),
             Self::HalvarGodOfBattle { .. } => write!(f, "accumulated knowledge"),
             Self::HammerOfNazahn { .. } => write!(f, "accumulated knowledge"),
             Self::HandOfVecna { .. } => write!(f, "accumulated knowledge"),
+            Self::HanweirGarrison { .. } => write!(f, "accumulated knowledge"),
             Self::HeartPiercerBow { .. } => write!(f, "accumulated knowledge"),
+            Self::HellkiteOverlord { .. } => write!(f, "accumulated knowledge"),
             Self::HelmOfKaldra { .. } => write!(f, "accumulated knowledge"),
+            Self::IgneousCur { .. } => write!(f, "accumulated knowledge"),
             Self::JaceArcaneStrategist { .. } => write!(f, "accumulated knowledge"),
             Self::JaceIngeniousMindMage { .. } => write!(f, "accumulated knowledge"),
             Self::JiangYanggu { .. } => write!(f, "accumulated knowledge"),
@@ -494,38 +638,50 @@ impl std::fmt::Display for NamedCard {
             Self::LilianaDeathWielder { .. } => write!(f, "accumulated knowledge"),
             Self::MagnifyingGlass { .. } => write!(f, "accumulated knowledge"),
             Self::MidnightClock { .. } => write!(f, "accumulated knowledge"),
-            Self::MidnightScavenger { .. } => write!(f, "accumulated knowledge"),
+            Self::MidnightScavengers { .. } => write!(f, "accumulated knowledge"),
             Self::MineWorker { .. } => write!(f, "accumulated knowledge"),
             Self::MonkOfTheOpenHand { .. } => write!(f, "accumulated knowledge"),
+            Self::MuscleBurst { .. } => write!(f, "accumulated knowledge"),
             Self::MuYanling { .. } => write!(f, "accumulated knowledge"),
             Self::MuYanlingCelestialWind { .. } => write!(f, "accumulated knowledge"),
             Self::NicolBolasTheDeceiver { .. } => write!(f, "accumulated knowledge"),
+            Self::NissaGenesisMage { .. } => write!(f, "accumulated knowledge"),
             Self::NissaNaturesArtisan { .. } => write!(f, "accumulated knowledge"),
             Self::OkoTheTrickster { .. } => write!(f, "accumulated knowledge"),
             Self::PeerThroughDepths { .. } => write!(f, "accumulated knowledge"),
             Self::PhyrexianDragonEngine { .. } => write!(f, "accumulated knowledge"),
             Self::PlantWorker { .. } => write!(f, "accumulated knowledge"),
+            Self::PrinceOfThralls { .. } => write!(f, "accumulated knowledge"),
             Self::RalCallerOfStorms { .. } => write!(f, "accumulated knowledge"),
             Self::ReachThroughMists { .. } => write!(f, "accumulated knowledge"),
             Self::Regrowth { .. } => write!(f, "accumulated knowledge"),
+            Self::RowanFearlessSparkmage { .. } => write!(f, "accumulated knowledge"),
             Self::ScepterOfEmpires { .. } => write!(f, "accumulated knowledge"),
             Self::ShieldOfKaldra { .. } => write!(f, "accumulated knowledge"),
             Self::ShivanDragon { .. } => write!(f, "accumulated knowledge"),
+            Self::SorinVampireLord { .. } => write!(f, "accumulated knowledge"),
             Self::SphinxSovereign { .. } => write!(f, "accumulated knowledge"),
-            Self::SunlitHoplit { .. } => write!(f, "accumulated knowledge"),
+            Self::SpittingDrake { .. } => write!(f, "accumulated knowledge"),
+            Self::SunlitHoplite { .. } => write!(f, "accumulated knowledge"),
             Self::SwordOfKaldra { .. } => write!(f, "accumulated knowledge"),
+            Self::Tardis { .. } => write!(f, "accumulated knowledge"),
             Self::TeferiTimebender { .. } => write!(f, "accumulated knowledge"),
             Self::TeferiTimelessVoyager { .. } => write!(f, "accumulated knowledge"),
             Self::Terror { .. } => write!(f, "accumulated knowledge"),
+            Self::TezzeretMasterOfMetal { .. } => write!(f, "accumulated knowledge"),
             Self::TheAnimus { .. } => write!(f, "accumulated knowledge"),
+            Self::TheMightstoneAndWeakstone { .. } => write!(f, "accumulated knowledge"),
             Self::TheSpearOfLeonidas { .. } => write!(f, "accumulated knowledge"),
+            Self::TheUnderworldCookbook { .. } => write!(f, "accumulated knowledge"),
             Self::TheUnspeakable { .. } => write!(f, "accumulated knowledge"),
             Self::ThinkingCap { .. } => write!(f, "accumulated knowledge"),
             Self::ThroneOfEmpires { .. } => write!(f, "accumulated knowledge"),
             Self::TowerWorker { .. } => write!(f, "accumulated knowledge"),
             Self::VialOfDragonfire { .. } => write!(f, "accumulated knowledge"),
+            Self::ViashivanDragon { .. } => write!(f, "accumulated knowledge"),
             Self::VivienNaturesAvenger { .. } => write!(f, "accumulated knowledge"),
             Self::VraskaRegalGorgon { .. } => write!(f, "accumulated knowledge"),
+            Self::VraskaSchemingGorgon { .. } => write!(f, "accumulated knowledge"),
             Self::Wastes { .. } => write!(f, "accumulated knowledge"),
         }
     }
@@ -543,15 +699,15 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "alpine watchdog" => Some(Self::AlpineWatchdog {
+            "alpine watchdog" | "~ watchdog" => Some(Self::AlpineWatchdog {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "altanak, the trice-called" => Some(Self::AltanakTheThriceCalled {
+            "altanak, the thrice-called" => Some(Self::AltanakTheThriceCalled {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "archnus web" => Some(Self::ArchnusWeb {
+            "arachnus web" | "~ web" => Some(Self::ArachnusWeb {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -568,6 +724,22 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "black lotus" => Some(Self::BlackLotus {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "blood artist" => Some(Self::BloodArtist {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "bogbrew witch" => Some(Self::BogbrewWitch {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "boulderborn dragon" => Some(Self::BoulderbornDragon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "brambleweft behemoth" => Some(Self::BrambleweftBehemoth {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -591,6 +763,10 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "chandra, bold pyromancer" => Some(Self::ChandraBoldPyromancer {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "chandra, flame's catalyst" => Some(Self::ChandraFlamesCatalyst {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -600,6 +776,10 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "chandra, pyrogenius" => Some(Self::ChandraPyrogenius {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "command tower" => Some(Self::CommandTower {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -615,11 +795,23 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "dovin, architect of law" => Some(Self::DovinArchitectOfLaw {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "dragonstorm globe" | "~ globe" => Some(Self::DragonstormGlobe {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "eight-and-a-half-tails" => Some(Self::EightAndAHalfTails {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "eivor, battle-ready" => Some(Self::EivorBattleReady {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "empyrial archangel" => Some(Self::EmpyrialArchangel {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -635,11 +827,19 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "gideon martial paragon" => Some(Self::GideonMartialParagon {
+            "garruk, savage herald" => Some(Self::GarrukSavageHerald {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "gideon the oathsworn" => Some(Self::GideonTheOathsworn {
+            "gideon, martial paragon" => Some(Self::GideonMartialParagon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "gideon, the oathsworn" => Some(Self::GideonTheOathsworn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "god-pharaoh's gift" => Some(Self::GodPharaohsGift {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -655,7 +855,7 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "hammer of nazahn" => Some(Self::HammerOfNazahn {
+            "hammer of nazahn" | "hammer of ~" => Some(Self::HammerOfNazahn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -675,11 +875,23 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "hanweir garrison" => Some(Self::HanweirGarrison {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "heart-piercer bow" => Some(Self::HeartPiercerBow {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "hellkite overlord" => Some(Self::HellkiteOverlord {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "helm of kaldra" => Some(Self::HelmOfKaldra {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "igneous cur" => Some(Self::IgneousCur {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -695,11 +907,11 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "keeper of kookus" => Some(Self::KeeperOfKookus {
+            "keeper of kookus" | "keeper of ~" => Some(Self::KeeperOfKookus {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "labyrinth of skophos" => Some(Self::LabyrinthOfSkophos {
+            "labyrinth of skophos" | "labyrinth of ~" => Some(Self::LabyrinthOfSkophos {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -723,7 +935,7 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "midnight scavenger" => Some(Self::MidnightScavenger {
+            "midnight scavengers" => Some(Self::MidnightScavengers {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -732,6 +944,10 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "monk of the open hand" => Some(Self::MonkOfTheOpenHand {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "muscle burst" => Some(Self::MuscleBurst {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -744,6 +960,10 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "nicol bolas, the deceiver" => Some(Self::NicolBolasTheDeceiver {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "nissa, genesis mage" => Some(Self::NissaGenesisMage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -767,6 +987,10 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "prince of thralls" => Some(Self::PrinceOfThralls {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "ral, caller of storms" => Some(Self::RalCallerOfStorms {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -776,6 +1000,10 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "regrowth" => Some(Self::Regrowth {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rowan, fearless sparkmage" => Some(Self::RowanFearlessSparkmage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -791,15 +1019,27 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "sorin, vampire lord" => Some(Self::SorinVampireLord {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "sphinx sovereign" => Some(Self::SphinxSovereign {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "sunlit hoplit" => Some(Self::SunlitHoplit {
+            "spitting drake" => Some(Self::SpittingDrake {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "sunlit hoplite" => Some(Self::SunlitHoplite {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "sword of kaldra" => Some(Self::SwordOfKaldra {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "tardis" => Some(Self::Tardis {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -815,11 +1055,23 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "tezzeret, master of metal" => Some(Self::TezzeretMasterOfMetal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "the animus" => Some(Self::TheAnimus {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "the mightstone and weakstone" => Some(Self::TheMightstoneAndWeakstone {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "the spear of leonidas" => Some(Self::TheSpearOfLeonidas {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the underworld cookbook" => Some(Self::TheUnderworldCookbook {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -843,11 +1095,19 @@ impl IntoToken for NamedCard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "viashivan dragon" => Some(Self::ViashivanDragon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "vivien, nature's avenger" => Some(Self::VivienNaturesAvenger {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "vraska, regal gorgon" => Some(Self::VraskaRegalGorgon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "vraska, scheming gorgon" => Some(Self::VraskaSchemingGorgon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

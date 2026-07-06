@@ -52,6 +52,11 @@ impl IntoToken for KeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "discovered" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Discover,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "exerted" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Exert,
                     #[cfg(feature = "spanned_tree")]
@@ -59,6 +64,11 @@ impl IntoToken for KeywordAction {
                 }),
                 "investigated" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Investigate,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "foraging" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Forage,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
@@ -84,6 +94,11 @@ impl IntoToken for KeywordAction {
                 }),
                 "played" => Some(Self {
                     keyword_action: mtg_data::KeywordAction::Play,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "plotting" => Some(Self {
+                    keyword_action: mtg_data::KeywordAction::Plot,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),

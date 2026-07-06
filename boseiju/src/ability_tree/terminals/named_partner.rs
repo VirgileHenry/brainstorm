@@ -19,7 +19,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    BebopSkull {
+    BebopSkullAndCrossbones {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -79,7 +79,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    KamberthePlunderer {
+    KamberThePlunderer {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -91,7 +91,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    LaurinetheDiversion {
+    LaurineTheDiversion {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -107,7 +107,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    MerryWardenofIsengard {
+    MerryWardenOfIsengard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -115,7 +115,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    OkaunEyeofChaos {
+    OkaunEyeOfChaos {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -139,7 +139,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    RegnatheRedeemer {
+    RegnaTheRedeemer {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -191,7 +191,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    TrynnChampionofFreedom {
+    TrynnChampionOfFreedom {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -211,7 +211,7 @@ pub enum NamedPartner {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    ZndrspltEyeofWisdom {
+    ZndrspltEyeOfWisdom {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -251,7 +251,7 @@ impl AbilityTreeNode for NamedPartner {
             Self::AlisaieLeveilleur { span } => *span,
             Self::AlphinaudLeveilleur { span } => *span,
             Self::AmyPond { span } => *span,
-            Self::BebopSkull { span } => *span,
+            Self::BebopSkullAndCrossbones { span } => *span,
             Self::BlaringCaptain { span } => *span,
             Self::BlaringRecruiter { span } => *span,
             Self::BlueLoyalRaptor { span } => *span,
@@ -266,22 +266,22 @@ impl AbilityTreeNode for NamedPartner {
             Self::ImpetuousProtege { span } => *span,
             Self::JacobFrye { span } => *span,
             Self::JennyFlint { span } => *span,
-            Self::KamberthePlunderer { span } => *span,
+            Self::KamberThePlunderer { span } => *span,
             Self::KhorvathBrightflame { span } => *span,
             Self::KravtheUnredeemed { span } => *span,
-            Self::LaurinetheDiversion { span } => *span,
+            Self::LaurineTheDiversion { span } => *span,
             Self::LeyWeaver { span } => *span,
             Self::LoreWeaver { span } => *span,
             Self::MadameVastra { span } => *span,
-            Self::MerryWardenofIsengard { span } => *span,
+            Self::MerryWardenOfIsengard { span } => *span,
             Self::NikaraLairScavenger { span } => *span,
-            Self::OkaunEyeofChaos { span } => *span,
+            Self::OkaunEyeOfChaos { span } => *span,
             Self::OwenGradyRaptorTrainer { span } => *span,
             Self::PakoArcaneRetriever { span } => *span,
             Self::PippinWardenofIsengard { span } => *span,
             Self::PirImaginativeRascal { span } => *span,
             Self::ProudMentor { span } => *span,
-            Self::RegnatheRedeemer { span } => *span,
+            Self::RegnaTheRedeemer { span } => *span,
             Self::RhodaGeistAvenger { span } => *span,
             Self::RocksteadyMutantMarauder { span } => *span,
             Self::RoryWilliams { span } => *span,
@@ -294,12 +294,12 @@ impl AbilityTreeNode for NamedPartner {
             Self::SylviaBrightspear { span } => *span,
             Self::TiminYouthfulGeist { span } => *span,
             Self::ToothyImaginaryFriend { span } => *span,
-            Self::TrynnChampionofFreedom { span } => *span,
+            Self::TrynnChampionOfFreedom { span } => *span,
             Self::UkkimaStalkingShadow { span } => *span,
             Self::VirtustheVeiled { span } => *span,
             Self::WillKenrith { span } => *span,
             Self::YannikScavengingSentinel { span } => *span,
-            Self::ZndrspltEyeofWisdom { span } => *span,
+            Self::ZndrspltEyeOfWisdom { span } => *span,
         }
     }
 }
@@ -310,7 +310,7 @@ impl std::fmt::Display for NamedPartner {
             Self::AlisaieLeveilleur { .. } => write!(f, "alisaie leveilleur"),
             Self::AlphinaudLeveilleur { .. } => write!(f, "alphinaud leveilleur"),
             Self::AmyPond { .. } => write!(f, "amy pond"),
-            Self::BebopSkull { .. } => write!(f, "bebop skull"),
+            Self::BebopSkullAndCrossbones { .. } => write!(f, "bebop skull"),
             Self::BlaringCaptain { .. } => write!(f, "blaring captain"),
             Self::BlaringRecruiter { .. } => write!(f, "blaring recruiter"),
             Self::BlueLoyalRaptor { .. } => write!(f, "blue, loyal raptor"),
@@ -325,22 +325,22 @@ impl std::fmt::Display for NamedPartner {
             Self::ImpetuousProtege { .. } => write!(f, "impetuous protege"),
             Self::JacobFrye { .. } => write!(f, "jacob frye"),
             Self::JennyFlint { .. } => write!(f, "jenny flint"),
-            Self::KamberthePlunderer { .. } => write!(f, "kamberthe plunderer"),
+            Self::KamberThePlunderer { .. } => write!(f, "kamberthe plunderer"),
             Self::KhorvathBrightflame { .. } => write!(f, "khorvath brightflame"),
             Self::KravtheUnredeemed { .. } => write!(f, "kravthe unredeemed"),
-            Self::LaurinetheDiversion { .. } => write!(f, "laurinethe diversion"),
+            Self::LaurineTheDiversion { .. } => write!(f, "laurinethe diversion"),
             Self::LeyWeaver { .. } => write!(f, "ley weaver"),
             Self::LoreWeaver { .. } => write!(f, "lore weaver"),
             Self::MadameVastra { .. } => write!(f, "madame vastra"),
-            Self::MerryWardenofIsengard { .. } => write!(f, "merry, warden of isengard"),
+            Self::MerryWardenOfIsengard { .. } => write!(f, "merry, warden of isengard"),
             Self::NikaraLairScavenger { .. } => write!(f, "nikara, lair scavenger"),
-            Self::OkaunEyeofChaos { .. } => write!(f, "okaun, eyeof chaos"),
+            Self::OkaunEyeOfChaos { .. } => write!(f, "okaun, eyeof chaos"),
             Self::OwenGradyRaptorTrainer { .. } => write!(f, "owen, grady raptor trainer"),
             Self::PakoArcaneRetriever { .. } => write!(f, "pako, arcane retriever"),
             Self::PippinWardenofIsengard { .. } => write!(f, "pippin, warden of isengard"),
             Self::PirImaginativeRascal { .. } => write!(f, "pir, imaginative rascal"),
             Self::ProudMentor { .. } => write!(f, "proud mentor"),
-            Self::RegnatheRedeemer { .. } => write!(f, "regnathe redeemer"),
+            Self::RegnaTheRedeemer { .. } => write!(f, "regnathe redeemer"),
             Self::RhodaGeistAvenger { .. } => write!(f, "rhoda, geist avenger"),
             Self::RocksteadyMutantMarauder { .. } => write!(f, "rocksteady, mutant marauder"),
             Self::RoryWilliams { .. } => write!(f, "rory williams"),
@@ -353,12 +353,12 @@ impl std::fmt::Display for NamedPartner {
             Self::SylviaBrightspear { .. } => write!(f, "sylvia brightspear"),
             Self::TiminYouthfulGeist { .. } => write!(f, "timin, youthful geist"),
             Self::ToothyImaginaryFriend { .. } => write!(f, "toothy imaginary friend"),
-            Self::TrynnChampionofFreedom { .. } => write!(f, "trynn champion of freedom"),
+            Self::TrynnChampionOfFreedom { .. } => write!(f, "trynn champion of freedom"),
             Self::UkkimaStalkingShadow { .. } => write!(f, "ukkima, stalking shadow"),
             Self::VirtustheVeiled { .. } => write!(f, "virtusthe veiled"),
             Self::WillKenrith { .. } => write!(f, "will kenrith"),
             Self::YannikScavengingSentinel { .. } => write!(f, "yannik, scavenging sentinel"),
-            Self::ZndrspltEyeofWisdom { .. } => write!(f, "zndrsplt, eyeof wisdom"),
+            Self::ZndrspltEyeOfWisdom { .. } => write!(f, "zndrsplt, eyeof wisdom"),
         }
     }
 }
@@ -379,7 +379,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "bebop skull" => Some(NamedPartner::BebopSkull {
+            "bebop, skull & crossbones" => Some(NamedPartner::BebopSkullAndCrossbones {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -439,7 +439,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "kamberthe plunderer" => Some(NamedPartner::KamberthePlunderer {
+            "kamber, the plunderer" => Some(NamedPartner::KamberThePlunderer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -447,11 +447,11 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "krav the unredeemed" => Some(NamedPartner::KravtheUnredeemed {
+            "krav, the unredeemed" => Some(NamedPartner::KravtheUnredeemed {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "laurinethe diversion" => Some(NamedPartner::LaurinetheDiversion {
+            "laurine, the diversion" => Some(NamedPartner::LaurineTheDiversion {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -467,7 +467,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "merry, warden of isengard" => Some(NamedPartner::MerryWardenofIsengard {
+            "merry, warden of isengard" => Some(NamedPartner::MerryWardenOfIsengard {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -475,7 +475,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "okaun, eyeof chaos" => Some(NamedPartner::OkaunEyeofChaos {
+            "okaun, eye of chaos" => Some(NamedPartner::OkaunEyeOfChaos {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -499,7 +499,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "regnathe redeemer" => Some(NamedPartner::RegnatheRedeemer {
+            "regna, the redeemer" => Some(NamedPartner::RegnaTheRedeemer {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -551,7 +551,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "trynn champion of freedom" => Some(NamedPartner::TrynnChampionofFreedom {
+            "trynn, champion of freedom" => Some(NamedPartner::TrynnChampionOfFreedom {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -571,7 +571,7 @@ impl IntoToken for NamedPartner {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "zndrsplt, eyeof wisdom" => Some(NamedPartner::ZndrspltEyeofWisdom {
+            "zndrsplt, eye of wisdom" => Some(NamedPartner::ZndrspltEyeOfWisdom {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

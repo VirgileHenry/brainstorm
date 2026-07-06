@@ -117,7 +117,7 @@ impl Layout {
 
 #[cfg(feature = "parser")]
 impl TryFrom<&mtg_cardbase::Card> for Layout {
-    type Error = String; // Fixme!
+    type Error = LayoutParseError;
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
         match raw_card.layout.as_str() {
             "normal" => Ok(Layout::Normal {
@@ -129,7 +129,49 @@ impl TryFrom<&mtg_cardbase::Card> for Layout {
             "saga" => Ok(Self::Saga {
                 layout: SagaLayout::from_raw_card(raw_card)?,
             }),
-            other => Err(format!("Invalid layout in card: {other}")),
+            other => Err(LayoutParseError::UnknownLayout {
+                layout: other.to_string(),
+            }),
         }
     }
 }
+
+#[derive(Debug)]
+pub enum LayoutParseError {
+    InvalidColors(crate::ability_tree::colors::ColorsParsingError),
+    InvalidManaCost { mana_cost: String },
+    InvalidTypeLine { type_line: String },
+    LexerError(crate::lexer::LexerError),
+    ParserError(crate::parser::ParserError),
+    UnknownLayout { layout: String },
+}
+
+impl From<crate::error::BoseijuError> for LayoutParseError {
+    fn from(error: crate::error::BoseijuError) -> Self {
+        match error {
+            crate::error::BoseijuError::LexerError(error) => Self::LexerError(error),
+            crate::error::BoseijuError::ParserError(error) => Self::ParserError(error),
+        }
+    }
+}
+
+impl From<crate::ability_tree::colors::ColorsParsingError> for LayoutParseError {
+    fn from(error: crate::ability_tree::colors::ColorsParsingError) -> Self {
+        Self::InvalidColors(error)
+    }
+}
+
+impl std::fmt::Display for LayoutParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidColors(error) => write!(f, "Invalid colors: {error}"),
+            Self::InvalidManaCost { mana_cost } => write!(f, "Invalid mana_cost: \"{mana_cost}\""),
+            Self::InvalidTypeLine { type_line } => write!(f, "Invalid type line: \"{type_line}\""),
+            Self::LexerError(error) => write!(f, "Lexer error: {error}"),
+            Self::ParserError(error) => write!(f, "Parser error: {error}"),
+            Self::UnknownLayout { layout } => write!(f, "Unknown layout: \"{layout}\""),
+        }
+    }
+}
+
+impl std::error::Error for LayoutParseError {}

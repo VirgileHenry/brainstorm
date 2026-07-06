@@ -2,6 +2,10 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PlayerAction {
+    Accept {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Add {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -34,6 +38,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Circle {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     CommitACrime {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -47,6 +55,14 @@ pub enum PlayerAction {
         span: crate::ability_tree::span::TreeSpan,
     },
     Cycle {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Decide {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Determine {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -90,11 +106,23 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Group {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Guess {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    GuessCorrectly {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     GuessWrong {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Hide {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -119,6 +147,10 @@ pub enum PlayerAction {
         span: crate::ability_tree::span::TreeSpan,
     },
     Note {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Offer {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -240,6 +272,7 @@ pub enum PlayerAction {
 impl PlayerAction {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Accept { span } => *span,
             Self::Add { span } => *span,
             Self::Ante { span } => *span,
             Self::Begin { span } => *span,
@@ -248,10 +281,13 @@ impl PlayerAction {
             Self::Change { span } => *span,
             Self::Choose { span } => *span,
             Self::ChooseAnyNumber { span } => *span,
+            Self::Circle { span } => *span,
             Self::CommitACrime { span } => *span,
             Self::CompletedADungeon { span } => *span,
             Self::Count { span } => *span,
             Self::Cycle { span } => *span,
+            Self::Decide { span } => *span,
+            Self::Determine { span } => *span,
             Self::Distribute { span } => *span,
             Self::Draft { span } => *span,
             Self::Draw { span } => *span,
@@ -262,14 +298,18 @@ impl PlayerAction {
             Self::Flip { span } => *span,
             Self::FullyUnlockARoom { span } => *span,
             Self::Give { span } => *span,
+            Self::Group { span } => *span,
             Self::Guess { span } => *span,
+            Self::GuessCorrectly { span } => *span,
             Self::GuessWrong { span } => *span,
+            Self::Hide { span } => *span,
             Self::LookAt { span } => *span,
             Self::Ignore { span } => *span,
             Self::Lock { span } => *span,
             Self::Move { span } => *span,
             Self::Mulligan { span } => *span,
             Self::Note { span } => *span,
+            Self::Offer { span } => *span,
             Self::Pass { span } => *span,
             Self::Pay { span } => *span,
             Self::Prevent { span } => *span,
@@ -305,6 +345,10 @@ impl PlayerAction {
 impl PlayerAction {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
+            "accept" => Some(Self::Accept {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "add" | "adds" | "added" => Some(Self::Add {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -325,7 +369,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "change" | "changes" => Some(Self::Change {
+            "change" | "changes" | "changing" => Some(Self::Change {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -337,7 +381,11 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "commit a crime" | "committed a crime" => Some(Self::CommitACrime {
+            "circle" => Some(Self::Circle {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "commit a crime" | "commits a crime" | "committed a crime" => Some(Self::CommitACrime {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -350,6 +398,14 @@ impl PlayerAction {
                 span: span.into(),
             }),
             "cycle" | "cycles" | "cycled" => Some(Self::Cycle {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "decide" | "decides" => Some(Self::Decide {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "determine" => Some(Self::Determine {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -373,7 +429,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "face a villanous choice" | "faces a villainous choice" | "face that choice" => Some(Self::FaceAVillanousChoice {
+            "face a villainous choice" | "faces a villainous choice" | "face that choice" => Some(Self::FaceAVillanousChoice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -393,11 +449,23 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "group" => Some(Self::Group {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "guess" | "guesses" | "guessed" => Some(Self::Guess {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "guessed correctly" => Some(Self::GuessCorrectly {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "guess wrong" | "guessed wrong" => Some(Self::GuessWrong {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "hide" | "hides" => Some(Self::Hide {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -417,7 +485,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "mulligan" => Some(Self::Mulligan {
+            "mulligan" | "mulligans" => Some(Self::Mulligan {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -425,7 +493,11 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "pass" => Some(Self::Pass {
+            "offer" => Some(Self::Offer {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "pass" | "passed" | "passes" => Some(Self::Pass {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -441,7 +513,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "repeat this process" | "repeat the following process" => Some(Self::RepeatThisProcess {
+            "repeat this process" | "repeats this process" | "repeat the following process" => Some(Self::RepeatThisProcess {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -501,7 +573,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "spend" | "spends" | "spent" => Some(Self::Spend {
+            "spend" | "spends" | "spent" | "spending" => Some(Self::Spend {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -513,7 +585,7 @@ impl PlayerAction {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "take" | "takes" => Some(Self::Take {
+            "take" | "takes" | "taking" => Some(Self::Take {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

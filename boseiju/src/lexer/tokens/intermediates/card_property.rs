@@ -88,6 +88,10 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Worthy {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -115,6 +119,7 @@ impl CardProperty {
             Self::TextBox { span } => *span,
             Self::TotalToxicValue { span } => *span,
             Self::Toughness { span } => *span,
+            Self::Worthy { span } => *span,
         }
     }
 }
@@ -204,6 +209,10 @@ impl IntoToken for CardProperty {
                 span: span.into(),
             }),
             "toughness" => Some(CardProperty::Toughness {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "worthy" => Some(CardProperty::Worthy {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

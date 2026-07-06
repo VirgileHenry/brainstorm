@@ -7,7 +7,16 @@ const START_BOUNDARY: &'static str = r"(^|\W)";
 const END_BOUNDARY: &'static str = r"($|\W)";
 
 /// List of excluded word for space separated epithet
-const EXCLUDED_WORDS: &'static [&'static str] = &["+2", "The", "This"];
+const EXCLUDED_WORDS: &'static [&'static str] = &[
+    "+2",
+    "The",
+    "This",
+    "Time",
+    "Blaring",   /* Blaring partners */
+    "Soulblade", /* Soulblade partners */
+    "Chakram",   /* Chakram partners */
+    "Hanweir",   /* Hanweir meld */
+];
 
 const HARD_CODED_EPITHETS: &'static [(&'static str, &'static str)] = &[
     ("Rosie Cotton of South Lane", "Rosie Cotton"),
@@ -23,6 +32,18 @@ const HARD_CODED_EPITHETS: &'static [(&'static str, &'static str)] = &[
     ("King Darien XLVIII", "King Darien"),
     ("Tor Wauki the Younger", "Tor Wauki"),
     ("Gogo, Mysterious Mime", "Gogo"),
+    ("Jedit Ojanen of Efrava", "Jedit Ojanen"),
+    ("Skoa, Embermage", "Skoa"),
+    ("Vial Smasher the Fierce", "Vial Smasher"),
+    ("Aisha of Sparks and Smoke", "Aisha"),
+    ("Immard, the Stormcleaver", "Immard"),
+    ("Ebondeath, Dracolich", "Ebondeath"),
+    ("Kimahri, Valiant Guardian", "Kimahri"),
+    ("Zethi, Arcane Blademaster", "Zethi"),
+    ("Staff of Eden, Vault's Key", "Staff of Eden"),
+    ("Taskmaster, Mercenary Mimic", "Taskmaster"),
+    ("Korlash, Heir to Blackblade", "Korlash"),
+    ("Quicksilver, Brash Blur", "Quicksilver"),
 ];
 
 fn main() {

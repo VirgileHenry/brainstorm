@@ -57,8 +57,18 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    /// protect a battle / flavor word
+    Protect {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     /// player action / named vote
     Return {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    /// english word / flavor word
+    Share {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -91,7 +101,9 @@ impl AmbiguousToken {
             Self::Gain { span } => *span,
             Self::Left { span } => *span,
             Self::Lose { span } => *span,
+            Self::Protect { span } => *span,
             Self::Return { span } => *span,
+            Self::Share { span } => *span,
             Self::Type { span } => *span,
             Self::Your { span } => *span,
         }
@@ -133,11 +145,19 @@ impl AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "lose" | "loses" | "lost" => Some(Self::Lose {
+            "lose" | "loses" | "lost" | "losing" => Some(Self::Lose {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "protect" | "protects" => Some(Self::Protect {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "return" | "returns" | "returned" => Some(Self::Return {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "share" | "shares" => Some(Self::Share {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -21,7 +21,7 @@ impl super::LayoutImpl for NormalLayout {
     }
 
     #[cfg(feature = "parser")]
-    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
+    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, crate::card::layout::LayoutParseError> {
         use crate::lexer::IntoToken;
 
         let type_line_text = raw_card.type_line.to_ascii_lowercase();
@@ -40,17 +40,22 @@ impl super::LayoutImpl for NormalLayout {
                         text: mana_cost,
                     };
                     Some(
-                        crate::ability_tree::terminals::ManaCost::try_from_span(&mana_cost_span)
-                            .ok_or_else(|| format!("Failed to parse mana cost from: {mana_cost}"))?,
+                        crate::ability_tree::terminals::ManaCost::try_from_span(&mana_cost_span).ok_or_else(|| {
+                            crate::card::layout::LayoutParseError::InvalidManaCost {
+                                mana_cost: mana_cost.clone(),
+                            }
+                        })?,
                     )
                 }
                 None => None,
             },
-            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span)
-                .ok_or_else(|| format!("Failed to parse card type: {}", raw_card.type_line))?,
+            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span).ok_or_else(|| {
+                crate::card::layout::LayoutParseError::InvalidTypeLine {
+                    type_line: type_line_text.clone(),
+                }
+            })?,
             abilities: match raw_card.oracle_text.as_ref() {
-                Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
-                    .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
+                Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)?,
                 None => crate::AbilityTree::empty(),
             },
             #[cfg(feature = "spanned_tree")]

@@ -69,7 +69,7 @@ impl super::LayoutImpl for TokenLayout {
     }
 
     #[cfg(feature = "parser")]
-    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
+    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, crate::card::layout::LayoutParseError> {
         use crate::lexer::IntoToken;
 
         let type_line_span = crate::lexer::Span {
@@ -80,12 +80,14 @@ impl super::LayoutImpl for TokenLayout {
 
         Ok(TokenLayout {
             name: raw_card.name.clone(),
-            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span)
-                .ok_or_else(|| format!("Failed to parse card type: {}", raw_card.type_line))?,
+            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span).ok_or_else(|| {
+                crate::card::layout::LayoutParseError::InvalidTypeLine {
+                    type_line: raw_card.type_line.clone(),
+                }
+            })?,
             colors: crate::ability_tree::colors::Colors::try_from(raw_card.color_identity.as_slice())?,
             abilities: match raw_card.oracle_text.as_ref() {
-                Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
-                    .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
+                Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)?,
                 None => crate::AbilityTree::empty(),
             },
             #[cfg(feature = "spanned_tree")]

@@ -56,11 +56,33 @@ impl AbilityTreeNode for FlavorWord {
 #[cfg(feature = "lexer")]
 impl IntoToken for FlavorWord {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
-        Some(Self {
-            flavor_word: crate::utils::from_str_singular_or_plural(&span.text)?,
-            #[cfg(feature = "spanned_tree")]
-            span: span.into(),
-        })
+        use std::str::FromStr;
+        if let Ok(flavor_word) = mtg_data::FlavorWord::from_str(&span.text) {
+            Some(Self {
+                flavor_word,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })
+        } else {
+            match span.text {
+                "~'s kiss" => Some(Self {
+                    flavor_word: mtg_data::FlavorWord::GenestealersKiss,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "~ entity" => Some(Self {
+                    flavor_word: mtg_data::FlavorWord::MidnightEntity,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "~ my love" => Some(Self {
+                    flavor_word: mtg_data::FlavorWord::EdEMyLove,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                _ => None,
+            }
+        }
     }
 }
 

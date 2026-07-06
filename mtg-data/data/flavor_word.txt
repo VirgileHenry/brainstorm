@@ -76,6 +76,7 @@ Bribe the Guards
 Brimstone
 Bring Down
 Bring it Down!
+Brontosaurus
 Brood Telepathy
 Buffet
 Bull Rush
@@ -285,7 +286,7 @@ Heavy Rock Cutter
 Heckle
 Hellmasker
 Hero Worship
-Hero’s Sundering
+Hero's Sundering
 Hide
 Hire a Mercenary
 History
@@ -319,7 +320,7 @@ Invoke Duplicity
 Iron Muscle
 It's Probably Nothing
 Item
-I’ve Come Up with a New Recipe!
+I've Come Up with a New Recipe!
 Jast
 Jecht Beam
 Jenova Cells
@@ -337,12 +338,13 @@ Leading from the Front
 Leap Strike
 Leap of Faith
 Learn Their Secrets
+Legal Justice
 Let the World Burn
 Life Drain
 Life of the Party
 Lift the Curse
 Light Party
-Lightbringer and Hero’s Shield
+Lightbringer and Hero's Shield
 Lightning
 Lightning Breath
 Lightning Kick
@@ -417,7 +419,7 @@ Patrol Night
 Pavitr's Sevā
 Peaceful Coexistence
 Perfect Illumination
-Perseus’s Bow
+Perseus's Bow
 Phaeron
 Phalanx Commander
 Pheromone Trail
@@ -561,6 +563,7 @@ Still Point in Time
 Stimpak
 Stowage
 Strategic Coordinator
+Street Justice
 Strike a Deal
 Strike first
 Strike hard
@@ -593,7 +596,7 @@ The Betrayer
 The Goose Laid an Egg
 The Goose is Loose
 The Last Centurion
-The Minstrel’s Ballad
+The Minstrel's Ballad
 The Most Important Punch in History
 The Nuka-Cola Challenge
 The Reunion
@@ -628,10 +631,12 @@ Trick Arrows
 Tunnel Snakes Rule!
 Two-Headed Coin
 Two-Weapon Fighting
+Tyrannosaurus Rex
 Ultima Founding
 Ultimate End
 Ultimate Jecht Shot
 Ultimate Sacrifice
+Unbreakable Skin
 Undying Vengeance
 Unearthly Power
 Unlock Ability

@@ -104,6 +104,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    PhasedOut {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Plotted {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -207,6 +211,7 @@ impl CardState {
             Self::MostRecentlyCast { span } => *span,
             Self::Mutated { span } => *span,
             Self::Paired { span } => *span,
+            Self::PhasedOut { span } => *span,
             Self::Plotted { span } => *span,
             Self::Prepared { span } => *span,
             Self::Remains { span } => *span,
@@ -330,6 +335,10 @@ impl IntoToken for CardState {
                 span: span.into(),
             }),
             "paired" => Some(CardState::Paired {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "phased-out" => Some(CardState::PhasedOut {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

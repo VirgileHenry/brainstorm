@@ -112,7 +112,7 @@ impl IntoToken for PlayerSpecifier {
             }),
 
             /* Object related players */
-            "controller" | "controllers'" => Some(Self::Controller {
+            "controller" | "controllers" | "controllers'" => Some(Self::Controller {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

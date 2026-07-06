@@ -24,6 +24,7 @@ pub fn parse_num(input: &str) -> Option<u32> {
         "thirty" => Some(30),
         "fifty" => Some(50),
         "ninety-nine" => Some(99),
+        "hundred" => Some(100),
         other => {
             /* Reject numbers with +/- signs, as we want separate tokens for those */
             if other.starts_with('+') || other.starts_with('-') {

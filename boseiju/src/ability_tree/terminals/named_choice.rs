@@ -7,7 +7,11 @@ use crate::lexer::IntoToken;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NamedChoice {
-    Beleive {
+    Abzan {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Believe {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -39,11 +43,19 @@ pub enum NamedChoice {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Friends {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Jeskai {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     Khans {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Legion {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -55,7 +67,31 @@ pub enum NamedChoice {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Money {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Ncr {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Peace {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Phyrexian {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Secrets {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Silence {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Snitch {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -64,6 +100,10 @@ pub enum NamedChoice {
         span: crate::ability_tree::span::TreeSpan,
     },
     Temur {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    War {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -100,7 +140,8 @@ impl AbilityTreeNode for NamedChoice {
     #[cfg(feature = "spanned_tree")]
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Beleive { span } => *span,
+            Self::Abzan { span } => *span,
+            Self::Believe { span } => *span,
             Self::Brotherhood { span } => *span,
             Self::Doubt { span } => *span,
             Self::Enclave { span } => *span,
@@ -108,13 +149,22 @@ impl AbilityTreeNode for NamedChoice {
             Self::Foe { span } => *span,
             Self::Fortune { span } => *span,
             Self::Friend { span } => *span,
+            Self::Friends { span } => *span,
             Self::Jeskai { span } => *span,
             Self::Khans { span } => *span,
+            Self::Legion { span } => *span,
             Self::Mardu { span } => *span,
             Self::Mirran { span } => *span,
+            Self::Money { span } => *span,
+            Self::Ncr { span } => *span,
+            Self::Peace { span } => *span,
             Self::Phyrexian { span } => *span,
+            Self::Secrets { span } => *span,
+            Self::Silence { span } => *span,
+            Self::Snitch { span } => *span,
             Self::Sultai { span } => *span,
             Self::Temur { span } => *span,
+            Self::War { span } => *span,
         }
     }
 }
@@ -122,7 +172,8 @@ impl AbilityTreeNode for NamedChoice {
 impl std::fmt::Display for NamedChoice {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            NamedChoice::Beleive { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Abzan { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Believe { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Brotherhood { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Doubt { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Enclave { .. } => write!(f, "legitimate businessperson"),
@@ -130,13 +181,22 @@ impl std::fmt::Display for NamedChoice {
             NamedChoice::Foe { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Fortune { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Friend { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Friends { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Jeskai { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Khans { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Legion { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Mardu { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Mirran { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Money { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Ncr { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Peace { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Phyrexian { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Secrets { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Silence { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::Snitch { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Sultai { .. } => write!(f, "legitimate businessperson"),
             NamedChoice::Temur { .. } => write!(f, "legitimate businessperson"),
+            NamedChoice::War { .. } => write!(f, "legitimate businessperson"),
         }
     }
 }
@@ -145,7 +205,11 @@ impl std::fmt::Display for NamedChoice {
 impl IntoToken for NamedChoice {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "beleive" => Some(NamedChoice::Beleive {
+            "abzan" => Some(NamedChoice::Abzan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "believe" => Some(NamedChoice::Believe {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -177,11 +241,19 @@ impl IntoToken for NamedChoice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "friends" => Some(NamedChoice::Friend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "jeskai" => Some(NamedChoice::Jeskai {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "khans" => Some(NamedChoice::Khans {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "legion" => Some(NamedChoice::Legion {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -193,7 +265,31 @@ impl IntoToken for NamedChoice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "money" => Some(NamedChoice::Money {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "ncr" => Some(NamedChoice::Ncr {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "peace" => Some(NamedChoice::Peace {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "phyrexian" => Some(NamedChoice::Phyrexian {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "secrets" => Some(NamedChoice::Secrets {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "silence" => Some(NamedChoice::Silence {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "snitch" => Some(NamedChoice::Snitch {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -202,6 +298,10 @@ impl IntoToken for NamedChoice {
                 span: span.into(),
             }),
             "temur" => Some(NamedChoice::Temur {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "war" => Some(NamedChoice::War {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

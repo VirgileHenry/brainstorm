@@ -1,3 +1,4 @@
+pub mod error;
 pub mod layout;
 pub mod legalities;
 
@@ -38,19 +39,16 @@ impl Card {
 
 #[cfg(feature = "parser")]
 impl TryFrom<&mtg_cardbase::Card> for Card {
-    type Error = String; // Fixme: proper error handling accross everything
+    type Error = error::CardParseError;
     fn try_from(raw_card: &mtg_cardbase::Card) -> Result<Self, Self::Error> {
+        use crate::ability_tree::colors::Colors;
         use std::str::FromStr;
         Ok(Card {
             name: raw_card.name.to_string(),
-            scryfall_id: uuid::Uuid::from_str(&raw_card.id)
-                .map_err(|e| format!("in {}, failed to parse scryfall id to uuid: {e}", raw_card.name))?,
-            legalities: legalities::Legalities::try_from(&raw_card.legalities)
-                .map_err(|e| format!("in {}, failed to parse legalities: {e}", raw_card.name))?,
-            color_identity: crate::ability_tree::colors::Colors::try_from(raw_card.color_identity.as_slice())
-                .map_err(|e| format!("in {}, failed to parse color identity: {e}", raw_card.name))?,
-            layout: layout::Layout::try_from(raw_card)
-                .map_err(|e| format!("in {}, failed to parse layout: {e}", raw_card.name))?,
+            scryfall_id: uuid::Uuid::from_str(&raw_card.id).map_err(error::CardJsonError::InvalidUuid)?,
+            legalities: legalities::Legalities::try_from(&raw_card.legalities).map_err(error::CardJsonError::InvalidLegality)?,
+            color_identity: Colors::try_from(raw_card.color_identity.as_slice()).map_err(error::CardJsonError::InvalidColors)?,
+            layout: layout::Layout::try_from(raw_card)?,
             images_uris: raw_card.image_uris.clone(),
         })
     }

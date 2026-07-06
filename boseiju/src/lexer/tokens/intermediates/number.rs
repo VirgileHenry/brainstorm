@@ -64,6 +64,10 @@ pub enum Number {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TheLowestNumber {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     TheNumberYouChose {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -121,6 +125,7 @@ impl Number {
             Self::ThatNumber { span } => *span,
             Self::TheGreatestNumber { span } => *span,
             Self::TheHighestNumber { span } => *span,
+            Self::TheLowestNumber { span } => *span,
             Self::TheNumberYouChose { span } => *span,
             Self::TheSameNumber { span } => *span,
             Self::ThriceThatMany { span } => *span,
@@ -177,6 +182,11 @@ impl Number {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "twelfth" => Some(Self::Ordinal {
+                num: 4,
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "amount" => Some(Self::Amount {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -222,6 +232,10 @@ impl Number {
                 span: span.into(),
             }),
             "the highest number" => Some(Self::TheHighestNumber {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the lowest number" => Some(Self::TheLowestNumber {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

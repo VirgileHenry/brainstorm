@@ -146,10 +146,12 @@ impl IntoToken for Step {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "declare blockers step" | "declare blockers steps" | "blockers are declared" => Some(Step::DeclareBlockers {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
+            "declare blockers step" | "declare blockers steps" | "blockers are declared" | "declaring blockers" => {
+                Some(Step::DeclareBlockers {
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                })
+            }
             "first strike damage step" => Some(Step::FirstStrikeDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),

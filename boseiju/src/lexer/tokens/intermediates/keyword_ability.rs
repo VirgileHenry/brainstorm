@@ -36,6 +36,11 @@ impl IntoToken for KeywordAbility {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "embalmed" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Embalm,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "enchanting" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Enchant,
                     #[cfg(feature = "spanned_tree")]
@@ -61,6 +66,11 @@ impl IntoToken for KeywordAbility {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "kicks" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Kicker,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 "mentors" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Mentor,
                     #[cfg(feature = "spanned_tree")]
@@ -78,6 +88,11 @@ impl IntoToken for KeywordAbility {
                 }),
                 "suspended" => Some(Self {
                     keyword_ability: mtg_data::KeywordAbility::Suspend,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
+                "trains" => Some(Self {
+                    keyword_ability: mtg_data::KeywordAbility::Training,
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),

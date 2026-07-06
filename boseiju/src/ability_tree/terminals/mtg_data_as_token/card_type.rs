@@ -77,6 +77,11 @@ impl crate::lexer::IntoToken for CardType {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 }),
+                "sorceries" => Some(Self {
+                    card_type: mtg_data::CardType::Sorcery,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                }),
                 _ => None,
             }
         }

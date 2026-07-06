@@ -73,33 +73,52 @@ impl Legalities {
 }
 
 impl TryFrom<&mtg_cardbase::Legalities> for Legalities {
-    type Error = String; // Fixme!
+    type Error = LegalitiesParseError;
     fn try_from(value: &mtg_cardbase::Legalities) -> Result<Self, Self::Error> {
         use mtg_data::Legality;
         use std::str::FromStr;
         // Fixme: there are differences between the legailities got from the direct api and the one in the cards
         Ok(Legalities {
-            alchemy: Legality::from_str(&value.alchemy).map_err(|e| format!("Failed to parse format alchemy: {e}"))?,
-            brawl: Legality::from_str(&value.brawl).map_err(|e| format!("Failed to parse format brawl: {e}"))?,
-            commander: Legality::from_str(&value.commander).map_err(|e| format!("Failed to parse format commander: {e}"))?,
-            duel: Legality::from_str(&value.duel).map_err(|e| format!("Failed to parse format duel: {e}"))?,
+            alchemy: Legality::from_str(&value.alchemy).map_err(|e| LegalitiesParseError::new(e, "alchemy"))?,
+            brawl: Legality::from_str(&value.brawl).map_err(|e| LegalitiesParseError::new(e, "brawl"))?,
+            commander: Legality::from_str(&value.commander).map_err(|e| LegalitiesParseError::new(e, "commander"))?,
+            duel: Legality::from_str(&value.duel).map_err(|e| LegalitiesParseError::new(e, "duel"))?,
             explorer: Legality::Notlegal,
-            future: Legality::from_str(&value.future).map_err(|e| format!("Failed to parse format future: {e}"))?,
-            gladiator: Legality::from_str(&value.gladiator).map_err(|e| format!("Failed to parse format gladiator: {e}"))?,
-            historic: Legality::from_str(&value.historic).map_err(|e| format!("Failed to parse format historic: {e}"))?,
+            future: Legality::from_str(&value.future).map_err(|e| LegalitiesParseError::new(e, "future"))?,
+            gladiator: Legality::from_str(&value.gladiator).map_err(|e| LegalitiesParseError::new(e, "gladiator"))?,
+            historic: Legality::from_str(&value.historic).map_err(|e| LegalitiesParseError::new(e, "historic"))?,
             historicbrawl: Legality::Notlegal,
-            legacy: Legality::from_str(&value.legacy).map_err(|e| format!("Failed to parse format legacy: {e}"))?,
-            modern: Legality::from_str(&value.modern).map_err(|e| format!("Failed to parse format modern: {e}"))?,
-            oathbreaker: Legality::from_str(&value.oathbreaker)
-                .map_err(|e| format!("Failed to parse format oathbreaker: {e}"))?,
-            pauper: Legality::from_str(&value.pauper).map_err(|e| format!("Failed to parse format pauper: {e}"))?,
+            legacy: Legality::from_str(&value.legacy).map_err(|e| LegalitiesParseError::new(e, "legacy"))?,
+            modern: Legality::from_str(&value.modern).map_err(|e| LegalitiesParseError::new(e, "modern"))?,
+            oathbreaker: Legality::from_str(&value.oathbreaker).map_err(|e| LegalitiesParseError::new(e, "oathbreaker"))?,
+            pauper: Legality::from_str(&value.pauper).map_err(|e| LegalitiesParseError::new(e, "pauper"))?,
             pauper_commander: Legality::Notlegal,
-            penny: Legality::from_str(&value.penny).map_err(|e| format!("Failed to parse format penny: {e}"))?,
+            penny: Legality::from_str(&value.penny).map_err(|e| LegalitiesParseError::new(e, "penny"))?,
             pionner: Legality::Notlegal,
-            predh: Legality::from_str(&value.predh).map_err(|e| format!("Failed to parse format predh: {e}"))?,
-            premodern: Legality::from_str(&value.premodern).map_err(|e| format!("Failed to parse format premodern: {e}"))?,
-            standard: Legality::from_str(&value.standard).map_err(|e| format!("Failed to parse format standard: {e}"))?,
-            vintage: Legality::from_str(&value.vintage).map_err(|e| format!("Failed to parse format vintage: {e}"))?,
+            predh: Legality::from_str(&value.predh).map_err(|e| LegalitiesParseError::new(e, "predh"))?,
+            premodern: Legality::from_str(&value.premodern).map_err(|e| LegalitiesParseError::new(e, "premodern"))?,
+            standard: Legality::from_str(&value.standard).map_err(|e| LegalitiesParseError::new(e, "standard"))?,
+            vintage: Legality::from_str(&value.vintage).map_err(|e| LegalitiesParseError::new(e, "vintage"))?,
         })
     }
 }
+
+#[derive(Debug)]
+pub struct LegalitiesParseError {
+    error: mtg_data::LegalityParseError,
+    for_format: &'static str,
+}
+
+impl LegalitiesParseError {
+    fn new(error: mtg_data::LegalityParseError, for_format: &'static str) -> Self {
+        Self { error, for_format }
+    }
+}
+
+impl std::fmt::Display for LegalitiesParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Error in legalities for format {}: {}", self.for_format, self.error)
+    }
+}
+
+impl std::error::Error for LegalitiesParseError {}
