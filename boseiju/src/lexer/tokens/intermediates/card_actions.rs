@@ -66,6 +66,10 @@ pub enum CardActions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    TurnsOver {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -88,6 +92,7 @@ impl CardActions {
             Self::Touch { span } => *span,
             Self::TurnedFaceUp { span } => *span,
             Self::TurnsCompletelyOver { span } => *span,
+            Self::TurnsOver { span } => *span,
         }
     }
 }
@@ -95,7 +100,7 @@ impl CardActions {
 impl CardActions {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "assign" | "assigns" => Some(Self::AssignsDamage {
+            "assign" | "assigns" | "assigned" => Some(Self::AssignsDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -107,7 +112,7 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "do so" => Some(Self::DoSo {
+            "do so" | "does so" => Some(Self::DoSo {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -155,7 +160,11 @@ impl CardActions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "turns completely over" => Some(Self::TurnsCompletelyOver {
+            "turn completely over" | "turns completely over" | "turns over completely" => Some(Self::TurnsCompletelyOver {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "turns over" => Some(Self::TurnsOver {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

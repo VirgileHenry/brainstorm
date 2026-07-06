@@ -15,32 +15,38 @@ impl CoverageTestCase {
 
 enum TestResult {
     Failed,
+    JsonParsed,
     OracleTextLexed,
-    OracleTextParsed,
     FullCardParsed,
 }
 
 #[derive(Default)]
 struct CoverageTestResults {
     total: usize,
+    json_parsed: usize,
     oracle_text_lexed: usize,
-    oracle_text_parsed: usize,
     fully_parsed: usize,
 }
 
 impl CoverageTestResults {
     fn add_result(&mut self, result: &TestResult) {
-        self.total += 1;
         match result {
-            TestResult::Failed => { /* :( */ }
-            TestResult::OracleTextLexed => self.oracle_text_lexed += 1,
-            TestResult::OracleTextParsed => {
-                self.oracle_text_lexed += 1;
-                self.oracle_text_parsed += 1;
+            TestResult::Failed => {
+                self.total += 1;
+            }
+            TestResult::JsonParsed => {
+                self.total += 1;
+                self.json_parsed += 1;
+            }
+            TestResult::OracleTextLexed => {
+                self.total += 1;
+                self.json_parsed += 1;
+                self.oracle_text_lexed += 1
             }
             TestResult::FullCardParsed => {
+                self.total += 1;
+                self.json_parsed += 1;
                 self.oracle_text_lexed += 1;
-                self.oracle_text_parsed += 1;
                 self.fully_parsed += 1;
             }
         }
@@ -115,7 +121,7 @@ fn main() -> std::io::Result<()> {
             "Commander-legal cards",
             Box::new(|card| card_legal_in(card, mtg_data::Format::Commander)),
         ),
-        CoverageTestCase::new("All (except uncards)", Box::new(|_| true)),
+        CoverageTestCase::new("All paper cards", Box::new(|_| true)),
     ];
 
     let categories_results = categories
@@ -133,7 +139,7 @@ fn main() -> std::io::Result<()> {
 
     /* Finally, we can display the output */
     println!("");
-    println!("| Category | Cards total | Lexed (oracle text) | Parsed (oracle text) | Parsed (full card) |");
+    println!("| Category | Cards total | JSON Parsed | Lexed | Parsed |");
     println!("|-----|-----|-----|-----|-----|");
 
     for (category, results) in categories_results.iter() {
@@ -142,12 +148,12 @@ fn main() -> std::io::Result<()> {
                 "|{}|{}|{} ({}%)|{} ({}%)|{} ({}%)|",
                 category.name,
                 results.total,
+                results.json_parsed,
+                results.json_parsed * 100 / results.total,
                 results.oracle_text_lexed,
-                results.oracle_text_lexed * 100 / results.total,
-                results.oracle_text_parsed,
-                results.oracle_text_parsed * 100 / results.total,
+                results.oracle_text_lexed * 100 / results.json_parsed,
                 results.fully_parsed,
-                results.fully_parsed * 100 / results.total,
+                results.fully_parsed * 100 / results.oracle_text_lexed,
             );
         } else {
             println!("|{}|0|skipped|skipped|skipped|", category.name);
@@ -158,30 +164,27 @@ fn main() -> std::io::Result<()> {
 }
 
 fn run_card(card: &mtg_cardbase::Card) -> TestResult {
-    let card_name = &card.name;
-    let oracle_text = match card.oracle_text.as_ref() {
-        Some(ot) => ot,
-        /* If there is no oracle text, attempt to raw parse */
-        None => match boseiju::Card::try_from(card) {
-            Ok(_) => return TestResult::FullCardParsed,
-            Err(_) => return TestResult::Failed,
-        },
-    };
-
-    let preprocessed = boseiju::preprocess(card_name, oracle_text);
-    let tokens = match boseiju::lex(&preprocessed) {
-        Ok(lexed) => lexed,
-        Err(_) => return TestResult::Failed,
-    };
-
-    match boseiju::parse(&tokens) {
-        Ok(parsed) => parsed,
-        Err(_) => return TestResult::OracleTextLexed,
-    };
-
     match boseiju::Card::try_from(card) {
-        Ok(_) => return TestResult::FullCardParsed,
-        Err(_) => return TestResult::OracleTextParsed,
+        Err(boseiju::card::error::CardParseError::InvalidJson(_)) => TestResult::Failed,
+        Err(boseiju::card::error::CardParseError::InvalidLayout(boseiju::card::layout::LayoutParseError::InvalidColors(_))) => {
+            TestResult::Failed
+        }
+        Err(boseiju::card::error::CardParseError::InvalidLayout(boseiju::card::layout::LayoutParseError::InvalidManaCost {
+            ..
+        })) => TestResult::Failed,
+        Err(boseiju::card::error::CardParseError::InvalidLayout(boseiju::card::layout::LayoutParseError::InvalidTypeLine {
+            ..
+        })) => TestResult::Failed,
+        Err(boseiju::card::error::CardParseError::InvalidLayout(boseiju::card::layout::LayoutParseError::UnknownLayout {
+            ..
+        })) => TestResult::Failed,
+        Err(boseiju::card::error::CardParseError::InvalidLayout(boseiju::card::layout::LayoutParseError::LexerError(_))) => {
+            TestResult::JsonParsed
+        }
+        Err(boseiju::card::error::CardParseError::InvalidLayout(boseiju::card::layout::LayoutParseError::ParserError(_))) => {
+            TestResult::OracleTextLexed
+        }
+        Ok(_) => TestResult::FullCardParsed,
     }
 }
 

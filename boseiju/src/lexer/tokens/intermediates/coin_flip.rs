@@ -27,6 +27,10 @@ pub enum CoinFlip {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    StopFlipping {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -39,6 +43,7 @@ impl CoinFlip {
             Self::FlipYouWon { span } => *span,
             Self::WinTheFlip { span } => *span,
             Self::LoseTheFlip { span } => *span,
+            Self::StopFlipping { span } => *span,
         }
     }
 }
@@ -62,11 +67,15 @@ impl CoinFlip {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "win the flip" => Some(Self::WinTheFlip {
+            "win the flip" | "wins a coin flip" => Some(Self::WinTheFlip {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "lose the flip" => Some(Self::LoseTheFlip {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "stop flipping" => Some(Self::StopFlipping {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

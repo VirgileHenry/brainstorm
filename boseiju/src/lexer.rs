@@ -87,7 +87,7 @@ fn replace_name(card_name: &str, oracle_text: &str) -> String {
     let result = if let Some(without_epithet) = epithet_map.get(card_name) {
         /* If the card contains a known name without epithet, replace it */
         let card_name_regex = regex::Regex::new(&format!("{START_BOUNDARY}{without_epithet}{END_BOUNDARY}")).unwrap();
-        card_name_regex.replace_all(oracle_text, replacer).to_string()
+        card_name_regex.replace_all(&result, replacer).to_string()
     } else {
         result
     };
@@ -104,13 +104,14 @@ pub fn lex(input: &str) -> Result<Vec<tokens::Token>, error::LexerError> {
                 "\\.", ",", "'", "{", "}", "~", "\\/", ":", "+", "\\-", "—", "•", "\n", "!", "?", "ˣ",
             ];
             let matchable_non_words: String = MATCHABLE_NON_WORDS.iter().cloned().collect();
-            let raw_token_pattern = format!("(\\b\\w+\\b)|([{}])", matchable_non_words);
+            /* [0-9\p{Latin}] contains latin alphabetic characters (with accents), without weird stuff like ˣ */
+            const WORD_CHARS: &'static str = r"[0-9\p{Latin}--ˣ]";
+            let raw_token_pattern = format!("(\\b{WORD_CHARS}+\\b)|([{}])", matchable_non_words);
             regex::Regex::new(&raw_token_pattern).expect("Failed to compile regex!")
         };
     );
 
     let mut raw_tokens: std::collections::VecDeque<_> = raw_token_regex.find_iter(input).collect();
-
     let mut result = Vec::new();
 
     'outer: while !raw_tokens.is_empty() {

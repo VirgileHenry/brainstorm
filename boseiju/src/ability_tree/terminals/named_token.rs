@@ -11,6 +11,10 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Angelo {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Avacyn {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -28,6 +32,10 @@ pub enum NamedToken {
         span: crate::ability_tree::span::TreeSpan,
     },
     Boo {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Butterfly {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -51,6 +59,10 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Cragflame {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Cursed {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -63,11 +75,23 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    EtheriumCell {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Everywhere {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     FesteringGoblin {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     FirstMateRagavan {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Galactus {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -79,7 +103,27 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    IcingdeathFrostTongue {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    IcyManalith {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Jumblebones {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Kaldra {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    KaroxBladewing {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Keimi {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -100,6 +144,10 @@ pub enum NamedToken {
         span: crate::ability_tree::span::TreeSpan,
     },
     MarkOfTheRani {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Mask {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -127,11 +175,19 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    Munition {
+    Munitions {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     Mutavault {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    NalaarAetherjet {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Ornithopter {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -143,7 +199,19 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    PrimoTheIndivisible {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    PrisonerZero {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Ragavan {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Redwing {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -167,11 +235,23 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Scrap {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Settlement {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Smaug {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
     SmokeBlessing {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    SparkElemental {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -219,6 +299,10 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Tiny {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Tombspawn {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -255,6 +339,10 @@ pub enum NamedToken {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    VolosJournal {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Walker {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -268,6 +356,10 @@ pub enum NamedToken {
         span: crate::ability_tree::span::TreeSpan,
     },
     Wicked {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    WolvesOfTheHunt {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -323,47 +415,67 @@ impl AbilityTreeNode for NamedToken {
     fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AjanisPridemate { span } => *span,
+            Self::Angelo { span } => *span,
             Self::Avacyn { span } => *span,
             Self::BallisticBoulder { span } => *span,
             Self::Banana { span } => *span,
             Self::Beau { span } => *span,
             Self::Boo { span } => *span,
+            Self::Butterfly { span } => *span,
             Self::Carnivore { span } => *span,
             Self::CloudSprite { span } => *span,
             Self::Cherubael { span } => *span,
             Self::Contract { span } => *span,
             Self::CordycepsInfected { span } => *span,
+            Self::Cragflame { span } => *span,
             Self::Cursed { span } => *span,
             Self::Darkstar { span } => *span,
             Self::Doombot { span } => *span,
+            Self::EtheriumCell { span } => *span,
+            Self::Everywhere { span } => *span,
             Self::FesteringGoblin { span } => *span,
             Self::FirstMateRagavan { span } => *span,
+            Self::Galactus { span } => *span,
             Self::GoldmeadowHarrier { span } => *span,
             Self::Guenhwyvar { span } => *span,
+            Self::IcingdeathFrostTongue { span } => *span,
+            Self::IcyManalith { span } => *span,
+            Self::Jumblebones { span } => *span,
             Self::Kaldra { span } => *span,
+            Self::KaroxBladewing { span } => *span,
+            Self::Keimi { span } => *span,
             Self::KoboldsOfKherKeep { span } => *span,
             Self::KomasCoil { span } => *span,
             Self::LightningRager { span } => *span,
             Self::MaritLage { span } => *span,
             Self::MarkOfTheRani { span } => *span,
+            Self::Mask { span } => *span,
             Self::MetallicSliver { span } => *span,
             Self::Meteorite { span } => *span,
             Self::MishrasWarform { span } => *span,
             Self::Moloid { span } => *span,
             Self::Monster { span } => *span,
             Self::Mowu { span } => *span,
-            Self::Munition { span } => *span,
+            Self::Munitions { span } => *span,
             Self::Mutavault { span } => *span,
+            Self::NalaarAetherjet { span } => *span,
+            Self::Ornithopter { span } => *span,
             Self::Phobos { span } => *span,
             Self::PlaguebearerOfNurgle { span } => *span,
+            Self::PrimoTheIndivisible { span } => *span,
+            Self::PrisonerZero { span } => *span,
             Self::Ragavan { span } => *span,
+            Self::Redwing { span } => *span,
             Self::ReliquaryDragon { span } => *span,
             Self::ReplicatedRing { span } => *span,
             Self::Rock { span } => *span,
             Self::Royal { span } => *span,
             Self::ScionOfTheDeep { span } => *span,
+            Self::Scrap { span } => *span,
+            Self::Settlement { span } => *span,
             Self::Smaug { span } => *span,
             Self::SmokeBlessing { span } => *span,
+            Self::SparkElemental { span } => *span,
             Self::SpellgorgerWeird { span } => *span,
             Self::StanggTwin { span } => *span,
             Self::StoneforgedBlade { span } => *span,
@@ -375,6 +487,7 @@ impl AbilityTreeNode for NamedToken {
             Self::TigerGod { span } => *span,
             Self::TheBlackjack { span } => *span,
             Self::TheHollowSentinel { span } => *span,
+            Self::Tiny { span } => *span,
             Self::Tombspawn { span } => *span,
             Self::TuktukTheReturned { span } => *span,
             Self::Twin { span } => *span,
@@ -384,10 +497,12 @@ impl AbilityTreeNode for NamedToken {
             Self::Voja { span } => *span,
             Self::VojaFenstalker { span } => *span,
             Self::VojaFriendsToElves { span } => *span,
+            Self::VolosJournal { span } => *span,
             Self::Walker { span } => *span,
             Self::Wasp { span } => *span,
             Self::WastelandSurvivalGuide { span } => *span,
             Self::Wicked { span } => *span,
+            Self::WolvesOfTheHunt { span } => *span,
             Self::Wood { span } => *span,
             Self::YoungHero { span } => *span,
             Self::Zabu { span } => *span,
@@ -401,6 +516,10 @@ impl IntoToken for NamedToken {
     fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
             "ajani's pridemate" => Some(Self::AjanisPridemate {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "angelo" => Some(Self::Angelo {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -424,6 +543,10 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "butterfly" => Some(Self::Butterfly {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "carnivore" => Some(Self::Carnivore {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -444,6 +567,10 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "cragflame" => Some(Self::Cragflame {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "cursed" => Some(Self::Cursed {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -456,6 +583,14 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "etherium cell" => Some(Self::EtheriumCell {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "everywhere" => Some(Self::Everywhere {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "festering goblin" => Some(Self::FesteringGoblin {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -464,7 +599,11 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "goldmeadow harrier" => Some(Self::GoldmeadowHarrier {
+            "galactus" => Some(Self::Galactus {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "goldmeadow harrier" | "~ harrier" => Some(Self::GoldmeadowHarrier {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -472,7 +611,27 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "icingdeath, frost tongue" | "~, frost tongue" => Some(Self::IcingdeathFrostTongue {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "icy manalith" => Some(Self::IcyManalith {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "jumblebones" => Some(Self::Jumblebones {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "kaldra" => Some(Self::Kaldra {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "karox bladewing" => Some(Self::KaroxBladewing {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "keimi" => Some(Self::Keimi {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -492,7 +651,11 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "mark of the rani" => Some(Self::MarkOfTheRani {
+            "mark of the rani" | "mark of ~" => Some(Self::MarkOfTheRani {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "mask" => Some(Self::Mask {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -504,7 +667,7 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "mishra's warform" => Some(Self::MishrasWarform {
+            "mishra's warform" | "~'s warform" => Some(Self::MishrasWarform {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -520,7 +683,7 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "munition" => Some(Self::Munition {
+            "munitions" => Some(Self::Munitions {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -528,7 +691,23 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "nalaar aetherjet" => Some(Self::NalaarAetherjet {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "ornithopter" => Some(Self::Ornithopter {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "phobos" => Some(Self::Phobos {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "primo, the indivisible" => Some(Self::PrimoTheIndivisible {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "prisoner zero" => Some(Self::PrisonerZero {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -540,11 +719,15 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "redwing" => Some(Self::Redwing {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "reliquary dragon" => Some(Self::ReliquaryDragon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "replicating ring" => Some(Self::ReplicatedRing {
+            "replicated ring" => Some(Self::ReplicatedRing {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -560,11 +743,23 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "scrap" => Some(Self::Scrap {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "settlement" => Some(Self::Settlement {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "smaug" => Some(Self::Smaug {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "smoke blessing" => Some(Self::SmokeBlessing {
+            "smoke blessing" | "~ blessing" => Some(Self::SmokeBlessing {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "spark elemental" => Some(Self::SparkElemental {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -592,7 +787,7 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "tamyio's notebook" => Some(Self::Sword {
+            "tamiyo's notebook" => Some(Self::TamiyosNotebook {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -609,6 +804,10 @@ impl IntoToken for NamedToken {
                 span: span.into(),
             }),
             "the hollow sentinel" => Some(Self::TheHollowSentinel {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "tiny" => Some(Self::Tiny {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -648,6 +847,10 @@ impl IntoToken for NamedToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "volo's journal" | "~'s journal" => Some(Self::VolosJournal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "walker" => Some(Self::Walker {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -661,6 +864,10 @@ impl IntoToken for NamedToken {
                 span: span.into(),
             }),
             "wicked" => Some(Self::Wicked {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "wolves of the hunt" => Some(Self::WolvesOfTheHunt {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -689,47 +896,67 @@ impl std::fmt::Display for NamedToken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::AjanisPridemate { .. } => write!(f, "koma's coil"),
+            Self::Angelo { .. } => write!(f, "koma's coil"),
             Self::Avacyn { .. } => write!(f, "koma's coil"),
             Self::BallisticBoulder { .. } => write!(f, "koma's coil"),
             Self::Banana { .. } => write!(f, "koma's coil"),
             Self::Beau { .. } => write!(f, "koma's coil"),
             Self::Boo { .. } => write!(f, "koma's coil"),
+            Self::Butterfly { .. } => write!(f, "koma's coil"),
             Self::Carnivore { .. } => write!(f, "koma's coil"),
             Self::CloudSprite { .. } => write!(f, "koma's coil"),
             Self::Cherubael { .. } => write!(f, "koma's coil"),
             Self::Contract { .. } => write!(f, "koma's coil"),
             Self::CordycepsInfected { .. } => write!(f, "koma's coil"),
+            Self::Cragflame { .. } => write!(f, "koma's coil"),
             Self::Cursed { .. } => write!(f, "koma's coil"),
             Self::Darkstar { .. } => write!(f, "koma's coil"),
             Self::Doombot { .. } => write!(f, "koma's coil"),
+            Self::EtheriumCell { .. } => write!(f, "koma's coil"),
+            Self::Everywhere { .. } => write!(f, "koma's coil"),
             Self::FesteringGoblin { .. } => write!(f, "koma's coil"),
             Self::FirstMateRagavan { .. } => write!(f, "koma's coil"),
+            Self::Galactus { .. } => write!(f, "koma's coil"),
             Self::GoldmeadowHarrier { .. } => write!(f, "koma's coil"),
             Self::Guenhwyvar { .. } => write!(f, "koma's coil"),
+            Self::IcingdeathFrostTongue { .. } => write!(f, "koma's coil"),
+            Self::IcyManalith { .. } => write!(f, "koma's coil"),
+            Self::Jumblebones { .. } => write!(f, "koma's coil"),
             Self::Kaldra { .. } => write!(f, "koma's coil"),
+            Self::KaroxBladewing { .. } => write!(f, "koma's coil"),
+            Self::Keimi { .. } => write!(f, "koma's coil"),
             Self::KoboldsOfKherKeep { .. } => write!(f, "koma's coil"),
             Self::KomasCoil { .. } => write!(f, "koma's coil"),
             Self::LightningRager { .. } => write!(f, "koma's coil"),
             Self::MaritLage { .. } => write!(f, "scion of the deep"),
             Self::MarkOfTheRani { .. } => write!(f, "scion of the deep"),
+            Self::Mask { .. } => write!(f, "scion of the deep"),
             Self::MetallicSliver { .. } => write!(f, "scion of the deep"),
             Self::Meteorite { .. } => write!(f, "scion of the deep"),
             Self::MishrasWarform { .. } => write!(f, "scion of the deep"),
             Self::Moloid { .. } => write!(f, "scion of the deep"),
             Self::Monster { .. } => write!(f, "scion of the deep"),
             Self::Mowu { .. } => write!(f, "scion of the deep"),
-            Self::Munition { .. } => write!(f, "scion of the deep"),
+            Self::Munitions { .. } => write!(f, "scion of the deep"),
             Self::Mutavault { .. } => write!(f, "scion of the deep"),
+            Self::NalaarAetherjet { .. } => write!(f, "scion of the deep"),
+            Self::Ornithopter { .. } => write!(f, "scion of the deep"),
             Self::Phobos { .. } => write!(f, "scion of the deep"),
             Self::PlaguebearerOfNurgle { .. } => write!(f, "scion of the deep"),
+            Self::PrimoTheIndivisible { .. } => write!(f, "scion of the deep"),
+            Self::PrisonerZero { .. } => write!(f, "scion of the deep"),
             Self::Ragavan { .. } => write!(f, "scion of the deep"),
+            Self::Redwing { .. } => write!(f, "scion of the deep"),
             Self::ReliquaryDragon { .. } => write!(f, "scion of the deep"),
             Self::ReplicatedRing { .. } => write!(f, "scion of the deep"),
             Self::Rock { .. } => write!(f, "scion of the deep"),
             Self::Royal { .. } => write!(f, "scion of the deep"),
             Self::ScionOfTheDeep { .. } => write!(f, "scion of the deep"),
+            Self::Scrap { .. } => write!(f, "scion of the deep"),
+            Self::Settlement { .. } => write!(f, "scion of the deep"),
             Self::Smaug { .. } => write!(f, "scion of the deep"),
             Self::SmokeBlessing { .. } => write!(f, "scion of the deep"),
+            Self::SparkElemental { .. } => write!(f, "scion of the deep"),
             Self::SpellgorgerWeird { .. } => write!(f, "scion of the deep"),
             Self::StanggTwin { .. } => write!(f, "scion of the deep"),
             Self::StoneforgedBlade { .. } => write!(f, "scion of the deep"),
@@ -741,6 +968,7 @@ impl std::fmt::Display for NamedToken {
             Self::TigerGod { .. } => write!(f, "scion of the deep"),
             Self::TheBlackjack { .. } => write!(f, "scion of the deep"),
             Self::TheHollowSentinel { .. } => write!(f, "scion of the deep"),
+            Self::Tiny { .. } => write!(f, "scion of the deep"),
             Self::Tombspawn { .. } => write!(f, "scion of the deep"),
             Self::TuktukTheReturned { .. } => write!(f, "scion of the deep"),
             Self::Twin { .. } => write!(f, "scion of the deep"),
@@ -750,10 +978,12 @@ impl std::fmt::Display for NamedToken {
             Self::Voja { .. } => write!(f, "scion of the deep"),
             Self::VojaFenstalker { .. } => write!(f, "scion of the deep"),
             Self::VojaFriendsToElves { .. } => write!(f, "scion of the deep"),
+            Self::VolosJournal { .. } => write!(f, "scion of the deep"),
             Self::Walker { .. } => write!(f, "wicked"),
             Self::Wasp { .. } => write!(f, "wicked"),
             Self::WastelandSurvivalGuide { .. } => write!(f, "wicked"),
             Self::Wicked { .. } => write!(f, "wicked"),
+            Self::WolvesOfTheHunt { .. } => write!(f, "wicked"),
             Self::Wood { .. } => write!(f, "wicked"),
             Self::YoungHero { .. } => write!(f, "wicked"),
             Self::Zabu { .. } => write!(f, "wicked"),

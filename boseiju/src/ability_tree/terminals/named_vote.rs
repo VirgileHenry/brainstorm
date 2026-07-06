@@ -431,7 +431,7 @@ impl IntoToken for NamedVote {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "readhorn pass" => Some(NamedVote::RedhornPass {
+            "redhorn pass" => Some(NamedVote::RedhornPass {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -78,6 +78,7 @@ impl crate::lexer::IntoToken for CreatureSubtype {
                         "mice" => Some(mtg_data::CreatureType::Mouse),
                         "octopuses" => Some(mtg_data::CreatureType::Octopus),
                         "oxen" => Some(mtg_data::CreatureType::Ox),
+                        "pegasi" => Some(mtg_data::CreatureType::Pegasus),
                         "werewolves" => Some(mtg_data::CreatureType::Werewolf),
                         "wolves" => Some(mtg_data::CreatureType::Wolf),
                         _ => None,

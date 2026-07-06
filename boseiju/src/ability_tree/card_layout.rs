@@ -10,6 +10,6 @@ pub trait LayoutImpl: Sized {
     fn card_types(&self) -> crate::ability_tree::type_line::SimplifiedCardTypes;
     fn mana_value(&self) -> usize;
     #[cfg(feature = "parser")]
-    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String>;
+    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, crate::card::layout::LayoutParseError>;
     fn layout_debug_display<W: std::io::Write>(&self, output: &mut W) -> std::io::Result<()>;
 }

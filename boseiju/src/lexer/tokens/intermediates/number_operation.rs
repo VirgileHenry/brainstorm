@@ -2,6 +2,10 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NumberOperation {
+    Above {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Below {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -50,6 +54,10 @@ pub enum NumberOperation {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    MaximumOf {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     Minus {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -92,6 +100,7 @@ pub enum NumberOperation {
 impl NumberOperation {
     pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
+            Self::Above { span } => *span,
             Self::Below { span } => *span,
             Self::Between { span } => *span,
             Self::Difference { span } => *span,
@@ -104,6 +113,7 @@ impl NumberOperation {
             Self::Lower { span } => *span,
             Self::Lowest { span } => *span,
             Self::Match { span } => *span,
+            Self::MaximumOf { span } => *span,
             Self::Minus { span } => *span,
             Self::Odd { span } => *span,
             Self::Plus { span } => *span,
@@ -120,6 +130,10 @@ impl NumberOperation {
 impl NumberOperation {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
+            "above" => Some(Self::Above {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "below" => Some(Self::Below {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -168,6 +182,10 @@ impl NumberOperation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "maximum of" => Some(Self::MaximumOf {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "minus" => Some(Self::Minus {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -200,7 +218,7 @@ impl NumberOperation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "substract" => Some(Self::Substract {
+            "subtract" => Some(Self::Substract {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

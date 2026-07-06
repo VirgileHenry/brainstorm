@@ -408,6 +408,42 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    Legal {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Illegal {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    OriginalSpell {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Determined {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Label {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Circled {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Unchanged {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    Order {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
+    PointOfBushido {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -494,6 +530,15 @@ impl VhyToSortLater {
             Self::Radiation { span } => *span,
             Self::Immediatly { span } => *span,
             Self::Heal { span } => *span,
+            Self::Legal { span } => *span,
+            Self::Illegal { span } => *span,
+            Self::OriginalSpell { span } => *span,
+            Self::Determined { span } => *span,
+            Self::Label { span } => *span,
+            Self::Circled { span } => *span,
+            Self::Unchanged { span } => *span,
+            Self::Order { span } => *span,
+            Self::PointOfBushido { span } => *span,
         }
     }
 }
@@ -678,7 +723,7 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "booster pack" => Some(Self::BoosterPack {
+            "booster pack" | "booster packs" => Some(Self::BoosterPack {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -798,7 +843,7 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "magic subgame" => Some(Self::MagicSubgame {
+            "magic subgame" | "subgame" => Some(Self::MagicSubgame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -814,11 +859,43 @@ impl VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "immediatly" => Some(Self::Immediatly {
+            "healed" => Some(Self::Heal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "healed" => Some(Self::Heal {
+            "legal" => Some(Self::Legal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "illegal" => Some(Self::Illegal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "original spell" => Some(Self::OriginalSpell {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "determined" => Some(Self::Determined {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "label" => Some(Self::Label {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "circled" => Some(Self::Circled {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unchanged" => Some(Self::Unchanged {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "order" => Some(Self::Order {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "point of bushido" => Some(Self::PointOfBushido {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

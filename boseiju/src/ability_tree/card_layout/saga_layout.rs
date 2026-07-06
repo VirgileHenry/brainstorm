@@ -25,7 +25,7 @@ impl super::LayoutImpl for SagaLayout {
     }
 
     #[cfg(feature = "parser")]
-    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, String> {
+    fn from_raw_card(raw_card: &mtg_cardbase::Card) -> Result<Self, crate::card::layout::LayoutParseError> {
         // let ability_tree = match raw_card.oracle_text.as_ref() {
         //     Some(oracle_text) => crate::AbilityTree::from_oracle_text(oracle_text, &raw_card.name)
         //         .map_err(|e| format!("Failed to parse oracle text to ability tree: {e}"))?,
@@ -55,15 +55,21 @@ impl super::LayoutImpl for SagaLayout {
                         text: mana_cost,
                     };
                     Some(
-                        crate::ability_tree::terminals::ManaCost::try_from_span(&mana_cost_span)
-                            .ok_or_else(|| format!("Failed to parse mana cost from: {mana_cost}"))?,
+                        crate::ability_tree::terminals::ManaCost::try_from_span(&mana_cost_span).ok_or_else(|| {
+                            crate::card::layout::LayoutParseError::InvalidManaCost {
+                                mana_cost: mana_cost.clone(),
+                            }
+                        })?,
                     )
                 }
                 None => None,
             },
 
-            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span)
-                .ok_or_else(|| format!("Failed to parse card type: {}", raw_card.type_line))?,
+            card_type: crate::ability_tree::type_line::TypeLine::try_from_span(&type_line_span).ok_or_else(|| {
+                crate::card::layout::LayoutParseError::InvalidTypeLine {
+                    type_line: raw_card.type_line.clone(),
+                }
+            })?,
             chapters,
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

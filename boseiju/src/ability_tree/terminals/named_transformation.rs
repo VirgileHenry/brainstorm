@@ -31,6 +31,10 @@ pub enum NamedTransformation {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    VituGhazi {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
 }
 
 impl AbilityTreeNode for NamedTransformation {
@@ -70,6 +74,7 @@ impl AbilityTreeNode for NamedTransformation {
             Self::LegitimateBuisnessperson { span } => *span,
             Self::MilevaTheStalwart { span } => *span,
             Self::Moon { span } => *span,
+            Self::VituGhazi { span } => *span,
         }
     }
 }
@@ -83,6 +88,7 @@ impl std::fmt::Display for NamedTransformation {
             NamedTransformation::LegitimateBuisnessperson { .. } => write!(f, "legitimate businessperson"),
             NamedTransformation::MilevaTheStalwart { .. } => write!(f, "legitimate businessperson"),
             NamedTransformation::Moon { .. } => write!(f, "legitimate businessperson"),
+            NamedTransformation::VituGhazi { .. } => write!(f, "legitimate businessperson"),
         }
     }
 }
@@ -112,6 +118,10 @@ impl IntoToken for NamedTransformation {
                 span: span.into(),
             }),
             "moon" => Some(NamedTransformation::Moon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "vitu-ghazi" => Some(NamedTransformation::VituGhazi {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

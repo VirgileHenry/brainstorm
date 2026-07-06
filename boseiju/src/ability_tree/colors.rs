@@ -152,16 +152,14 @@ impl crate::utils::DummyInit for Colors {
 }
 
 impl<S: AsRef<str>> TryFrom<&[S]> for Colors {
-    type Error = String; // Fixme!
+    type Error = ColorsParsingError;
     fn try_from(colors: &[S]) -> Result<Self, Self::Error> {
         use std::str::FromStr;
         let mut result = Colors::empty();
 
         for color_str in colors {
             let color_flag = match mtg_data::Color::from_str(color_str.as_ref())? {
-                mtg_data::Color::Colorless => {
-                    return Err(format!("Colorless isn't valid in color combination!"))?;
-                }
+                mtg_data::Color::Colorless => return Err(ColorsParsingError::ColorlessInColors),
                 mtg_data::Color::White => &mut result.white,
                 mtg_data::Color::Blue => &mut result.blue,
                 mtg_data::Color::Black => &mut result.black,
@@ -169,8 +167,7 @@ impl<S: AsRef<str>> TryFrom<&[S]> for Colors {
                 mtg_data::Color::Green => &mut result.green,
             };
             if *color_flag {
-                let color_str = color_str.as_ref();
-                return Err(format!("Duplicate color {color_str} in combination"));
+                return Err(ColorsParsingError::DuplicateColor);
             } else {
                 *color_flag = true;
             }
@@ -179,3 +176,28 @@ impl<S: AsRef<str>> TryFrom<&[S]> for Colors {
         Ok(result)
     }
 }
+
+#[derive(Debug)]
+pub enum ColorsParsingError {
+    ColorlessInColors,
+    DuplicateColor,
+    InvalidColor(mtg_data::ColorParsingError),
+}
+
+impl From<mtg_data::ColorParsingError> for ColorsParsingError {
+    fn from(error: mtg_data::ColorParsingError) -> Self {
+        Self::InvalidColor(error)
+    }
+}
+
+impl std::fmt::Display for ColorsParsingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ColorlessInColors => write!(f, "\"Coloress\" is invalid in color combinations"),
+            Self::DuplicateColor => write!(f, "Duplicate color in color combination"),
+            Self::InvalidColor(error) => write!(f, "Invalid color in combination: {error}"),
+        }
+    }
+}
+
+impl std::error::Error for ColorsParsingError {}

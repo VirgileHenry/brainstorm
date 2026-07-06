@@ -19,7 +19,7 @@ pub enum PlayerDesignation {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    YourParty {
+    Party {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
@@ -33,7 +33,7 @@ impl PlayerDesignation {
             Self::Poisoned { span } => *span,
             Self::TheCitysBlessing { span } => *span,
             Self::TheInitiative { span } => *span,
-            Self::YourParty { span } => *span,
+            Self::Party { span } => *span,
         }
     }
 }
@@ -57,7 +57,8 @@ impl PlayerDesignation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "your party" => Some(Self::YourParty {
+            /* Fixme: somewhere else */
+            "party" => Some(Self::Party {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
