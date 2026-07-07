@@ -12,7 +12,7 @@ pub enum Color {
 }
 
 impl std::str::FromStr for Color {
-    type Err = String;
+    type Err = ColorParsingError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "b" | "B" | "black" => Ok(Self::Black),
@@ -21,7 +21,9 @@ impl std::str::FromStr for Color {
             "g" | "G" | "green" => Ok(Self::Green),
             "r" | "R" | "red" => Ok(Self::Red),
             "w" | "W" | "white" => Ok(Self::White),
-            other => Err(format!("Unknown Color: {}", other.to_string())),
+            other => Err(ColorParsingError {
+                color: other.to_string(),
+            }),
         }
     }
 }
@@ -59,5 +61,16 @@ impl std::fmt::Display for Color {
 impl Color {
     pub fn all() -> impl Iterator<Item = Self> {
         [Self::Black, Self::Blue, Self::Colorless, Self::Green, Self::Red, Self::White].into_iter()
+    }
+}
+
+#[derive(Debug)]
+pub struct ColorParsingError {
+    color: String,
+}
+
+impl std::fmt::Display for ColorParsingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Invalid color: {}", self.color)
     }
 }

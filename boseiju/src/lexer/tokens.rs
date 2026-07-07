@@ -1,4 +1,5 @@
 pub mod intermediates;
+pub mod tensed;
 
 use crate::ability_tree::state;
 use crate::ability_tree::terminals;
@@ -12,7 +13,6 @@ pub trait IntoToken: Sized {
 
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
-#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
     AbilityWord(intermediates::AbilityWord),
@@ -67,7 +67,7 @@ pub enum Token {
     CardOwnName(intermediates::CardOwnName),
     PartnerKind(intermediates::PartnerKind),
     Phase(terminals::Phase),
-    PlayerAction(intermediates::PlayerAction),
+    TensedPlayerAction(intermediates::TensedPlayerAction),
     PlayerDesignation(intermediates::PlayerDesignation),
     PlayerProperties(intermediates::PlayerProperties),
     PlayerSpecifier(intermediates::PlayerSpecifier),
@@ -201,8 +201,8 @@ impl Token {
             Some(Self::Die(kind))
         } else if let Some(kind) = intermediates::Direction::try_from_span(&span) {
             Some(Self::Direction(kind))
-        } else if let Some(kind) = intermediates::PlayerAction::try_from_span(&span) {
-            Some(Self::PlayerAction(kind))
+        } else if let Some(kind) = intermediates::TensedPlayerAction::try_from_span(&span) {
+            Some(Self::TensedPlayerAction(kind))
         } else if let Some(kind) = intermediates::PlayerDesignation::try_from_span(&span) {
             Some(Self::PlayerDesignation(kind))
         } else if let Some(kind) = intermediates::NonKind::try_from_span(&span) {
@@ -306,7 +306,7 @@ impl Token {
             Self::CardState(child) => child.span(),
             Self::PartnerKind(child) => child.span(),
             Self::Phase(child) => child.node_span(),
-            Self::PlayerAction(child) => child.span(),
+            Self::TensedPlayerAction(child) => child.token().span(),
             Self::PlayerDesignation(child) => child.span(),
             Self::PlayerProperties(child) => child.span(),
             Self::PlayerSpecifier(child) => child.span(),

@@ -25,6 +25,6 @@ impl idris::Idris for TheSameIsTrueFor {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "InAdditionToPayingItsOtherCost"
+        "TheSameIsTrueFor"
     }
 }

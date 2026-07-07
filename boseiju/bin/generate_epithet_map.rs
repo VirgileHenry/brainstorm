@@ -44,6 +44,9 @@ const HARD_CODED_EPITHETS: &'static [(&'static str, &'static str)] = &[
     ("Taskmaster, Mercenary Mimic", "Taskmaster"),
     ("Korlash, Heir to Blackblade", "Korlash"),
     ("Quicksilver, Brash Blur", "Quicksilver"),
+    ("Irma, Part-Time Mutant", "Irma"),
+    ("Hulkling, Young Avenger", "Hulkling"),
+    ("Hanweir, the Writhing Township", "Hanweir"),
 ];
 
 fn main() {
