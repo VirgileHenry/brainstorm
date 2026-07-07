@@ -73,7 +73,7 @@ pub use number::Number;
 pub use number_of_times::NumberOfTimes;
 pub use number_operation::NumberOperation;
 pub use partner_kind::PartnerKind;
-pub use player_action::PlayerAction;
+pub use player_action::TensedPlayerAction;
 pub use player_designation::PlayerDesignation;
 pub use player_properties::PlayerProperties;
 pub use player_specifier::PlayerSpecifier;

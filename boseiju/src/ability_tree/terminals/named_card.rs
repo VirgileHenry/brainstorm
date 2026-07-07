@@ -155,6 +155,10 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    GalactusDevourerOfWorlds {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     GarrukSavageHerald {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -335,6 +339,10 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
+    SilverSurferGalactussHerald {
+        #[cfg(feature = "spanned_tree")]
+        span: crate::ability_tree::span::TreeSpan,
+    },
     SorinVampireLord {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -501,6 +509,7 @@ impl AbilityTreeNode for NamedCard {
             Self::FeralShadow { span } => *span,
             Self::FesteringNewt { span } => *span,
             Self::FlameBurst { span } => *span,
+            Self::GalactusDevourerOfWorlds { span } => *span,
             Self::GarrukSavageHerald { span } => *span,
             Self::GideonMartialParagon { span } => *span,
             Self::GideonTheOathsworn { span } => *span,
@@ -546,6 +555,7 @@ impl AbilityTreeNode for NamedCard {
             Self::ScepterOfEmpires { span } => *span,
             Self::ShieldOfKaldra { span } => *span,
             Self::ShivanDragon { span } => *span,
+            Self::SilverSurferGalactussHerald { span } => *span,
             Self::SorinVampireLord { span } => *span,
             Self::SphinxSovereign { span } => *span,
             Self::SpittingDrake { span } => *span,
@@ -614,6 +624,7 @@ impl std::fmt::Display for NamedCard {
             Self::FeralShadow { .. } => write!(f, "accumulated knowledge"),
             Self::FesteringNewt { .. } => write!(f, "accumulated knowledge"),
             Self::FlameBurst { .. } => write!(f, "accumulated knowledge"),
+            Self::GalactusDevourerOfWorlds { .. } => write!(f, "accumulated knowledge"),
             Self::GarrukSavageHerald { .. } => write!(f, "accumulated knowledge"),
             Self::GideonMartialParagon { .. } => write!(f, "accumulated knowledge"),
             Self::GideonTheOathsworn { .. } => write!(f, "accumulated knowledge"),
@@ -659,6 +670,7 @@ impl std::fmt::Display for NamedCard {
             Self::ScepterOfEmpires { .. } => write!(f, "accumulated knowledge"),
             Self::ShieldOfKaldra { .. } => write!(f, "accumulated knowledge"),
             Self::ShivanDragon { .. } => write!(f, "accumulated knowledge"),
+            Self::SilverSurferGalactussHerald { .. } => write!(f, "accumulated knowledge"),
             Self::SorinVampireLord { .. } => write!(f, "accumulated knowledge"),
             Self::SphinxSovereign { .. } => write!(f, "accumulated knowledge"),
             Self::SpittingDrake { .. } => write!(f, "accumulated knowledge"),
@@ -824,6 +836,10 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "flame burst" => Some(Self::FlameBurst {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "galactus, devourer of worlds" => Some(Self::GalactusDevourerOfWorlds {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -1016,6 +1032,10 @@ impl IntoToken for NamedCard {
                 span: span.into(),
             }),
             "shivan dragon" => Some(Self::ShivanDragon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "silver surfer, galactus's herald" | "silver surfer, ~'s herald" => Some(Self::SilverSurferGalactussHerald {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -30,6 +30,7 @@ Arrest
 Astral Projection
 Atomic Transmutation
 Attack
+AV Bead
 Avalanche!
 Avian Telepathy
 Avoidance
@@ -61,6 +62,7 @@ Blizzara
 Blizzard
 Blood Chalice
 Blood Drain
+Bloody Mary
 Blow Up
 Blue Magic
 Body Thief
@@ -109,6 +111,7 @@ Combine Powers!
 Come Fly With Me
 Command Protocols
 Command Section
+Communication Bead
 Conceal
 Concealed Position
 Cone of Cold
@@ -132,6 +135,7 @@ Cunning Action
 Cura
 Curaga
 Cure
+Cure Cancer
 Cure Wounds
 Curse of the Walking Pox
 Cybernetic Senses
@@ -310,6 +314,7 @@ Impound
 In You, All Things Are Possible
 Infesting Spores
 Inquisition Agents
+Insatiable Hunger
 Intangibility
 Interrogate Them
 Intimidate Them
@@ -340,6 +345,7 @@ Leap of Faith
 Learn Their Secrets
 Legal Justice
 Let the World Burn
+Lethal Voice
 Life Drain
 Life of the Party
 Lift the Curse
@@ -371,6 +377,7 @@ Mama's Coming
 Mantle of Inspiration
 Mark of Chaos Ascendant
 Martyrdom
+Mary
 Mash
 Master Tactician
 Master of Machines
@@ -409,6 +416,7 @@ Nosh
 Oblivion
 Omnislash
 One for My Baby
+Origami-Fu
 Pact Boon
 Pain
 Parade!
@@ -438,6 +446,7 @@ Pray
 Pray for Protection
 Primarch of the Death Guard
 Prince of Chaos
+Prime Bead
 Prismatic Gallery
 Probing Telepathy
 Proclamator Hailer
@@ -503,6 +512,7 @@ Seismic Takedown
 Selfie Shot
 Sell Contraband
 Sensational Save
+Sense the Good
 Set Off Traps
 Share
 Share Intelligence
@@ -629,8 +639,10 @@ Trapped!
 Treasure Hunter
 Trick Arrows
 Tunnel Snakes Rule!
+Turn People into Dinosaurs
 Two-Headed Coin
 Two-Weapon Fighting
+Typhoid Mary
 Tyrannosaurus Rex
 Ultima Founding
 Ultimate End

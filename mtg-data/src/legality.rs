@@ -9,14 +9,16 @@ pub enum Legality {
 }
 
 impl std::str::FromStr for Legality {
-    type Err = String;
+    type Err = LegalityParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "legal" => Ok(Self::Legal),
             "not_legal" => Ok(Self::Notlegal),
             "restricted" => Ok(Self::Restricted),
             "banned" => Ok(Self::Banned),
-            other => Err(format!("Unknown Legality: {}", other.to_string())),
+            other => Err(LegalityParseError {
+                legality: other.to_string(),
+            }),
         }
     }
 }
@@ -43,3 +45,20 @@ impl Legality {
         [Self::Legal, Self::Notlegal, Self::Restricted, Self::Banned].into_iter()
     }
 }
+
+#[derive(Debug)]
+pub struct LegalityParseError {
+    legality: String,
+}
+
+impl std::fmt::Display for LegalityParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Invalid legality: \"{}\", expected one of \"legal\", \"not_legal\", \"restricted\", \"banned\"",
+            self.legality
+        )
+    }
+}
+
+impl std::error::Error for LegalityParseError {}

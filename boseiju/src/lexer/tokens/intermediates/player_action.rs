@@ -1,3 +1,5 @@
+use crate::lexer::tokens::tensed::Tensed;
+
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -342,273 +344,507 @@ impl PlayerAction {
     }
 }
 
-impl PlayerAction {
+pub type TensedPlayerAction = Tensed<PlayerAction>;
+
+impl TensedPlayerAction {
     pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "accept" => Some(Self::Accept {
+            "accept" => Some(Tensed::base_form(PlayerAction::Accept {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "add" | "adds" | "added" => Some(Self::Add {
+            })),
+            "add" => Some(Tensed::base_form(PlayerAction::Add {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "antes" => Some(Self::Ante {
+            })),
+            "adds" => Some(Tensed::third_person_singular_present(PlayerAction::Add {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "begin" | "begins" | "began" => Some(Self::Begin {
+            })),
+            "added" => Some(Tensed::simple_past(PlayerAction::Add {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "begin the game with" => Some(Self::BeginTheGameWith {
+            })),
+            "antes" => Some(Tensed::third_person_singular_present(PlayerAction::Ante {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "bid" => Some(Self::Bid {
+            })),
+            "begin" => Some(Tensed::base_form(PlayerAction::Begin {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "change" | "changes" | "changing" => Some(Self::Change {
+            })),
+            "begins" => Some(Tensed::third_person_singular_present(PlayerAction::Begin {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "choose" | "chooses" | "chose" | "chosen" | "choosing" => Some(Self::Choose {
+            })),
+            "began" => Some(Tensed::simple_past(PlayerAction::Begin {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "choose any number" => Some(Self::ChooseAnyNumber {
+            })),
+            "begin the game with" => Some(Tensed::base_form(PlayerAction::BeginTheGameWith {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "circle" => Some(Self::Circle {
+            })),
+            "bid" => Some(Tensed::base_form(PlayerAction::Bid {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "commit a crime" | "commits a crime" | "committed a crime" => Some(Self::CommitACrime {
+            })),
+            "change" => Some(Tensed::base_form(PlayerAction::Change {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "complete" | "completed" => Some(Self::CompletedADungeon {
+            })),
+            "changes" => Some(Tensed::third_person_singular_present(PlayerAction::Change {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "count" => Some(Self::Count {
+            })),
+            "changing" => Some(Tensed::present_participle(PlayerAction::Change {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "cycle" | "cycles" | "cycled" => Some(Self::Cycle {
+            })),
+            "choose" => Some(Tensed::base_form(PlayerAction::Choose {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "decide" | "decides" => Some(Self::Decide {
+            })),
+            "chooses" => Some(Tensed::third_person_singular_present(PlayerAction::Choose {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "determine" => Some(Self::Determine {
+            })),
+            "chose" => Some(Tensed::simple_past(PlayerAction::Choose {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "distribute" => Some(Self::Distribute {
+            })),
+            "chosen" => Some(Tensed::past_participle(PlayerAction::Choose {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "draft" | "drafts" | "drafted" | "drafting" => Some(Self::Draft {
+            })),
+            "choosing" => Some(Tensed::present_participle(PlayerAction::Choose {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "draw" | "draws" | "drawn" | "drew" | "drawing" => Some(Self::Draw {
+            })),
+            "choose any number" => Some(Tensed::base_form(PlayerAction::ChooseAnyNumber {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "encounter" => Some(Self::Encounter {
+            })),
+            "circle" => Some(Tensed::base_form(PlayerAction::Circle {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "expend" => Some(Self::Expend {
+            })),
+            "commit a crime" => Some(Tensed::base_form(PlayerAction::CommitACrime {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "face a villainous choice" | "faces a villainous choice" | "face that choice" => Some(Self::FaceAVillanousChoice {
+            })),
+            "commits a crime" => Some(Tensed::third_person_singular_present(PlayerAction::CommitACrime {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "finish voting" => Some(Self::FinishVoting {
+            })),
+            "committed a crime" => Some(Tensed::simple_past(PlayerAction::CommitACrime {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "flip" | "flips" => Some(Self::Flip {
+            })),
+            "complete" => Some(Tensed::base_form(PlayerAction::CompletedADungeon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "fully unlock a room" => Some(Self::FullyUnlockARoom {
+            })),
+            "completed" => Some(Tensed::simple_past(PlayerAction::CompletedADungeon {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "give" => Some(Self::Give {
+            })),
+            "count" => Some(Tensed::base_form(PlayerAction::Count {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "group" => Some(Self::Group {
+            })),
+            "cycle" => Some(Tensed::base_form(PlayerAction::Cycle {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "guess" | "guesses" | "guessed" => Some(Self::Guess {
+            })),
+            "cycles" => Some(Tensed::third_person_singular_present(PlayerAction::Cycle {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "guessed correctly" => Some(Self::GuessCorrectly {
+            })),
+            "cycled" => Some(Tensed::simple_past(PlayerAction::Cycle {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "guess wrong" | "guessed wrong" => Some(Self::GuessWrong {
+            })),
+            "decide" => Some(Tensed::base_form(PlayerAction::Decide {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "hide" | "hides" => Some(Self::Hide {
+            })),
+            "decides" => Some(Tensed::third_person_singular_present(PlayerAction::Decide {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "lock" => Some(Self::Lock {
+            })),
+            "determine" => Some(Tensed::base_form(PlayerAction::Determine {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "ignore" => Some(Self::Ignore {
+            })),
+            "distribute" => Some(Tensed::base_form(PlayerAction::Distribute {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "look at" | "looks at" => Some(Self::LookAt {
+            })),
+            "draft" => Some(Tensed::base_form(PlayerAction::Draft {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "move" | "moves" | "moved" => Some(Self::Move {
+            })),
+            "drafts" => Some(Tensed::third_person_singular_present(PlayerAction::Draft {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "mulligan" | "mulligans" => Some(Self::Mulligan {
+            })),
+            "drafted" => Some(Tensed::simple_past(PlayerAction::Draft {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "note" | "noted" => Some(Self::Note {
+            })),
+            "drafting" => Some(Tensed::present_participle(PlayerAction::Draft {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "offer" => Some(Self::Offer {
+            })),
+            "draw" => Some(Tensed::base_form(PlayerAction::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "pass" | "passed" | "passes" => Some(Self::Pass {
+            })),
+            "draws" => Some(Tensed::third_person_singular_present(PlayerAction::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "pay" | "pays" | "paying" | "paid" => Some(Self::Pay {
+            })),
+            "drawn" => Some(Tensed::past_participle(PlayerAction::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "prevent" | "prevented" => Some(Self::Prevent {
+            })),
+            "drew" => Some(Tensed::simple_past(PlayerAction::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "redistribute" => Some(Self::Redistribute {
+            })),
+            "drawing" => Some(Tensed::present_participle(PlayerAction::Draw {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "repeat this process" | "repeats this process" | "repeat the following process" => Some(Self::RepeatThisProcess {
+            })),
+            "encounter" => Some(Tensed::base_form(PlayerAction::Encounter {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "replace" | "replacing" => Some(Self::Replace {
+            })),
+            "expend" => Some(Tensed::base_form(PlayerAction::Expend {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "reorder" => Some(Self::Reorder {
+            })),
+            "face a villainous choice" | "face that choice" => Some(Tensed::base_form(PlayerAction::FaceAVillanousChoice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "remove" | "removing" | "removed" => Some(Self::Remove {
+            })),
+            "faces a villainous choice" => Some(Tensed::third_person_singular_present(PlayerAction::FaceAVillanousChoice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "reselect" => Some(Self::Reselect {
+            })),
+            "finish voting" => Some(Tensed::base_form(PlayerAction::FinishVoting {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "restart the game" => Some(Self::RestartTheGame {
+            })),
+            "flip" => Some(Tensed::base_form(PlayerAction::Flip {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "reverse the game's turn order" => Some(Self::ReverseTheTurnOrder {
+            })),
+            "flips" => Some(Tensed::third_person_singular_present(PlayerAction::Flip {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "roll" | "rolls" | "rolled" => Some(Self::Roll {
+            })),
+            "fully unlock a room" => Some(Tensed::base_form(PlayerAction::FullyUnlockARoom {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "secretly choose" | "secretly chooses" => Some(Self::SecretlyChoose {
+            })),
+            "give" => Some(Tensed::base_form(PlayerAction::Give {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "secretly vote" | "secretly votes" => Some(Self::SecretlyVote {
+            })),
+            "group" => Some(Tensed::base_form(PlayerAction::Group {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "separate" | "separates" => Some(Self::Separate {
+            })),
+            "guess" => Some(Tensed::base_form(PlayerAction::Guess {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "shuffle" | "shuffles" | "shuffled" => Some(Self::Shuffle {
+            })),
+            "guesses" => Some(Tensed::third_person_singular_present(PlayerAction::Guess {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "simultaneously" => Some(Self::Simultaneously {
+            })),
+            "guessed" => Some(Tensed::simple_past(PlayerAction::Guess {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "skip" | "skips" => Some(Self::Skip {
+            })),
+            "guessed correctly" => Some(Tensed::simple_past(PlayerAction::GuessCorrectly {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "solve a case" => Some(Self::SolveACase {
+            })),
+            "guess wrong" => Some(Tensed::base_form(PlayerAction::GuessWrong {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "spend" | "spends" | "spent" | "spending" => Some(Self::Spend {
+            })),
+            "guessed wrong" => Some(Tensed::simple_past(PlayerAction::GuessWrong {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "start the bidding" => Some(Self::StartTheBidding {
+            })),
+            "hide" => Some(Tensed::base_form(PlayerAction::Hide {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "switch" => Some(Self::Switch {
+            })),
+            "hides" => Some(Tensed::third_person_singular_present(PlayerAction::Hide {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "take" | "takes" | "taking" => Some(Self::Take {
+            })),
+            "lock" => Some(Tensed::base_form(PlayerAction::Lock {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "the ring tempts you" | "the ring has tempted you" => Some(Self::TheRingTemptsYou {
+            })),
+            "ignore" => Some(Tensed::base_form(PlayerAction::Ignore {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "unattach" => Some(Self::Unattach {
+            })),
+            "look at" => Some(Tensed::base_form(PlayerAction::LookAt {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "unlock" => Some(Self::Unlock {
+            })),
+            "looks at" => Some(Tensed::third_person_singular_present(PlayerAction::LookAt {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "you won" => Some(Self::WonAClash {
+            })),
+            "move" => Some(Tensed::base_form(PlayerAction::Move {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "you become the monarch" => Some(Self::YouBecomeTheMonarch {
+            })),
+            "moves" => Some(Tensed::third_person_singular_present(PlayerAction::Move {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
+            })),
+            "moved" => Some(Tensed::simple_past(PlayerAction::Move {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "mulligan" => Some(Tensed::base_form(PlayerAction::Mulligan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "mulligans" => Some(Tensed::third_person_singular_present(PlayerAction::Mulligan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "note" => Some(Tensed::base_form(PlayerAction::Note {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "noted" => Some(Tensed::simple_past(PlayerAction::Note {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "offer" => Some(Tensed::base_form(PlayerAction::Offer {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "pass" => Some(Tensed::base_form(PlayerAction::Pass {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "passes" => Some(Tensed::third_person_singular_present(PlayerAction::Pass {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "passed" => Some(Tensed::simple_past(PlayerAction::Pass {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "pay" => Some(Tensed::base_form(PlayerAction::Pay {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "pays" => Some(Tensed::third_person_singular_present(PlayerAction::Pay {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "paying" => Some(Tensed::present_participle(PlayerAction::Pay {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "paid" => Some(Tensed::simple_past(PlayerAction::Pay {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "prevent" => Some(Tensed::base_form(PlayerAction::Prevent {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "prevented" => Some(Tensed::simple_past(PlayerAction::Prevent {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "redistribute" => Some(Tensed::base_form(PlayerAction::Redistribute {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "repeat this process" | "repeat the following process" => Some(Tensed::base_form(PlayerAction::RepeatThisProcess {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "repeats this process" => Some(Tensed::third_person_singular_present(PlayerAction::RepeatThisProcess {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "replace" => Some(Tensed::base_form(PlayerAction::Replace {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "replacing" => Some(Tensed::present_participle(PlayerAction::Replace {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "reorder" => Some(Tensed::base_form(PlayerAction::Reorder {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "remove" => Some(Tensed::base_form(PlayerAction::Remove {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "removing" => Some(Tensed::present_participle(PlayerAction::Remove {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "removed" => Some(Tensed::simple_past(PlayerAction::Remove {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "reselect" => Some(Tensed::base_form(PlayerAction::Reselect {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "restart the game" => Some(Tensed::base_form(PlayerAction::RestartTheGame {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "reverse the game's turn order" => Some(Tensed::base_form(PlayerAction::ReverseTheTurnOrder {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "roll" => Some(Tensed::base_form(PlayerAction::Roll {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "rolls" => Some(Tensed::third_person_singular_present(PlayerAction::Roll {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "rolled" => Some(Tensed::simple_past(PlayerAction::Roll {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "secretly choose" => Some(Tensed::base_form(PlayerAction::SecretlyChoose {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "secretly chooses" => Some(Tensed::third_person_singular_present(PlayerAction::SecretlyChoose {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "secretly vote" => Some(Tensed::base_form(PlayerAction::SecretlyVote {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "secretly votes" => Some(Tensed::third_person_singular_present(PlayerAction::SecretlyVote {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "separate" => Some(Tensed::base_form(PlayerAction::Separate {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "separates" => Some(Tensed::third_person_singular_present(PlayerAction::Separate {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "shuffle" => Some(Tensed::base_form(PlayerAction::Shuffle {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "shuffles" => Some(Tensed::third_person_singular_present(PlayerAction::Shuffle {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "shuffled" => Some(Tensed::simple_past(PlayerAction::Shuffle {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "simultaneously" => Some(Tensed::base_form(PlayerAction::Simultaneously {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "skip" => Some(Tensed::base_form(PlayerAction::Skip {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "skips" => Some(Tensed::third_person_singular_present(PlayerAction::Skip {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "solve a case" => Some(Tensed::base_form(PlayerAction::SolveACase {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "spend" => Some(Tensed::base_form(PlayerAction::Spend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "spends" => Some(Tensed::third_person_singular_present(PlayerAction::Spend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "spent" => Some(Tensed::simple_past(PlayerAction::Spend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "spending" => Some(Tensed::present_participle(PlayerAction::Spend {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "start the bidding" => Some(Tensed::base_form(PlayerAction::StartTheBidding {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "switch" => Some(Tensed::base_form(PlayerAction::Switch {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "take" => Some(Tensed::base_form(PlayerAction::Take {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "takes" => Some(Tensed::third_person_singular_present(PlayerAction::Take {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "taking" => Some(Tensed::present_participle(PlayerAction::Take {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "the ring tempts you" => Some(Tensed::base_form(PlayerAction::TheRingTemptsYou {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "the ring has tempted you" => Some(Tensed::simple_past(PlayerAction::TheRingTemptsYou {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "unattach" => Some(Tensed::base_form(PlayerAction::Unattach {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "unlock" => Some(Tensed::base_form(PlayerAction::Unlock {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "you won" => Some(Tensed::simple_past(PlayerAction::WonAClash {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "you become the monarch" => Some(Tensed::base_form(PlayerAction::YouBecomeTheMonarch {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
             _ => None,
         }
     }
