@@ -51,3 +51,8 @@ impl<'src> From<&crate::lexer::Span<'src>> for TreeSpan {
         }
     }
 }
+
+/// Trait for objects that track the span they came from
+pub trait Spanned {
+    fn span(&self) -> TreeSpan;
+}

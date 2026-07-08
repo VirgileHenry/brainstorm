@@ -23,7 +23,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                         object::specified_object::EnchantmentSubtypeSpecifier {
                             subtype: subtype.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: subtype.node_span(),
+                            span: subtype.span(),
                         },
                     ),
                 }),
@@ -100,7 +100,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                     specifiers: object::specified_object::Specifiers::And(object::specified_object::SpecifierAndList {
                         specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: s1.node_span().merge(&s2.node_span()),
+                        span: s1.span().merge(&s2.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -128,7 +128,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                     specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {
                         specifiers: [s1.clone(), s2.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: s1.node_span().merge(&s2.node_span()),
+                        span: s1.span().merge(&s2.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

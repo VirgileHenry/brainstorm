@@ -57,12 +57,14 @@ impl crate::ability_tree::AbilityTreeNode for CardKind {
     fn node_tag(&self) -> &'static str {
         "card card"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CardKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::OneAmong(child) => child.node_span(),
-            Self::Permanent(child) => child.node_span(),
+            Self::OneAmong(child) => child.span(),
+            Self::Permanent(child) => child.span(),
             Self::Card { span } => *span,
         }
     }

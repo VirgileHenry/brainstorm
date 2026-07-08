@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     number: number::GameStateNumber::NumberOfPermanents(number::NumberOfPermanents {
                         permanent: permanent.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span(),
+                        span: permanent.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

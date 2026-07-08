@@ -62,9 +62,11 @@ impl AbilityTreeNode for OwnableZone {
     fn node_tag(&self) -> &'static str {
         "zone"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for OwnableZone {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Battlefield { span } => *span,
             Self::Graveyard { span } => *span,

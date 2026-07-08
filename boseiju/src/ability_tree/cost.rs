@@ -46,9 +46,11 @@ impl crate::ability_tree::AbilityTreeNode for Cost {
     fn node_tag(&self) -> &'static str {
         "cost"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Cost {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

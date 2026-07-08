@@ -30,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             abilities
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: keyword_ability.node_span(),
+                        span: keyword_ability.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             abilities
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: ab1.node_span().merge(&ab2.node_span()),
+                        span: ab1.span().merge(&ab2.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -121,7 +121,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             abilities
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: ab1.node_span().merge(&ab3.node_span()),
+                        span: ab1.span().merge(&ab3.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -183,7 +183,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             abilities
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: ab1.node_span().merge(&ab4.node_span()),
+                        span: ab1.span().merge(&ab4.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -50,7 +50,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         power_mod: power.clone(),
                         toughness_mod: toughness.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: toughness.node_span().merge(start_span),
+                        span: toughness.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -94,7 +94,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         power_mod: power.clone(),
                         toughness_mod: toughness.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: toughness.node_span().merge(start_span),
+                        span: toughness.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -138,7 +138,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         power_mod: power.clone(),
                         toughness_mod: toughness.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: toughness.node_span().merge(start_span),
+                        span: toughness.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -182,7 +182,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         power_mod: power.clone(),
                         toughness_mod: toughness.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: toughness.node_span().merge(start_span),
+                        span: toughness.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -50,15 +50,17 @@ impl AbilityTreeNode for Ability {
     }
 
     fn node_tag(&self) -> &'static str {
-        "ability kind"
+        "ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Ability {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::AbilityWord(child) => child.node_span(),
-            Self::KeywordAbility(child) => child.node_span(),
-            Self::Written(child) => child.node_span(),
+            Self::AbilityWord(child) => child.span(),
+            Self::KeywordAbility(child) => child.span(),
+            Self::Written(child) => child.span(),
         }
     }
 }
@@ -121,14 +123,16 @@ impl AbilityTreeNode for WrittenAbility {
     fn node_tag(&self) -> &'static str {
         "text ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for WrittenAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Spell(child) => child.node_span(),
-            Self::Activated(child) => child.node_span(),
-            Self::Triggered(child) => child.node_span(),
-            Self::Static(child) => child.node_span(),
+            Self::Spell(child) => child.span(),
+            Self::Activated(child) => child.span(),
+            Self::Triggered(child) => child.span(),
+            Self::Static(child) => child.span(),
         }
     }
 }
@@ -188,9 +192,11 @@ impl AbilityTreeNode for KeywordAbility {
     fn node_tag(&self) -> &'static str {
         "keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for KeywordAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -251,9 +257,11 @@ impl AbilityTreeNode for AbilityWordAbility {
     fn node_tag(&self) -> &'static str {
         "ability word"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for AbilityWordAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

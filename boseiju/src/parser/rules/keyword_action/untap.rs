@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::untap::UntapKeywordAction {
                                 permanent: permanent.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(untap_span),
+                                span: permanent.span().merge(untap_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::untap::ability(
                             permanent,
                             #[cfg(feature = "spanned_tree")]
-                            permanent.node_span().merge(untap_span),
+                            permanent.span().merge(untap_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(untap_span),
+                        span: permanent.span().merge(untap_span),
                     },
                 ),
             }),

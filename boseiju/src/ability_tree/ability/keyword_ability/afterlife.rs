@@ -33,9 +33,11 @@ impl crate::ability_tree::AbilityTreeNode for AfterlifeKeywordAbility {
     fn node_tag(&self) -> &'static str {
         "afterlife keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for AfterlifeKeywordAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

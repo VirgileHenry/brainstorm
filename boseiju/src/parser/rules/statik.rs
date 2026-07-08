@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             kind: kind.clone(),
                             condition: None,
                             #[cfg(feature = "spanned_tree")]
-                            span: kind.node_span(),
+                            span: kind.span(),
                         },
                     ),
                 }),
@@ -67,11 +67,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 crate::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: condition.node_span().merge(start_span),
+                                    span: condition.span().merge(start_span),
                                 },
                             )),
                             #[cfg(feature = "spanned_tree")]
-                            span: kind.node_span().merge(start_span),
+                            span: kind.span().merge(start_span),
                         },
                     ),
                 }),
@@ -107,11 +107,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 crate::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: condition.node_span().merge(start_span),
+                                    span: condition.span().merge(start_span),
                                 },
                             )),
                             #[cfg(feature = "spanned_tree")]
-                            span: kind.node_span().merge(&condition.node_span()),
+                            span: kind.span().merge(&condition.span()),
                         },
                     ),
                 }),

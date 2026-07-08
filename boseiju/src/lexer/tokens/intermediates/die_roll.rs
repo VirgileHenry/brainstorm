@@ -52,8 +52,8 @@ pub enum DieRoll {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl DieRoll {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for DieRoll {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::D4 { span } => *span,
             Self::D6 { span } => *span,

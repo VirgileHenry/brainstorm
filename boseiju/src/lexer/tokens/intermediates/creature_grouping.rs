@@ -9,8 +9,8 @@ pub enum CreatureGrouping {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl CreatureGrouping {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for CreatureGrouping {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Outlaw { span } => *span,
         }

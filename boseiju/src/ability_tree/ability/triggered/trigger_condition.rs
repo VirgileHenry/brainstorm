@@ -48,9 +48,11 @@ impl AbilityTreeNode for TriggerCondition {
     fn node_tag(&self) -> &'static str {
         "trigger condition"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for TriggerCondition {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -110,12 +112,14 @@ impl AbilityTreeNode for TriggerConditionKind {
     fn node_tag(&self) -> &'static str {
         "trigger condition"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for TriggerConditionKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Event(child) => child.node_span(),
-            Self::AtInstant(child) => child.node_span(),
+            Self::Event(child) => child.span(),
+            Self::AtInstant(child) => child.span(),
         }
     }
 }

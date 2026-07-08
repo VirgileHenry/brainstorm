@@ -56,15 +56,17 @@ impl crate::ability_tree::AbilityTreeNode for DamageReceiver {
     fn node_tag(&self) -> &'static str {
         "damage receiver"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for DamageReceiver {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::AnyTarget(child) => child.node_span(),
-            Self::OneAmong(child) => child.node_span(),
-            Self::PreviouslyMentionned(child) => child.node_span(),
-            Self::SelfReferencing(child) => child.node_span(),
-            Self::Reference(child) => child.node_span(),
+            Self::AnyTarget(child) => child.span(),
+            Self::OneAmong(child) => child.span(),
+            Self::PreviouslyMentionned(child) => child.span(),
+            Self::SelfReferencing(child) => child.span(),
+            Self::Reference(child) => child.span(),
         }
     }
 }
@@ -103,9 +105,11 @@ impl AbilityTreeNode for AnyTarget {
     fn node_tag(&self) -> &'static str {
         "any target"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for AnyTarget {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

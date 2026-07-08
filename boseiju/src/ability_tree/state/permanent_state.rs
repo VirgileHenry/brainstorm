@@ -53,13 +53,15 @@ impl AbilityTreeNode for PermanentState {
     fn node_tag(&self) -> &'static str {
         "permanent state"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PermanentState {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Tapped(child) => child.node_span(),
-            Self::Untapped(child) => child.node_span(),
-            Self::Targeted(child) => child.node_span(),
+            Self::Tapped(child) => child.span(),
+            Self::Untapped(child) => child.span(),
+            Self::Targeted(child) => child.span(),
         }
     }
 }

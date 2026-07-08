@@ -33,9 +33,11 @@ impl crate::ability_tree::AbilityTreeNode for DiscardKeywordAction {
     fn node_tag(&self) -> &'static str {
         "discard keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for DiscardKeywordAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

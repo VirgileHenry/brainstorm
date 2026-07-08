@@ -9,8 +9,8 @@ pub enum SpecialCost {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl SpecialCost {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for SpecialCost {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Paw { span } => *span,
         }

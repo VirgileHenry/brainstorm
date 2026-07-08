@@ -78,7 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             condition: Some(conditional::Conditional::If(conditional::ConditionalIf {
                                 condition: condition.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: condition.node_span().merge(if_span),
+                                span: condition.span().merge(if_span),
                             })),
                             #[cfg(feature = "spanned_tree")]
                             span: trigger_cond.span.merge(&ability.span),

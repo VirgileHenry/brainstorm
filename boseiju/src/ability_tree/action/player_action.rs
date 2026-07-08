@@ -45,12 +45,14 @@ impl crate::ability_tree::AbilityTreeNode for PlayerAction {
     fn node_tag(&self) -> &'static str {
         "player action"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PlayerAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Attacks(child) => child.node_span(),
-            Self::CastsSpell(child) => child.node_span(),
+            Self::Attacks(child) => child.span(),
+            Self::CastsSpell(child) => child.span(),
         }
     }
 }

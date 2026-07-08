@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     player: player.clone(),
                     permanent: permanent.clone(),
                     #[cfg(feature = "spanned_tree")]
-                    span: player.node_span().merge(&permanent.node_span()),
+                    span: player.span().merge(&permanent.span()),
                 }),
             }),
             _ => Err("Provided tokens do not match rule definition"),

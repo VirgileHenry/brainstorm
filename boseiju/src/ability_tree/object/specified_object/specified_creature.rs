@@ -20,7 +20,10 @@ pub struct SpecifiedCreature {
 impl SpecifiedCreature {
     pub fn add_factor_specifier(&self, factor_specifier: CreatureSpecifier) -> Self {
         #[cfg(feature = "spanned_tree")]
-        let factor_specifier_span = factor_specifier.node_span();
+        let factor_specifier_span = {
+            use crate::ability_tree::span::Spanned;
+            factor_specifier.span()
+        };
         match &self.specifiers {
             Some(prev_specifiers) => SpecifiedCreature {
                 kind: self.kind.clone(),
@@ -79,9 +82,11 @@ impl AbilityTreeNode for SpecifiedCreature {
     fn node_tag(&self) -> &'static str {
         "specified creature"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for SpecifiedCreature {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

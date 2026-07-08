@@ -45,13 +45,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 crate::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: condition.node_span().merge(if_span),
+                                    span: condition.span().merge(if_span),
                                 },
                             ),
                             condition_met_clause: imperatives.clone(),
                             cond_not_met_clause: None,
                             #[cfg(feature = "spanned_tree")]
-                            span: imperatives.node_span().merge(if_span),
+                            span: imperatives.span().merge(if_span),
                         },
                     ),
                 }),
@@ -109,13 +109,13 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 crate::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: condition.node_span().merge(if_span),
+                                    span: condition.span().merge(if_span),
                                 },
                             ),
                             condition_met_clause: imp2.clone(),
                             cond_not_met_clause: Some(imp1.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: imp1.node_span().merge(end_span),
+                            span: imp1.span().merge(end_span),
                         },
                     ),
                 }),

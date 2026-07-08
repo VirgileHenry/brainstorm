@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     kind: spell.clone(),
                     specifiers: Some(specifiers.clone()),
                     #[cfg(feature = "spanned_tree")]
-                    span: specifiers.node_span().merge(&spell.node_span()),
+                    span: specifiers.span().merge(&spell.span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

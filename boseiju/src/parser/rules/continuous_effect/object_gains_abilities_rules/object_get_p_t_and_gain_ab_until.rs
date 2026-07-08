@@ -61,19 +61,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     modifications.push(ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                         ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                         #[cfg(feature = "spanned_tree")]
-                                        span: gain_ab_span.merge(&ability.node_span()),
+                                        span: gain_ab_span.merge(&ability.span()),
                                     }));
                                     modifications
                                 },
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(&ability.node_span()),
+                                span: creature.span().merge(&ability.span()),
                             }),
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&ability.node_span()),
+                            span: creature.span().merge(&ability.span()),
                         },
                         duration: duration.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(&duration.node_span()),
+                        span: creature.span().merge(&duration.span()),
                     },
                 ),
             }),

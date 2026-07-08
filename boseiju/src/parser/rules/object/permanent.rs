@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         permanent: permanent.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&permanent.node_span()),
+                        span: count.span().merge(&permanent.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -45,11 +45,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     permanent: object::Permanent::Reference(object::reference::PermanentReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().empty_at_start(),
+                            span: permanent.span().empty_at_start(),
                         },
                         permanent: permanent.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span(),
+                        span: permanent.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -87,7 +87,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(another_span),
+                        span: permanent.span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -119,7 +119,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Permanent {
                     permanent: object::Permanent::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(start_span),
+                        span: permanent.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

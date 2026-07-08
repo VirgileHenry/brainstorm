@@ -32,7 +32,9 @@ impl AbilityTreeNode for ModalImperative {
     }
 
     fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
-        Some(crate::ability_tree::AbTreeNodeData::Boolean { value: self.can_choose_same_mode })
+        Some(crate::ability_tree::AbTreeNodeData::Boolean {
+            value: self.can_choose_same_mode,
+        })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -63,9 +65,11 @@ impl AbilityTreeNode for ModalImperative {
     fn node_tag(&self) -> &'static str {
         "modal imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ModalImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

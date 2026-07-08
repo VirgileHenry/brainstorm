@@ -37,9 +37,11 @@ impl crate::ability_tree::AbilityTreeNode for DrawImperative {
     fn node_tag(&self) -> &'static str {
         "draw imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for DrawImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

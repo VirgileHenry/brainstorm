@@ -55,12 +55,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                 counter.clone(),
                                             ),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: number.node_span().merge(&counter.span),
+                                            span: number.span().merge(&counter.span),
                                         });
                                         counters
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: span.merge(&permanent.node_span()),
+                                    span: span.merge(&permanent.span()),
                                 },
                             ),
                         }),
@@ -114,12 +114,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                 counter.clone(),
                                             ),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: number.node_span().merge(&counter.span),
+                                            span: number.span().merge(&counter.span),
                                         });
                                         counters
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: span.merge(&permanent.node_span()),
+                                    span: span.merge(&permanent.span()),
                                 },
                             ),
                         }),
@@ -184,12 +184,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     span: *counter_span,
                                 },
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(counter_span),
+                                span: number.span().merge(counter_span),
                             });
                             counters
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: remove_span.merge(&permanent.node_span()),
+                        span: remove_span.merge(&permanent.span()),
                     },
                 ),
             }),

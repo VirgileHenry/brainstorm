@@ -46,20 +46,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                             ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: span.merge(&ability.node_span()),
+                                            span: span.merge(&ability.span()),
                                         });
                                         modifications.push(gain_ab_mod);
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(&ability.node_span()),
+                                    span: permanent.span().merge(&ability.span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(&duration.node_span()),
+                                span: permanent.span().merge(&duration.span()),
                             },
                             duration: duration.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(&duration.node_span()),
+                            span: permanent.span().merge(&duration.span()),
                         },
                     ),
                 }),
@@ -98,23 +98,23 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                             ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: span.merge(&ability.node_span()),
+                                            span: span.merge(&ability.span()),
                                         });
                                         modifications.push(gain_ab_mod);
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(&ability.node_span()),
+                                    span: permanent.span().merge(&ability.span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(&ability.node_span()),
+                                span: permanent.span().merge(&ability.span()),
                             },
                             duration: crate::ability_tree::time::ForwardDuration::Forever {
                                 #[cfg(feature = "spanned_tree")]
-                                span: ability.node_span().empty_at_end(),
+                                span: ability.span().empty_at_end(),
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(&ability.node_span()),
+                            span: permanent.span().merge(&ability.span()),
                         },
                     ),
                 }),

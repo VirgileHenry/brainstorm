@@ -71,14 +71,6 @@ impl<T> Tensed<T> {
             token,
         }
     }
-
-    /// Get a reference on the inner token.
-    ///
-    /// This is mostly to access the span for now: perhaps spans shall be accessible through a trait ?
-    /// And we shall make a convenient method here to access it if the token implement the said trait ?
-    pub fn token(&self) -> &T {
-        &self.token
-    }
 }
 
 impl<T: idris::Idris> idris::Idris for Tensed<T> {
@@ -88,6 +80,13 @@ impl<T: idris::Idris> idris::Idris for Tensed<T> {
     }
     fn name_from_id(id: usize) -> &'static str {
         T::name_from_id(id / <Tense as idris::Idris>::COUNT)
+    }
+}
+
+#[cfg(feature = "spanned_tree")]
+impl<T: crate::ability_tree::span::Spanned> crate::ability_tree::span::Spanned for Tensed<T> {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.token.span()
     }
 }
 

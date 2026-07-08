@@ -37,11 +37,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 player: player.clone(),
                                 attacked_player: None,
                                 #[cfg(feature = "spanned_tree")]
-                                span: player.node_span().merge(end_span),
+                                span: player.span().merge(end_span),
                             },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(end_span),
+                        span: player.span().merge(end_span),
                     },
                 ),
             }),

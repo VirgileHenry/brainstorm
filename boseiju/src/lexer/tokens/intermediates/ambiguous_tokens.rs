@@ -89,8 +89,8 @@ pub enum AmbiguousToken {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl AmbiguousToken {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for AmbiguousToken {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Attack { span } => *span,
             Self::Chaos { span } => *span,

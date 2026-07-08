@@ -22,8 +22,8 @@ pub enum PartnerKind {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PartnerKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for PartnerKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::CharacterSelect { span } => *span,
             Self::FatherAndSon { span } => *span,

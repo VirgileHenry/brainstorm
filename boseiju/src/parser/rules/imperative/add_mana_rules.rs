@@ -35,7 +35,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::AddManaImperative {
                             possibilities: [mana.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: mana.node_span().merge(add_span),
+                            span: mana.span().merge(add_span),
                         },
                     ),
                 }),
@@ -74,7 +74,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::AddManaImperative {
                             possibilities: [m1.clone(), m2.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m2.node_span().merge(add_span),
+                            span: m2.span().merge(add_span),
                         },
                     ),
                 }),
@@ -127,7 +127,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::AddManaImperative {
                             possibilities: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m3.node_span().merge(add_span),
+                            span: m3.span().merge(add_span),
                         },
                     ),
                 }),
@@ -176,7 +176,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::ManaToAddOfAnyColor {
                             amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: number.node_span().merge(end_span),
+                            span: number.span().merge(end_span),
                         },
                     ),
                 }),
@@ -194,7 +194,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::ManaToAddSymbols {
                             symbols: [mana.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: mana.node_span(),
+                            span: mana.span(),
                         },
                     ),
                 }),
@@ -218,7 +218,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::ManaToAddSymbols {
                             symbols: [m1.clone(), m2.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m2.node_span()),
+                            span: m1.span().merge(&m2.span()),
                         },
                     ),
                 }),
@@ -244,7 +244,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::ManaToAddSymbols {
                             symbols: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m3.node_span()),
+                            span: m1.span().merge(&m3.span()),
                         },
                     ),
                 }),
@@ -272,7 +272,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::imperative::ManaToAddSymbols {
                             symbols: [m1.clone(), m2.clone(), m3.clone(), m4.clone()].into_iter().collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m4.node_span()),
+                            span: m1.span().merge(&m4.span()),
                         },
                     ),
                 }),
@@ -304,7 +304,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 .into_iter()
                                 .collect(),
                             #[cfg(feature = "spanned_tree")]
-                            span: m1.node_span().merge(&m5.node_span()),
+                            span: m1.span().merge(&m5.span()),
                         },
                     ),
                 }),

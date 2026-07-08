@@ -27,6 +27,7 @@ impl Permanent {
         use crate::ability_tree::object::kind::CardKind;
         use crate::ability_tree::object::reference::CardReference;
         use crate::ability_tree::object::specified_object::SpecifiedCard;
+        use crate::ability_tree::span::Spanned;
 
         match self {
             Self::Attached(attached) => Card::Attached(attached.clone()),
@@ -43,10 +44,10 @@ impl Permanent {
                     kind: CardKind::Permanent(reference.permanent.clone()),
                     specifiers: None,
                     #[cfg(feature = "spanned_tree")]
-                    span: reference.permanent.node_span(),
+                    span: reference.permanent.span(),
                 },
                 #[cfg(feature = "spanned_tree")]
-                span: reference.node_span(),
+                span: reference.span(),
             }),
         }
     }
@@ -88,15 +89,17 @@ impl crate::ability_tree::AbilityTreeNode for Permanent {
     fn node_tag(&self) -> &'static str {
         "permanent"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Permanent {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Attached(child) => child.node_span(),
-            Self::OneAmong(child) => child.node_span(),
-            Self::PreviouslyMentionned(child) => child.node_span(),
-            Self::SelfReferencing(child) => child.node_span(),
-            Self::Reference(child) => child.node_span(),
+            Self::Attached(child) => child.span(),
+            Self::OneAmong(child) => child.span(),
+            Self::PreviouslyMentionned(child) => child.span(),
+            Self::SelfReferencing(child) => child.span(),
+            Self::Reference(child) => child.span(),
         }
     }
 }

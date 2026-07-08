@@ -39,17 +39,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::keyword_ability::BushidoKeywordAbility {
                             amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: number.node_span().merge(bushido_span),
+                            span: number.span().merge(bushido_span),
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(crate::ability_tree::ability::spell::SpellAbility {
-                        effects: crate::utils::HeapArrayVec::new(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
-                    }),
+                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
+                        crate::ability_tree::ability::spell::SpellAbility {
+                            effects: crate::utils::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                    ),
                     #[cfg(feature = "spanned_tree")]
-                    span: number.node_span().merge(bushido_span),
+                    span: number.span().merge(bushido_span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

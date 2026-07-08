@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::plot::PlotKeywordAction {
                                 cost: cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: cost.node_span().merge(plot_span),
+                                span: cost.span().merge(plot_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::plot::ability(
                             cost,
                             #[cfg(feature = "spanned_tree")]
-                            cost.node_span().merge(plot_span),
+                            cost.span().merge(plot_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: cost.node_span().merge(plot_span),
+                        span: cost.span().merge(plot_span),
                     },
                 ),
             }),

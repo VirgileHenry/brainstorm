@@ -26,7 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         land: land.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&land.node_span()),
+                        span: count.span().merge(&land.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -42,11 +42,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     land: object::Land::Reference(object::reference::LandReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: land.node_span().empty_at_start(),
+                            span: land.span().empty_at_start(),
                         },
                         land: land.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: land.node_span(),
+                        span: land.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -84,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: land.node_span().merge(another_span),
+                        span: land.span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -116,7 +116,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Land {
                     land: object::Land::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: land.node_span().merge(start_span),
+                        span: land.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

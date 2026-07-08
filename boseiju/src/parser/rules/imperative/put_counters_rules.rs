@@ -51,12 +51,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     amount: number.clone(),
                                     counter: crate::ability_tree::imperative::CounterKind::NewCounter(counter.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: number.node_span().merge(&counter.span),
+                                    span: number.span().merge(&counter.span),
                                 });
                                 counters
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: span.merge(&permanent.node_span()),
+                            span: span.merge(&permanent.span()),
                         },
                     ),
                 }),

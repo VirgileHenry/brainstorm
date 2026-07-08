@@ -22,8 +22,8 @@ pub enum PlayerSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
     },
-    ObjectController(PlayerSpecifierObjectController),
-    ObjectOwner(PlayerSpecifierObjectOwner),
+    ObjectController(ObjectController),
+    ObjectOwner(ObjectOwner),
     PerviouslyMentionnedPlayer {
         #[cfg(feature = "spanned_tree")]
         span: crate::ability_tree::span::TreeSpan,
@@ -98,9 +98,11 @@ impl AbilityTreeNode for PlayerSpecifier {
     fn node_tag(&self) -> &'static str {
         "player specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PlayerSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::All { span } => *span,
             Self::AnOpponent { span } => *span,
@@ -129,13 +131,13 @@ impl crate::utils::DummyInit for PlayerSpecifier {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PlayerSpecifierObjectController {
+pub struct ObjectController {
     pub object: Box<crate::ability_tree::object::Permanent>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl AbilityTreeNode for PlayerSpecifierObjectController {
+impl AbilityTreeNode for ObjectController {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::PlayerSpecifierObjectController.id()
@@ -159,14 +161,16 @@ impl AbilityTreeNode for PlayerSpecifierObjectController {
     fn node_tag(&self) -> &'static str {
         "object's controller"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ObjectController {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
 
-impl idris::Idris for PlayerSpecifierObjectController {
+impl idris::Idris for ObjectController {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
@@ -177,7 +181,7 @@ impl idris::Idris for PlayerSpecifierObjectController {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for PlayerSpecifierObjectController {
+impl crate::utils::DummyInit for ObjectController {
     fn dummy_init() -> Self {
         Self {
             object: Box::new(crate::utils::dummy()),
@@ -189,13 +193,13 @@ impl crate::utils::DummyInit for PlayerSpecifierObjectController {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PlayerSpecifierObjectOwner {
+pub struct ObjectOwner {
     pub object: Box<crate::ability_tree::object::Card>,
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl AbilityTreeNode for PlayerSpecifierObjectOwner {
+impl AbilityTreeNode for ObjectOwner {
     fn node_id(&self) -> usize {
         use idris::Idris;
         crate::ability_tree::NodeKind::PlayerSpecifierObjectOwner.id()
@@ -219,14 +223,16 @@ impl AbilityTreeNode for PlayerSpecifierObjectOwner {
     fn node_tag(&self) -> &'static str {
         "object's owner"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ObjectOwner {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
 
-impl idris::Idris for PlayerSpecifierObjectOwner {
+impl idris::Idris for ObjectOwner {
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
@@ -237,7 +243,7 @@ impl idris::Idris for PlayerSpecifierObjectOwner {
 }
 
 #[cfg(feature = "parser")]
-impl crate::utils::DummyInit for PlayerSpecifierObjectOwner {
+impl crate::utils::DummyInit for ObjectOwner {
     fn dummy_init() -> Self {
         Self {
             object: Box::new(crate::utils::dummy()),

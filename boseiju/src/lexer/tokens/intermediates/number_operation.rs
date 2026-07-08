@@ -97,8 +97,8 @@ pub enum NumberOperation {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl NumberOperation {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for NumberOperation {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Above { span } => *span,
             Self::Below { span } => *span,

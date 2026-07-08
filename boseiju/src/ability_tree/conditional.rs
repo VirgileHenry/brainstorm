@@ -55,12 +55,14 @@ impl AbilityTreeNode for Conditional {
     fn node_tag(&self) -> &'static str {
         "conditional"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Conditional {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::If(child) => child.node_span(),
-            Self::Unless(child) => child.node_span(),
+            Self::If(child) => child.span(),
+            Self::Unless(child) => child.span(),
         }
     }
 }
@@ -105,9 +107,11 @@ impl AbilityTreeNode for ConditionalIf {
     fn node_tag(&self) -> &'static str {
         "if condition"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ConditionalIf {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -156,9 +160,11 @@ impl AbilityTreeNode for ConditionalUnless {
     fn node_tag(&self) -> &'static str {
         "unless condition"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ConditionalUnless {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -221,15 +227,17 @@ impl AbilityTreeNode for Condition {
     fn node_tag(&self) -> &'static str {
         "condition"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Condition {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::EventOccured(child) => child.node_span(),
-            Self::ObjectMatchSpecifiers(child) => child.node_span(),
-            Self::PlayerControlsObject(child) => child.node_span(),
-            Self::StackObjectHasState(child) => child.node_span(),
-            Self::ThisIsYourTurn(child) => child.node_span(),
+            Self::EventOccured(child) => child.span(),
+            Self::ObjectMatchSpecifiers(child) => child.span(),
+            Self::PlayerControlsObject(child) => child.span(),
+            Self::StackObjectHasState(child) => child.span(),
+            Self::ThisIsYourTurn(child) => child.span(),
         }
     }
 }

@@ -225,47 +225,49 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAbility {
     fn node_tag(&self) -> &'static str {
         "keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ExpandedKeywordAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Affinity(child) => child.node_span(),
-            Self::Afterlife(child) => child.node_span(),
-            Self::Annihilator(child) => child.node_span(),
-            Self::Backup(child) => child.node_span(),
-            Self::Bestow(child) => child.node_span(),
-            Self::Blitz(child) => child.node_span(),
-            Self::Bloodthirst(child) => child.node_span(),
-            Self::Bushido(child) => child.node_span(),
-            Self::Cleave(child) => child.node_span(),
-            Self::Crew(child) => child.node_span(),
-            Self::CumulativeUpkeep(child) => child.node_span(),
-            Self::Cycling(child) => child.node_span(),
-            Self::Dash(child) => child.node_span(),
-            Self::Disguise(child) => child.node_span(),
-            Self::Echo(child) => child.node_span(),
-            Self::Enchant(child) => child.node_span(),
-            Self::Equip(child) => child.node_span(),
-            Self::Fabricate(child) => child.node_span(),
-            Self::Flashback(child) => child.node_span(),
-            Self::Freerunning(child) => child.node_span(),
-            Self::Kicker(child) => child.node_span(),
-            Self::Megamorph(child) => child.node_span(),
-            Self::Morph(child) => child.node_span(),
-            Self::Ninjutsu(child) => child.node_span(),
-            Self::Outlast(child) => child.node_span(),
-            Self::Prototype(child) => child.node_span(),
-            Self::Rampage(child) => child.node_span(),
-            Self::Reinforce(child) => child.node_span(),
-            Self::Reconfigure(child) => child.node_span(),
-            Self::Renown(child) => child.node_span(),
-            Self::Ripple(child) => child.node_span(),
-            Self::Standalone(child) => child.node_span(),
-            Self::Surge(child) => child.node_span(),
-            Self::Suspend(child) => child.node_span(),
-            Self::Vanishing(child) => child.node_span(),
-            Self::Ward(child) => child.node_span(),
-            Self::Warp(child) => child.node_span(),
+            Self::Affinity(child) => child.span(),
+            Self::Afterlife(child) => child.span(),
+            Self::Annihilator(child) => child.span(),
+            Self::Backup(child) => child.span(),
+            Self::Bestow(child) => child.span(),
+            Self::Blitz(child) => child.span(),
+            Self::Bloodthirst(child) => child.span(),
+            Self::Bushido(child) => child.span(),
+            Self::Cleave(child) => child.span(),
+            Self::Crew(child) => child.span(),
+            Self::CumulativeUpkeep(child) => child.span(),
+            Self::Cycling(child) => child.span(),
+            Self::Dash(child) => child.span(),
+            Self::Disguise(child) => child.span(),
+            Self::Echo(child) => child.span(),
+            Self::Enchant(child) => child.span(),
+            Self::Equip(child) => child.span(),
+            Self::Fabricate(child) => child.span(),
+            Self::Flashback(child) => child.span(),
+            Self::Freerunning(child) => child.span(),
+            Self::Kicker(child) => child.span(),
+            Self::Megamorph(child) => child.span(),
+            Self::Morph(child) => child.span(),
+            Self::Ninjutsu(child) => child.span(),
+            Self::Outlast(child) => child.span(),
+            Self::Prototype(child) => child.span(),
+            Self::Rampage(child) => child.span(),
+            Self::Reinforce(child) => child.span(),
+            Self::Reconfigure(child) => child.span(),
+            Self::Renown(child) => child.span(),
+            Self::Ripple(child) => child.span(),
+            Self::Standalone(child) => child.span(),
+            Self::Surge(child) => child.span(),
+            Self::Suspend(child) => child.span(),
+            Self::Vanishing(child) => child.span(),
+            Self::Ward(child) => child.span(),
+            Self::Warp(child) => child.span(),
         }
     }
 }
@@ -309,9 +311,11 @@ impl AbilityTreeNode for StandaloneKeywordAbility {
     fn node_tag(&self) -> &'static str {
         "standalone keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for StandaloneKeywordAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

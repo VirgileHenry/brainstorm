@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             specifier: specifier.clone(),
                             shall_match: true,
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&specifier.node_span()),
+                            span: creature.span().merge(&specifier.span()),
                         },
                     ),
                 }),
@@ -80,7 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             specifier: specifier.clone(),
                             shall_match: true,
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&specifier.node_span()),
+                            span: creature.span().merge(&specifier.span()),
                         },
                     ),
                 }),

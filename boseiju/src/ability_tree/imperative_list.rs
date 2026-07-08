@@ -47,9 +47,11 @@ impl AbilityTreeNode for ImperativeList {
     fn node_tag(&self) -> &'static str {
         "imperative list"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ImperativeList {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

@@ -42,11 +42,13 @@ impl AbilityTreeNode for ReplacementEffect {
     fn node_tag(&self) -> &'static str {
         "replacement event"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ReplacementEffect {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Etb(child) => child.node_span(),
+            Self::Etb(child) => child.span(),
         }
     }
 }

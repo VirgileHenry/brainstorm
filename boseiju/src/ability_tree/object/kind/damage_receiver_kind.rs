@@ -51,14 +51,16 @@ impl crate::ability_tree::AbilityTreeNode for DamageReceiverKind {
     fn node_tag(&self) -> &'static str {
         "damage receiver reference"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for DamageReceiverKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Creature(child) => child.node_span(),
-            Self::OneAmong(child) => child.node_span(),
-            Self::Planeswalker(child) => child.node_span(),
-            Self::Player(child) => child.node_span(),
+            Self::Creature(child) => child.span(),
+            Self::OneAmong(child) => child.span(),
+            Self::Planeswalker(child) => child.span(),
+            Self::Player(child) => child.span(),
         }
     }
 }

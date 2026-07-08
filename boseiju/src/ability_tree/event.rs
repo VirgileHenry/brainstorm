@@ -63,14 +63,16 @@ impl crate::ability_tree::AbilityTreeNode for Event {
     fn node_tag(&self) -> &'static str {
         "event"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Event {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::CreaturePerformsAction(child) => child.node_span(),
-            Self::ObjectGainsState(child) => child.node_span(),
-            Self::PermanentPerformsAction(child) => child.node_span(),
-            Self::PlayerPerformsAction(child) => child.node_span(),
+            Self::CreaturePerformsAction(child) => child.span(),
+            Self::ObjectGainsState(child) => child.span(),
+            Self::PermanentPerformsAction(child) => child.span(),
+            Self::PlayerPerformsAction(child) => child.span(),
         }
     }
 }

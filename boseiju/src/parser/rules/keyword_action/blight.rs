@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::blight::BlightKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(blight_span),
+                                span: number.span().merge(blight_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::blight::ability(
                             number,
                             #[cfg(feature = "spanned_tree")]
-                            number.node_span().merge(blight_span),
+                            number.span().merge(blight_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: number.node_span().merge(blight_span),
+                        span: number.span().merge(blight_span),
                     },
                 ),
             }),

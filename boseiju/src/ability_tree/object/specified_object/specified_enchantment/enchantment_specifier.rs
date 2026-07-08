@@ -55,15 +55,17 @@ impl crate::ability_tree::AbilityTreeNode for EnchantmentSpecifier {
     fn node_tag(&self) -> &'static str {
         "enchantment specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for EnchantmentSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Another(child) => child.node_span(),
-            Self::Color(child) => child.node_span(),
-            Self::Control(child) => child.node_span(),
-            Self::Owner(child) => child.node_span(),
-            Self::Subtype(child) => child.node_span(),
+            Self::Another(child) => child.span(),
+            Self::Color(child) => child.span(),
+            Self::Control(child) => child.span(),
+            Self::Owner(child) => child.span(),
+            Self::Subtype(child) => child.span(),
         }
     }
 }
@@ -108,10 +110,12 @@ impl crate::ability_tree::AbilityTreeNode for EnchantmentSubtypeSpecifier {
     fn node_tag(&self) -> &'static str {
         "Enchantment specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        self.subtype.node_span()
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for EnchantmentSubtypeSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.subtype.span()
     }
 }
 

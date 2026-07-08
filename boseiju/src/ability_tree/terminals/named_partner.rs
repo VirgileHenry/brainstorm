@@ -244,9 +244,11 @@ impl AbilityTreeNode for NamedPartner {
     fn node_tag(&self) -> &'static str {
         "named Partners"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for NamedPartner {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AlisaieLeveilleur { span } => *span,
             Self::AlphinaudLeveilleur { span } => *span,

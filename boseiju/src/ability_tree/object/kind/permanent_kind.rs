@@ -73,16 +73,18 @@ impl crate::ability_tree::AbilityTreeNode for PermanentKind {
     fn node_tag(&self) -> &'static str {
         "permanent reference"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PermanentKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Artifact(child) => child.node_span(),
-            Self::Creature(child) => child.node_span(),
-            Self::Enchantment(child) => child.node_span(),
-            Self::Land(child) => child.node_span(),
-            Self::OneAmong(child) => child.node_span(),
-            Self::Planeswalker(child) => child.node_span(),
+            Self::Artifact(child) => child.span(),
+            Self::Creature(child) => child.span(),
+            Self::Enchantment(child) => child.span(),
+            Self::Land(child) => child.span(),
+            Self::OneAmong(child) => child.span(),
+            Self::Planeswalker(child) => child.span(),
             Self::Permanent { span } => *span,
         }
     }

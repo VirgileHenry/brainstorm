@@ -49,9 +49,11 @@ impl crate::ability_tree::AbilityTreeNode for CreatureKind {
     fn node_tag(&self) -> &'static str {
         "creature kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CreatureKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Creature { span } => *span,
         }

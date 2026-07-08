@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             word: ability_word.clone(),
                             ability: ability.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: ability_word.node_span().merge(&ability.node_span()),
+                            span: ability_word.span().merge(&ability.span()),
                         },
                     ),
                 }),

@@ -22,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     kind: land.clone(),
                     specifiers: None,
                     #[cfg(feature = "spanned_tree")]
-                    span: land.node_span(),
+                    span: land.span(),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),
@@ -39,17 +39,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 land: object::specified_object::SpecifiedLand {
                     kind: object::kind::LandKind::Land {
                         #[cfg(feature = "spanned_tree")]
-                        span: subtype.node_span(),
+                        span: subtype.span(),
                     },
                     specifiers: Some(object::specified_object::Specifiers::Single(
                         object::specified_object::LandSpecifier::Subtype(object::specified_object::LandSubtypeSpecifier {
                             subtype: subtype.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: subtype.node_span(),
+                            span: subtype.span(),
                         }),
                     )),
                     #[cfg(feature = "spanned_tree")]
-                    span: subtype.node_span(),
+                    span: subtype.span(),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

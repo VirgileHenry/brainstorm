@@ -14,8 +14,8 @@ pub enum CardFace {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl CardFace {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for CardFace {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::FaceDown { span } => *span,
             Self::FaceUp { span } => *span,

@@ -26,7 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         spell: spell.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&spell.node_span()),
+                        span: count.span().merge(&spell.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: spell.node_span().merge(another_span),
+                        span: spell.span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -80,11 +80,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     spell: object::Spell::Reference(object::reference::SpellReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: spell.node_span().empty_at_start(),
+                            span: spell.span().empty_at_start(),
                         },
                         spell: spell.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: spell.node_span(),
+                        span: spell.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -116,7 +116,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Spell {
                     spell: object::Spell::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: spell.node_span().merge(start_span),
+                        span: spell.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

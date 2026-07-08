@@ -42,9 +42,11 @@ impl AbilityTreeNode for CreateTokenImperative {
     fn node_tag(&self) -> &'static str {
         "create tokens imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CreateTokenImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -105,9 +107,11 @@ impl AbilityTreeNode for TokenCreation {
     fn node_tag(&self) -> &'static str {
         "token creation"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for TokenCreation {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -163,12 +167,14 @@ impl AbilityTreeNode for CreatedTokenKind {
     fn node_tag(&self) -> &'static str {
         "token kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CreatedTokenKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::PreviouslyMentionnedToken { span } => *span,
-            Self::NewToken(child) => child.node_span(),
+            Self::NewToken(child) => child.span(),
         }
     }
 }

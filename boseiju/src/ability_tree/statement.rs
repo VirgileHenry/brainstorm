@@ -43,13 +43,15 @@ impl crate::ability_tree::AbilityTreeNode for Statement {
     fn node_tag(&self) -> &'static str {
         "statement"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Statement {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Imperatives(child) => child.node_span(),
-            Self::May(child) => child.node_span(),
-            Self::ConditionalImperative(child) => child.node_span(),
+            Self::Imperatives(child) => child.span(),
+            Self::May(child) => child.span(),
+            Self::ConditionalImperative(child) => child.span(),
         }
     }
 }
@@ -124,9 +126,11 @@ impl crate::ability_tree::AbilityTreeNode for MayAbility {
     fn node_tag(&self) -> &'static str {
         "may ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for MayAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -209,9 +213,11 @@ impl crate::ability_tree::AbilityTreeNode for ConditionalImperative {
     fn node_tag(&self) -> &'static str {
         "conditional imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ConditionalImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

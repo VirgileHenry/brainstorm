@@ -55,14 +55,16 @@ impl crate::ability_tree::AbilityTreeNode for CreatureAction {
     fn node_tag(&self) -> &'static str {
         "creature action"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CreatureAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Attacks(child) => child.node_span(),
-            Self::Blocks(child) => child.node_span(),
-            Self::DealsDamage(child) => child.node_span(),
-            Self::Dies(child) => child.node_span(),
+            Self::Attacks(child) => child.span(),
+            Self::Blocks(child) => child.span(),
+            Self::DealsDamage(child) => child.span(),
+            Self::Dies(child) => child.span(),
         }
     }
 }

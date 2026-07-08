@@ -19,7 +19,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
                             #[cfg(feature = "spanned_tree")]
-                            span: statement.node_span(),
+                            span: statement.span(),
                         }
                     },
                 }),
@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::spell::SpellAbility {
                             effects: ability.effects.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: ability.node_span(),
+                            span: ability.span(),
                         },
                     ),
                 }),

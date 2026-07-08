@@ -34,8 +34,8 @@ pub enum CoinFlip {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl CoinFlip {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for CoinFlip {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Coin { span } => *span,
             Self::ComeUpHead { span } => *span,

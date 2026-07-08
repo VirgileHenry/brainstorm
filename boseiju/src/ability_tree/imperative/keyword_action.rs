@@ -1,4 +1,4 @@
-mod keyword_to_abilities;
+// mod keyword_to_abilities;
 
 pub mod activate;
 pub mod adapt;
@@ -51,7 +51,7 @@ pub mod untap;
 pub mod vote;
 pub mod waterbend;
 
-pub use keyword_to_abilities::keyword_action_to_abilities;
+// pub use keyword_to_abilities::keyword_action_to_abilities;
 
 use crate::ability_tree::AbilityTreeNode;
 use crate::ability_tree::MAX_CHILDREN_PER_NODE;
@@ -101,9 +101,11 @@ impl AbilityTreeNode for KeywordAction {
     fn node_tag(&self) -> &'static str {
         "keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for KeywordAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -295,55 +297,57 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedKeywordAction {
     fn node_tag(&self) -> &'static str {
         "keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ExpandedKeywordAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Adapt(child) => child.node_span(),
-            Self::Airbend(child) => child.node_span(),
-            Self::Amass(child) => child.node_span(),
-            Self::Attach(child) => child.node_span(),
-            Self::Behold(child) => child.node_span(),
-            Self::Blight(child) => child.node_span(),
-            Self::Bolster(child) => child.node_span(),
-            Self::Cast(child) => child.node_span(),
-            Self::Clash(child) => child.node_span(),
-            Self::Cloak(child) => child.node_span(),
-            Self::CollectEvidence(child) => child.node_span(),
-            Self::Connive(child) => child.node_span(),
-            Self::Convert(child) => child.node_span(),
-            Self::Counter(child) => child.node_span(),
-            Self::Create(child) => child.node_span(),
-            Self::Destroy(child) => child.node_span(),
-            Self::Detain(child) => child.node_span(),
-            Self::Discard(child) => child.node_span(),
-            Self::Discover(child) => child.node_span(),
-            Self::Earthbend(child) => child.node_span(),
-            Self::Endure(child) => child.node_span(),
-            Self::Exert(child) => child.node_span(),
-            Self::Exile(child) => child.node_span(),
-            Self::Explore(child) => child.node_span(),
-            Self::Fateseal(child) => child.node_span(),
-            Self::Goad(child) => child.node_span(),
-            Self::Incubate(child) => child.node_span(),
-            Self::Manifest(child) => child.node_span(),
-            Self::Mill(child) => child.node_span(),
-            Self::Monstrosity(child) => child.node_span(),
-            Self::Play(child) => child.node_span(),
-            Self::Plot(child) => child.node_span(),
-            Self::Regenerate(child) => child.node_span(),
-            Self::Reveal(child) => child.node_span(),
-            Self::Sacrifice(child) => child.node_span(),
-            Self::Scry(child) => child.node_span(),
-            Self::Search(child) => child.node_span(),
-            Self::Standalone(child) => child.node_span(),
-            Self::Support(child) => child.node_span(),
-            Self::Surveil(child) => child.node_span(),
-            Self::Suspect(child) => child.node_span(),
-            Self::Tap(child) => child.node_span(),
-            Self::Transform(child) => child.node_span(),
-            Self::Untap(child) => child.node_span(),
-            Self::Waterbend(child) => child.node_span(),
+            Self::Adapt(child) => child.span(),
+            Self::Airbend(child) => child.span(),
+            Self::Amass(child) => child.span(),
+            Self::Attach(child) => child.span(),
+            Self::Behold(child) => child.span(),
+            Self::Blight(child) => child.span(),
+            Self::Bolster(child) => child.span(),
+            Self::Cast(child) => child.span(),
+            Self::Clash(child) => child.span(),
+            Self::Cloak(child) => child.span(),
+            Self::CollectEvidence(child) => child.span(),
+            Self::Connive(child) => child.span(),
+            Self::Convert(child) => child.span(),
+            Self::Counter(child) => child.span(),
+            Self::Create(child) => child.span(),
+            Self::Destroy(child) => child.span(),
+            Self::Detain(child) => child.span(),
+            Self::Discard(child) => child.span(),
+            Self::Discover(child) => child.span(),
+            Self::Earthbend(child) => child.span(),
+            Self::Endure(child) => child.span(),
+            Self::Exert(child) => child.span(),
+            Self::Exile(child) => child.span(),
+            Self::Explore(child) => child.span(),
+            Self::Fateseal(child) => child.span(),
+            Self::Goad(child) => child.span(),
+            Self::Incubate(child) => child.span(),
+            Self::Manifest(child) => child.span(),
+            Self::Mill(child) => child.span(),
+            Self::Monstrosity(child) => child.span(),
+            Self::Play(child) => child.span(),
+            Self::Plot(child) => child.span(),
+            Self::Regenerate(child) => child.span(),
+            Self::Reveal(child) => child.span(),
+            Self::Sacrifice(child) => child.span(),
+            Self::Scry(child) => child.span(),
+            Self::Search(child) => child.span(),
+            Self::Standalone(child) => child.span(),
+            Self::Support(child) => child.span(),
+            Self::Surveil(child) => child.span(),
+            Self::Suspect(child) => child.span(),
+            Self::Tap(child) => child.span(),
+            Self::Transform(child) => child.span(),
+            Self::Untap(child) => child.span(),
+            Self::Waterbend(child) => child.span(),
         }
     }
 }
@@ -387,9 +391,11 @@ impl AbilityTreeNode for StandaloneKeywordAction {
     fn node_tag(&self) -> &'static str {
         "standalone keyword ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for StandaloneKeywordAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

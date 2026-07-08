@@ -95,8 +95,8 @@ pub enum CardProperty {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl CardProperty {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for CardProperty {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::BasePower { span } => *span,
             Self::BasePowerAndToughness { span } => *span,

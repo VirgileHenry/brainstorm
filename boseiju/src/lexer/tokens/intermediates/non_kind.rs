@@ -69,8 +69,8 @@ pub enum NonKind {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl NonKind {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for NonKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::NonBlack { span } => *span,
             Self::NonBlue { span } => *span,

@@ -45,10 +45,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 instant: instant.clone(),
                                 effect: ability.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: ability.node_span().merge(at_span),
+                                span: ability.span().merge(at_span),
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: ability.node_span().merge(at_span),
+                            span: ability.span().merge(at_span),
                         },
                     ),
                 }),

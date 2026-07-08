@@ -1,4 +1,5 @@
 mod add_mana_imperative;
+mod change_zone_imperative;
 mod create_token_imperative;
 mod deals_damage_imperative;
 mod destroy_imperative;
@@ -15,13 +16,13 @@ mod pay_life_imperative;
 mod pay_mana_imperative;
 mod put_counters_imperative;
 mod remove_counters_imperative;
-mod return_imperative;
 mod sacrifice_imperative;
 mod search_imperative;
 mod tap_imperative;
 mod untap_imperative;
 
 pub use add_mana_imperative::*;
+pub use change_zone_imperative::*;
 pub use create_token_imperative::*;
 pub use deals_damage_imperative::*;
 pub use destroy_imperative::*;
@@ -38,7 +39,6 @@ pub use pay_life_imperative::*;
 pub use pay_mana_imperative::*;
 pub use put_counters_imperative::*;
 pub use remove_counters_imperative::*;
-pub use return_imperative::*;
 pub use sacrifice_imperative::*;
 pub use search_imperative::*;
 pub use tap_imperative::*;
@@ -95,9 +95,11 @@ impl AbilityTreeNode for Imperative {
     fn node_tag(&self) -> &'static str {
         "imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Imperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -196,25 +198,27 @@ impl AbilityTreeNode for ImperativeKind {
     fn node_tag(&self) -> &'static str {
         "imperative kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ImperativeKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::AddMana(child) => child.node_span(),
-            Self::ChangeZone(child) => child.node_span(),
-            Self::DealsDamage(child) => child.node_span(),
-            Self::Draw(child) => child.node_span(),
-            Self::ForEach(child) => child.node_span(),
-            Self::GainLife(child) => child.node_span(),
-            Self::GenerateContinuousEffect(child) => child.node_span(),
-            Self::GenerateDelayedTriggeredAbility(child) => child.node_span(),
-            Self::KeywordAction(child) => child.node_span(),
-            Self::LoseLife(child) => child.node_span(),
-            Self::Modal(child) => child.node_span(),
-            Self::PayLife(child) => child.node_span(),
-            Self::PayMana(child) => child.node_span(),
-            Self::PutCounters(child) => child.node_span(),
-            Self::RemoveCounters(child) => child.node_span(),
+            Self::AddMana(child) => child.span(),
+            Self::ChangeZone(child) => child.span(),
+            Self::DealsDamage(child) => child.span(),
+            Self::Draw(child) => child.span(),
+            Self::ForEach(child) => child.span(),
+            Self::GainLife(child) => child.span(),
+            Self::GenerateContinuousEffect(child) => child.span(),
+            Self::GenerateDelayedTriggeredAbility(child) => child.span(),
+            Self::KeywordAction(child) => child.span(),
+            Self::LoseLife(child) => child.span(),
+            Self::Modal(child) => child.span(),
+            Self::PayLife(child) => child.span(),
+            Self::PayMana(child) => child.span(),
+            Self::PutCounters(child) => child.span(),
+            Self::RemoveCounters(child) => child.span(),
         }
     }
 }

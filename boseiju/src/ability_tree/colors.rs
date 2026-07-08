@@ -109,9 +109,11 @@ impl AbilityTreeNode for Colors {
     fn node_tag(&self) -> &'static str {
         "colors"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> super::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Colors {
+    fn span(&self) -> super::span::TreeSpan {
         self.span
     }
 }

@@ -49,15 +49,17 @@ impl AbilityTreeNode for PowerToughnessModifiers {
     fn node_tag(&self) -> &'static str {
         "power / toughness modifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PowerToughnessModifiers {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::MinusMinus(child) => child.node_span(),
-            Self::MinusPlus(child) => child.node_span(),
-            Self::PlusMinus(child) => child.node_span(),
-            Self::PlusPlus(child) => child.node_span(),
-            Self::Set(child) => child.node_span(),
+            Self::MinusMinus(child) => child.span(),
+            Self::MinusPlus(child) => child.span(),
+            Self::PlusMinus(child) => child.span(),
+            Self::PlusPlus(child) => child.span(),
+            Self::Set(child) => child.span(),
         }
     }
 }
@@ -114,9 +116,11 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusPlus {
     fn node_tag(&self) -> &'static str {
         "+/+ modifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PowerToughnessModifiersPlusPlus {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -188,9 +192,11 @@ impl AbilityTreeNode for PowerToughnessModifiersPlusMinus {
     fn node_tag(&self) -> &'static str {
         "+/- modifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PowerToughnessModifiersPlusMinus {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -262,9 +268,11 @@ impl AbilityTreeNode for PowerToughnessModifiersMinusMinus {
     fn node_tag(&self) -> &'static str {
         "-/- modifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PowerToughnessModifiersMinusMinus {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -336,9 +344,11 @@ impl AbilityTreeNode for PowerToughnessModifiersMinusPlus {
     fn node_tag(&self) -> &'static str {
         "-/+ modifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PowerToughnessModifiersMinusPlus {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -408,9 +418,11 @@ impl AbilityTreeNode for PowerToughnessModifiersSet {
     fn node_tag(&self) -> &'static str {
         "set to value p/t modifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PowerToughnessModifiersSet {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

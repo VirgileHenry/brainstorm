@@ -58,9 +58,11 @@ impl AbilityTreeNode for ModifyObjectEffect {
     fn node_tag(&self) -> &'static str {
         "modify object effect"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ModifyObjectEffect {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -117,12 +119,14 @@ impl AbilityTreeNode for ObjectAbilitiesModification {
     fn node_tag(&self) -> &'static str {
         "object modification"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ObjectAbilitiesModification {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::CharacteristicModification(child) => child.node_span(),
-            Self::GainAbility(child) => child.node_span(),
+            Self::CharacteristicModification(child) => child.span(),
+            Self::GainAbility(child) => child.span(),
         }
     }
 }
@@ -167,9 +171,11 @@ impl AbilityTreeNode for ObjectGainAbility {
     fn node_tag(&self) -> &'static str {
         "object gain ability modification"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ObjectGainAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

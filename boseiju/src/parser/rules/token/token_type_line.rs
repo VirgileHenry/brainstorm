@@ -65,7 +65,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     type_line: crate::ability_tree::type_line::TypeLine::creature_token(
                         &[subtype.creature_subtype],
                         #[cfg(feature = "spanned_tree")]
-                        subtype.node_span().merge(token_span),
+                        subtype.span().merge(token_span),
                     ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

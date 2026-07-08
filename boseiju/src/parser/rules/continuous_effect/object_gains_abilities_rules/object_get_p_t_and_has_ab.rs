@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let gain_ab_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: crate::AbilityTree::from_single_ability(ability.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: gain_ab_span.merge(&ability.node_span()),
+                                    span: gain_ab_span.merge(&ability.span()),
                                 });
 
                                 modifications.push(characteristic_mod);
@@ -67,10 +67,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&ability.node_span()),
+                            span: creature.span().merge(&ability.span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(&ability.node_span()),
+                        span: creature.span().merge(&ability.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -131,12 +131,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 let gain_ab1_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: crate::AbilityTree::from_single_ability(ability_1.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: ab1_span.merge(&ability_1.node_span()),
+                                    span: ab1_span.merge(&ability_1.span()),
                                 });
                                 let gain_ab2_mod = ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
                                     ability: crate::AbilityTree::from_single_ability(ability_2.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: ability_2.node_span(),
+                                    span: ability_2.span(),
                                 });
 
                                 modifications.push(characteristic_mod);
@@ -145,10 +145,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&ability_2.node_span()),
+                            span: creature.span().merge(&ability_2.span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(&ability_2.node_span()),
+                        span: creature.span().merge(&ability_2.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -69,9 +69,11 @@ impl AbilityTreeNode for StackObjectState {
     fn node_tag(&self) -> &'static str {
         "stack object state"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for StackObjectState {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Countered { span } => *span,
             Self::Kicked { span } => *span,

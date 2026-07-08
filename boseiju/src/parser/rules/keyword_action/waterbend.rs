@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::waterbend::WaterbendKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(waterbend_span),
+                                span: number.span().merge(waterbend_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::waterbend::ability(
                             number,
                             #[cfg(feature = "spanned_tree")]
-                            number.node_span().merge(waterbend_span),
+                            number.span().merge(waterbend_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: number.node_span().merge(waterbend_span),
+                        span: number.span().merge(waterbend_span),
                     },
                 ),
             }),

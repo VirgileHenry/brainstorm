@@ -43,9 +43,11 @@ impl AbilityTreeNode for EtbWithCounters {
     fn node_tag(&self) -> &'static str {
         "enters the battlefield with counters"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for EtbWithCounters {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

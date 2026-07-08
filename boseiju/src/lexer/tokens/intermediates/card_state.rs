@@ -183,8 +183,8 @@ pub enum CardState {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl CardState {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for CardState {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Able { span } => *span,
             Self::Amassed { span } => *span,

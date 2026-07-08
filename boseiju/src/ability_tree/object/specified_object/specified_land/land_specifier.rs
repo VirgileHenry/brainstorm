@@ -55,15 +55,17 @@ impl crate::ability_tree::AbilityTreeNode for LandSpecifier {
     fn node_tag(&self) -> &'static str {
         "land specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for LandSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Another(child) => child.node_span(),
-            Self::Color(child) => child.node_span(),
-            Self::Control(child) => child.node_span(),
-            Self::Owner(child) => child.node_span(),
-            Self::Subtype(child) => child.node_span(),
+            Self::Another(child) => child.span(),
+            Self::Color(child) => child.span(),
+            Self::Control(child) => child.span(),
+            Self::Owner(child) => child.span(),
+            Self::Subtype(child) => child.span(),
         }
     }
 }
@@ -108,10 +110,12 @@ impl crate::ability_tree::AbilityTreeNode for LandSubtypeSpecifier {
     fn node_tag(&self) -> &'static str {
         "land subtype specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        self.subtype.node_span()
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for LandSubtypeSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.subtype.span()
     }
 }
 

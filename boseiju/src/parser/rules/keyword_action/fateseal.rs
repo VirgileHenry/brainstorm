@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::fateseal::FatesealKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(fateseal_span),
+                                span: number.span().merge(fateseal_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::fateseal::ability(
                             number,
                             #[cfg(feature = "spanned_tree")]
-                            number.node_span().merge(fateseal_span),
+                            number.span().merge(fateseal_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: number.node_span().merge(fateseal_span),
+                        span: number.span().merge(fateseal_span),
                     },
                 ),
             }),

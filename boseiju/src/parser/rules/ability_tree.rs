@@ -34,7 +34,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::AbilityTree {
                             abilities,
                             #[cfg(feature = "spanned_tree")]
-                            span: ability.node_span().merge(end_span),
+                            span: ability.span().merge(end_span),
                         }
                     },
                 }),
@@ -133,7 +133,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::AbilityTree {
                             abilities: ab_tree,
                             #[cfg(feature = "spanned_tree")]
-                            span: tree.node_span().merge(&abilities.span),
+                            span: tree.span().merge(&abilities.span),
                         }
                     },
                 }),

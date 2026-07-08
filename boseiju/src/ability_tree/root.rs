@@ -23,7 +23,10 @@ impl AbilityTree {
 
     pub fn from_single_ability(ability: ability::Ability) -> Self {
         #[cfg(feature = "spanned_tree")]
-        let span = ability.node_span();
+        let span = {
+            use crate::ability_tree::span::Spanned;
+            ability.span()
+        };
         Self {
             abilities: [ability].into_iter().collect(),
             #[cfg(feature = "spanned_tree")]
@@ -78,9 +81,11 @@ impl crate::ability_tree::AbilityTreeNode for AbilityTree {
     fn node_tag(&self) -> &'static str {
         "ability tree"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for AbilityTree {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

@@ -51,14 +51,16 @@ impl crate::ability_tree::AbilityTreeNode for SpellSpecifier {
     fn node_tag(&self) -> &'static str {
         "spell specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for SpellSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Another(child) => child.node_span(),
-            Self::Caster(child) => child.node_span(),
-            Self::Color(child) => child.node_span(),
-            Self::Control(child) => child.node_span(),
+            Self::Another(child) => child.span(),
+            Self::Caster(child) => child.span(),
+            Self::Color(child) => child.span(),
+            Self::Control(child) => child.span(),
         }
     }
 }
@@ -103,9 +105,11 @@ impl AbilityTreeNode for CasterSpecifier {
     fn node_tag(&self) -> &'static str {
         "caster specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CasterSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

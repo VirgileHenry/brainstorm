@@ -56,9 +56,11 @@ impl AbilityTreeNode for StaticAbility {
     fn node_tag(&self) -> &'static str {
         "static ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for StaticAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -118,13 +120,15 @@ impl AbilityTreeNode for StaticAbilityKind {
     fn node_tag(&self) -> &'static str {
         "static ability kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for StaticAbilityKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::ContinuousEffect(child) => child.node_span(),
-            Self::CostModificationEffect(child) => child.node_span(),
-            Self::AlternativeCastingPermissions(child) => child.node_span(),
+            Self::ContinuousEffect(child) => child.span(),
+            Self::CostModificationEffect(child) => child.span(),
+            Self::AlternativeCastingPermissions(child) => child.span(),
         }
     }
 }

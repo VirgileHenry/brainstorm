@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         enchantment: enchantment.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&enchantment.node_span()),
+                        span: count.span().merge(&enchantment.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: enchantment.node_span().merge(another_span),
+                        span: enchantment.span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -83,11 +83,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     enchantment: object::Enchantment::Reference(object::reference::EnchantmentReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: enchantment.node_span().empty_at_start(),
+                            span: enchantment.span().empty_at_start(),
                         },
                         enchantment: enchantment.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: enchantment.node_span(),
+                        span: enchantment.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -119,7 +119,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Enchantment {
                     enchantment: object::Enchantment::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: enchantment.node_span().merge(start_span),
+                        span: enchantment.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

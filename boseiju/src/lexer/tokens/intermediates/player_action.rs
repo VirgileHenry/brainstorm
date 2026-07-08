@@ -271,8 +271,8 @@ pub enum PlayerAction {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerAction {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for PlayerAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Accept { span } => *span,
             Self::Add { span } => *span,

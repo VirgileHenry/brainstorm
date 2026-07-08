@@ -122,20 +122,20 @@ impl AbilityTreeNode for ObjectKind {
     }
 
     #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::ArtifactSubtype(child) => child.node_span(),
-            Self::BattleSubtype(child) => child.node_span(),
-            Self::Card(child) => child.node_span(),
-            Self::CardType(child) => child.node_span(),
-            Self::CreatureSubtype(child) => child.node_span(),
-            Self::EnchantmentSubtype(child) => child.node_span(),
-            Self::InstantSorcerySubtype(child) => child.node_span(),
-            Self::LandSubtype(child) => child.node_span(),
-            Self::Permanent(child) => child.node_span(),
-            Self::PlaneswalkerSubtype(child) => child.node_span(),
-            Self::Spell(child) => child.node_span(),
-            Self::Supertype(child) => child.node_span(),
+            Self::ArtifactSubtype(child) => child.span(),
+            Self::BattleSubtype(child) => child.span(),
+            Self::Card(child) => child.span(),
+            Self::CardType(child) => child.span(),
+            Self::CreatureSubtype(child) => child.span(),
+            Self::EnchantmentSubtype(child) => child.span(),
+            Self::InstantSorcerySubtype(child) => child.span(),
+            Self::LandSubtype(child) => child.span(),
+            Self::Permanent(child) => child.span(),
+            Self::PlaneswalkerSubtype(child) => child.span(),
+            Self::Spell(child) => child.span(),
+            Self::Supertype(child) => child.span(),
         }
     }
 }

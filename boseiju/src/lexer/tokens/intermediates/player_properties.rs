@@ -41,8 +41,8 @@ pub enum PlayerProperties {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerProperties {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for PlayerProperties {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::HandSize { span } => *span,
             Self::LifeTotal { span } => *span,

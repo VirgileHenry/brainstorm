@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::tap::TapKeywordAction {
                                 permanent: permanent.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(tap_span),
+                                span: permanent.span().merge(tap_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::tap::ability(
                             permanent,
                             #[cfg(feature = "spanned_tree")]
-                            permanent.node_span().merge(tap_span),
+                            permanent.span().merge(tap_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(tap_span),
+                        span: permanent.span().merge(tap_span),
                     },
                 ),
             }),

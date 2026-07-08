@@ -18,6 +18,9 @@ pub enum ParserError {
 
 impl ParserError {
     pub(super) fn from_earley_table(table: &super::EarleyTable, tokens: &[crate::lexer::tokens::Token]) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        use crate::ability_tree::span::Spanned;
+
         let error_row = table.table.iter().enumerate().rev().find(|(_, row)| !row.is_empty());
         let (stuck_index, last_non_empty_row) = match error_row {
             Some(error) => error,

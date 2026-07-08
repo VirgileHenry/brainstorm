@@ -23,12 +23,19 @@ pub enum Specifiers<T: Specifier + AbilityTreeNode> {
     OrOfAnd(SpecifierOrOfAndList<T>),
 }
 
-impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
+impl<T> Specifiers<T>
+where
+    T: Specifier + AbilityTreeNode + Clone,
+    T: crate::ability_tree::span::Spanned,
+{
     pub fn add_factor_specifier(&self, factor_specifier: T) -> Self {
+        #[cfg(feature = "spanned_tree")]
+        use crate::ability_tree::span::Spanned;
+
         match self {
             Self::Single(specifier) => Self::And(SpecifierAndList {
                 #[cfg(feature = "spanned_tree")]
-                span: self.node_span().merge(&factor_specifier.node_span()),
+                span: self.span().merge(&factor_specifier.span()),
                 specifiers: {
                     let mut specifiers = crate::utils::HeapArrayVec::new();
                     specifiers.push(specifier.clone());
@@ -38,7 +45,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
             }),
             Self::And(and) => Self::And(SpecifierAndList {
                 #[cfg(feature = "spanned_tree")]
-                span: and.span.merge(&factor_specifier.node_span()),
+                span: and.span.merge(&factor_specifier.span()),
                 specifiers: {
                     let mut and_specifiers = and.specifiers.clone();
                     and_specifiers.push(factor_specifier);
@@ -56,7 +63,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
                     #[cfg(feature = "spanned_tree")]
-                    span: or.span.merge(&factor_specifier.node_span()),
+                    span: or.span.merge(&factor_specifier.span()),
                 }
             }),
             Self::OrOfAnd(or_of_and) => Self::OrOfAnd({
@@ -67,7 +74,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> Specifiers<T> {
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
                     #[cfg(feature = "spanned_tree")]
-                    span: or_of_and.span.merge(&factor_specifier.node_span()),
+                    span: or_of_and.span.merge(&factor_specifier.span()),
                 }
             }),
         }
@@ -112,14 +119,16 @@ impl<T: Specifier + AbilityTreeNode> crate::ability_tree::AbilityTreeNode for Sp
     fn node_tag(&self) -> &'static str {
         "object specifiers"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl<T: Specifier + AbilityTreeNode + crate::ability_tree::span::Spanned> crate::ability_tree::span::Spanned for Specifiers<T> {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Single(child) => child.node_span(),
-            Self::And(child) => child.node_span(),
-            Self::Or(child) => child.node_span(),
-            Self::OrOfAnd(child) => child.node_span(),
+            Self::Single(child) => child.span(),
+            Self::And(child) => child.span(),
+            Self::Or(child) => child.span(),
+            Self::OrOfAnd(child) => child.span(),
         }
     }
 }

@@ -34,10 +34,12 @@ impl crate::ability_tree::AbilityTreeNode for ColorSpecifier {
     fn node_tag(&self) -> &'static str {
         "color specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
-        self.color.node_span()
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ColorSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
+        self.color.span()
     }
 }
 

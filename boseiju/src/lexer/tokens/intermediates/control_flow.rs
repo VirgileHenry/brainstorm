@@ -29,8 +29,8 @@ pub enum ControlFlow {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl ControlFlow {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for ControlFlow {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Bullet { span } => *span,
             Self::Colons { span } => *span,

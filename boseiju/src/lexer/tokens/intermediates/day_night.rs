@@ -13,8 +13,8 @@ pub enum DayNight {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl DayNight {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for DayNight {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Day { span } => *span,
             Self::Night { span } => *span,

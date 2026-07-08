@@ -71,16 +71,18 @@ impl AbilityTreeNode for Number {
     fn node_tag(&self) -> &'static str {
         "number"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Number {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AnyNumber { span } => *span,
-            Self::Number(child) => child.node_span(),
-            Self::OrMore(child) => child.node_span(),
-            Self::UpTo(child) => child.node_span(),
+            Self::Number(child) => child.span(),
+            Self::OrMore(child) => child.span(),
+            Self::UpTo(child) => child.span(),
             Self::ThatMany { span } => *span,
-            Self::X(child) => child.node_span(),
+            Self::X(child) => child.span(),
         }
     }
 }
@@ -123,9 +125,11 @@ impl AbilityTreeNode for FixedNumber {
     fn node_tag(&self) -> &'static str {
         "fixed number"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for FixedNumber {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -155,7 +159,7 @@ impl crate::utils::DummyInit for FixedNumber {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OrMoreNumber {
-    pub minimum: u32,
+    pub minimum: u32, /* Fixme: number here ? */
     #[cfg(feature = "spanned_tree")]
     pub span: crate::ability_tree::span::TreeSpan,
 }
@@ -182,9 +186,11 @@ impl AbilityTreeNode for OrMoreNumber {
     fn node_tag(&self) -> &'static str {
         "or more number"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for OrMoreNumber {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -230,9 +236,11 @@ impl AbilityTreeNode for UpToNumber {
     fn node_tag(&self) -> &'static str {
         "up to number"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for UpToNumber {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -281,9 +289,11 @@ impl AbilityTreeNode for XNumber {
     fn node_tag(&self) -> &'static str {
         "x number"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for XNumber {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

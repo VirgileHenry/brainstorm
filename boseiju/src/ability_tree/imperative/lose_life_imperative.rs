@@ -37,9 +37,11 @@ impl crate::ability_tree::AbilityTreeNode for LoseLifeImperative {
     fn node_tag(&self) -> &'static str {
         "lose life imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for LoseLifeImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
