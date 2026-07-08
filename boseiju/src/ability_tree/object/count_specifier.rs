@@ -72,14 +72,16 @@ impl AbilityTreeNode for CountSpecifier {
     fn node_tag(&self) -> &'static str {
         "object count"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CountSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::A { span } => *span,
             Self::All { span } => *span,
-            Self::Count(child) => child.node_span(),
-            Self::Target(child) => child.node_span(),
+            Self::Count(child) => child.span(),
+            Self::Target(child) => child.span(),
             Self::TheNext { span } => *span,
         }
     }

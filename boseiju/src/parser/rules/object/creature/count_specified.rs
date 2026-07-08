@@ -27,7 +27,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         creature: creature.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&creature.node_span()),
+                        span: count.span().merge(&creature.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -43,11 +43,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().empty_at_start(),
+                            span: creature.span().empty_at_start(),
                         },
                         creature: creature.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span(),
+                        span: creature.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -37,9 +37,11 @@ impl crate::ability_tree::AbilityTreeNode for PayManaImperative {
     fn node_tag(&self) -> &'static str {
         "pay mana imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PayManaImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

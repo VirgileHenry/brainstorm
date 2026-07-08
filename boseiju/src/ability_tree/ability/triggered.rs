@@ -75,9 +75,11 @@ impl AbilityTreeNode for TriggeredAbility {
     fn node_tag(&self) -> &'static str {
         "triggered ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for TriggeredAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -125,9 +127,11 @@ impl AbilityTreeNode for DelayedTriggerAbility {
     fn node_tag(&self) -> &'static str {
         "delayed triggered ability"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for DelayedTriggerAbility {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

@@ -5,8 +5,10 @@ use crate::ability_tree::imperative::keyword_action::StandaloneKeywordAction;
 use crate::ability_tree::terminals;
 use crate::lexer::tokens::intermediates;
 
-pub fn keyword_action_to_abilities(keyword: intermediates::KeywordAction) -> Result<KeywordAction, &'static str> {
-    let keyword_action = match keyword.keyword_action {
+pub fn keyword_action_to_abilities(keyword: intermediates::TensedKeywordAction) -> Result<KeywordAction, &'static str> {
+    /* Fixme: let's think about this */
+
+    let keyword_action = match keyword.token().keyword_action {
         mtg_data::KeywordAction::Forage => terminals::StandaloneKeywordAction::Forage,
         mtg_data::KeywordAction::Investigate => terminals::StandaloneKeywordAction::Investigate,
         mtg_data::KeywordAction::Learn => terminals::StandaloneKeywordAction::Learn,
@@ -22,18 +24,20 @@ pub fn keyword_action_to_abilities(keyword: intermediates::KeywordAction) -> Res
         mtg_data::KeywordAction::VentureIntoTheDungeon => terminals::StandaloneKeywordAction::VentureIntoTheDungeon,
         _ => return Err("provided keyword is not a valid keyword ability on its own"),
     };
+
+    use crate::ability_tree::span::Spanned;
     Ok(KeywordAction {
         keyword: ExpandedKeywordAction::Standalone(StandaloneKeywordAction {
             keyword_action,
             #[cfg(feature = "spanned_tree")]
-            span: keyword.span,
+            span: keyword.span(),
         }),
         ability: SpellAbility {
             effects: crate::utils::HeapArrayVec::new(),
             #[cfg(feature = "spanned_tree")]
-            span: keyword.span,
+            span: keyword.span(),
         },
         #[cfg(feature = "spanned_tree")]
-        span: keyword.span,
+        span: keyword.span(),
     })
 }

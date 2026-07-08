@@ -46,7 +46,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::keyword_ability::AffinityKeywordAbility {
                             for_object: permanent.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(affinity_span),
+                            span: permanent.span().merge(affinity_span),
                         },
                     ),
                     /* Fixme */
@@ -58,7 +58,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: permanent.node_span().merge(affinity_span),
+                    span: permanent.span().merge(affinity_span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

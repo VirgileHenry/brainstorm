@@ -63,13 +63,15 @@ impl AbilityTreeNode for ZoneReference {
     fn node_tag(&self) -> &'static str {
         "zone reference type"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ZoneReference {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Anywhere { span } => *span,
             Self::Exile { span } => *span,
-            Self::OwnedZone(child) => child.node_span(),
+            Self::OwnedZone(child) => child.span(),
             Self::TheBattlefield { span } => *span,
         }
     }

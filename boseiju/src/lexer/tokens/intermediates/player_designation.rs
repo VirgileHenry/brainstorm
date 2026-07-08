@@ -26,8 +26,8 @@ pub enum PlayerDesignation {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PlayerDesignation {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for PlayerDesignation {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Monarch { span } => *span,
             Self::Poisoned { span } => *span,

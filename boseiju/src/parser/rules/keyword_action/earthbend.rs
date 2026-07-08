@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::earthbend::EarthbendKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(earthbend_span),
+                                span: number.span().merge(earthbend_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::earthbend::ability(
                             number,
                             #[cfg(feature = "spanned_tree")]
-                            number.node_span().merge(earthbend_span),
+                            number.span().merge(earthbend_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: number.node_span().merge(earthbend_span),
+                        span: number.span().merge(earthbend_span),
                     },
                 ),
             }),

@@ -39,9 +39,11 @@ impl crate::ability_tree::AbilityTreeNode for PayLifeImperative {
     fn node_tag(&self) -> &'static str {
         "pay life imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PayLifeImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

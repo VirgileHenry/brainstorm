@@ -31,6 +31,8 @@ pub extern "C" fn lex(
     oracle_text_ptr: *const u8,
     oracle_text_len: usize,
 ) -> *const u8 {
+    use boseiju::ability_tree::span::Spanned;
+
     let card_name = utils::ptr_len_to_str(card_name_ptr, card_name_len);
     let oracle_text = utils::ptr_len_to_str(oracle_text_ptr, oracle_text_len);
 
@@ -100,7 +102,7 @@ fn build_tree_nodes(tree: &dyn boseiju::ability_tree::AbilityTreeNode) -> (Vec<N
     let mut result = Vec::new();
 
     let children = tree.children();
-    let span = tree.node_span();
+    let span = tree.span();
 
     let mut layer = 1; /* 0 is for lexer tokens */
 

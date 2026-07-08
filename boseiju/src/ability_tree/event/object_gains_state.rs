@@ -50,13 +50,15 @@ impl crate::ability_tree::AbilityTreeNode for ObjectGainsStateEvent {
     fn node_tag(&self) -> &'static str {
         "object gains state event"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ObjectGainsStateEvent {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::CreatureGainsState(child) => child.node_span(),
-            Self::PermanentGainsState(child) => child.node_span(),
-            Self::SpellGainsState(child) => child.node_span(),
+            Self::CreatureGainsState(child) => child.span(),
+            Self::PermanentGainsState(child) => child.span(),
+            Self::SpellGainsState(child) => child.span(),
         }
     }
 }

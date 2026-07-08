@@ -38,7 +38,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Creature {
                     creature: object::Creature::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(start_span),
+                        span: creature.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

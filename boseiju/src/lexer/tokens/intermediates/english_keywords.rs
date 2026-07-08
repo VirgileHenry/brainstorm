@@ -647,8 +647,8 @@ pub enum EnglishKeyword {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl EnglishKeyword {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for EnglishKeyword {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::A { span } => *span,
             Self::Additional { span } => *span,

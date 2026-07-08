@@ -40,11 +40,13 @@ impl crate::ability_tree::AbilityTreeNode for PermanentAction {
     fn node_tag(&self) -> &'static str {
         "creature action"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PermanentAction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::EntersTheBattlefield(child) => child.node_span(),
+            Self::EntersTheBattlefield(child) => child.span(),
         }
     }
 }

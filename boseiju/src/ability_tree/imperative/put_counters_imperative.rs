@@ -54,9 +54,11 @@ impl AbilityTreeNode for PutCountersImperative {
     fn node_tag(&self) -> &'static str {
         "put counters imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PutCountersImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -116,9 +118,11 @@ impl crate::ability_tree::AbilityTreeNode for CounterOnPermanent {
     fn node_tag(&self) -> &'static str {
         "counters on permanent"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CounterOnPermanent {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -173,12 +177,14 @@ impl AbilityTreeNode for CounterKind {
     fn node_tag(&self) -> &'static str {
         "counter kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CounterKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::PreviouslyMentionnedCounter { span } => *span,
-            Self::NewCounter(child) => child.node_span(),
+            Self::NewCounter(child) => child.span(),
         }
     }
 }

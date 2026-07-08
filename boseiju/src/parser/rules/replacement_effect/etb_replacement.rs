@@ -49,7 +49,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 etb_event: crate::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(enters_span),
+                                    span: permanent.span().merge(enters_span),
                                 },
                                 etb_modifiers: [EtbModifier::WithState(EtbWithState {
                                     state: crate::ability_tree::state::PermanentState::Tapped(
@@ -64,11 +64,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 .into_iter()
                                 .collect(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(tapped_span),
+                                span: permanent.span().merge(tapped_span),
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(tapped_span),
+                        span: permanent.span().merge(tapped_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -117,21 +117,21 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 etb_event: crate::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(enters_span),
+                                    span: permanent.span().merge(enters_span),
                                 },
                                 etb_modifiers: [EtbModifier::PerformAction(EtbPerformAction {
                                     action: ability.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: ability.node_span().merge(start_span),
+                                    span: ability.span().merge(start_span),
                                 })]
                                 .into_iter()
                                 .collect(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: ability.node_span().merge(start_span),
+                                span: ability.span().merge(start_span),
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: ability.node_span().merge(start_span),
+                        span: ability.span().merge(start_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -197,7 +197,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 etb_event: crate::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(enters_span),
+                                    span: permanent.span().merge(enters_span),
                                 },
                                 etb_modifiers: {
                                     let mut modifiers = crate::utils::HeapArrayVec::new();
@@ -206,16 +206,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                             counter_kind: counter.clone(),
                                             amount: number.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                            span: counter.node_span().merge(with_span) },
+                                            span: counter.span().merge(with_span) },
                                     ));
                                     modifiers
                                 },
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(end_span),
+                                span: permanent.span().merge(end_span),
                             }),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: permanent.node_span().merge(end_span),
+                        span: permanent.span().merge(end_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

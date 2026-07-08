@@ -49,12 +49,14 @@ impl crate::ability_tree::AbilityTreeNode for ExpandedAbilityWord {
     fn node_tag(&self) -> &'static str {
         "ability word"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ExpandedAbilityWord {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Descend(child) => child.node_span(),
-            Self::Standalone(child) => child.node_span(),
+            Self::Descend(child) => child.span(),
+            Self::Standalone(child) => child.span(),
         }
     }
 }
@@ -98,9 +100,11 @@ impl AbilityTreeNode for StandaloneAbilityWord {
     fn node_tag(&self) -> &'static str {
         "standalone ability word"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for StandaloneAbilityWord {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

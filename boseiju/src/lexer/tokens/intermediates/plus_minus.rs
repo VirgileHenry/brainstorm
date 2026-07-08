@@ -17,8 +17,8 @@ pub enum PowerToughnessModElements {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl PowerToughnessModElements {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for PowerToughnessModElements {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Plus { span } => *span,
             Self::Minus { span } => *span,

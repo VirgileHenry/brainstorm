@@ -49,13 +49,15 @@ impl AbilityTreeNode for EtbModifier {
     fn node_tag(&self) -> &'static str {
         "counter on permanent replacement"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for EtbModifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::WithCounters(child) => child.node_span(),
-            Self::WithState(child) => child.node_span(),
-            Self::PerformAction(child) => child.node_span(),
+            Self::WithCounters(child) => child.span(),
+            Self::WithState(child) => child.span(),
+            Self::PerformAction(child) => child.span(),
         }
     }
 }

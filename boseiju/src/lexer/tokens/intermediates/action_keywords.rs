@@ -1,3 +1,6 @@
+use crate::lexer::IntoToken;
+use crate::lexer::tokens::tensed::Tensed;
+
 /// Fixme: what's this ? we can do better
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -17,9 +20,11 @@ pub enum ActionKeyword {
     },
 }
 
+pub type TensedActionKeyword = Tensed<ActionKeyword>;
+
 #[cfg(feature = "spanned_tree")]
-impl ActionKeyword {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for ActionKeyword {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Deals { span } => *span,
             Self::Get { span } => *span,
@@ -28,21 +33,49 @@ impl ActionKeyword {
     }
 }
 
-impl ActionKeyword {
-    pub fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
+impl IntoToken for TensedActionKeyword {
+    fn try_from_span(span: &crate::lexer::Span) -> Option<Self> {
         match span.text {
-            "deal" | "deals" | "dealt" | "dealing" => Some(Self::Deals {
+            "deal" => Some(Tensed::base_form(ActionKeyword::Deals {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "get" | "gets" | "got" => Some(Self::Get {
+            })),
+            "deals" => Some(Tensed::third_person_singular_present(ActionKeyword::Deals {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
-            "put" | "puts" | "putting" => Some(Self::Put {
+            })),
+            "dealt" => Some(Tensed::simple_past(ActionKeyword::Deals {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
-            }),
+            })),
+            "dealing" => Some(Tensed::present_participle(ActionKeyword::Deals {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "get" => Some(Tensed::base_form(ActionKeyword::Get {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "gets" => Some(Tensed::third_person_singular_present(ActionKeyword::Get {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "got" => Some(Tensed::simple_past(ActionKeyword::Get {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "put" => Some(Tensed::base_form(ActionKeyword::Put {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "puts" => Some(Tensed::third_person_singular_present(ActionKeyword::Put {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "putting" => Some(Tensed::present_participle(ActionKeyword::Put {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
             _ => None,
         }
     }

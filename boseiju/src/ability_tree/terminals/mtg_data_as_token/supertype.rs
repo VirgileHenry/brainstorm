@@ -44,9 +44,11 @@ impl AbilityTreeNode for Supertype {
     fn node_tag(&self) -> &'static str {
         "supertype"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Supertype {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

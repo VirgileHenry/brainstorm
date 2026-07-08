@@ -84,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             from_zone: zone.clone(),
                             additional_cost: None,
                             #[cfg(feature = "spanned_tree")]
-                            span: player.node_span().merge(&zone.node_span()),
+                            span: player.span().merge(&zone.span()),
                         },
                     ),
                 }),
@@ -156,7 +156,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             from_zone: zone.clone(),
                             additional_cost: Some(inner.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: player.node_span().merge(in_addition_span),
+                            span: player.span().merge(in_addition_span),
                         },
                     ),
                 }),

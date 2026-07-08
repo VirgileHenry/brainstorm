@@ -52,14 +52,16 @@ impl crate::ability_tree::AbilityTreeNode for PermanentSpecifier {
     fn node_tag(&self) -> &'static str {
         "permanent specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PermanentSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Another(child) => child.node_span(),
-            Self::Color(child) => child.node_span(),
-            Self::Control(child) => child.node_span(),
-            Self::Owner(child) => child.node_span(),
+            Self::Another(child) => child.span(),
+            Self::Color(child) => child.span(),
+            Self::Control(child) => child.span(),
+            Self::Owner(child) => child.span(),
         }
     }
 }

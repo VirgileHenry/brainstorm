@@ -40,11 +40,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 player: player.clone(),
                                 spell: spell.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: player.node_span().merge(&spell.node_span()),
+                                span: player.span().merge(&spell.span()),
                             },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&spell.node_span()),
+                        span: player.span().merge(&spell.span()),
                     },
                 ),
             }),

@@ -17,8 +17,8 @@ pub enum WinLoseClause {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl WinLoseClause {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for WinLoseClause {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::WinTheGame { span } => *span,
             Self::LoseTheGame { span } => *span,

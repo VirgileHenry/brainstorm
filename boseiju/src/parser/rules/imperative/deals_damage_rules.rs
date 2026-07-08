@@ -54,12 +54,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     to: to.clone(),
                                     amount: number.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: number.node_span().merge(&to.node_span()),
+                                    span: number.span().merge(&to.span()),
                                 });
                                 damages
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: dealer.node_span().merge(&to.node_span()),
+                            span: dealer.span().merge(&to.span()),
                         },
                     ),
                 }),
@@ -130,18 +130,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         //                             to: to_d1.clone(),
         //                             amount: num_d1.clone(),
         //                             #[cfg(feature = "spanned_tree")]
-        //                             span: num_d1.node_span().merge(&to_d1.node_span()),
+        //                             span: num_d1.span().merge(&to_d1.span()),
         //                         });
         //                         damages.push(crate::ability_tree::imperative::DamagesDealt {
         //                             to: to_d2.clone(),
         //                             amount: num_d2.clone(),
         //                             #[cfg(feature = "spanned_tree")]
-        //                             span: num_d2.node_span().merge(&to_d2.node_span()),
+        //                             span: num_d2.span().merge(&to_d2.span()),
         //                         });
         //                         damages
         //                     },
         //                     #[cfg(feature = "spanned_tree")]
-        //                     span: dealer.node_span().merge(&to_d2.node_span()),
+        //                     span: dealer.span().merge(&to_d2.span()),
         //                 },
         //             ),
         //         }),

@@ -15,7 +15,11 @@ pub struct SpecifierOrList<T: Specifier + AbilityTreeNode> {
     pub span: crate::ability_tree::span::TreeSpan,
 }
 
-impl<T: Specifier + AbilityTreeNode + Clone> SpecifierOrList<T> {
+impl<T> SpecifierOrList<T>
+where
+    T: Specifier + AbilityTreeNode + Clone,
+    T: crate::ability_tree::span::Spanned,
+{
     pub fn add_factor_specifier(&self, factor_specifier: T) -> SpecifierOrOfAndList<T> {
         let mut or_specifiers = crate::utils::HeapArrayVec::new();
         for prev_specifier in self.specifiers.iter() {
@@ -27,7 +31,7 @@ impl<T: Specifier + AbilityTreeNode + Clone> SpecifierOrList<T> {
         SpecifierOrOfAndList {
             specifiers: or_specifiers,
             #[cfg(feature = "spanned_tree")]
-            span: self.span.merge(&factor_specifier.node_span()),
+            span: self.span.merge(&factor_specifier.span()),
         }
     }
 }
@@ -64,9 +68,11 @@ impl<T: Specifier + AbilityTreeNode> AbilityTreeNode for SpecifierOrList<T> {
     fn node_tag(&self) -> &'static str {
         "specifiers or list"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl<T: Specifier + AbilityTreeNode> crate::ability_tree::span::Spanned for SpecifierOrList<T> {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

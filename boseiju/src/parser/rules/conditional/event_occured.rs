@@ -32,7 +32,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         timeframe: *duration,
                         event: event.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: event.node_span().merge(&duration.node_span()),
+                        span: event.span().merge(&duration.span()),
                     },
                 ),
             }),

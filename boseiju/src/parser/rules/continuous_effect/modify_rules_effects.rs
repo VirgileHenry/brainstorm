@@ -47,14 +47,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     creature: creature.clone(),
                                     blocked_creature: None,
                                     #[cfg(feature = "spanned_tree")]
-                                    span: creature.node_span().merge(block_span),
+                                    span: creature.span().merge(block_span),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(block_span),
+                                span: creature.span().merge(block_span),
                             }),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(block_span),
+                        span: creature.span().merge(block_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -115,14 +115,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     }),
                                     blocked_creature: Some(creature.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: creature.node_span().merge(block_span),
+                                    span: creature.span().merge(block_span),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(block_span),
+                                span: creature.span().merge(block_span),
                             }),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(block_span),
+                        span: creature.span().merge(block_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

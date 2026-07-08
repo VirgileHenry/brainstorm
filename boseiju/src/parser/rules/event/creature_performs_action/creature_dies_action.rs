@@ -36,11 +36,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::action::CreatureDiesAction {
                                 creature: creature.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(block_span),
+                                span: creature.span().merge(block_span),
                             },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(block_span),
+                        span: creature.span().merge(block_span),
                     },
                 ),
             }),

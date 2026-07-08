@@ -17,8 +17,8 @@ pub enum NumberOfTimes {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl NumberOfTimes {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for NumberOfTimes {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::FirstTime { span } => *span,
             Self::SecondTime { span } => *span,

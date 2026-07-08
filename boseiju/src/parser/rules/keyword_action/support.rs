@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::support::SupportKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(support_span),
+                                span: number.span().merge(support_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::support::ability(
                             number,
                             #[cfg(feature = "spanned_tree")]
-                            number.node_span().merge(support_span),
+                            number.span().merge(support_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: number.node_span().merge(support_span),
+                        span: number.span().merge(support_span),
                     },
                 ),
             }),

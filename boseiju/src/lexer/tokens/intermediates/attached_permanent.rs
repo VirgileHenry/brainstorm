@@ -17,8 +17,8 @@ pub enum AttachedObject {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl AttachedObject {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for AttachedObject {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AttachedCreature { span } => *span,
             Self::AttachedPermanent { span } => *span,

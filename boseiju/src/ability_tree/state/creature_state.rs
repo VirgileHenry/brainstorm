@@ -56,9 +56,11 @@ impl AbilityTreeNode for CreatureState {
     fn node_tag(&self) -> &'static str {
         "creature state"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CreatureState {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Attacking { span } => *span,
             Self::Blocking { span } => *span,

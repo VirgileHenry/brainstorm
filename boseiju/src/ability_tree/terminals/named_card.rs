@@ -468,9 +468,11 @@ impl AbilityTreeNode for NamedCard {
     fn node_tag(&self) -> &'static str {
         "named choice"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for NamedCard {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AdvocateOfTheBeast { span } => *span,
             Self::AjaniInspiringLeader { span } => *span,

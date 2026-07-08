@@ -20,7 +20,10 @@ pub struct SpecifiedEnchantment {
 impl SpecifiedEnchantment {
     pub fn add_factor_specifier(&self, factor_specifier: EnchantmentSpecifier) -> Self {
         #[cfg(feature = "spanned_tree")]
-        let factor_specifier_span = factor_specifier.node_span();
+        let factor_specifier_span = {
+            use crate::ability_tree::span::Spanned;
+            factor_specifier.span()
+        };
         match &self.specifiers {
             Some(prev_specifiers) => SpecifiedEnchantment {
                 kind: self.kind.clone(),
@@ -79,9 +82,11 @@ impl AbilityTreeNode for SpecifiedEnchantment {
     fn node_tag(&self) -> &'static str {
         "specified enchantment"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for SpecifiedEnchantment {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

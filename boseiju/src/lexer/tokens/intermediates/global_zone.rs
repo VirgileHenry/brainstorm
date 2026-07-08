@@ -25,8 +25,8 @@ pub enum GlobalZone {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl GlobalZone {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for GlobalZone {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Anywhere { span } => *span,
             Self::AnywhereElse { span } => *span,

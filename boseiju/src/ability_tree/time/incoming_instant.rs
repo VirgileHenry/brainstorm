@@ -43,12 +43,14 @@ impl AbilityTreeNode for IncomingInstant {
     fn node_tag(&self) -> &'static str {
         "recurrent instant"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for IncomingInstant {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::NextStepOrPhase(child) => child.node_span(),
-            Self::StepInNextTurn(child) => child.node_span(),
+            Self::NextStepOrPhase(child) => child.span(),
+            Self::StepInNextTurn(child) => child.span(),
         }
     }
 }
@@ -94,9 +96,11 @@ impl AbilityTreeNode for IncomingNextStepOrPhase {
     fn node_tag(&self) -> &'static str {
         "incoming step or phase instant"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for IncomingNextStepOrPhase {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -147,9 +151,11 @@ impl AbilityTreeNode for IncomingStepInNextTurn {
     fn node_tag(&self) -> &'static str {
         "incoming step or phase instant"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for IncomingStepInNextTurn {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

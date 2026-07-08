@@ -36,14 +36,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             object: permanent.to_card(),
                             from: crate::ability_tree::zone::ZoneReference::TheBattlefield {
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().empty_at_end(),
+                                span: permanent.span().empty_at_end(),
                             },
                             to: crate::ability_tree::zone::ZoneReference::Exile {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *exile_span,
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(exile_span),
+                            span: permanent.span().merge(exile_span),
                         },
                     ),
                 }),
@@ -87,7 +87,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: *exile_span,
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: zone.node_span().merge(exile_span),
+                            span: zone.span().merge(exile_span),
                         },
                     ),
                 }),

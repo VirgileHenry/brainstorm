@@ -44,12 +44,14 @@ impl AbilityTreeNode for XDefinition {
     fn node_tag(&self) -> &'static str {
         "x definition"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for XDefinition {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::FromCost(child) => child.node_span(),
-            Self::FromGameState(child) => child.node_span(),
+            Self::FromCost(child) => child.span(),
+            Self::FromGameState(child) => child.span(),
         }
     }
 }

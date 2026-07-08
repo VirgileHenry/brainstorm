@@ -46,9 +46,11 @@ impl<T: Specifier + AbilityTreeNode> AbilityTreeNode for SpecifierAndList<T> {
     fn node_tag(&self) -> &'static str {
         "specifiers and list"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl<T: Specifier + AbilityTreeNode> crate::ability_tree::span::Spanned for SpecifierAndList<T> {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

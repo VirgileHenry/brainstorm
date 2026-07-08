@@ -82,12 +82,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                 crate::ability_tree::number::XNumber {
                                                     x_definition: Box::new(definition.clone()),
                                                     #[cfg(feature = "spanned_tree")]
-                                                    span: definition.node_span().merge(x_span),
+                                                    span: definition.span().merge(x_span),
                                                 },
                                             ),
                                             toughness_mod: toughness.clone(),
                                             #[cfg(feature = "spanned_tree")]
-                                            span: span.merge(&toughness.node_span()),
+                                            span: span.merge(&toughness.span()),
                                         },
                                     )),
                                 );
@@ -96,10 +96,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&definition.node_span()),
+                            span: creature.span().merge(&definition.span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(&definition.node_span()),
+                        span: creature.span().merge(&definition.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -181,14 +181,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                 crate::ability_tree::number::XNumber {
                                                     x_definition: Box::new(definition.clone()),
                                                     #[cfg(feature = "spanned_tree")]
-                                                    span: definition.node_span().merge(power_x_span),
+                                                    span: definition.span().merge(power_x_span),
                                                 },
                                             ),
                                             toughness_mod: crate::ability_tree::number::Number::X(
                                                 crate::ability_tree::number::XNumber {
                                                     x_definition: Box::new(definition.clone()),
                                                     #[cfg(feature = "spanned_tree")]
-                                                    span: definition.node_span().merge(toughness_x_span),
+                                                    span: definition.span().merge(toughness_x_span),
                                                 },
                                             ),
                                             #[cfg(feature = "spanned_tree")]
@@ -201,10 +201,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 modifications
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&definition.node_span()),
+                            span: creature.span().merge(&definition.span()),
                         }),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(&definition.node_span()),
+                        span: creature.span().merge(&definition.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -290,14 +290,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                         crate::ability_tree::number::XNumber {
                                                             x_definition: Box::new(definition.clone()),
                                                             #[cfg(feature = "spanned_tree")]
-                                                            span: definition.node_span().merge(power_x_span),
+                                                            span: definition.span().merge(power_x_span),
                                                         },
                                                     ),
                                                     toughness_mod: crate::ability_tree::number::Number::X(
                                                         crate::ability_tree::number::XNumber {
                                                             x_definition: Box::new(definition.clone()),
                                                             #[cfg(feature = "spanned_tree")]
-                                                            span: definition.node_span().merge(toughness_x_span),
+                                                            span: definition.span().merge(toughness_x_span),
                                                         },
                                                     ),
                                                     #[cfg(feature = "spanned_tree")]
@@ -310,14 +310,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: creature.node_span().merge(&definition.node_span()),
+                                    span: creature.span().merge(&definition.span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(&definition.node_span()),
+                                span: creature.span().merge(&definition.span()),
                             },
                             duration: duration.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&definition.node_span()),
+                            span: creature.span().merge(&definition.span()),
                         },
                     ),
                 }),
@@ -397,12 +397,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                         crate::ability_tree::number::XNumber {
                                                             x_definition: Box::new(definition.clone()),
                                                             #[cfg(feature = "spanned_tree")]
-                                                            span: definition.node_span().merge(x_span),
+                                                            span: definition.span().merge(x_span),
                                                         },
                                                     ),
                                                     toughness_mod: toughness.clone(),
                                                     #[cfg(feature = "spanned_tree")]
-                                                    span: span.merge(&toughness.node_span()),
+                                                    span: span.merge(&toughness.span()),
                                                 }),
                                             ),
                                         );
@@ -411,14 +411,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         modifications
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: creature.node_span().merge(&definition.node_span()),
+                                    span: creature.span().merge(&definition.span()),
                                 }),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(&definition.node_span()),
+                                span: creature.span().merge(&definition.span()),
                             },
                             duration: duration.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: creature.node_span().merge(&definition.node_span()),
+                            span: creature.span().merge(&definition.span()),
                         },
                     ),
                 }),

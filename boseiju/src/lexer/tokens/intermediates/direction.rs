@@ -9,8 +9,8 @@ pub enum Direction {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl Direction {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for Direction {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Right { span } => *span,
         }

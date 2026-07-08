@@ -40,7 +40,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: None,
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&imperatives.node_span()),
+                        span: player.span().merge(&imperatives.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -113,7 +113,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: Some(Box::new(statement.clone())),
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: statement.node_span().merge(start_span),
+                        span: statement.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -176,7 +176,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: Some(Box::new(statement.clone())),
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&statement.node_span()),
+                        span: player.span().merge(&statement.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -249,7 +249,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: None,
                         if_not_done: Some(Box::new(statement.clone())),
                         #[cfg(feature = "spanned_tree")]
-                        span: statement.node_span().merge(start_span),
+                        span: statement.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -312,7 +312,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: None,
                         if_not_done: Some(Box::new(statement.clone())),
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&statement.node_span()),
+                        span: player.span().merge(&statement.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -349,7 +349,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: None,
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&imperatives.node_span()),
+                        span: player.span().merge(&imperatives.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -428,7 +428,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: Some(Box::new(statement.clone())),
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: statement.node_span().merge(start_span),
+                        span: statement.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -497,7 +497,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: Some(Box::new(statement.clone())),
                         if_not_done: None,
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&statement.node_span()),
+                        span: player.span().merge(&statement.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -576,7 +576,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: None,
                         if_not_done: Some(Box::new(statement.clone())),
                         #[cfg(feature = "spanned_tree")]
-                        span: statement.node_span().merge(start_span),
+                        span: statement.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -645,7 +645,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         if_it_is_done: None,
                         if_not_done: Some(Box::new(statement.clone())),
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(&statement.node_span()),
+                        span: player.span().merge(&statement.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

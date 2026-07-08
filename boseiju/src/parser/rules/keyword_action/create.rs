@@ -41,17 +41,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 amount: number.clone(),
                                 token: token.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: token.node_span().merge(create_span),
+                                span: token.span().merge(create_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::create::ability(
                             number,
                             token,
                             #[cfg(feature = "spanned_tree")]
-                            token.node_span().merge(create_span),
+                            token.span().merge(create_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: token.node_span().merge(create_span),
+                        span: token.span().merge(create_span),
                     },
                 ),
             }),

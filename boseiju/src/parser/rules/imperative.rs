@@ -34,10 +34,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         kind: imperative.clone(),
                         executing_player: crate::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
-                            span: imperative.node_span().empty_at_start(),
+                            span: imperative.span().empty_at_start(),
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: imperative.node_span(),
+                        span: imperative.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         kind: imperative.clone(),
                         executing_player: player.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: imperative.node_span(),
+                        span: imperative.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

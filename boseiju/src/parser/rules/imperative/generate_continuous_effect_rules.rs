@@ -47,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: *start_span,
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: effect.node_span().merge(start_span),
+                            span: effect.span().merge(start_span),
                         },
                     ),
                 }),
@@ -82,7 +82,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: *end_span,
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: effect.node_span().merge(end_span),
+                            span: effect.span().merge(end_span),
                         },
                     ),
                 }),
@@ -140,25 +140,25 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                                         ),
                                                     ),
                                                     #[cfg(feature = "spanned_tree")]
-                                                    span: keyword_ability.node_span().merge(have_span),
+                                                    span: keyword_ability.span().merge(have_span),
                                                 },
                                             );
                                             modifications.push(gain_ab_mod);
                                             modifications
                                         },
                                         #[cfg(feature = "spanned_tree")]
-                                        span: permanent.node_span().merge(&keyword_ability.node_span()),
+                                        span: permanent.span().merge(&keyword_ability.span()),
                                     },
                                 ),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.node_span().merge(&keyword_ability.node_span()),
+                                span: permanent.span().merge(&keyword_ability.span()),
                             },
                             duration: time::ForwardDuration::UntilEndOfTurn {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *this_turn_span,
                             },
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(&keyword_ability.node_span()),
+                            span: permanent.span().merge(&keyword_ability.span()),
                         },
                     ),
                 }),

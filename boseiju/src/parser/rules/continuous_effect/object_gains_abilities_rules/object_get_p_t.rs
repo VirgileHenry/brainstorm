@@ -42,10 +42,10 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             modifications
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(&modifiers.node_span()),
+                        span: creature.span().merge(&modifiers.span()),
                     }),
                     #[cfg(feature = "spanned_tree")]
-                    span: creature.node_span().merge(&modifiers.node_span()),
+                    span: creature.span().merge(&modifiers.span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

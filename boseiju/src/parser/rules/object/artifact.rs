@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         artifact: artifact.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&artifact.node_span()),
+                        span: count.span().merge(&artifact.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: artifact.node_span().merge(another_span),
+                        span: artifact.span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -83,11 +83,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
                         count: object::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
-                            span: artifact.node_span().empty_at_start(),
+                            span: artifact.span().empty_at_start(),
                         },
                         artifact: artifact.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: artifact.node_span(),
+                        span: artifact.span(),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -119,7 +119,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Artifact {
                     artifact: object::Artifact::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: artifact.node_span().merge(start_span),
+                        span: artifact.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

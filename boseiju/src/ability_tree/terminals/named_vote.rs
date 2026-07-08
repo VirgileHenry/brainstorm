@@ -204,9 +204,11 @@ impl AbilityTreeNode for NamedVote {
     fn node_tag(&self) -> &'static str {
         "named vote"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for NamedVote {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Aid { span } => *span,
             Self::Bribery { span } => *span,

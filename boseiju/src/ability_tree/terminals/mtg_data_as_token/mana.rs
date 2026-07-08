@@ -86,18 +86,20 @@ impl AbilityTreeNode for Mana {
     fn node_tag(&self) -> &'static str {
         "mana symbol"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Mana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::X { span } => *span,
             Self::Snow { span } => *span,
-            Self::Any(child) => child.node_span(),
-            Self::Colored(child) => child.node_span(),
-            Self::Hybrid(child) => child.node_span(),
-            Self::MonocoloredHybrid(child) => child.node_span(),
-            Self::Phyrexian(child) => child.node_span(),
-            Self::HybridPhyrexian(child) => child.node_span(),
+            Self::Any(child) => child.span(),
+            Self::Colored(child) => child.span(),
+            Self::Hybrid(child) => child.span(),
+            Self::MonocoloredHybrid(child) => child.span(),
+            Self::Phyrexian(child) => child.span(),
+            Self::HybridPhyrexian(child) => child.span(),
         }
     }
 }
@@ -181,7 +183,9 @@ impl AbilityTreeNode for AnyMana {
     }
 
     fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
-        Some(crate::ability_tree::AbTreeNodeData::Numeric { value: self.mana.number as u32 })
+        Some(crate::ability_tree::AbTreeNodeData::Numeric {
+            value: self.mana.number as u32,
+        })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -192,9 +196,11 @@ impl AbilityTreeNode for AnyMana {
     fn node_tag(&self) -> &'static str {
         "numbered mana"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for AnyMana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -233,9 +239,11 @@ impl AbilityTreeNode for ColoredMana {
     fn node_tag(&self) -> &'static str {
         "colored mana"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ColoredMana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -275,9 +283,11 @@ impl AbilityTreeNode for HybridMana {
     fn node_tag(&self) -> &'static str {
         "hybrid mana"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for HybridMana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -305,7 +315,10 @@ impl AbilityTreeNode for MonocoloredHybridMana {
 
     fn data(&self) -> Option<crate::ability_tree::AbTreeNodeData> {
         let colors = crate::ability_tree::colors::Colors::from_single(self.mana.color);
-        Some(crate::ability_tree::AbTreeNodeData::ColorAndNumeric { color: colors, numeric: self.mana.number as u32 })
+        Some(crate::ability_tree::AbTreeNodeData::ColorAndNumeric {
+            color: colors,
+            numeric: self.mana.number as u32,
+        })
     }
 
     fn display(&self, out: &mut crate::utils::TreeFormatter<'_>) -> std::io::Result<()> {
@@ -316,9 +329,11 @@ impl AbilityTreeNode for MonocoloredHybridMana {
     fn node_tag(&self) -> &'static str {
         "monocolored hybrid mana"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for MonocoloredHybridMana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -358,9 +373,11 @@ impl AbilityTreeNode for PhyrexianMana {
     fn node_tag(&self) -> &'static str {
         "phyrexian mana"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PhyrexianMana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -401,9 +418,11 @@ impl AbilityTreeNode for HybridPhyrexianMana {
     fn node_tag(&self) -> &'static str {
         "hybrid phyrexian mana"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for HybridPhyrexianMana {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

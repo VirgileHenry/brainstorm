@@ -42,7 +42,7 @@ mod under_control;
 mod win_lose_clauses;
 
 pub use ability_word::AbilityWord;
-pub use action_keywords::ActionKeyword;
+pub use action_keywords::TensedActionKeyword;
 pub use ambiguous_tokens::AmbiguousToken;
 pub use any_number_of_clause::AnyNumberOfClause;
 pub use attached_permanent::AttachedObject;
@@ -65,7 +65,7 @@ pub use english_keywords::EnglishKeyword;
 pub use global_zone::GlobalZone;
 pub use in_addition_to_paying_its_other_costs::InAdditionToPayingItsOtherCost;
 pub use keyword_ability::KeywordAbility;
-pub use keyword_action::KeywordAction;
+pub use keyword_action::TensedKeywordAction;
 pub use may_choose_the_same_mode::MayChooseTheSameModeMoreThanOnce;
 pub use non_kind::NonKind;
 pub use not_of_a_kind::NotOfAKind;
@@ -447,8 +447,8 @@ pub enum VhyToSortLater {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl VhyToSortLater {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for VhyToSortLater {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AnyTime { span } => *span,
             Self::NextTime { span } => *span,

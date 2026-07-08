@@ -35,6 +35,20 @@ pub use tree_node::NodeKind;
 /// This constant strongly impact the size of the tree, and is mostly bottom-limited by exisiting MTG cards.
 pub const MAX_CHILDREN_PER_NODE: usize = 12;
 
+/*
+/// Small trait to make AbilityTreeNode require the Spanned trait when the spanned_tree feature is active.
+#[cfg(not(feature = "spanned_tree"))]
+pub trait SpannedHelper {}
+#[cfg(not(feature = "spanned_tree"))]
+impl<T> SpannedHelper for T {}
+
+/// Small trait to make AbilityTreeNode require the Spanned trait when the spanned_tree feature is active.
+#[cfg(feature = "spanned_tree")]
+pub trait SpannedHelper: span::Spanned {}
+#[cfg(feature = "spanned_tree")]
+impl<T: span::Spanned> SpannedHelper for T {}
+*/
+
 /// Trait to reunite all the types of the ability trees to a single "node" type.
 ///
 /// The ability tree is using hard types, to preserve strong semantics in the tree.
@@ -79,7 +93,7 @@ pub const MAX_CHILDREN_PER_NODE: usize = 12;
 /// ```
 /// Here, this is a shortcut for having a `EmptyVariant(EmptyVariantData)` where the
 /// data would be an empty struct.
-pub trait AbilityTreeNode {
+pub trait AbilityTreeNode /*:  SpannedHelper Fixme: this is nice for the webdemo but somehow crashes the rust analyzer */ {
     /// Get the node id.
     ///
     /// This identifier is unique to the kind of node it is, allowing to rebuild the node kind
@@ -119,11 +133,4 @@ pub trait AbilityTreeNode {
     fn node_description(&self) -> String {
         format!("the {} node.", self.node_tag())
     }
-
-    /// Get the span in the original oracle text that built this node.
-    ///
-    /// This is only available under the spanned_tree feature, and is useful for
-    /// visualisation of the tree and debug purpuses.
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> span::TreeSpan;
 }

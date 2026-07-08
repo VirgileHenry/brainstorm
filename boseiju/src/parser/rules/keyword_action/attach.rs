@@ -47,17 +47,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 object: object.clone(),
                                 to: to.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: to.node_span().merge(attach_span),
+                                span: to.span().merge(attach_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::attach::ability(
                             object,
                             to,
                             #[cfg(feature = "spanned_tree")]
-                            to.node_span().merge(attach_span),
+                            to.span().merge(attach_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: to.node_span().merge(attach_span),
+                        span: to.span().merge(attach_span),
                     },
                 ),
             }),

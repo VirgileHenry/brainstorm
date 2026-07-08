@@ -44,16 +44,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::clash::ClashKeywordAction {
                                 opponent: player.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: player.node_span().merge(clash_span),
+                                span: player.span().merge(clash_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::clash::ability(
                             player,
                             #[cfg(feature = "spanned_tree")]
-                            player.node_span().merge(clash_span),
+                            player.span().merge(clash_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: player.node_span().merge(clash_span),
+                        span: player.span().merge(clash_span),
                     },
                 ),
             }),

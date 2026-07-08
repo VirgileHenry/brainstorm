@@ -13,8 +13,8 @@ pub enum TapUntapCost {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl TapUntapCost {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for TapUntapCost {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::Tap { span } => *span,
             Self::Untap { span } => *span,

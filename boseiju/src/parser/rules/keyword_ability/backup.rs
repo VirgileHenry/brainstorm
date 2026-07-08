@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::keyword_ability::BackupKeywordAbility {
                             amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: number.node_span().merge(backup_span),
+                            span: number.span().merge(backup_span),
                         },
                     ),
                     /* Fixme */
@@ -51,7 +51,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: number.node_span().merge(backup_span),
+                    span: number.span().merge(backup_span),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

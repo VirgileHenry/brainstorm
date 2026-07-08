@@ -45,9 +45,11 @@ impl crate::ability_tree::AbilityTreeNode for AddManaImperative {
     fn node_tag(&self) -> &'static str {
         "add mana imperative"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for AddManaImperative {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -100,12 +102,14 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAdd {
     fn node_tag(&self) -> &'static str {
         "mana to add"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ManaToAdd {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::AnyColor(child) => child.node_span(),
-            Self::Symbols(child) => child.node_span(),
+            Self::AnyColor(child) => child.span(),
+            Self::Symbols(child) => child.span(),
         }
     }
 }
@@ -159,9 +163,11 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAddSymbols {
     fn node_tag(&self) -> &'static str {
         "mana to add kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ManaToAddSymbols {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }
@@ -218,9 +224,11 @@ impl crate::ability_tree::AbilityTreeNode for ManaToAddOfAnyColor {
     fn node_tag(&self) -> &'static str {
         "mana to add kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ManaToAddOfAnyColor {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

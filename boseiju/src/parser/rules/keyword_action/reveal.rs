@@ -40,17 +40,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     card: card.clone(),
                                     from: None,
                                     #[cfg(feature = "spanned_tree")]
-                                    span: card.node_span().merge(reveal_span),
+                                    span: card.span().merge(reveal_span),
                                 },
                             ),
                             ability: crate::ability_tree::imperative::reveal::ability(
                                 card,
                                 None,
                                 #[cfg(feature = "spanned_tree")]
-                                card.node_span().merge(reveal_span),
+                                card.span().merge(reveal_span),
                             ),
                             #[cfg(feature = "spanned_tree")]
-                            span: card.node_span().merge(reveal_span),
+                            span: card.span().merge(reveal_span),
                         },
                     ),
                 }),
@@ -94,17 +94,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                     card: card.clone(),
                                     from: Some(zone.clone()),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: zone.node_span().merge(reveal_span),
+                                    span: zone.span().merge(reveal_span),
                                 },
                             ),
                             ability: crate::ability_tree::imperative::reveal::ability(
                                 card,
                                 Some(zone),
                                 #[cfg(feature = "spanned_tree")]
-                                zone.node_span().merge(reveal_span),
+                                zone.span().merge(reveal_span),
                             ),
                             #[cfg(feature = "spanned_tree")]
-                            span: zone.node_span().merge(reveal_span),
+                            span: zone.span().merge(reveal_span),
                         },
                     ),
                 }),

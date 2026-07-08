@@ -34,9 +34,11 @@ impl AbilityTreeNode for NumberOfPermanents {
     fn node_tag(&self) -> &'static str {
         "number of permanents"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for NumberOfPermanents {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

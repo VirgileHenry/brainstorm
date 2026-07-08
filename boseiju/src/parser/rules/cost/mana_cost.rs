@@ -23,15 +23,15 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::PayManaImperative {
                                 amount: mana_cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: mana_cost.node_span(),
+                                span: mana_cost.span(),
                             },
                         ),
                         executing_player: crate::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
-                            span: mana_cost.node_span().empty_at_start(),
+                            span: mana_cost.span().empty_at_start(),
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: mana_cost.node_span(),
+                        span: mana_cost.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -62,7 +62,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::PayManaImperative {
                                 amount: mana_cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: mana_cost.node_span().merge(pay_span),
+                                span: mana_cost.span().merge(pay_span),
                             },
                         ),
                         executing_player: crate::ability_tree::player::PlayerSpecifier::You {
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             span: pay_span.empty_at_start(),
                         },
                         #[cfg(feature = "spanned_tree")]
-                        span: mana_cost.node_span().merge(pay_span),
+                        span: mana_cost.span().merge(pay_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

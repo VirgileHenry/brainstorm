@@ -17,8 +17,8 @@ pub enum CountSpecifier {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl CountSpecifier {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for CountSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::All { span } => *span,
             Self::Target { span } => *span,

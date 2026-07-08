@@ -20,7 +20,10 @@ pub struct SpecifiedArtifact {
 impl SpecifiedArtifact {
     pub fn add_factor_specifier(&self, factor_specifier: ArtifactSpecifier) -> Self {
         #[cfg(feature = "spanned_tree")]
-        let factor_specifier_span = factor_specifier.node_span();
+        let factor_specifier_span = {
+            use crate::ability_tree::span::Spanned;
+            factor_specifier.span()
+        };
         match &self.specifiers {
             Some(prev_specifiers) => SpecifiedArtifact {
                 kind: self.kind.clone(),
@@ -79,9 +82,11 @@ impl AbilityTreeNode for SpecifiedArtifact {
     fn node_tag(&self) -> &'static str {
         "specified artifact"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for SpecifiedArtifact {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

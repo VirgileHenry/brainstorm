@@ -39,11 +39,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         damage_kind: damage_kind.clone(),
                                         to_player: None,
                                         #[cfg(feature = "spanned_tree")]
-                                        span: creature.node_span().merge(&damage_kind.node_span()),
+                                        span: creature.span().merge(&damage_kind.span()),
                                     },
                                 ),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(&damage_kind.node_span()),
+                                span: creature.span().merge(&damage_kind.span()),
                             },
                         ),
                     }),
@@ -85,11 +85,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         damage_kind: damage_kind.clone(),
                                         to_player: Some(player.clone()),
                                         #[cfg(feature = "spanned_tree")]
-                                        span: creature.node_span().merge(&damage_kind.node_span()),
+                                        span: creature.span().merge(&damage_kind.span()),
                                     },
                                 ),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(&damage_kind.node_span()),
+                                span: creature.span().merge(&damage_kind.span()),
                             },
                         ),
                     }),

@@ -16,7 +16,7 @@ pub trait IntoToken: Sized {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
     AbilityWord(intermediates::AbilityWord),
-    ActionKeyword(intermediates::ActionKeyword),
+    TensedActionKeyword(intermediates::TensedActionKeyword),
     AmbiguousToken(intermediates::AmbiguousToken),
     AnyNumberOfClause { clauses: intermediates::AnyNumberOfClause },
     AttachedObject(intermediates::AttachedObject),
@@ -42,7 +42,7 @@ pub enum Token {
     GlobalZone(intermediates::GlobalZone),
     InAdditionToPayingItsOtherCost(intermediates::InAdditionToPayingItsOtherCost),
     KeywordAbility(intermediates::KeywordAbility),
-    KeywordAction(intermediates::KeywordAction),
+    TensedKeywordAction(intermediates::TensedKeywordAction),
     Mana { mana: terminals::Mana },
     MayChooseTheSameModeMoreThanOnce(intermediates::MayChooseTheSameModeMoreThanOnce),
     NamedCard(terminals::NamedCard),
@@ -169,8 +169,8 @@ impl Token {
             Some(Self::AbilityWord(kind))
         } else if let Some(kind) = intermediates::KeywordAbility::try_from_span(&span) {
             Some(Self::KeywordAbility(kind))
-        } else if let Some(kind) = intermediates::KeywordAction::try_from_span(&span) {
-            Some(Self::KeywordAction(kind))
+        } else if let Some(kind) = intermediates::TensedKeywordAction::try_from_span(&span) {
+            Some(Self::TensedKeywordAction(kind))
         } else if let Some(mana) = terminals::Mana::try_from_span(&span) {
             Some(Self::Mana { mana })
         } else if let Some(kind) = intermediates::MayChooseTheSameModeMoreThanOnce::try_from_span(&span) {
@@ -191,8 +191,8 @@ impl Token {
             Some(Self::Number(kind))
         } else if let Some(not) = intermediates::NotOfAKind::try_from_span(&span) {
             Some(Self::NotOfAKind { not })
-        } else if let Some(kind) = intermediates::ActionKeyword::try_from_span(&span) {
-            Some(Self::ActionKeyword(kind))
+        } else if let Some(kind) = intermediates::TensedActionKeyword::try_from_span(&span) {
+            Some(Self::TensedActionKeyword(kind))
         } else if let Some(kind) = terminals::DamageKind::try_from_span(&span) {
             Some(Self::DamageKind(kind))
         } else if let Some(kind) = intermediates::DayNight::try_from_span(&span) {
@@ -251,17 +251,18 @@ impl Token {
             None
         }
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
-        use crate::ability_tree::AbilityTreeNode;
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Token {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::AbilityWord(child) => child.span,
-            Self::ActionKeyword(child) => child.span(),
+            Self::TensedActionKeyword(child) => child.span(),
             Self::AmbiguousToken(child) => child.span(),
             Self::AnyNumberOfClause { clauses } => clauses.span,
             Self::AttachedObject(child) => child.span(),
-            Self::BackwardDuration(child) => child.node_span(),
+            Self::BackwardDuration(child) => child.span(),
             Self::Bid(child) => child.span(),
             Self::CardActions(child) => child.span(),
             Self::CardFace(child) => child.span(),
@@ -274,64 +275,64 @@ impl Token {
             Self::ControlFlow(child) => child.span(),
             Self::CountSpecifier(child) => child.span(),
             Self::Counter(child) => child.span,
-            Self::DamageKind(child) => child.node_span(),
+            Self::DamageKind(child) => child.span(),
             Self::DayNight(child) => child.span(),
             Self::Die(child) => child.span(),
             Self::Direction(child) => child.span(),
             Self::EnglishKeyword(child) => child.span(),
-            Self::ForwardDuration(child) => child.node_span(),
-            Self::FlavorWord(child) => child.node_span(),
+            Self::ForwardDuration(child) => child.span(),
+            Self::FlavorWord(child) => child.span(),
             Self::GlobalZone(child) => child.span(),
             Self::InAdditionToPayingItsOtherCost(child) => child.span,
             Self::KeywordAbility(child) => child.span,
-            Self::KeywordAction(child) => child.span,
-            Self::Mana { mana } => mana.node_span(),
+            Self::TensedKeywordAction(child) => child.span(),
+            Self::Mana { mana } => mana.span(),
             Self::MayChooseTheSameModeMoreThanOnce(child) => child.span,
-            Self::NamedCard(child) => child.node_span(),
-            Self::NamedChoice(child) => child.node_span(),
-            Self::NamedDungeon(child) => child.node_span(),
-            Self::NamedExpansion(child) => child.node_span(),
-            Self::NamedMeld(child) => child.node_span(),
-            Self::NamedPartner(child) => child.node_span(),
-            Self::NamedToken(child) => child.node_span(),
+            Self::NamedCard(child) => child.span(),
+            Self::NamedChoice(child) => child.span(),
+            Self::NamedDungeon(child) => child.span(),
+            Self::NamedExpansion(child) => child.span(),
+            Self::NamedMeld(child) => child.span(),
+            Self::NamedPartner(child) => child.span(),
+            Self::NamedToken(child) => child.span(),
             Self::NonKind(child) => child.span(),
             Self::NotOfAKind { not } => not.span,
             Self::Number(child) => child.span(),
             Self::NumberOfTimes(child) => child.span(),
             Self::NumberOperation(child) => child.span(),
-            Self::Order(child) => child.node_span(),
-            Self::OwnableZone(child) => child.node_span(),
-            Self::OwnerSpecifier(child) => child.node_span(),
+            Self::Order(child) => child.span(),
+            Self::OwnableZone(child) => child.span(),
+            Self::OwnerSpecifier(child) => child.span(),
             Self::CardProperty(child) => child.span(),
             Self::CardState(child) => child.span(),
             Self::PartnerKind(child) => child.span(),
-            Self::Phase(child) => child.node_span(),
-            Self::TensedPlayerAction(child) => child.token().span(),
+            Self::Phase(child) => child.span(),
+            Self::TensedPlayerAction(child) => child.span(),
             Self::PlayerDesignation(child) => child.span(),
             Self::PlayerProperties(child) => child.span(),
             Self::PlayerSpecifier(child) => child.span(),
             Self::PowerToughnessModElements(child) => child.span(),
             Self::PowerToughness { pt } => pt.span,
             Self::SagaChapterNumber { chapter } => chapter.span,
-            Self::StackObjectState(child) => child.node_span(),
+            Self::StackObjectState(child) => child.span(),
             Self::SpecialCost(child) => child.span(),
-            Self::Step(child) => child.node_span(),
+            Self::Step(child) => child.span(),
             Self::TapUntapCost(child) => child.span(),
             Self::TheSameIsTrueFor(child) => child.span,
-            Self::NamedTransformation(child) => child.node_span(),
-            Self::NamedVote(child) => child.node_span(),
+            Self::NamedTransformation(child) => child.span(),
+            Self::NamedVote(child) => child.span(),
             Self::UnderControl(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),
-            Self::ArtifactSubtype(child) => child.node_span(),
-            Self::BattleSubtype(child) => child.node_span(),
-            Self::CardType(child) => child.node_span(),
-            Self::CreatureSubtype(child) => child.node_span(),
-            Self::EnchantmentSubtype(child) => child.node_span(),
-            Self::LandSubtype(child) => child.node_span(),
-            Self::PlaneswalkerSubtype(child) => child.node_span(),
-            Self::InstantSorcerySubtype(child) => child.node_span(),
-            Self::Supertype(child) => child.node_span(),
+            Self::ArtifactSubtype(child) => child.span(),
+            Self::BattleSubtype(child) => child.span(),
+            Self::CardType(child) => child.span(),
+            Self::CreatureSubtype(child) => child.span(),
+            Self::EnchantmentSubtype(child) => child.span(),
+            Self::LandSubtype(child) => child.span(),
+            Self::PlaneswalkerSubtype(child) => child.span(),
+            Self::InstantSorcerySubtype(child) => child.span(),
+            Self::Supertype(child) => child.span(),
         }
     }
 }

@@ -32,7 +32,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             effect: ability.clone(),
                             cost: cost.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: cost.node_span().merge(&ability.span),
+                            span: cost.span().merge(&ability.span),
                         },
                     ),
                 }),

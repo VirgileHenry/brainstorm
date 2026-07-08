@@ -45,20 +45,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                             crate::ability_tree::imperative::PayManaImperative {
                                                 amount: mana_cost.clone(),
                                                 #[cfg(feature = "spanned_tree")]
-                                                span: mana_cost.node_span(),
+                                                span: mana_cost.span(),
                                             },
                                         ),
                                         executing_player: crate::ability_tree::player::PlayerSpecifier::You {
                                             #[cfg(feature = "spanned_tree")]
-                                            span: mana_cost.node_span().empty_at_start(),
+                                            span: mana_cost.span().empty_at_start(),
                                         },
                                         #[cfg(feature = "spanned_tree")]
-                                        span: mana_cost.node_span(),
+                                        span: mana_cost.span(),
                                     }]
                                     .into_iter()
                                     .collect(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: mana_cost.node_span(),
+                                    span: mana_cost.span(),
                                 },
                                 #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&mana_cost.span),
@@ -115,7 +115,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::ability::keyword_ability::WardKeywordAbility {
                                 cost: cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: ward_span.merge(&cost.node_span()),
+                                span: ward_span.merge(&cost.span()),
                             },
                         ),
                         /* Fixme */
@@ -127,7 +127,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: ward_span.merge(&cost.node_span()),
+                        span: ward_span.merge(&cost.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

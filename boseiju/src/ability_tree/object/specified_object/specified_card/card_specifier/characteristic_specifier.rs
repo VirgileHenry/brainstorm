@@ -41,12 +41,14 @@ impl crate::ability_tree::AbilityTreeNode for CardCharacteristicSpecifier {
     fn node_tag(&self) -> &'static str {
         "creature characteristic specifier"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for CardCharacteristicSpecifier {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::ManaValue(child) => child.node_span(),
-            Self::KeywordAbility(child) => child.node_span(),
+            Self::ManaValue(child) => child.span(),
+            Self::KeywordAbility(child) => child.span(),
         }
     }
 }

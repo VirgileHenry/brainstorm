@@ -51,13 +51,15 @@ impl AbilityTreeNode for ContinuousEffectKind {
     fn node_tag(&self) -> &'static str {
         "continuous effect kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ContinuousEffectKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::ModifyRule(child) => child.node_span(),
-            Self::ModifyObjectAbilities(child) => child.node_span(),
-            Self::ReplacementEffect(child) => child.node_span(),
+            Self::ModifyRule(child) => child.span(),
+            Self::ModifyObjectAbilities(child) => child.span(),
+            Self::ReplacementEffect(child) => child.span(),
         }
     }
 }

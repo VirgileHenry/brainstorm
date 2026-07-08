@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         count: count.clone(),
                         card: card.clone(),
                         #[cfg(feature = "spanned_tree")]
-                        span: count.node_span().merge(&card.node_span()),
+                        span: count.span().merge(&card.span()),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -66,7 +66,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         )),
                         #[cfg(feature = "spanned_tree")]
-                        span: card.node_span().merge(another_span),
+                        span: card.span().merge(another_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -98,7 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::Card {
                     card: object::Card::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
-                        span: card.node_span().merge(start_span),
+                        span: card.span().merge(start_span),
                     }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

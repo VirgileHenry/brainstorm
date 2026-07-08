@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::connive::ConniveKeywordAction {
                                 creature: creature.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: creature.node_span().merge(connive_span),
+                                span: creature.span().merge(connive_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::connive::ability(
                             creature,
                             #[cfg(feature = "spanned_tree")]
-                            creature.node_span().merge(connive_span),
+                            creature.span().merge(connive_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: creature.node_span().merge(connive_span),
+                        span: creature.span().merge(connive_span),
                     },
                 ),
             }),

@@ -41,17 +41,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 creature_subtype: subtype.clone(),
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: number.node_span().merge(amass_span),
+                                span: number.span().merge(amass_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::amass::ability(
                             subtype,
                             number,
                             #[cfg(feature = "spanned_tree")]
-                            number.node_span().merge(amass_span),
+                            number.span().merge(amass_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: number.node_span().merge(amass_span),
+                        span: number.span().merge(amass_span),
                     },
                 ),
             }),

@@ -51,11 +51,13 @@ impl AbilityTreeNode for ObjectCharacteristicModification {
     fn node_tag(&self) -> &'static str {
         "object characteristics modification"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ObjectCharacteristicModification {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::PowerToughnessModifiers(child) => child.node_span(),
+            Self::PowerToughnessModifiers(child) => child.span(),
         }
     }
 }

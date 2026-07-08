@@ -44,9 +44,11 @@ impl crate::ability_tree::AbilityTreeNode for PermanentGainsStateEvent {
     fn node_tag(&self) -> &'static str {
         "permanent gains state event"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for PermanentGainsStateEvent {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         self.span
     }
 }

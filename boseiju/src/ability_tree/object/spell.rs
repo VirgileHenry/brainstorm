@@ -53,14 +53,16 @@ impl crate::ability_tree::AbilityTreeNode for Spell {
     fn node_tag(&self) -> &'static str {
         "spell"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Spell {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::OneAmong(child) => child.node_span(),
-            Self::PreviouslyMentionned(child) => child.node_span(),
-            Self::SelfReferencing(child) => child.node_span(),
-            Self::Reference(child) => child.node_span(),
+            Self::OneAmong(child) => child.span(),
+            Self::PreviouslyMentionned(child) => child.span(),
+            Self::SelfReferencing(child) => child.span(),
+            Self::Reference(child) => child.span(),
         }
     }
 }

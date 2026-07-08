@@ -43,11 +43,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 crate::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(battlefield_span),
+                                    span: permanent.span().merge(battlefield_span),
                                 },
                             ),
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(battlefield_span),
+                            span: permanent.span().merge(battlefield_span),
                         },
                     ),
                 }),
@@ -80,11 +80,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 crate::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
-                                    span: permanent.node_span().merge(enters_span),
+                                    span: permanent.span().merge(enters_span),
                                 },
                             ),
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(enters_span),
+                            span: permanent.span().merge(enters_span),
                         },
                     ),
                 }),

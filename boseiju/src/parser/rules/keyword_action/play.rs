@@ -38,16 +38,16 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             crate::ability_tree::imperative::play::PlayKeywordAction {
                                 card: card.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: card.node_span().merge(play_span),
+                                span: card.span().merge(play_span),
                             },
                         ),
                         ability: crate::ability_tree::imperative::play::ability(
                             card,
                             #[cfg(feature = "spanned_tree")]
-                            card.node_span().merge(play_span),
+                            card.span().merge(play_span),
                         ),
                         #[cfg(feature = "spanned_tree")]
-                        span: card.node_span().merge(play_span),
+                        span: card.span().merge(play_span),
                     },
                 ),
             }),

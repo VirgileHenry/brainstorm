@@ -29,8 +29,8 @@ pub enum Bid {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl Bid {
-    pub fn span(&self) -> crate::ability_tree::span::TreeSpan {
+impl crate::ability_tree::span::Spanned for Bid {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::BiddingEnds { span } => *span,
             Self::HighBid { span } => *span,

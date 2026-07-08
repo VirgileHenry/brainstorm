@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     mana_cost: terminals::ManaCost {
                         cost: std::iter::once(mana.clone()).collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: mana.node_span(),
+                        span: mana.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -38,7 +38,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     mana_cost: terminals::ManaCost {
                         cost: [m1.clone(), m2.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: m1.node_span().merge(&m2.node_span()),
+                        span: m1.span().merge(&m2.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     mana_cost: terminals::ManaCost {
                         cost: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: m1.node_span().merge(&m3.node_span()),
+                        span: m1.span().merge(&m3.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -86,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                     mana_cost: terminals::ManaCost {
                         cost: [m1.clone(), m2.clone(), m3.clone(), m4.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: m1.node_span().merge(&m4.node_span()),
+                        span: m1.span().merge(&m4.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -115,7 +115,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             .into_iter()
                             .collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: m1.node_span().merge(&m5.node_span()),
+                        span: m1.span().merge(&m5.span()),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

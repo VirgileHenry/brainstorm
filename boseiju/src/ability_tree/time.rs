@@ -48,12 +48,14 @@ impl AbilityTreeNode for Instant {
     fn node_tag(&self) -> &'static str {
         "instant"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for Instant {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
-            Self::Incoming(child) => child.node_span(),
-            Self::Reccurent(child) => child.node_span(),
+            Self::Incoming(child) => child.span(),
+            Self::Reccurent(child) => child.span(),
         }
     }
 }
@@ -116,9 +118,11 @@ impl AbilityTreeNode for ForwardDuration {
         use std::io::Write;
         write!(out, "{self}")
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for ForwardDuration {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::ForAsLongAsItsExiled { span } => *span,
             Self::Forever { span } => *span,
@@ -214,9 +218,11 @@ impl AbilityTreeNode for BackwardDuration {
     fn node_tag(&self) -> &'static str {
         "backward duration"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for BackwardDuration {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::ThisGame { span } => *span,
             Self::ThisTurn { span } => *span,

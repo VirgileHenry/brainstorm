@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::ability::keyword_ability::CumulativeUpkeepKeywordAbility {
                             cost: cost.clone(),
                             #[cfg(feature = "spanned_tree")]
-                            span: cumulative_upkeep_span.merge(&cost.node_span()),
+                            span: cumulative_upkeep_span.merge(&cost.span()),
                         },
                     ),
                     /* Fixme */
@@ -51,7 +51,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                     #[cfg(feature = "spanned_tree")]
-                    span: cumulative_upkeep_span.merge(&cost.node_span()),
+                    span: cumulative_upkeep_span.merge(&cost.span()),
                 },
             }),
             _ => Err("Provided tokens do not match rule definition"),

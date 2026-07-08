@@ -79,9 +79,11 @@ impl AbilityTreeNode for DamageKind {
     fn node_tag(&self) -> &'static str {
         "damage kind"
     }
+}
 
-    #[cfg(feature = "spanned_tree")]
-    fn node_span(&self) -> crate::ability_tree::span::TreeSpan {
+#[cfg(feature = "spanned_tree")]
+impl crate::ability_tree::span::Spanned for DamageKind {
+    fn span(&self) -> crate::ability_tree::span::TreeSpan {
         match self {
             Self::CombatDamage { span } => *span,
             Self::Damage { span } => *span,

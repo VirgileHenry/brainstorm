@@ -241,7 +241,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::player::PlayerSpecifierObjectController {
                             object: Box::new(permanent.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: permanent.node_span().merge(span),
+                            span: permanent.span().merge(span),
                         },
                     ),
                 }),
@@ -278,7 +278,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         crate::ability_tree::player::PlayerSpecifierObjectOwner {
                             object: Box::new(card.clone()),
                             #[cfg(feature = "spanned_tree")]
-                            span: card.node_span().merge(span),
+                            span: card.span().merge(span),
                         },
                     ),
                 }),
