@@ -2,7 +2,7 @@
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]
-pub enum Mana {
+pub enum ManaSymbol {
     X,
     Any(AnyMana),
     Colored(ColoredMana),
@@ -13,49 +13,55 @@ pub enum Mana {
     Snow,
 }
 
-impl Mana {
+impl ManaSymbol {
     pub fn mana_value(&self) -> usize {
         match self {
-            Mana::X => 0,
-            Mana::Any(any_mana) => any_mana.number,
-            Mana::Colored(_) => 1,
-            Mana::Hybrid(_) => 1,
-            Mana::MonocoloredHybrid(hybrid_mana) => 1.max(hybrid_mana.number),
-            Mana::Phyrexian(_) => 1,
-            Mana::HybridPhyrexian(_) => 1,
-            Mana::Snow => 1,
+            ManaSymbol::X => 0,
+            ManaSymbol::Any(any_mana) => any_mana.number,
+            ManaSymbol::Colored(_) => 1,
+            ManaSymbol::Hybrid(_) => 1,
+            ManaSymbol::MonocoloredHybrid(hybrid_mana) => 1.max(hybrid_mana.number),
+            ManaSymbol::Phyrexian(_) => 1,
+            ManaSymbol::HybridPhyrexian(_) => 1,
+            ManaSymbol::Snow => 1,
         }
     }
 }
 
-impl std::str::FromStr for Mana {
+impl std::str::FromStr for ManaSymbol {
     type Err = String;
     fn from_str(from: &str) -> Result<Self, Self::Err> {
         if from.starts_with('{') && from.ends_with('}') {
             let symbols = from[1..from.len() - 1]
                 .split('/')
-                .map(ManaSymbol::parse_symbol)
+                .map(ManaSingleSymbol::parse_symbol)
                 .collect::<Result<Vec<_>, _>>()?;
             match symbols.as_slice() {
-                [ManaSymbol::X] => Ok(Mana::X),
-                [ManaSymbol::Any(number)] => Ok(Mana::Any(AnyMana { number: *number })),
-                [ManaSymbol::Colored(color)] => Ok(Mana::Colored(ColoredMana { color: *color })),
-                [ManaSymbol::Colored(c1), ManaSymbol::Colored(c2)] => Ok(Mana::Hybrid(HybridMana {
+                [ManaSingleSymbol::X] => Ok(ManaSymbol::X),
+                [ManaSingleSymbol::Any(number)] => Ok(ManaSymbol::Any(AnyMana { number: *number })),
+                [ManaSingleSymbol::Colored(color)] => Ok(ManaSymbol::Colored(ColoredMana { color: *color })),
+                [ManaSingleSymbol::Colored(c1), ManaSingleSymbol::Colored(c2)] => Ok(ManaSymbol::Hybrid(HybridMana {
                     color_1: *c1,
                     color_2: *c2,
                 })),
-                [ManaSymbol::Any(number), ManaSymbol::Colored(color)] => Ok(Mana::MonocoloredHybrid(MonocoloredHybridMana {
-                    number: *number,
-                    color: *color,
-                })),
-                [ManaSymbol::Colored(color), ManaSymbol::Phyrexian] => Ok(Mana::Phyrexian(PhyrexianMana { color: *color })),
-                [ManaSymbol::Colored(c1), ManaSymbol::Colored(c2), ManaSymbol::Phyrexian] => {
-                    Ok(Mana::HybridPhyrexian(HybridPhyrexianMana {
-                        color_1: *c1,
-                        color_2: *c2,
+                [ManaSingleSymbol::Any(number), ManaSingleSymbol::Colored(color)] => {
+                    Ok(ManaSymbol::MonocoloredHybrid(MonocoloredHybridMana {
+                        number: *number,
+                        color: *color,
                     }))
                 }
-                [ManaSymbol::Snow] => Ok(Mana::Snow),
+                [ManaSingleSymbol::Colored(color), ManaSingleSymbol::Phyrexian] => {
+                    Ok(ManaSymbol::Phyrexian(PhyrexianMana { color: *color }))
+                }
+                [
+                    ManaSingleSymbol::Colored(c1),
+                    ManaSingleSymbol::Colored(c2),
+                    ManaSingleSymbol::Phyrexian,
+                ] => Ok(ManaSymbol::HybridPhyrexian(HybridPhyrexianMana {
+                    color_1: *c1,
+                    color_2: *c2,
+                })),
+                [ManaSingleSymbol::Snow] => Ok(ManaSymbol::Snow),
                 _ => Err(format!("Invalid symbol combination: {symbols:?}")),
             }
         } else {
@@ -64,17 +70,17 @@ impl std::str::FromStr for Mana {
     }
 }
 
-impl std::fmt::Display for Mana {
+impl std::fmt::Display for ManaSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Mana::X => write!(f, "{{x}}"),
-            Mana::Snow => write!(f, "{{s}}"),
-            Mana::Any(mana) => write!(f, "{mana}"),
-            Mana::Colored(mana) => write!(f, "{mana}"),
-            Mana::Hybrid(mana) => write!(f, "{mana}"),
-            Mana::MonocoloredHybrid(mana) => write!(f, "{mana}"),
-            Mana::Phyrexian(mana) => write!(f, "{mana}"),
-            Mana::HybridPhyrexian(mana) => write!(f, "{mana}"),
+            ManaSymbol::X => write!(f, "{{x}}"),
+            ManaSymbol::Snow => write!(f, "{{s}}"),
+            ManaSymbol::Any(mana) => write!(f, "{mana}"),
+            ManaSymbol::Colored(mana) => write!(f, "{mana}"),
+            ManaSymbol::Hybrid(mana) => write!(f, "{mana}"),
+            ManaSymbol::MonocoloredHybrid(mana) => write!(f, "{mana}"),
+            ManaSymbol::Phyrexian(mana) => write!(f, "{mana}"),
+            ManaSymbol::HybridPhyrexian(mana) => write!(f, "{mana}"),
         }
     }
 }
@@ -227,7 +233,7 @@ impl std::fmt::Display for HybridPhyrexianMana {
 }
 
 /// Inner type used to parse mana costs.
-enum ManaSymbol {
+enum ManaSingleSymbol {
     X,
     Any(usize),
     Colored(crate::Color),
@@ -235,32 +241,32 @@ enum ManaSymbol {
     Snow,
 }
 
-impl std::fmt::Debug for ManaSymbol {
+impl std::fmt::Debug for ManaSingleSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ManaSymbol::X => write!(f, "x"),
-            ManaSymbol::Any(num) => write!(f, "{num}"),
-            ManaSymbol::Colored(color) => write!(f, "{}", color.as_char()),
-            ManaSymbol::Phyrexian => write!(f, "p"),
-            ManaSymbol::Snow => write!(f, "s"),
+            ManaSingleSymbol::X => write!(f, "x"),
+            ManaSingleSymbol::Any(num) => write!(f, "{num}"),
+            ManaSingleSymbol::Colored(color) => write!(f, "{}", color.as_char()),
+            ManaSingleSymbol::Phyrexian => write!(f, "p"),
+            ManaSingleSymbol::Snow => write!(f, "s"),
         }
     }
 }
 
-impl ManaSymbol {
-    fn parse_symbol(input: &str) -> Result<ManaSymbol, String> {
+impl ManaSingleSymbol {
+    fn parse_symbol(input: &str) -> Result<ManaSingleSymbol, String> {
         return match input {
-            "w" | "W" => Ok(ManaSymbol::Colored(crate::Color::White)),
-            "b" | "B" => Ok(ManaSymbol::Colored(crate::Color::Black)),
-            "r" | "R" => Ok(ManaSymbol::Colored(crate::Color::Red)),
-            "u" | "U" => Ok(ManaSymbol::Colored(crate::Color::Blue)),
-            "g" | "G" => Ok(ManaSymbol::Colored(crate::Color::Green)),
-            "c" | "C" => Ok(ManaSymbol::Colored(crate::Color::Colorless)),
-            "x" | "X" => Ok(ManaSymbol::X),
-            "s" | "S" => Ok(ManaSymbol::Snow),
-            "p" | "P" => Ok(ManaSymbol::Phyrexian),
+            "w" | "W" => Ok(ManaSingleSymbol::Colored(crate::Color::White)),
+            "b" | "B" => Ok(ManaSingleSymbol::Colored(crate::Color::Black)),
+            "r" | "R" => Ok(ManaSingleSymbol::Colored(crate::Color::Red)),
+            "u" | "U" => Ok(ManaSingleSymbol::Colored(crate::Color::Blue)),
+            "g" | "G" => Ok(ManaSingleSymbol::Colored(crate::Color::Green)),
+            "c" | "C" => Ok(ManaSingleSymbol::Colored(crate::Color::Colorless)),
+            "x" | "X" => Ok(ManaSingleSymbol::X),
+            "s" | "S" => Ok(ManaSingleSymbol::Snow),
+            "p" | "P" => Ok(ManaSingleSymbol::Phyrexian),
             other => match other.parse() {
-                Ok(num) => Ok(ManaSymbol::Any(num)),
+                Ok(num) => Ok(ManaSingleSymbol::Any(num)),
                 Err(_) => Err(format!("Unknown mana symbol: {other}")),
             },
         };

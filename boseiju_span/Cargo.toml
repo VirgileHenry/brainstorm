@@ -1,0 +1,9 @@
+[package]
+name = "boseiju_span"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+edition.workspace = true
+
+[dependencies]
