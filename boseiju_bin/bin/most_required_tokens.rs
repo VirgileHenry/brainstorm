@@ -101,7 +101,8 @@ fn main() {
     } else {
         println!("");
         println!(
-            "Most required tokens: (showing {SHOWN_TOKENS} out of {})",
+            "Most required tokens: (showing {} out of {})",
+            SHOWN_TOKENS.min(most_required_tokens.len()),
             most_required_tokens.len()
         );
         for (token, count) in most_required_tokens.iter().take(SHOWN_TOKENS) {

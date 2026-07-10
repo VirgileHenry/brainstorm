@@ -71,6 +71,11 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    /// Player's turn / Turn a permanent face up or down
+    Turn {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     /// Type can be from a card
     /// Or for mana type
     Type {
@@ -103,6 +108,7 @@ impl boseiju_span::Spanned for AmbiguousToken {
             Self::Protect { span } => *span,
             Self::Return { span } => *span,
             Self::Share { span } => *span,
+            Self::Turn { span } => *span,
             Self::Type { span } => *span,
             Self::Your { span } => *span,
         }
@@ -158,6 +164,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for AmbiguousToken {
                 span: span.into(),
             }),
             "share" | "shares" => Ok(Self::Share {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "turn" | "turns" => Ok(Self::Turn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

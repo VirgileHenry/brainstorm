@@ -9,10 +9,6 @@ pub enum CountSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    TheNext {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -21,7 +17,6 @@ impl boseiju_span::Spanned for CountSpecifier {
         match self {
             Self::All { span } => *span,
             Self::Target { span } => *span,
-            Self::TheNext { span } => *span,
         }
     }
 }
@@ -35,10 +30,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CountSpecifier {
                 span: span.into(),
             }),
             "target" | "targets" => Ok(Self::Target {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "the next" => Ok(Self::TheNext {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

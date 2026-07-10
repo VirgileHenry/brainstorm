@@ -251,6 +251,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Turn {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Unattach {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -335,6 +339,7 @@ impl boseiju_span::Spanned for PlayerAction {
             Self::Switch { span } => *span,
             Self::Take { span } => *span,
             Self::TheRingTemptsYou { span } => *span,
+            Self::Turn { span } => *span,
             Self::Unattach { span } => *span,
             Self::Unlock { span } => *span,
             Self::WonAClash { span } => *span,
@@ -826,6 +831,14 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for TensedPlayerAction {
                 span: span.into(),
             })),
             "the ring has tempted you" => Ok(Tensed::simple_past(PlayerAction::TheRingTemptsYou {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "turned" => Ok(Tensed::simple_past(PlayerAction::Turn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "turning" => Ok(Tensed::present_participle(PlayerAction::Turn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             })),
