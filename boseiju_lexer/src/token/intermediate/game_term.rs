@@ -1,233 +1,233 @@
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum CardProperty {
-    BasePower {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum GameTerm {
+    Card {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    BasePowerAndToughness {
+    CardPool {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    BaseToughness {
+    Effect {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    ColorIdentity {
+    ExtraTurn {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Commander {
+    GenericManaCost {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Cost {
+    Heal {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    DoubleFaced {
+    LegendRule {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Historic {
+    LethalDamage {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Level {
+    Life {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Loyalty {
+    MagicSubgame {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    ManaValue {
+    Mana {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Monocolored {
+    MostRecentTurn {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Multicolored {
+    OriginalSpell {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Name {
+    Permanent {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    OriginallyPrintedIn {
+    Phase {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Ownership {
+    PlayingArea {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Power {
+    Radiation {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Quality {
+    Source {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    StartingLoyalty {
+    Spell {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Text {
+    Step {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    TextBox {
+    TheGame {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    TotalToxicValue {
+    TheStack {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Toughness {
+    Trigger {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Worthy {
+    TurnOrder {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for CardProperty {
+impl boseiju_span::Spanned for GameTerm {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::BasePower { span } => *span,
-            Self::BasePowerAndToughness { span } => *span,
-            Self::BaseToughness { span } => *span,
-            Self::ColorIdentity { span } => *span,
-            Self::Commander { span } => *span,
-            Self::Cost { span } => *span,
-            Self::DoubleFaced { span } => *span,
-            Self::Historic { span } => *span,
-            Self::Level { span } => *span,
-            Self::Loyalty { span } => *span,
-            Self::ManaValue { span } => *span,
-            Self::Monocolored { span } => *span,
-            Self::Multicolored { span } => *span,
-            Self::Name { span } => *span,
-            Self::OriginallyPrintedIn { span } => *span,
-            Self::Ownership { span } => *span,
-            Self::Power { span } => *span,
-            Self::Quality { span } => *span,
-            Self::StartingLoyalty { span } => *span,
-            Self::Text { span } => *span,
-            Self::TextBox { span } => *span,
-            Self::TotalToxicValue { span } => *span,
-            Self::Toughness { span } => *span,
-            Self::Worthy { span } => *span,
+            Self::Card { span } => *span,
+            Self::CardPool { span } => *span,
+            Self::Effect { span } => *span,
+            Self::ExtraTurn { span } => *span,
+            Self::GenericManaCost { span } => *span,
+            Self::Heal { span } => *span,
+            Self::LegendRule { span } => *span,
+            Self::LethalDamage { span } => *span,
+            Self::Life { span } => *span,
+            Self::MagicSubgame { span } => *span,
+            Self::Mana { span } => *span,
+            Self::MostRecentTurn { span } => *span,
+            Self::OriginalSpell { span } => *span,
+            Self::Permanent { span } => *span,
+            Self::Phase { span } => *span,
+            Self::PlayingArea { span } => *span,
+            Self::Radiation { span } => *span,
+            Self::Source { span } => *span,
+            Self::Spell { span } => *span,
+            Self::Step { span } => *span,
+            Self::TheGame { span } => *span,
+            Self::TheStack { span } => *span,
+            Self::Trigger { span } => *span,
+            Self::TurnOrder { span } => *span,
         }
     }
 }
 
-impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardProperty {
+impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
-            "base power" => Ok(CardProperty::BasePower {
+            "card" | "cards" => Ok(Self::Card {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "base power and toughness" => Ok(CardProperty::BasePowerAndToughness {
+            "card pool" => Ok(Self::CardPool {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "base toughness" => Ok(CardProperty::BaseToughness {
+            "effect" | "effects" => Ok(Self::Effect {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "color identity" => Ok(CardProperty::ColorIdentity {
+            "extra turn" | "extra turns" => Ok(Self::ExtraTurn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "commander" | "commanders" => Ok(CardProperty::Commander {
+            "generic mana costs" => Ok(Self::GenericManaCost {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "cost" | "costs" => Ok(CardProperty::Cost {
+            "healed" => Ok(Self::Heal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "double-faced" => Ok(CardProperty::DoubleFaced {
+            "legend rule" => Ok(Self::LegendRule {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "historic" => Ok(CardProperty::Historic {
+            "lethal damage" => Ok(Self::LethalDamage {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "level" => Ok(CardProperty::Level {
+            "life" => Ok(Self::Life {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "loyalty" => Ok(CardProperty::Loyalty {
+            "magic subgame" | "subgame" => Ok(Self::MagicSubgame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "mana cost" | "mana costs" | "mana value" | "mana values" => Ok(CardProperty::ManaValue {
+            "mana" => Ok(Self::Mana {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "monocolored" => Ok(CardProperty::Monocolored {
+            "most recent turn" => Ok(Self::MostRecentTurn {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "multicolored" => Ok(CardProperty::Multicolored {
+            "original spell" => Ok(Self::OriginalSpell {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "name" | "names" => Ok(CardProperty::Name {
+            "permanent" | "permanents" => Ok(Self::Permanent {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "originally printed in" => Ok(CardProperty::OriginallyPrintedIn {
+            "phase" | "phases" => Ok(Self::Phase {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "ownership" => Ok(CardProperty::Ownership {
+            "playing area" => Ok(Self::PlayingArea {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "power" | "powers" => Ok(CardProperty::Power {
+            "radiation" => Ok(Self::Radiation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "quality" => Ok(CardProperty::Quality {
+            "source" | "sources" => Ok(Self::Source {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "starting loyalty" => Ok(CardProperty::StartingLoyalty {
+            "spell" | "spells" => Ok(Self::Spell {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "text" => Ok(CardProperty::Text {
+            "step" | "steps" => Ok(Self::Step {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "text box" => Ok(CardProperty::TextBox {
+            "the game" => Ok(Self::TheGame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "total toxic value" => Ok(CardProperty::TotalToxicValue {
+            "the stack" => Ok(Self::TheStack {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "toughness" => Ok(CardProperty::Toughness {
+            "trigger" | "triggers" => Ok(Self::Trigger {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "worthy" => Ok(CardProperty::Worthy {
+            "turn order" => Ok(Self::TurnOrder {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

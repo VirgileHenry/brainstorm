@@ -2,15 +2,6 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnableZone {
-    /// The battlefield is technically not an owned zone.
-    ///
-    /// However, "the battlefield under some player control" can be interpreted
-    /// as "your battlefield ?" soo it makes sense
-    Battlefield {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    /// A Deck is a owned zone that exist before a game starts.
     Deck {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -33,7 +24,6 @@ pub enum OwnableZone {
 impl boseiju_span::Spanned for OwnableZone {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::Battlefield { span } => *span,
             Self::Graveyard { span } => *span,
             Self::Deck { span } => *span,
             Self::Hand { span } => *span,
@@ -45,7 +35,6 @@ impl boseiju_span::Spanned for OwnableZone {
 impl std::fmt::Display for OwnableZone {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OwnableZone::Battlefield { .. } => write!(f, "graveyard"),
             OwnableZone::Deck { .. } => write!(f, "graveyard"),
             OwnableZone::Graveyard { .. } => write!(f, "graveyard"),
             OwnableZone::Hand { .. } => write!(f, "hand"),

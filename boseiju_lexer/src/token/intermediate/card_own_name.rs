@@ -4,6 +4,12 @@ pub struct CardOwnName {
     pub span: boseiju_span::Span,
 }
 
+impl boseiju_span::Spanned for CardOwnName {
+    fn span(&self) -> boseiju_span::Span {
+        self.span
+    }
+}
+
 impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardOwnName {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {

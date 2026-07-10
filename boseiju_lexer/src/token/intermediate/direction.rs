@@ -5,6 +5,7 @@ pub enum Direction {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    /* Left is an ambiguous token */
 }
 
 #[cfg(feature = "spanned_tree")]

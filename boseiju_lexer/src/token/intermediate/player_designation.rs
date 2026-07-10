@@ -18,10 +18,6 @@ pub enum PlayerDesignation {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Party {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -32,7 +28,6 @@ impl boseiju_span::Spanned for PlayerDesignation {
             Self::Poisoned { span } => *span,
             Self::TheCitysBlessing { span } => *span,
             Self::TheInitiative { span } => *span,
-            Self::Party { span } => *span,
         }
     }
 }
@@ -54,11 +49,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for PlayerDesignation {
                 span: span.into(),
             }),
             "the initiative" => Ok(Self::TheInitiative {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            /* Fixme: somewhere else */
-            "party" => Ok(Self::Party {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

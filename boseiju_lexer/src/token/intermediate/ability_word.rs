@@ -6,6 +6,12 @@ pub struct AbilityWord {
     pub span: boseiju_span::Span,
 }
 
+impl boseiju_span::Spanned for AbilityWord {
+    fn span(&self) -> boseiju_span::Span {
+        self.span
+    }
+}
+
 impl<'src> TryFrom<&crate::LexerSpan<'src>> for AbilityWord {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {

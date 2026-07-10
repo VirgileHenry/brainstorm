@@ -6,6 +6,7 @@ pub mod terminal;
 #[idris(repr = usize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
+    AbilityKind(intermediate::AbilityKind),
     AbilityWord(intermediate::AbilityWord),
     AmbiguousToken(intermediate::AmbiguousToken),
     ArtifactSubtype(terminal::ArtifactSubtype),
@@ -19,8 +20,6 @@ pub enum Token {
     CardProperty(intermediate::CardProperty),
     CardState(intermediate::CardState),
     CardType(terminal::CardType),
-    Choice(intermediate::Choice),
-    ChoiceReference(intermediate::ChoiceReference),
     CoinFlip(intermediate::CoinFlip),
     Color(terminal::Color),
     ControlFlow(intermediate::ControlFlow),
@@ -35,7 +34,9 @@ pub enum Token {
     EnchantmentSubtype(terminal::EnchantmentSubtype),
     EnglishKeyword(intermediate::EnglishKeyword),
     FlavorWord(terminal::FlavorWord),
+    FormatSpecific(intermediate::FormatSpecific),
     ForwardDuration(terminal::ForwardDuration),
+    GameTerm(intermediate::GameTerm),
     GlobalZone(intermediate::GlobalZone),
     InstantSorcerySubtype(terminal::InstantSorcerySubtype),
     KeywordAbility(intermediate::KeywordAbility),
@@ -76,7 +77,9 @@ pub enum Token {
 
 impl Token {
     pub fn try_from_span(span: crate::span::LexerSpan) -> Option<Token> {
-        if let Ok(token) = intermediate::AbilityWord::try_from(&span) {
+        if let Ok(token) = intermediate::AbilityKind::try_from(&span) {
+            Some(Self::AbilityKind(token))
+        } else if let Ok(token) = intermediate::AbilityWord::try_from(&span) {
             Some(Self::AbilityWord(token))
         } else if let Ok(token) = intermediate::AmbiguousToken::try_from(&span) {
             Some(Self::AmbiguousToken(token))
@@ -102,10 +105,6 @@ impl Token {
             Some(Self::CardState(token))
         } else if let Ok(token) = terminal::CardType::try_from(&span) {
             Some(Self::CardType(token))
-        } else if let Ok(token) = intermediate::Choice::try_from(&span) {
-            Some(Self::Choice(token))
-        } else if let Ok(token) = intermediate::ChoiceReference::try_from(&span) {
-            Some(Self::ChoiceReference(token))
         } else if let Ok(token) = intermediate::CoinFlip::try_from(&span) {
             Some(Self::CoinFlip(token))
         } else if let Ok(token) = terminal::Color::try_from(&span) {
@@ -134,8 +133,12 @@ impl Token {
             Some(Self::EnglishKeyword(token))
         } else if let Ok(token) = terminal::FlavorWord::try_from(&span) {
             Some(Self::FlavorWord(token))
+        } else if let Ok(token) = intermediate::FormatSpecific::try_from(&span) {
+            Some(Self::FormatSpecific(token))
         } else if let Ok(token) = terminal::ForwardDuration::try_from(&span) {
             Some(Self::ForwardDuration(token))
+        } else if let Ok(token) = intermediate::GameTerm::try_from(&span) {
+            Some(Self::GameTerm(token))
         } else if let Ok(token) = intermediate::GlobalZone::try_from(&span) {
             Some(Self::GlobalZone(token))
         } else if let Ok(token) = terminal::InstantSorcerySubtype::try_from(&span) {
@@ -218,7 +221,8 @@ impl Token {
 impl boseiju_span::Spanned for Token {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::AbilityWord(child) => child.span,
+            Self::AbilityKind(child) => child.span(),
+            Self::AbilityWord(child) => child.span(),
             Self::AmbiguousToken(child) => child.span(),
             Self::ArtifactSubtype(child) => child.span(),
             Self::AttachedObject(child) => child.span(),
@@ -227,14 +231,12 @@ impl boseiju_span::Spanned for Token {
             Self::Bid(child) => child.span(),
             Self::CardActions(child) => child.span(),
             Self::CardFace(child) => child.span(),
-            Self::CardOwnName(child) => child.span,
+            Self::CardOwnName(child) => child.span(),
             Self::CardProperty(child) => child.span(),
             Self::CardState(child) => child.span(),
             Self::CardType(child) => child.span(),
-            Self::Choice(child) => child.span(),
-            Self::ChoiceReference(child) => child.span(),
             Self::CoinFlip(child) => child.span(),
-            Self::Color(child) => child.span,
+            Self::Color(child) => child.span(),
             Self::ControlFlow(child) => child.span(),
             Self::CountSpecifier(child) => child.span(),
             Self::Counter(child) => child.span(),
@@ -244,10 +246,12 @@ impl boseiju_span::Spanned for Token {
             Self::DayNight(child) => child.span(),
             Self::Die(child) => child.span(),
             Self::Direction(child) => child.span(),
-            Self::EnchantmentSubtype(child) => child.span,
+            Self::EnchantmentSubtype(child) => child.span(),
             Self::EnglishKeyword(child) => child.span(),
             Self::FlavorWord(child) => child.span(),
+            Self::FormatSpecific(child) => child.span(),
             Self::ForwardDuration(child) => child.span(),
+            Self::GameTerm(child) => child.span(),
             Self::GlobalZone(child) => child.span(),
             Self::InstantSorcerySubtype(child) => child.span(),
             Self::KeywordAbility(child) => child.span(),
