@@ -58,8 +58,8 @@ fn main() {
     println!("const EXAMPLE_CARDS = [");
     for card in result.into_iter() {
         println!("  {{");
-        println!("    name: \"{}\",", card.card_name);
-        println!("    oracle: \"{}\",", card.oracle_text);
+        println!("    name: \"{}\",", card.card_name.replace('"', "\\\""));
+        println!("    oracle: \"{}\",", card.oracle_text.replace('"', "\\\""));
         println!("  }},");
     }
     println!("];");
