@@ -8,10 +8,30 @@ edition.workspace = true
 
 [dependencies]
 boseiju_lexer = { workspace = true }
+boseiju_parser = { workspace = true }
+boseiju_tree = { workspace = true }
 indicatif = { version = "0.17", features = ["rayon"] }
 mtg_cardbase = { workspace = true }
+mtg_data = { workspace = true }
 rayon = "1.10"
+serde_json = { workspace = true }
+
+[[bin]]
+name = "card_coverage"
+path = "bin/card_coverage.rs"
+
+[[bin]]
+name = "export_for_urza"
+path = "bin/export_for_urza.rs"
+
+[[bin]]
+name = "export_for_webdemo"
+path = "bin/export_for_webdemo.rs"
 
 [[bin]]
 name = "most_required_tokens"
 path = "bin/most_required_tokens.rs"
+
+[[bin]]
+name = "most_required_nodes"
+path = "bin/most_required_nodes.rs"

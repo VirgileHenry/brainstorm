@@ -75,9 +75,13 @@ name = "boseiju_bin"
 version = "0.0.1"
 dependencies = [
  "boseiju_lexer",
+ "boseiju_parser",
+ "boseiju_tree",
  "indicatif",
  "mtg_cardbase",
+ "mtg_data",
  "rayon",
+ "serde_json",
 ]
 
 [[package]]
@@ -93,6 +97,24 @@ dependencies = [
  "mtg_data",
  "regex",
  "serde",
+]
+
+[[package]]
+name = "boseiju_parser"
+version = "0.0.1"
+dependencies = [
+ "arrayvec",
+ "boseiju_lexer",
+ "boseiju_span",
+ "boseiju_tree",
+ "idris",
+ "idris_derive",
+ "lazy_static",
+ "mtg_cardbase",
+ "mtg_data",
+ "rapidhash",
+ "regex",
+ "uuid",
 ]
 
 [[package]]
@@ -392,6 +414,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a338cc41d27e6cc6dce6cefc13a0729dfbb81c262b1f519331575dd80ef3067f"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rapidhash"
+version = "4.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5da7e78a036ce858e8d55b7e7dc8ba3a88b78350fd2155d3591bbd966b58589e"
+dependencies = [
+ "rustversion",
 ]
 
 [[package]]

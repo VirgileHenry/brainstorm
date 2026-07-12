@@ -9,9 +9,9 @@ edition.workspace = true
 [dependencies]
 arrayvec = { workspace = true }
 boseiju_span = { workspace = true, optional = true }
-lazy_static = { workspace = true }
 idris = { workspace = true }
 idris_derive = { workspace = true }
+lazy_static = { workspace = true }
 mtg_cardbase = { workspace = true }
 mtg_data = { workspace = true }
 regex = { workspace = true }

@@ -1,0 +1,64 @@
+use crate::lexer::tokens::Token;
+use crate::lexer::tokens::intermediates;
+use crate::parser::rules::ParserNode;
+use crate::parser::rules::ParserRule;
+use crate::parser::rules::ParserRuleDeclarationLocation;
+use crate::parser::rules::RuleLhs;
+use crate::utils::dummy;
+use idris::Idris;
+
+pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+    /* "Mill <amount> cards" */
+    std::iter::once(ParserRule {
+        expanded: RuleLhs::new(&[
+            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                keyword_action: mtg_data::KeywordAction::Mill,
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::Number { number: dummy() }.id(),
+            ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+        ]),
+        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Mill,
+                    #[cfg(feature = "spanned_tree")]
+                        span: mill_span,
+                })),
+                ParserNode::Number { number },
+                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Card {
+                    #[cfg(feature = "spanned_tree")]
+                        span: end_span,
+                })),
+            ] => Ok(ParserNode::ImperativeKind {
+                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    crate::ability_tree::imperative::KeywordAction {
+                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Mill(
+                            crate::ability_tree::imperative::mill::MillKeywordAction {
+                                amount: number.clone(),
+                                #[cfg(feature = "spanned_tree")]
+                                span: mill_span.merge(end_span),
+                            },
+                        ),
+                        ability: crate::ability_tree::imperative::mill::ability(
+                            number,
+                            #[cfg(feature = "spanned_tree")]
+                            mill_span.merge(end_span),
+                        ),
+                        #[cfg(feature = "spanned_tree")]
+                        span: mill_span.merge(end_span),
+                    },
+                ),
+            }),
+            _ => Err("Provided tokens do not match rule definition"),
+        },
+        creation_loc: ParserRuleDeclarationLocation::here(),
+    })
+}

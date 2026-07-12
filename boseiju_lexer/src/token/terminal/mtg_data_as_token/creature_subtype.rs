@@ -34,6 +34,7 @@ impl boseiju_span::Spanned for CreatureSubtype {
     }
 }
 
+/* Fixme: do we want to differentiate specific creature types ? */
 impl idris::Idris for CreatureSubtype {
     const COUNT: usize = mtg_data::CreatureType::COUNT;
     fn id(&self) -> usize {
@@ -71,5 +72,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CreatureSubtype {
             #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
+    }
+}
+
+impl std::fmt::Display for CreatureSubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.creature_subtype.fmt(f)
     }
 }

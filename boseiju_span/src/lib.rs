@@ -17,6 +17,13 @@ pub struct Span {
 }
 
 impl Span {
+    pub fn from_str(source: &str) -> Self {
+        Self {
+            start: 0,
+            end: source.len(),
+        }
+    }
+
     /// Creates a new span that includes both spans
     pub fn merge(&self, other: &Self) -> Self {
         Self {

@@ -70,3 +70,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardType {
         }
     }
 }
+
+impl std::fmt::Display for CardType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.card_type.fmt(f)
+    }
+}

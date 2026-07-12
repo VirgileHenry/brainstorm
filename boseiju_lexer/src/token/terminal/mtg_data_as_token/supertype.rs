@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for Supertype {
         })
     }
 }
+
+impl std::fmt::Display for Supertype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.supertype.fmt(f)
+    }
+}

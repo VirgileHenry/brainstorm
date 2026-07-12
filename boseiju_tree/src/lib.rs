@@ -1,10 +1,11 @@
 pub mod ability_tree;
+pub mod card;
 
 pub use ability_tree::AbilityTree;
 pub use card::Card;
+pub use heap_array_vec::HeapArrayVec;
 pub use node_data::AbTreeNodeData;
 
-mod card;
 mod dummy_terminal;
 mod formatter;
 mod heap_array_vec;
@@ -12,7 +13,6 @@ mod node_data;
 mod node_kind;
 
 use formatter::TreeFormatter;
-use heap_array_vec::HeapArrayVec;
 use node_kind::NodeKind;
 
 /// Maximum number of children a single node can have.

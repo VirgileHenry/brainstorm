@@ -3,6 +3,7 @@
 members = [
     "boseiju_bin",
     "boseiju_lexer",
+    "boseiju_parser",
     "boseiju_span",
     "boseiju_tree",
 #   "boseiju_wasm",
@@ -23,6 +24,7 @@ edition = "2024"
 [workspace.dependencies]
 # Own crates as dependencies
 boseiju_lexer = { path = "boseiju_lexer" }
+boseiju_parser = { path = "boseiju_parser" }
 boseiju_span = { path = "boseiju_span" }
 boseiju_tree = { path = "boseiju_tree" }
 # boseiju_wasm = { path = "boseiju_wasm" }

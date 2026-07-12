@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnchantmentSubtype {
         })
     }
 }
+
+impl std::fmt::Display for EnchantmentSubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.enchantment_subtype.fmt(f)
+    }
+}

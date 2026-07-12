@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for LandSubtype {
         })
     }
 }
+
+impl std::fmt::Display for LandSubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.land_subtype.fmt(f)
+    }
+}

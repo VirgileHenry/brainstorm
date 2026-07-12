@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for PlaneswalkerSubtype {
         })
     }
 }
+
+impl std::fmt::Display for PlaneswalkerSubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.planeswalker_subtype.fmt(f)
+    }
+}

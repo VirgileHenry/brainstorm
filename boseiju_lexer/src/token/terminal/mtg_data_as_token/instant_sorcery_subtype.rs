@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for InstantSorcerySubtype {
         })
     }
 }
+
+impl std::fmt::Display for InstantSorcerySubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.instant_sorcery_subtype.fmt(f)
+    }
+}
