@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Fetch Cardbase
         run: |
-          cd mtg-cardbase
+          cd mtg_cardbase
           python3 data_fetcher.py
       - name: Generate Card Coverage Report
         run: |

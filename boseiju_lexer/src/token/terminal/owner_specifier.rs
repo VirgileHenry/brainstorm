@@ -1,6 +1,7 @@
 /// Fixme: doc
 /// Fixme: is this bullshit ?
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnerSpecifier {
     YouOwn {
@@ -15,6 +16,15 @@ pub enum OwnerSpecifier {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+}
+
+impl Default for OwnerSpecifier {
+    fn default() -> Self {
+        Self::YouOwn {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "spanned_tree")]

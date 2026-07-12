@@ -1,4 +1,5 @@
 /// Wrapper around the card type.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct CardType {
     pub card_type: mtg_data::CardType,
@@ -13,6 +14,16 @@ impl CardType {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for CardType {
+    fn default() -> Self {
+        Self {
+            card_type: mtg_data::CardType::Creature,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

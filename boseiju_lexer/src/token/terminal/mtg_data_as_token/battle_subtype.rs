@@ -1,4 +1,5 @@
 /// Wrapper around the battle subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct BattleSubtype {
     pub battle_subtype: mtg_data::BattleType,
@@ -13,6 +14,16 @@ impl BattleSubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for BattleSubtype {
+    fn default() -> Self {
+        Self {
+            battle_subtype: mtg_data::BattleType::Siege,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

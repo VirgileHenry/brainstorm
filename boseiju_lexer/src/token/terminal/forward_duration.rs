@@ -1,5 +1,6 @@
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ForwardDuration {
     ForAsLongAsItsExiled {
@@ -18,6 +19,15 @@ pub enum ForwardDuration {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+}
+
+impl Default for ForwardDuration {
+    fn default() -> Self {
+        Self::Forever {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 impl boseiju_span::Spanned for ForwardDuration {

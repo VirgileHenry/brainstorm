@@ -1,7 +1,8 @@
 /// Enum for all the keyword abilties that does not require
 /// additionnal text besides the keyword.
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum StandaloneAbilityWord {
     Adamant,
     Addendum,

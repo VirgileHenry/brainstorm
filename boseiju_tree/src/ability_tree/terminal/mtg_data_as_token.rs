@@ -1,0 +1,13 @@
+mod artifact_subtype;
+mod battle_subtype;
+mod card_type;
+mod color;
+mod creature_subtype;
+mod enchantment_subtype;
+mod flavor_word;
+mod instant_sorcery_subtype;
+mod keywords;
+mod land_subtype;
+mod mana_symbol;
+mod planeswalker_subtype;
+mod supertype;

@@ -1,5 +1,6 @@
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NamedMeld {
     HanweirTheWrithingTownship {
@@ -30,6 +31,15 @@ pub enum NamedMeld {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+}
+
+impl Default for NamedMeld {
+    fn default() -> Self {
+        Self::MishraLostToPhyrexia {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "spanned_tree")]

@@ -1,4 +1,5 @@
 /// Wrapper around the enchantment subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Supertype {
     pub supertype: mtg_data::Supertype,
@@ -13,6 +14,16 @@ impl Supertype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for Supertype {
+    fn default() -> Self {
+        Self {
+            supertype: mtg_data::Supertype::Legendary,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

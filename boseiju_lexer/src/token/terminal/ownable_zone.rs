@@ -1,5 +1,6 @@
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum OwnableZone {
     Deck {
@@ -18,6 +19,15 @@ pub enum OwnableZone {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+}
+
+impl Default for OwnableZone {
+    fn default() -> Self {
+        Self::Deck {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "spanned_tree")]

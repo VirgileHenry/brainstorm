@@ -1,8 +1,19 @@
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SagaChapterNumber {
     pub chapter: u32,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
+}
+
+impl Default for SagaChapterNumber {
+    fn default() -> Self {
+        Self {
+            chapter: Default::default(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "spanned_tree")]

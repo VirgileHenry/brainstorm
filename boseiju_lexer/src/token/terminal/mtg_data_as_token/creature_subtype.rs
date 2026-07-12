@@ -1,4 +1,5 @@
 /// Wrapper around the creature subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct CreatureSubtype {
     pub creature_subtype: mtg_data::CreatureType,
@@ -13,6 +14,16 @@ impl CreatureSubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for CreatureSubtype {
+    fn default() -> Self {
+        Self {
+            creature_subtype: mtg_data::CreatureType::Goblin,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

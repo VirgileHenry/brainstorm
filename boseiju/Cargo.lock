@@ -136,7 +136,7 @@ name = "krark"
 version = "0.1.0"
 dependencies = [
  "libtest-mimic",
- "mtg-cardbase",
+ "mtg_cardbase",
  "regex",
 ]
 
@@ -159,7 +159,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
 
 [[package]]
-name = "mtg-cardbase"
+name = "mtg_cardbase"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -168,7 +168,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mtg-data"
+name = "mtg_data"
 version = "0.1.0"
 
 [[package]]
@@ -176,7 +176,7 @@ name = "boseiju"
 version = "0.1.0"
 dependencies = [
  "krark",
- "mtg-data",
+ "mtg_data",
  "regex",
 ]
 

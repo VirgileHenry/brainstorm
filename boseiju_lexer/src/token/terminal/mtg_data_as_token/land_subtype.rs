@@ -1,4 +1,5 @@
 /// Wrapper around the enchantment subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct LandSubtype {
     pub land_subtype: mtg_data::LandType,
@@ -13,6 +14,16 @@ impl LandSubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for LandSubtype {
+    fn default() -> Self {
+        Self {
+            land_subtype: mtg_data::LandType::Mountain,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

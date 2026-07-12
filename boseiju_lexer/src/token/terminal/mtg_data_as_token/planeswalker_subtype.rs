@@ -1,4 +1,5 @@
 /// Wrapper around the enchantment subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PlaneswalkerSubtype {
     pub planeswalker_subtype: mtg_data::PlaneswalkerType,
@@ -13,6 +14,16 @@ impl PlaneswalkerSubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for PlaneswalkerSubtype {
+    fn default() -> Self {
+        Self {
+            planeswalker_subtype: mtg_data::PlaneswalkerType::Jace,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
