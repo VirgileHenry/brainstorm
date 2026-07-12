@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Step {
     Untap {
@@ -49,6 +50,15 @@ pub enum Step {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+}
+
+impl Default for Step {
+    fn default() -> Self {
+        Self::Untap {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "spanned_tree")]

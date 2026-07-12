@@ -1,5 +1,6 @@
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NamedCard {
     AdvocateOfTheBeast {
@@ -434,6 +435,15 @@ pub enum NamedCard {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+}
+
+impl Default for NamedCard {
+    fn default() -> Self {
+        Self::ChandraBoldPyromancer {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "spanned_tree")]

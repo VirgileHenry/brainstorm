@@ -1,4 +1,5 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Counter {
     pub kind: CounterKind,
     #[cfg(feature = "spanned_tree")]
@@ -12,6 +13,16 @@ impl Counter {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for Counter {
+    fn default() -> Self {
+        Self {
+            kind: CounterKind::Acorn,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
@@ -300,6 +311,7 @@ impl idris::Idris for Counter {
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CounterKind {
     Acorn,

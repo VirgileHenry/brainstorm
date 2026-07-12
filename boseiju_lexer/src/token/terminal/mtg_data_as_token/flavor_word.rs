@@ -1,4 +1,5 @@
 /// Wrapper around the ability word.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct FlavorWord {
     pub flavor_word: mtg_data::FlavorWord,
@@ -13,6 +14,16 @@ impl FlavorWord {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for FlavorWord {
+    fn default() -> Self {
+        Self {
+            flavor_word: mtg_data::FlavorWord::Fight,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

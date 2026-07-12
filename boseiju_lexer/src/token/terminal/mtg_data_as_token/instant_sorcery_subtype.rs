@@ -1,4 +1,5 @@
 /// Wrapper around the enchantment subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct InstantSorcerySubtype {
     pub instant_sorcery_subtype: mtg_data::SpellType,
@@ -13,6 +14,16 @@ impl InstantSorcerySubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for InstantSorcerySubtype {
+    fn default() -> Self {
+        Self {
+            instant_sorcery_subtype: mtg_data::SpellType::Arcane,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

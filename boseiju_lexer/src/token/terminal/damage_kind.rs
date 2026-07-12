@@ -1,5 +1,6 @@
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum DamageKind {
     CombatDamage {
         #[cfg(feature = "spanned_tree")]
@@ -40,6 +41,15 @@ impl DamageKind {
             },
         ]
         .into_iter()
+    }
+}
+
+impl Default for DamageKind {
+    fn default() -> Self {
+        Self::Damage {
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

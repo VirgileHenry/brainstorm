@@ -1,4 +1,5 @@
 /// Wrapper around the artifact subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ArtifactSubtype {
     pub artifact_subtype: mtg_data::ArtifactType,
@@ -13,6 +14,16 @@ impl ArtifactSubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for ArtifactSubtype {
+    fn default() -> Self {
+        Self {
+            artifact_subtype: mtg_data::ArtifactType::Clue,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 /// Wrapper around the enchantment subtype.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct EnchantmentSubtype {
     pub enchantment_subtype: mtg_data::EnchantmentType,
@@ -13,6 +14,16 @@ impl EnchantmentSubtype {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for EnchantmentSubtype {
+    fn default() -> Self {
+        Self {
+            enchantment_subtype: mtg_data::EnchantmentType::Shard,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

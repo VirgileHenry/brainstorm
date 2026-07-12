@@ -15,8 +15,8 @@ A quick demo for the oracle text parser [can be found here](https://virgilehenry
 
 The documentation for the main crates are available here:
 - [boseiju](https://virgilehenry.github.io/brainstorm/doc/boseiju)
-- [mtg-cardbase](https://virgilehenry.github.io/brainstorm/doc/mtg-cardbase)
-- [mtg-data](https://virgilehenry.github.io/brainstorm/doc/mtg-data)
+- [mtg_cardbase](https://virgilehenry.github.io/brainstorm/doc/mtg_cardbase)
+- [mtg_data](https://virgilehenry.github.io/brainstorm/doc/mtg_data)
 - [idris](https://virgilehenry.github.io/brainstorm/doc/idris)
 
 ### Status

@@ -7,10 +7,10 @@ workspace = ".."
 [dependencies]
 arrayvec = { workspace = true }
 idris = { workspace = true }
-idris-derive = { workspace = true }
+idris_derive = { workspace = true }
 lazy_static = { workspace = true }
-mtg-cardbase = { workspace = true }
-mtg-data = { workspace = true }
+mtg_cardbase = { workspace = true }
+mtg_data = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

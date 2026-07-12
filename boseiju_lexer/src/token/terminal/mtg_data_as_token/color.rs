@@ -1,4 +1,5 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Color {
     pub color: mtg_data::Color,
     #[cfg(feature = "spanned_tree")]
@@ -12,6 +13,16 @@ impl Color {
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         })
+    }
+}
+
+impl Default for Color {
+    fn default() -> Self {
+        Self {
+            color: mtg_data::Color::Red,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 

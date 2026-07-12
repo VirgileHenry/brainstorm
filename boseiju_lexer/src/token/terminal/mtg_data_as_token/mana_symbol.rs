@@ -1,14 +1,25 @@
 /// Wrapper around the mana symbol type.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ManaSymbol {
-    mana: mtg_data::ManaSymbol,
+    pub mana_symbol: mtg_data::ManaSymbol,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl ManaSymbol {
     pub fn mana_value(&self) -> usize {
-        self.mana.mana_value()
+        self.mana_symbol.mana_value()
+    }
+}
+
+impl Default for ManaSymbol {
+    fn default() -> Self {
+        Self {
+            mana_symbol: mtg_data::ManaSymbol::Snow,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }
 
@@ -24,7 +35,7 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for ManaSymbol {
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         use std::str::FromStr;
         Ok(Self {
-            mana: mtg_data::ManaSymbol::from_str(span.text).map_err(|_| ())?,
+            mana_symbol: mtg_data::ManaSymbol::from_str(span.text).map_err(|_| ())?,
             span: span.into(),
         })
     }

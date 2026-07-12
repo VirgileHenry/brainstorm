@@ -1,0 +1,63 @@
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum Legality {
+    Legal,
+    Notlegal,
+    Restricted,
+    Banned,
+}
+
+impl std::str::FromStr for Legality {
+    type Err = LegalityParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "legal" => Ok(Self::Legal),
+            "not_legal" => Ok(Self::Notlegal),
+            "restricted" => Ok(Self::Restricted),
+            "banned" => Ok(Self::Banned),
+            other => Err(LegalityParseError {
+                legality: other.to_string(),
+            }),
+        }
+    }
+}
+
+impl Legality {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Legal => "legal",
+            Self::Notlegal => "not_legal",
+            Self::Restricted => "restricted",
+            Self::Banned => "banned",
+        }
+    }
+}
+
+impl std::fmt::Display for Legality {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+impl Legality {
+    pub fn all() -> impl Iterator<Item = Self> {
+        [Self::Legal, Self::Notlegal, Self::Restricted, Self::Banned].into_iter()
+    }
+}
+
+#[derive(Debug)]
+pub struct LegalityParseError {
+    legality: String,
+}
+
+impl std::fmt::Display for LegalityParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Invalid legality: \"{}\", expected one of \"legal\", \"not_legal\", \"restricted\", \"banned\"",
+            self.legality
+        )
+    }
+}
+
+impl std::error::Error for LegalityParseError {}

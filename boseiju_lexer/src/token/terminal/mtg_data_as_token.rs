@@ -1,3 +1,4 @@
+mod ability_word;
 mod artifact_subtype;
 mod battle_subtype;
 mod card_type;
@@ -6,7 +7,6 @@ mod creature_subtype;
 mod enchantment_subtype;
 mod flavor_word;
 mod instant_sorcery_subtype;
-mod keywords;
 mod land_subtype;
 mod mana_symbol;
 mod planeswalker_subtype;
@@ -15,6 +15,7 @@ mod standalone_kw_ab;
 mod standalone_kw_action;
 mod supertype;
 
+pub use ability_word::*;
 pub use artifact_subtype::*;
 pub use battle_subtype::*;
 pub use card_type::*;
@@ -23,7 +24,6 @@ pub use creature_subtype::*;
 pub use enchantment_subtype::*;
 pub use flavor_word::*;
 pub use instant_sorcery_subtype::*;
-pub use keywords::*;
 pub use land_subtype::*;
 pub use mana_symbol::*;
 pub use planeswalker_subtype::*;

@@ -11,10 +11,11 @@ arrayvec = { workspace = true }
 boseiju_span = { workspace = true, optional = true }
 lazy_static = { workspace = true }
 idris = { workspace = true }
-idris-derive = { workspace = true }
-mtg-cardbase = { workspace = true }
-mtg-data = { workspace = true }
+idris_derive = { workspace = true }
+mtg_cardbase = { workspace = true }
+mtg_data = { workspace = true }
 regex = { workspace = true }
+serde = { workspace = true }
 
 [features]
 default = ["spanned_tree"]

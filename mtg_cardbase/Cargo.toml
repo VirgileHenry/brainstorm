@@ -1,0 +1,13 @@
+[package]
+name = "mtg_cardbase"
+version.workspace = true
+edition.workspace = true
+workspace = ".."
+
+[dependencies]
+arrayvec = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[features]
+default = []

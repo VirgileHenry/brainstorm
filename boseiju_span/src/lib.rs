@@ -7,6 +7,7 @@ pub trait Spanned {
 ///
 /// This allows to keep track of which text generated which tokens and nodes.
 /// Useful almost only for visual and debugging purpuses.
+#[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Span {
     /// Byte position of the start of the span.
