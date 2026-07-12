@@ -45,3 +45,9 @@ impl idris::Idris for AbilityWord {
         mtg_data::AbilityWord::name_from_id(id)
     }
 }
+
+impl std::fmt::Display for AbilityWord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.ability_word.fmt(f)
+    }
+}

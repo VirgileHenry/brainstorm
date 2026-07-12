@@ -76,3 +76,9 @@ impl idris::Idris for FlavorWord {
         mtg_data::AbilityWord::name_from_id(id)
     }
 }
+
+impl std::fmt::Display for FlavorWord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.flavor_word.fmt(f)
+    }
+}

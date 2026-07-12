@@ -54,3 +54,9 @@ impl idris::Idris for Color {
         mtg_data::Color::name_from_id(id)
     }
 }
+
+impl std::fmt::Display for Color {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.color.fmt(f)
+    }
+}

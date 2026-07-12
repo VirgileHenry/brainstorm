@@ -6,6 +6,7 @@ mod token;
 
 pub use error::LexerError;
 pub use span::LexerSpan;
+pub use token::Token;
 pub use token::intermediate;
 pub use token::terminal;
 

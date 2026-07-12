@@ -1,0 +1,29 @@
+[package]
+name = "boseiju_parser"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+edition.workspace = true
+
+[dependencies]
+arrayvec = { workspace = true }
+boseiju_lexer = { workspace = true }
+boseiju_span = { workspace = true, optional = true }
+boseiju_tree = { workspace = true }
+idris = { workspace = true }
+idris_derive = { workspace = true }
+lazy_static = { workspace = true }
+mtg_cardbase = { workspace = true }
+mtg_data = { workspace = true }
+rapidhash = { version = "4.4.1" }
+regex = { workspace = true }
+uuid = { workspace = true }
+
+[features]
+default = ["spanned_tree"]
+spanned_tree = ["dep:boseiju_span"]
+
+[[bin]]
+name = "debug"
+path = "bin/debug.rs"

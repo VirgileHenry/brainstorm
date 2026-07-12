@@ -31,11 +31,11 @@ impl boseiju_span::Spanned for ManaSymbol {
 }
 
 impl<'src> TryFrom<&crate::LexerSpan<'src>> for ManaSymbol {
-    type Error = ();
-    fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
+    type Error = mtg_data::ManaSymbolParseError;
+    fn try_from(span: &crate::LexerSpan) -> Result<Self, Self::Error> {
         use std::str::FromStr;
         Ok(Self {
-            mana_symbol: mtg_data::ManaSymbol::from_str(span.text).map_err(|_| ())?,
+            mana_symbol: mtg_data::ManaSymbol::from_str(span.text)?,
             span: span.into(),
         })
     }
@@ -48,5 +48,11 @@ impl idris::Idris for ManaSymbol {
     }
     fn name_from_id(_: usize) -> &'static str {
         "ManaSymbol"
+    }
+}
+
+impl std::fmt::Display for ManaSymbol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.mana_symbol.fmt(f)
     }
 }

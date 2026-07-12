@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for ArtifactSubtype {
         })
     }
 }
+
+impl std::fmt::Display for ArtifactSubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.artifact_subtype.fmt(f)
+    }
+}

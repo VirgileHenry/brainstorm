@@ -28,7 +28,7 @@ impl ManaSymbol {
 }
 
 impl std::str::FromStr for ManaSymbol {
-    type Err = String;
+    type Err = ManaSymbolParseError;
     fn from_str(from: &str) -> Result<Self, Self::Err> {
         if from.starts_with('{') && from.ends_with('}') {
             let symbols = from[1..from.len() - 1]
@@ -61,10 +61,12 @@ impl std::str::FromStr for ManaSymbol {
                     color_2: *c2,
                 })),
                 [ManaSingleSymbol::Snow] => Ok(ManaSymbol::Snow),
-                _ => Err(format!("Invalid symbol combination: {symbols:?}")),
+                other => Err(ManaSymbolParseError::InvalidCombination {
+                    combination: other.iter().map(|symbol| symbol.to_string()).collect(),
+                }),
             }
         } else {
-            Err(format!("Mana cost shall be between curly braces, got {from}"))
+            Err(ManaSymbolParseError::ExpectedBraces { found: from.to_string() })
         }
     }
 }
@@ -226,6 +228,7 @@ impl std::fmt::Display for HybridPhyrexianMana {
 }
 
 /// Inner type used to parse mana costs.
+#[derive(Debug)]
 enum ManaSingleSymbol {
     X,
     Any(usize),
@@ -234,7 +237,7 @@ enum ManaSingleSymbol {
     Snow,
 }
 
-impl std::fmt::Debug for ManaSingleSymbol {
+impl std::fmt::Display for ManaSingleSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ManaSingleSymbol::X => write!(f, "x"),
@@ -247,7 +250,7 @@ impl std::fmt::Debug for ManaSingleSymbol {
 }
 
 impl ManaSingleSymbol {
-    fn parse_symbol(input: &str) -> Result<ManaSingleSymbol, String> {
+    fn parse_symbol(input: &str) -> Result<ManaSingleSymbol, ManaSymbolParseError> {
         return match input {
             "w" | "W" => Ok(ManaSingleSymbol::Colored(crate::Color::White)),
             "b" | "B" => Ok(ManaSingleSymbol::Colored(crate::Color::Black)),
@@ -260,8 +263,29 @@ impl ManaSingleSymbol {
             "p" | "P" => Ok(ManaSingleSymbol::Phyrexian),
             other => match other.parse() {
                 Ok(num) => Ok(ManaSingleSymbol::Any(num)),
-                Err(_) => Err(format!("Unknown mana symbol: {other}")),
+                Err(_) => Err(ManaSymbolParseError::InvalidSymbol {
+                    symbol: input.to_string(),
+                }),
             },
         };
     }
 }
+
+#[derive(Debug)]
+pub enum ManaSymbolParseError {
+    ExpectedBraces { found: String },
+    InvalidCombination { combination: Vec<String> },
+    InvalidSymbol { symbol: String },
+}
+
+impl std::fmt::Display for ManaSymbolParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ExpectedBraces { found } => write!(f, "Expected mana symbol to be between braces, found {found}"),
+            Self::InvalidCombination { combination } => write!(f, "Invalid symbol combination: {combination:?}"),
+            Self::InvalidSymbol { symbol } => write!(f, "Invalid mana symbol: {symbol}"),
+        }
+    }
+}
+
+impl std::error::Error for ManaSymbolParseError {}

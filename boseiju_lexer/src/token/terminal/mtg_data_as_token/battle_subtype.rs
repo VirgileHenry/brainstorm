@@ -54,3 +54,9 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for BattleSubtype {
         })
     }
 }
+
+impl std::fmt::Display for BattleSubtype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.battle_subtype.fmt(f)
+    }
+}

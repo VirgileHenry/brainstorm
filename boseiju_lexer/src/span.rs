@@ -5,6 +5,16 @@ pub struct LexerSpan<'src> {
     pub text: &'src str,
 }
 
+impl<'src> LexerSpan<'src> {
+    pub fn from_str(str: &'src str) -> Self {
+        Self {
+            start: 0,
+            length: str.len(),
+            text: str,
+        }
+    }
+}
+
 #[cfg(feature = "spanned_tree")]
 impl<'src> From<LexerSpan<'src>> for boseiju_span::Span {
     fn from(span: LexerSpan<'src>) -> Self {
