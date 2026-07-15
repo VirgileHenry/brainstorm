@@ -2,6 +2,7 @@ use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
 
 use serde_big_array::BigArray;
+use std::ops::Add;
 
 /* Fixme: this shall be a bool array with all possible types.
  * Thanks to idris, it's super easy to do ? And changeling types MUST have all creature types this way.
@@ -254,6 +255,21 @@ impl From<&TypeLine> for SimplifiedCardTypes {
         }
     }
 }
+
+impl Add for SimplifiedCardTypes {
+    type Output = Self;
+    fn add(self, other: Self) -> Self::Output {
+        Self {
+            artifact: self.artifact | other.artifact,
+            battle: self.battle | other.battle,
+            creature: self.creature | other.creature,
+            enchantment: self.enchantment | other.enchantment,
+            instant: self.instant | other.instant,
+            land: self.land | other.land,
+            planeswalker: self.planeswalker | other.planeswalker,
+            sorcery: self.sorcery | other.sorcery,
+        }
+    }
 
 impl Default for SimplifiedCardTypes {
     fn default() -> Self {

@@ -114,6 +114,7 @@ pub enum NodeKind {
     ExpandedKeywordAbility(boseiju_lexer::terminal::StandaloneKeywordAbility),
     ExpandedKeywordAbilityIdMarker,
     ExpandedKeywordAction(boseiju_lexer::terminal::StandaloneKeywordAction),
+    Face,
     ForEachImperative,
     GainLifeImperative,
     GameStateNumber,
