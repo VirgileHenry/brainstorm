@@ -5,7 +5,7 @@ mod one_among;
 mod previously_mentionned;
 mod self_referencing;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         another_specified::rules().collect::<Vec<_>>(),
         attached::rules().collect::<Vec<_>>(),

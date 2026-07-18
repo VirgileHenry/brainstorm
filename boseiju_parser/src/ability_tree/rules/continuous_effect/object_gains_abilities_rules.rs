@@ -5,7 +5,7 @@ mod object_get_p_t_and_has_ab;
 mod object_get_x_x;
 mod object_have_ab;
 
-use crate::parser::rules::ParserRule;
+use crate::ability_tree::rules::ParserRule;
 
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     [

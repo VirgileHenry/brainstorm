@@ -2,49 +2,54 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_span::Spanned;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Reinforce <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+            ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                 keyword_ability: mtg_data::KeywordAbility::Reinforce,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash {
+            ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
+            ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::LongDash {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Cost { cost: dummy() }.id(),
+            ParserNode::Cost {
+                cost: Default::default(),
+            }
+            .id(),
         ]),
         merged: ParserNode::KeywordAbility {
-            keyword_ability: dummy(),
+            keyword_ability: Default::default(),
         }
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Reinforce,
                     #[cfg(feature = "spanned_tree")]
                         span: reinforce_span,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::LongDash { .. })),
                 ParserNode::Cost { cost },
             ] => Ok(ParserNode::KeywordAbility {
-                keyword_ability: crate::ability_tree::ability::KeywordAbility {
-                    keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Reinforce(
-                        crate::ability_tree::ability::keyword_ability::ReinforceKeywordAbility {
+                keyword_ability: boseiju_tree::ability_tree::ability::KeywordAbility {
+                    keyword: boseiju_tree::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Reinforce(
+                        boseiju_tree::ability_tree::ability::keyword_ability::ReinforceKeywordAbility {
                             cost: cost.clone(),
                             amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -52,9 +57,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
-                        crate::ability_tree::ability::spell::SpellAbility {
-                            effects: crate::utils::HeapArrayVec::new(),
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Spell(
+                        boseiju_tree::ability_tree::ability::spell::SpellAbility {
+                            effects: boseiju_tree::HeapArrayVec::new(),
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         },

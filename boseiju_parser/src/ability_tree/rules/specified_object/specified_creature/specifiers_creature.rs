@@ -1,24 +1,32 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "<count> <creature kind> <creature specifiers>" makes a specified creature  */
 
     let specifiers_to_specified_creatures = ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
-            ParserNode::CreatureKind { creature: dummy() }.id(),
+            ParserNode::CreatureSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
+            ParserNode::CreatureKind {
+                creature: Default::default(),
+            }
+            .id(),
         ]),
-        merged: ParserNode::SpecifiedCreature { creature: dummy() }.id(),
+        merged: ParserNode::SpecifiedCreature {
+            creature: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::CreatureSpecifiers { specifiers },
@@ -37,12 +45,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     };
 
     /* creature subtypes can be used in place of the "creature" marker, adding a specifier */
-    let subtype_to_creature_specifiers = crate::ability_tree::terminals::CreatureSubtype::all().map(|subtype| ParserRule {
+    let subtype_to_creature_specifiers = boseiju_lexer::terminal::CreatureSubtype::all().map(|subtype| ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
+            ParserNode::CreatureSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             ParserNode::LexerToken(Token::CreatureSubtype(subtype.clone())).id(),
         ]),
-        merged: ParserNode::SpecifiedCreature { creature: dummy() }.id(),
+        merged: ParserNode::SpecifiedCreature {
+            creature: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::CreatureSpecifiers { specifiers },

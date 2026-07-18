@@ -8,10 +8,10 @@ impl crate::card::Parse for boseiju_tree::card::layout::Layout {
     fn parse(from: &Self::Source) -> Result<Self, Self::Error> {
         match from.layout.as_str() {
             "normal" => Ok(Self::Normal {
-                layout: boseiju_tree::card::layout::normal::NormalLayout::parse(from)?,
+                layout: boseiju_tree::card::layout::NormalLayout::parse(from)?,
             }),
             "token" => Ok(Self::Token {
-                layout: boseiju_tree::card::layout::token::TokenLayout::parse(from)?,
+                layout: boseiju_tree::card::layout::TokenLayout::parse(from)?,
             }),
             other => Err(LayoutParseError::UnknownLayout {
                 layout: other.to_string(),

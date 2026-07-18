@@ -1,32 +1,37 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<mana cost>" is a imperative cost: "pay <mana cost>" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ManaCost { mana_cost: dummy() }.id()]),
-            merged: ParserNode::ImperativeAsCost { cost: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::ManaCost {
+                mana_cost: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::ImperativeAsCost {
+                cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ManaCost { mana_cost }] => Ok(ParserNode::ImperativeAsCost {
-                    cost: crate::ability_tree::imperative::Imperative {
-                        kind: crate::ability_tree::imperative::ImperativeKind::PayMana(
-                            crate::ability_tree::imperative::PayManaImperative {
+                    cost: boseiju_tree::ability_tree::imperative::Imperative {
+                        kind: boseiju_tree::ability_tree::imperative::ImperativeKind::PayMana(
+                            boseiju_tree::ability_tree::imperative::PayManaImperative {
                                 amount: mana_cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: mana_cost.span(),
                             },
                         ),
-                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
                             span: mana_cost.span().empty_at_start(),
                         },
@@ -41,31 +46,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "pay <mana cost>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Pay {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    token: intermediate::PlayerAction::Pay {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
-                ParserNode::ManaCost { mana_cost: dummy() }.id(),
+                ParserNode::ManaCost {
+                    mana_cost: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeAsCost { cost: dummy() }.id(),
+            merged: ParserNode::ImperativeAsCost {
+                cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Pay {
-                        #[cfg(feature = "spanned_tree")]
-                            span: pay_span,
+                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                        token:
+                            intermediate::PlayerAction::Pay {
+                                #[cfg(feature = "spanned_tree")]
+                                    span: pay_span,
+                            },
+                        tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::ManaCost { mana_cost },
                 ] => Ok(ParserNode::ImperativeAsCost {
-                    cost: crate::ability_tree::imperative::Imperative {
-                        kind: crate::ability_tree::imperative::ImperativeKind::PayMana(
-                            crate::ability_tree::imperative::PayManaImperative {
+                    cost: boseiju_tree::ability_tree::imperative::Imperative {
+                        kind: boseiju_tree::ability_tree::imperative::ImperativeKind::PayMana(
+                            boseiju_tree::ability_tree::imperative::PayManaImperative {
                                 amount: mana_cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: mana_cost.span().merge(pay_span),
                             },
                         ),
-                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
                             span: pay_span.empty_at_start(),
                         },

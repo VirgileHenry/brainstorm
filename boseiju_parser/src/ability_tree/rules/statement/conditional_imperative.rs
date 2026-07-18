@@ -1,48 +1,56 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "if <condition>, <imperative>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
                     ParserNode::Condition { condition },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::ImperativeList { imperatives },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::ConditionalImperative(
-                        crate::ability_tree::statement::ConditionalImperative {
-                            condition: crate::ability_tree::conditional::Conditional::If(
-                                crate::ability_tree::conditional::ConditionalIf {
+                    statement: boseiju_tree::ability_tree::statement::Statement::ConditionalImperative(
+                        boseiju_tree::ability_tree::statement::ConditionalImperative {
+                            condition: boseiju_tree::ability_tree::conditional::Conditional::If(
+                                boseiju_tree::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: condition.span().merge(if_span),
@@ -62,51 +70,63 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<imperative>. if <condition>, <imperative> instead" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Instead {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ImperativeList { imperatives: imp1 },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
                     ParserNode::Condition { condition },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::ImperativeList { imperatives: imp2 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Instead {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Instead {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::ConditionalImperative(
-                        crate::ability_tree::statement::ConditionalImperative {
-                            condition: crate::ability_tree::conditional::Conditional::If(
-                                crate::ability_tree::conditional::ConditionalIf {
+                    statement: boseiju_tree::ability_tree::statement::Statement::ConditionalImperative(
+                        boseiju_tree::ability_tree::statement::ConditionalImperative {
+                            condition: boseiju_tree::ability_tree::conditional::Conditional::If(
+                                boseiju_tree::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: condition.span().merge(if_span),

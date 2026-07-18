@@ -1,47 +1,57 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
 /* Fixme: "player may have" wording is a bit strange, to check more properly */
 /* From my understanding, it's when it references something after that does an action rather than the action directly */
 /* "you may draw 3 cards", "you may have that creature deals 3 damage" */
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<player> may <imperative list>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
                     ParserNode::ImperativeList { imperatives },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: player.clone(),
-                        action: imperatives.clone(),
-                        if_it_is_done: None,
-                        if_not_done: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.span().merge(&imperatives.span()),
-                    }),
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: player.clone(),
+                            action: imperatives.clone(),
+                            if_it_is_done: None,
+                            if_not_done: None,
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.span().merge(&imperatives.span()),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -50,71 +60,82 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "you may <imperative list>. If you do, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: crate::ability_tree::player::PlayerSpecifier::You {
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *start_span,
+                            },
+                            action: imperatives.clone(),
+                            if_it_is_done: Some(Box::new(statement.clone())),
+                            if_not_done: None,
                             #[cfg(feature = "spanned_tree")]
-                            span: *start_span,
+                            span: statement.span().merge(start_span),
                         },
-                        action: imperatives.clone(),
-                        if_it_is_done: Some(Box::new(statement.clone())),
-                        if_not_done: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: statement.span().merge(start_span),
-                    }),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -123,61 +144,75 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<player> may <imperative list>. If they do, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: player.clone(),
-                        action: imperatives.clone(),
-                        if_it_is_done: Some(Box::new(statement.clone())),
-                        if_not_done: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.span().merge(&statement.span()),
-                    }),
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: player.clone(),
+                            action: imperatives.clone(),
+                            if_it_is_done: Some(Box::new(statement.clone())),
+                            if_not_done: None,
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.span().merge(&statement.span()),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -186,71 +221,82 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "you may <imperative list>. If you don't, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: crate::ability_tree::player::PlayerSpecifier::You {
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *start_span,
+                            },
+                            action: imperatives.clone(),
+                            if_it_is_done: None,
+                            if_not_done: Some(Box::new(statement.clone())),
                             #[cfg(feature = "spanned_tree")]
-                            span: *start_span,
+                            span: statement.span().merge(start_span),
                         },
-                        action: imperatives.clone(),
-                        if_it_is_done: None,
-                        if_not_done: Some(Box::new(statement.clone())),
-                        #[cfg(feature = "spanned_tree")]
-                        span: statement.span().merge(start_span),
-                    }),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -259,61 +305,75 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<player> may <imperative list>. If they don't, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: player.clone(),
-                        action: imperatives.clone(),
-                        if_it_is_done: None,
-                        if_not_done: Some(Box::new(statement.clone())),
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.span().merge(&statement.span()),
-                    }),
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: player.clone(),
+                            action: imperatives.clone(),
+                            if_it_is_done: None,
+                            if_not_done: Some(Box::new(statement.clone())),
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.span().merge(&statement.span()),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -322,35 +382,46 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<player> may have <imperative list>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: player.clone(),
-                        action: imperatives.clone(),
-                        if_it_is_done: None,
-                        if_not_done: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.span().merge(&imperatives.span()),
-                    }),
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: player.clone(),
+                            action: imperatives.clone(),
+                            if_it_is_done: None,
+                            if_not_done: None,
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.span().merge(&imperatives.span()),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -359,77 +430,88 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "you may have <imperative list>. If you do, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: crate::ability_tree::player::PlayerSpecifier::You {
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *start_span,
+                            },
+                            action: imperatives.clone(),
+                            if_it_is_done: Some(Box::new(statement.clone())),
+                            if_not_done: None,
                             #[cfg(feature = "spanned_tree")]
-                            span: *start_span,
+                            span: statement.span().merge(start_span),
                         },
-                        action: imperatives.clone(),
-                        if_it_is_done: Some(Box::new(statement.clone())),
-                        if_not_done: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: statement.span().merge(start_span),
-                    }),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -438,67 +520,81 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<player> may have <imperative list>. If they do, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Do { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Do { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: player.clone(),
-                        action: imperatives.clone(),
-                        if_it_is_done: Some(Box::new(statement.clone())),
-                        if_not_done: None,
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.span().merge(&statement.span()),
-                    }),
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: player.clone(),
+                            action: imperatives.clone(),
+                            if_it_is_done: Some(Box::new(statement.clone())),
+                            if_not_done: None,
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.span().merge(&statement.span()),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -507,77 +603,88 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "you may have <imperative list>. If you don't, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You {
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediates::PlayerSpecifier::You { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: crate::ability_tree::player::PlayerSpecifier::You {
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *start_span,
+                            },
+                            action: imperatives.clone(),
+                            if_it_is_done: None,
+                            if_not_done: Some(Box::new(statement.clone())),
                             #[cfg(feature = "spanned_tree")]
-                            span: *start_span,
+                            span: statement.span().merge(start_span),
                         },
-                        action: imperatives.clone(),
-                        if_it_is_done: None,
-                        if_not_done: Some(Box::new(statement.clone())),
-                        #[cfg(feature = "spanned_tree")]
-                        span: statement.span().merge(start_span),
-                    }),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -586,67 +693,81 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<player> may have <imperative list>. If they don't, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May {
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeList { imperatives: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::ImperativeList {
+                    imperatives: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Statement { statement: dummy() }.id(),
+                ParserNode::Statement {
+                    statement: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Statement { statement: dummy() }.id(),
+            merged: ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::May { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::May { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
                     ParserNode::ImperativeList { imperatives },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::They { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Dont { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::They { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::Statement { statement },
                 ] => Ok(ParserNode::Statement {
-                    statement: crate::ability_tree::statement::Statement::May(crate::ability_tree::statement::MayAbility {
-                        player: player.clone(),
-                        action: imperatives.clone(),
-                        if_it_is_done: None,
-                        if_not_done: Some(Box::new(statement.clone())),
-                        #[cfg(feature = "spanned_tree")]
-                        span: player.span().merge(&statement.span()),
-                    }),
+                    statement: boseiju_tree::ability_tree::statement::Statement::May(
+                        boseiju_tree::ability_tree::statement::MayAbility {
+                            player: player.clone(),
+                            action: imperatives.clone(),
+                            if_it_is_done: None,
+                            if_not_done: Some(Box::new(statement.clone())),
+                            #[cfg(feature = "spanned_tree")]
+                            span: player.span().merge(&statement.span()),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

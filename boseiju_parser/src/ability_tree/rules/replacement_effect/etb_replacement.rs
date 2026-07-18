@@ -1,59 +1,65 @@
-use crate::ability_tree::ability::statik::continuous_effect;
-use crate::ability_tree::replacement_effect::*;
-use crate::ability_tree::terminals;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_lexer::terminal;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind::ContinuousEffectKind;
+use boseiju_tree::ability_tree::replacement_effect;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     let default_etb_replacements = vec![
         /* "<permanent reference> enter <permanent state>" is a replacement effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                ParserNode::Permanent {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::CardState(intermediates::CardState::Tapped {
+                ParserNode::LexerToken(Token::CardState(intermediate::CardState::Tapped {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            merged: ParserNode::ContinuousEffect {
+                effect: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                    ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                         #[cfg(feature = "spanned_tree")]
                             span: enters_span,
                     })),
-                    ParserNode::LexerToken(Token::CardState(intermediates::CardState::Tapped {
+                    ParserNode::LexerToken(Token::CardState(intermediate::CardState::Tapped {
                         #[cfg(feature = "spanned_tree")]
                             span: tapped_span,
                     })),
                 ] => Ok(ParserNode::ContinuousEffect {
-                    effect: continuous_effect::ContinuousEffect {
-                        effect: continuous_effect::ContinuousEffectKind::ReplacementEffect(ReplacementEffect::Etb(
-                            EtbReplacementEffect {
-                                etb_event: crate::ability_tree::action::PermanentEtbAction {
+                    effect: ContinuousEffect {
+                        effect: ContinuousEffectKind::ReplacementEffect(replacement_effect::ReplacementEffect::Etb(
+                            replacement_effect::EtbReplacementEffect {
+                                etb_event: boseiju_tree::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: permanent.span().merge(enters_span),
                                 },
-                                etb_modifiers: [EtbModifier::WithState(EtbWithState {
-                                    state: crate::ability_tree::state::PermanentState::Tapped(
-                                        crate::ability_tree::state::PermanentTappedState {
+                                etb_modifiers: [replacement_effect::EtbModifier::WithState(replacement_effect::EtbWithState {
+                                    state: boseiju_tree::ability_tree::state::PermanentState::Tapped(
+                                        boseiju_tree::ability_tree::state::PermanentTappedState {
                                             #[cfg(feature = "spanned_tree")]
                                             span: *tapped_span,
                                         },
@@ -78,52 +84,63 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "as <permanent reference> enters, <spell ability>" is an etb perform action */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::As {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::As {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                ParserNode::Permanent {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellAbility { ability: dummy() }.id(),
+                ParserNode::SpellAbility {
+                    ability: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            merged: ParserNode::ContinuousEffect {
+                effect: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::As {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::As {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                    ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                         #[cfg(feature = "spanned_tree")]
                             span: enters_span,
                     })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ContinuousEffect {
-                    effect: continuous_effect::ContinuousEffect {
-                        effect: continuous_effect::ContinuousEffectKind::ReplacementEffect(ReplacementEffect::Etb(
-                            EtbReplacementEffect {
-                                etb_event: crate::ability_tree::action::PermanentEtbAction {
+                    effect: ContinuousEffect {
+                        effect: ContinuousEffectKind::ReplacementEffect(replacement_effect::ReplacementEffect::Etb(
+                            replacement_effect::EtbReplacementEffect {
+                                etb_event: boseiju_tree::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: permanent.span().merge(enters_span),
                                 },
-                                etb_modifiers: [EtbModifier::PerformAction(EtbPerformAction {
-                                    action: ability.clone(),
-                                    #[cfg(feature = "spanned_tree")]
-                                    span: ability.span().merge(start_span),
-                                })]
+                                etb_modifiers: [replacement_effect::EtbModifier::PerformAction(
+                                    replacement_effect::EtbPerformAction {
+                                        action: ability.clone(),
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: ability.span().merge(start_span),
+                                    },
+                                )]
                                 .into_iter()
                                 .collect(),
                                 #[cfg(feature = "spanned_tree")]
@@ -140,69 +157,69 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
     ];
 
-    let etb_with_counter = terminals::Counter::all()
+    let etb_with_counter = terminal::Counter::all()
         .map(|counter|
         /* "<object reference> enters with <number> <counter> on it" is a replacement effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent:  dummy() }.id(),
-                ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                ParserNode::Permanent { permanent: Default::default() }.id(),
+                ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number { number: Default::default() }.id(),
                 ParserNode::LexerToken(Token::Counter(counter))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::On {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::ContinuousEffect { effect: dummy() }.id(),
+            merged: ParserNode::ContinuousEffect { effect: Default::default() }.id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::CardActions(intermediates::CardActions::Enters {
+                    ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                         #[cfg(feature = "spanned_tree")]
                         span: enters_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                         #[cfg(feature = "spanned_tree")]
                         span: with_span,
                     })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::Counter(counter)),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::On { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::On { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
                         #[cfg(feature = "spanned_tree")]
                         span: end_span,
                     })),
                 ] => Ok(ParserNode::ContinuousEffect {
-                    effect: continuous_effect::ContinuousEffect {
-                        effect: continuous_effect::ContinuousEffectKind::ReplacementEffect(
-                            ReplacementEffect::Etb(
-                                EtbReplacementEffect {
-                                etb_event: crate::ability_tree::action::PermanentEtbAction {
+                    effect: ContinuousEffect {
+                        effect: ContinuousEffectKind::ReplacementEffect(
+                            replacement_effect::ReplacementEffect::Etb(
+                                replacement_effect::EtbReplacementEffect {
+                                etb_event: boseiju_tree::ability_tree::action::PermanentEtbAction {
                                     permanent: permanent.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: permanent.span().merge(enters_span),
                                 },
                                 etb_modifiers: {
-                                    let mut modifiers = crate::utils::HeapArrayVec::new();
-                                    modifiers.push(EtbModifier::WithCounters(
-                                        EtbWithCounters {
+                                    let mut modifiers = boseiju_tree::HeapArrayVec::new();
+                                    modifiers.push(replacement_effect::EtbModifier::WithCounters(
+                                        replacement_effect::EtbWithCounters {
                                             counter_kind: counter.clone(),
                                             amount: number.clone(),
                                     #[cfg(feature = "spanned_tree")]

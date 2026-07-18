@@ -1,47 +1,59 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Fateseal <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Fateseal,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
-            ParserNode::Number { number: dummy() }.id(),
-        ]),
-        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
-        reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+            ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                token: intermediate::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Fateseal,
                     #[cfg(feature = "spanned_tree")]
-                        span: fateseal_span,
+                    span: Default::default(),
+                },
+                tense: boseiju_lexer::Tense::BaseForm,
+            }))
+            .id(),
+            ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
+        ]),
+        merged: ParserNode::ImperativeKind {
+            imperative: Default::default(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    token:
+                        intermediate::KeywordAction {
+                            keyword_action: mtg_data::KeywordAction::Fateseal,
+                            #[cfg(feature = "spanned_tree")]
+                                span: fateseal_span,
+                        },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 })),
                 ParserNode::Number { number },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                    crate::ability_tree::imperative::KeywordAction {
-                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Fateseal(
-                            crate::ability_tree::imperative::fateseal::FatesealKeywordAction {
+                imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    boseiju_tree::ability_tree::imperative::KeywordAction {
+                        keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Fateseal(
+                            boseiju_tree::ability_tree::imperative::fateseal::FatesealKeywordAction {
                                 amount: number.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: number.span().merge(fateseal_span),
                             },
                         ),
-                        ability: crate::ability_tree::imperative::fateseal::ability(
+                        ability: boseiju_tree::ability_tree::imperative::fateseal::ability(
                             number,
                             #[cfg(feature = "spanned_tree")]
                             number.span().merge(fateseal_span),

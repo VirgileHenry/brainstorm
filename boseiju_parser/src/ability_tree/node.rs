@@ -23,11 +23,12 @@ use boseiju_tree::ability_tree::object::kind::*;
 use boseiju_tree::ability_tree::object::specified_object::*;
 use boseiju_tree::ability_tree::object::*;
 use boseiju_tree::ability_tree::player::PlayerSpecifier;
+use boseiju_tree::ability_tree::power_toughness::PowerToughness;
 use boseiju_tree::ability_tree::statement::Statement;
 use boseiju_tree::ability_tree::time::{IncomingInstant, RecurrentInstant};
 use boseiju_tree::ability_tree::type_line::TypeLine;
 use boseiju_tree::ability_tree::zone::ZoneReference;
-use boseiju_tree::card::layout::token::TokenLayout;
+use boseiju_tree::card::layout::TokenLayout;
 
 /// Since this can carry entire ability trees, we need to box the biggest variants.
 /// Otherwise, this can easily blow up the stack when attempting to store multiple of them.
@@ -95,6 +96,7 @@ pub enum ParserNode {
     PermanentSpecifiers { specifiers: Specifiers<PermanentSpecifier> },
     PlaneswalkerKind { planeswalker: PlaneswalkerKind },
     Player { player: PlayerSpecifier },
+    PowerToughness { power_toughness: PowerToughness },
     PowerToughnessModifiers { modifiers: PowerToughnessModifiers },
     PutCounterKind { kind: CounterKind },
     RecurrentInstant { instant: RecurrentInstant },

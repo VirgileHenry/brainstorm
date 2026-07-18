@@ -1,34 +1,42 @@
 use super::ParserNode;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<cost>: <spell ability>" makes an activated ability */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Cost { cost: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Colons {
+                ParserNode::Cost {
+                    cost: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Colons {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellAbility { ability: dummy() }.id(),
+                ParserNode::SpellAbility {
+                    ability: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Cost { cost },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Colons { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Colons { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Activated(
-                        crate::ability_tree::ability::activated::ActivatedAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Activated(
+                        boseiju_tree::ability_tree::ability::activated::ActivatedAbility {
                             effect: ability.clone(),
                             cost: cost.clone(),
                             #[cfg(feature = "spanned_tree")]

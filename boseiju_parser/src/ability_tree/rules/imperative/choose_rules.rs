@@ -1,47 +1,52 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::node::ImperativeChoices;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::node::ImperativeChoices;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* A single choice is presented with a newline, bullet and imperative. */
         /* Fixme: hard limit on the number of choices ?  */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::NewLine {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Bullet {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellAbility { ability: dummy() }.id(),
+                ParserNode::SpellAbility {
+                    ability: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            merged: ParserNode::ImperativeChoices {
+                choices: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::NewLine {
                         #[cfg(feature = "spanned_tree")]
                             span: new_line_span,
                     })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
                     choices: ImperativeChoices {
                         choices: {
-                            let mut choices = crate::utils::HeapArrayVec::new();
+                            let mut choices = boseiju_tree::HeapArrayVec::new();
                             choices.push(ability.clone());
                             choices
                         },
@@ -56,25 +61,34 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Add choices to choices */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeChoices { choices: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine {
+                ParserNode::ImperativeChoices {
+                    choices: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::NewLine {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Bullet {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellAbility { ability: dummy() }.id(),
+                ParserNode::SpellAbility {
+                    ability: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeChoices { choices: dummy() }.id(),
+            merged: ParserNode::ImperativeChoices {
+                choices: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ImperativeChoices { choices },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::NewLine { .. })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Bullet { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::NewLine { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Bullet { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::ImperativeChoices {
                     choices: {
@@ -90,32 +104,48 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* From a choose clause and choices, we can make a choose imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Choose {
+                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    token: intermediate::PlayerAction::Choose {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
+                }))
+                .id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::LongDash {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
+                ParserNode::ImperativeChoices {
+                    choices: Default::default(),
+                }
                 .id(),
-                ParserNode::ImperativeChoices { choices: dummy() }.id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::Imperative {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Choose {
-                        #[cfg(feature = "spanned_tree")]
-                            span: choose_span,
+                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                        token:
+                            intermediate::PlayerAction::Choose {
+                                #[cfg(feature = "spanned_tree")]
+                                    span: choose_span,
+                            },
+                        tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::LongDash { .. })),
                     ParserNode::ImperativeChoices { choices },
                 ] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::Modal(
-                        crate::ability_tree::imperative::ModalImperative {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::Modal(
+                        boseiju_tree::ability_tree::imperative::ModalImperative {
                             mode_count: number.clone(),
                             can_choose_same_mode: false,
                             modes: choices.choices.clone(),

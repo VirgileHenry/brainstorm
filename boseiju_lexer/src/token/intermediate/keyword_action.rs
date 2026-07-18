@@ -5,7 +5,7 @@ use crate::token::tensed::Tensed;
 pub struct KeywordAction {
     pub keyword_action: mtg_data::KeywordAction,
     #[cfg(feature = "spanned_tree")]
-    span: boseiju_span::Span,
+    pub span: boseiju_span::Span,
 }
 
 #[cfg(feature = "spanned_tree")]

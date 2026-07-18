@@ -4,7 +4,7 @@ mod life_cost;
 mod mana_cost;
 mod tap_cost;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         cost_grouping::rules().collect::<Vec<_>>(),
         imperative_cost::rules().collect::<Vec<_>>(),

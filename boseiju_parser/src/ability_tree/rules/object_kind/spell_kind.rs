@@ -1,31 +1,31 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "spell" is the default spell kind */
         ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Spell {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-            ]),
-            merged: ParserNode::SpellKind { spell: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Spell {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id()]),
+            merged: ParserNode::SpellKind {
+                spell: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Spell {
+                    ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Spell {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -41,8 +41,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified permanent>" can be used as a spell kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedPermanent { permanent: dummy() }.id()]),
-            merged: ParserNode::SpellKind { spell: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPermanent {
+                permanent: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::SpellKind {
+                spell: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedPermanent { permanent }] => Ok(ParserNode::SpellKind {
                     spell: object::kind::SpellKind::Permanent(permanent.clone()),
@@ -54,24 +60,33 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<spell kind> or <spell kind>" makes a one among kind */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::SpellKind { spell: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                ParserNode::SpellKind {
+                    spell: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellKind { spell: dummy() }.id(),
+                ParserNode::SpellKind {
+                    spell: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::SpellKind { spell: dummy() }.id(),
+            merged: ParserNode::SpellKind {
+                spell: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::SpellKind { spell: c1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
                     ParserNode::SpellKind { spell: c2 },
                 ] => Ok(ParserNode::SpellKind {
                     spell: object::kind::SpellKind::OneAmong(object::OneAmong {
                         references: {
-                            let mut references = crate::utils::HeapArrayVec::new();
+                            let mut references = boseiju_tree::HeapArrayVec::new();
                             references.push(c1.clone());
                             references.push(c2.clone());
                             references

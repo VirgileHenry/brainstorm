@@ -3,7 +3,7 @@ mod game_state_numbers;
 mod number_literals;
 mod x_numbers;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         english_numbers::rules().collect::<Vec<_>>(),
         game_state_numbers::rules().collect::<Vec<_>>(),

@@ -3,7 +3,7 @@ mod event_occured;
 mod player_control_permanent;
 mod stack_object_has_state;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         creature_match_specifier::rules().collect::<Vec<_>>(),
         event_occured::rules().collect::<Vec<_>>(),

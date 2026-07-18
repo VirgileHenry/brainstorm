@@ -2,51 +2,53 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Afterlife <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+            ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                 keyword_ability: mtg_data::KeywordAbility::Afterlife,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Number { number: dummy() }.id(),
+            ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
         ]),
         merged: ParserNode::KeywordAbility {
-            keyword_ability: dummy(),
+            keyword_ability: Default::default(),
         }
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Afterlife,
                     #[cfg(feature = "spanned_tree")]
                         span: afterlife_span,
                 })),
                 ParserNode::Number { number },
             ] => Ok(ParserNode::KeywordAbility {
-                keyword_ability: crate::ability_tree::ability::KeywordAbility {
-                    keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Afterlife(
-                        crate::ability_tree::ability::keyword_ability::AfterlifeKeywordAbility {
+                keyword_ability: boseiju_tree::ability_tree::ability::KeywordAbility {
+                    keyword: boseiju_tree::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Afterlife(
+                        boseiju_tree::ability_tree::ability::keyword_ability::AfterlifeKeywordAbility {
                             amount: number.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: number.span().merge(afterlife_span),
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
-                        crate::ability_tree::ability::spell::SpellAbility {
-                            effects: crate::utils::HeapArrayVec::new(),
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Spell(
+                        boseiju_tree::ability_tree::ability::spell::SpellAbility {
+                            effects: boseiju_tree::HeapArrayVec::new(),
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         },

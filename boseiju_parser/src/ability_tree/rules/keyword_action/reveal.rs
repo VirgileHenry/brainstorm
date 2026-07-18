@@ -1,49 +1,61 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* Reveal <card> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Reveal,
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Card { card: dummy() }.id(),
-            ]),
-            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Reveal,
                         #[cfg(feature = "spanned_tree")]
-                            span: reveal_span,
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
+                }))
+                .id(),
+                ParserNode::Card {
+                    card: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                        token:
+                            intermediate::KeywordAction {
+                                keyword_action: mtg_data::KeywordAction::Reveal,
+                                #[cfg(feature = "spanned_tree")]
+                                    span: reveal_span,
+                            },
+                        tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::Card { card },
                 ] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                        crate::ability_tree::imperative::KeywordAction {
-                            keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Reveal(
-                                crate::ability_tree::imperative::reveal::RevealKeywordAction {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                        boseiju_tree::ability_tree::imperative::KeywordAction {
+                            keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Reveal(
+                                boseiju_tree::ability_tree::imperative::reveal::RevealKeywordAction {
                                     card: card.clone(),
                                     from: None,
                                     #[cfg(feature = "spanned_tree")]
                                     span: card.span().merge(reveal_span),
                                 },
                             ),
-                            ability: crate::ability_tree::imperative::reveal::ability(
+                            ability: boseiju_tree::ability_tree::imperative::reveal::ability(
                                 card,
                                 None,
                                 #[cfg(feature = "spanned_tree")]
@@ -61,43 +73,59 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Reveal <card> from <zone> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                    keyword_action: mtg_data::KeywordAction::Reveal,
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Card { card: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::ZoneReference { zone: dummy() }.id(),
-            ]),
-            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Reveal,
                         #[cfg(feature = "spanned_tree")]
-                            span: reveal_span,
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
+                }))
+                .id(),
+                ParserNode::Card {
+                    card: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+                ParserNode::ZoneReference {
+                    zone: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                        token:
+                            intermediate::KeywordAction {
+                                keyword_action: mtg_data::KeywordAction::Reveal,
+                                #[cfg(feature = "spanned_tree")]
+                                    span: reveal_span,
+                            },
+                        tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::Card { card },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
                     ParserNode::ZoneReference { zone },
                 ] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                        crate::ability_tree::imperative::KeywordAction {
-                            keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Reveal(
-                                crate::ability_tree::imperative::reveal::RevealKeywordAction {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                        boseiju_tree::ability_tree::imperative::KeywordAction {
+                            keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Reveal(
+                                boseiju_tree::ability_tree::imperative::reveal::RevealKeywordAction {
                                     card: card.clone(),
                                     from: Some(zone.clone()),
                                     #[cfg(feature = "spanned_tree")]
                                     span: zone.span().merge(reveal_span),
                                 },
                             ),
-                            ability: crate::ability_tree::imperative::reveal::ability(
+                            ability: boseiju_tree::ability_tree::imperative::reveal::ability(
                                 card,
                                 Some(zone),
                                 #[cfg(feature = "spanned_tree")]

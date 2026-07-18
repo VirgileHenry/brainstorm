@@ -1,27 +1,32 @@
 mod statik_ability_kind;
 
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     let statik_ability_rules = vec![
         /* "<static ab kind>" -> static ability */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::StaticAbilityKind { kind: dummy() }.id()]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::StaticAbilityKind {
+                kind: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::StaticAbilityKind { kind }] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Static(
-                        crate::ability_tree::ability::statik::StaticAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Static(
+                        boseiju_tree::ability_tree::ability::statik::StaticAbility {
                             kind: kind.clone(),
                             condition: None,
                             #[cfg(feature = "spanned_tree")]
@@ -36,35 +41,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "as long as <condition>, <static ab kind>" -> static ability */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::AsLongAs {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::AsLongAs {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::StaticAbilityKind { kind: dummy() }.id(),
+                ParserNode::StaticAbilityKind {
+                    kind: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::AsLongAs {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::AsLongAs {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Condition { condition },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::StaticAbilityKind { kind },
                 ] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Static(
-                        crate::ability_tree::ability::statik::StaticAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Static(
+                        boseiju_tree::ability_tree::ability::statik::StaticAbility {
                             kind: kind.clone(),
-                            condition: Some(crate::ability_tree::conditional::Conditional::If(
-                                crate::ability_tree::conditional::ConditionalIf {
+                            condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                                boseiju_tree::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: condition.span().merge(start_span),
@@ -82,29 +96,38 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<static ab kind> if <condition>" -> static ability */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::StaticAbilityKind { kind: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::StaticAbilityKind {
+                    kind: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::StaticAbilityKind { kind },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Condition { condition },
                 ] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Static(
-                        crate::ability_tree::ability::statik::StaticAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Static(
+                        boseiju_tree::ability_tree::ability::statik::StaticAbility {
                             kind: kind.clone(),
-                            condition: Some(crate::ability_tree::conditional::Conditional::If(
-                                crate::ability_tree::conditional::ConditionalIf {
+                            condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                                boseiju_tree::ability_tree::conditional::ConditionalIf {
                                     condition: condition.clone(),
                                     #[cfg(feature = "spanned_tree")]
                                     span: condition.span().merge(start_span),

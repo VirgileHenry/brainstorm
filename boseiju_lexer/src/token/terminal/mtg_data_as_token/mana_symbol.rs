@@ -16,7 +16,7 @@ impl ManaSymbol {
 impl Default for ManaSymbol {
     fn default() -> Self {
         Self {
-            mana_symbol: mtg_data::ManaSymbol::Snow,
+            mana_symbol: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

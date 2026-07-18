@@ -1,22 +1,27 @@
 use super::ParserNode;
-use crate::utils::dummy;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<statement>" is a spell ability */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::Statement { statement: dummy() }.id()]),
-            merged: ParserNode::SpellAbility { ability: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::Statement {
+                statement: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::SpellAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Statement { statement }] => Ok(ParserNode::SpellAbility {
                     ability: {
-                        let mut statements = crate::utils::HeapArrayVec::new();
+                        let mut statements = boseiju_tree::HeapArrayVec::new();
                         statements.push(statement.clone());
-                        crate::ability_tree::ability::spell::SpellAbility {
+                        boseiju_tree::ability_tree::ability::spell::SpellAbility {
                             effects: statements,
                             #[cfg(feature = "spanned_tree")]
                             span: statement.span(),
@@ -29,12 +34,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<spell ability>" makes an ability */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::SpellAbility { ability: dummy() }.id()]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::SpellAbility {
+                ability: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpellAbility { ability }] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
-                        crate::ability_tree::ability::spell::SpellAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Spell(
+                        boseiju_tree::ability_tree::ability::spell::SpellAbility {
                             effects: ability.effects.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: ability.span(),

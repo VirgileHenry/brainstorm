@@ -1,35 +1,43 @@
 use super::ParserNode;
-use crate::ability_tree::conditional;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::conditional;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<trigger_cond>, <spell ability>" make the structure for triggered abilities. */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::TriggerCondition { condition: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::TriggerCondition {
+                    condition: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellAbility { ability: dummy() }.id(),
+                ParserNode::SpellAbility {
+                    ability: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::TriggerCondition { condition },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
                 ] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Triggered(
-                        crate::ability_tree::ability::triggered::TriggeredAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Triggered(
+                        boseiju_tree::ability_tree::ability::triggered::TriggeredAbility {
                             trigger_condition: condition.clone(),
                             effect: ability.clone(),
                             condition: None,
@@ -45,34 +53,46 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<trigger_cond>, <spell ability> if <condition>" make the structure for triggered abilities. */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::TriggerCondition { condition: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::TriggerCondition {
+                    condition: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpellAbility { ability: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::SpellAbility {
+                    ability: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::WrittenAbility { ability: dummy() }.id(),
+            merged: ParserNode::WrittenAbility {
+                ability: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::TriggerCondition { condition: trigger_cond },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
                     ParserNode::Condition { condition },
                 ] => Ok(ParserNode::WrittenAbility {
-                    ability: crate::ability_tree::ability::WrittenAbility::Triggered(
-                        crate::ability_tree::ability::triggered::TriggeredAbility {
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Triggered(
+                        boseiju_tree::ability_tree::ability::triggered::TriggeredAbility {
                             trigger_condition: trigger_cond.clone(),
                             effect: ability.clone(),
                             condition: Some(conditional::Conditional::If(conditional::ConditionalIf {

@@ -1,17 +1,22 @@
-use crate::ability_tree::object;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<creature kind>" can be used as a damage receiver kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
-            merged: ParserNode::DamageReceiverKind { receiver: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature {
+                creature: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::DamageReceiverKind {
+                receiver: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::DamageReceiverKind {
                     receiver: object::kind::DamageReceiverKind::Creature(creature.clone()),
@@ -22,8 +27,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<planeswalker kind>" can be used as a damage receiver kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedPlaneswalker { planeswalker: dummy() }.id()]),
-            merged: ParserNode::DamageReceiverKind { receiver: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPlaneswalker {
+                planeswalker: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::DamageReceiverKind {
+                receiver: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedPlaneswalker { planeswalker }] => Ok(ParserNode::DamageReceiverKind {
                     receiver: object::kind::DamageReceiverKind::Planeswalker(planeswalker.clone()),
@@ -34,8 +45,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<player specifier>" can be used as a damage receiver kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::Player { player: dummy() }.id()]),
-            merged: ParserNode::DamageReceiverKind { receiver: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::Player {
+                player: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::DamageReceiverKind {
+                receiver: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Player { player }] => Ok(ParserNode::DamageReceiverKind {
                     receiver: object::kind::DamageReceiverKind::Player(player.clone()),

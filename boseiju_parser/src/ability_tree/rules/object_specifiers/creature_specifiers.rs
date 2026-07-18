@@ -1,22 +1,24 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     /* <creature subtype> is a creature "subtype" specifier */
-    let subtypes_to_specifiers = crate::ability_tree::terminals::CreatureSubtype::all()
+    let subtypes_to_specifiers = boseiju_lexer::terminal::CreatureSubtype::all()
         .map(|subtype| ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CreatureSubtype(subtype.clone())).id()]),
-            merged: ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            merged: ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(Token::CreatureSubtype(subtype))] => Ok(ParserNode::CreatureSpecifier {
                     specifier: object::specified_object::CreatureSpecifier::Subtype(
@@ -37,26 +39,32 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "with power <number>" makes a power specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::CardProperty(intermediates::CardProperty::Power {
+                ParserNode::LexerToken(Token::CardProperty(intermediate::CardProperty::Power {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            merged: ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::CardProperty(intermediates::CardProperty::Power { .. })),
+                    ParserNode::LexerToken(Token::CardProperty(intermediate::CardProperty::Power { .. })),
                     ParserNode::Number { number },
                 ] => Ok(ParserNode::CreatureSpecifier {
                     specifier: object::specified_object::CreatureSpecifier::WithCharacteristic(
@@ -76,20 +84,23 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "with <keyword ability>" makes a keyword ability specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
             ]),
-            merged: ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            merged: ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -114,8 +125,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
     let common_specifiers = vec![
         /* "<control specifier>" is a creature specifier */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ControlSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::ControlSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ControlSpecifier { specifier }] => Ok(ParserNode::CreatureSpecifier {
                     specifier: object::specified_object::CreatureSpecifier::Control(specifier.clone()),
@@ -126,8 +143,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         },
         /* "<color specifier>" is a creature specifier */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ColorSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::ColorSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ColorSpecifier { specifier }] => Ok(ParserNode::CreatureSpecifier {
                     specifier: object::specified_object::CreatureSpecifier::Color(specifier.clone()),
@@ -138,8 +161,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         },
         /* "<another specifier>" is a creature specifier */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::AnotherSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::AnotherSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::AnotherSpecifier { specifier }] => Ok(ParserNode::CreatureSpecifier {
                     specifier: object::specified_object::CreatureSpecifier::Another(specifier.clone()),
@@ -153,8 +182,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
     let merging_specifiers = vec![
         /* "<creature specifier>" on its own can make a creature specifiers node */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::CreatureSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::CreatureSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::CreatureSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::CreatureSpecifier { specifier }] => Ok(ParserNode::CreatureSpecifiers {
                     specifiers: object::specified_object::Specifiers::Single(specifier.clone()),
@@ -166,10 +201,19 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "<creature specifier> <creature specifier>" -> and list */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
-                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+                ParserNode::CreatureSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
+                ParserNode::CreatureSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
+            merged: ParserNode::CreatureSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CreatureSpecifier { specifier: s1 },
@@ -188,19 +232,28 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "<creature specifier> or <creature specifier>" -> or list */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                ParserNode::CreatureSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CreatureSpecifier { specifier: dummy() }.id(),
+                ParserNode::CreatureSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::CreatureSpecifiers { specifiers: dummy() }.id(),
+            merged: ParserNode::CreatureSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CreatureSpecifier { specifier: s1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
                     ParserNode::CreatureSpecifier { specifier: s2 },
                 ] => Ok(ParserNode::CreatureSpecifiers {
                     specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {

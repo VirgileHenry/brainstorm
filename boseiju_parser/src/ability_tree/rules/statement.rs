@@ -2,7 +2,7 @@ mod conditional_imperative;
 mod imperatives;
 mod may_ability;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         imperatives::rules().collect::<Vec<_>>(),
         may_ability::rules().collect::<Vec<_>>(),

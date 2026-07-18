@@ -1,31 +1,31 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "permanent" is the default permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Permanent {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-            ]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Permanent {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id()]),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Permanent {
+                    ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Permanent {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -41,8 +41,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified artifact>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedArtifact { artifact: dummy() }.id()]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedArtifact {
+                artifact: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedArtifact { artifact }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Artifact(artifact.clone()),
@@ -53,8 +59,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified creature>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature {
+                creature: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Creature(creature.clone()),
@@ -65,8 +77,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified enchantment>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id()]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedEnchantment {
+                enchantment: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedEnchantment { enchantment }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Enchantment(enchantment.clone()),
@@ -77,8 +95,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified land>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedLand { land: dummy() }.id()]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedLand {
+                land: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedLand { land }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Land(land.clone()),
@@ -89,8 +113,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified planeswalker>" can be used as a permanent kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedPlaneswalker { planeswalker: dummy() }.id()]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPlaneswalker {
+                planeswalker: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedPlaneswalker { planeswalker }] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::Planeswalker(planeswalker.clone()),
@@ -102,24 +132,33 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent kind> or <permanent kind>" makes a one among kind */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentKind { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                ParserNode::PermanentKind {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::PermanentKind { permanent: dummy() }.id(),
+                ParserNode::PermanentKind {
+                    permanent: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PermanentKind { permanent: dummy() }.id(),
+            merged: ParserNode::PermanentKind {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::PermanentKind { permanent: c1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
                     ParserNode::PermanentKind { permanent: c2 },
                 ] => Ok(ParserNode::PermanentKind {
                     permanent: object::kind::PermanentKind::OneAmong(object::OneAmong {
                         references: {
-                            let mut references = crate::utils::HeapArrayVec::new();
+                            let mut references = boseiju_tree::HeapArrayVec::new();
                             references.push(c1.clone());
                             references.push(c2.clone());
                             references

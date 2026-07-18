@@ -1,48 +1,54 @@
-use crate::ability_tree::ability::statik::continuous_effect;
-use crate::ability_tree::time;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_lexer::terminal::ForwardDuration;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "Until end of turn, <continuous effect>" makes a generated continuous effect. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::ForwardDuration(time::ForwardDuration::UntilEndOfTurn {
+                ParserNode::LexerToken(Token::ForwardDuration(ForwardDuration::UntilEndOfTurn {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ContinuousEffect { effect: dummy() }.id(),
+                ParserNode::ContinuousEffect {
+                    effect: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::ForwardDuration(time::ForwardDuration::UntilEndOfTurn {
+                    ParserNode::LexerToken(Token::ForwardDuration(ForwardDuration::UntilEndOfTurn {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::ContinuousEffect { effect },
                 ] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
-                        crate::ability_tree::imperative::GenerateContinuousEffectImperative {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
+                        boseiju_tree::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: effect.clone(),
-                            duration: time::ForwardDuration::UntilEndOfTurn {
+                            duration: ForwardDuration::UntilEndOfTurn {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *start_span,
                             },
@@ -58,26 +64,32 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<continuous effect> until end of turn" makes a generated continuous effect. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ContinuousEffect { effect: dummy() }.id(),
-                ParserNode::LexerToken(Token::ForwardDuration(time::ForwardDuration::UntilEndOfTurn {
+                ParserNode::ContinuousEffect {
+                    effect: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ForwardDuration(ForwardDuration::UntilEndOfTurn {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ContinuousEffect { effect },
-                    ParserNode::LexerToken(Token::ForwardDuration(time::ForwardDuration::UntilEndOfTurn {
+                    ParserNode::LexerToken(Token::ForwardDuration(ForwardDuration::UntilEndOfTurn {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
                 ] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
-                        crate::ability_tree::imperative::GenerateContinuousEffectImperative {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
+                        boseiju_tree::ability_tree::imperative::GenerateContinuousEffectImperative {
                             effect: effect.clone(),
-                            duration: time::ForwardDuration::UntilEndOfTurn {
+                            duration: ForwardDuration::UntilEndOfTurn {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *end_span,
                             },
@@ -94,48 +106,54 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Fixme: this only appears with: "the next <spell specifier> this turn has...", maybe we could be more restrictive */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::BackwardDuration(time::BackwardDuration::ThisTurn {
+                ParserNode::Permanent {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::BackwardDuration(boseiju_lexer::terminal::BackwardDuration::ThisTurn {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
             ]),
-            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+            merged: ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::BackwardDuration(time::BackwardDuration::ThisTurn {
+                    ParserNode::LexerToken(Token::BackwardDuration(boseiju_lexer::terminal::BackwardDuration::ThisTurn {
                         #[cfg(feature = "spanned_tree")]
                             span: this_turn_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Has {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
                         #[cfg(feature = "spanned_tree")]
                             span: have_span,
                     })),
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
-                        crate::ability_tree::imperative::GenerateContinuousEffectImperative {
-                            effect: continuous_effect::ContinuousEffect {
-                                effect: continuous_effect::ContinuousEffectKind::ModifyObjectAbilities(
-                                    continuous_effect::ModifyObjectEffect {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
+                        boseiju_tree::ability_tree::imperative::GenerateContinuousEffectImperative {
+                            effect: ContinuousEffect {
+                                effect: continuous_effect_kind::ContinuousEffectKind::ModifyObjectAbilities(
+                                    continuous_effect_kind::ModifyObjectEffect {
                                         object: permanent.clone(),
                                         modifications: {
-                                            let mut modifications = crate::utils::HeapArrayVec::new();
-                                            let gain_ab_mod = continuous_effect::ObjectAbilitiesModification::GainAbility(
-                                                continuous_effect::ObjectGainAbility {
-                                                    ability: crate::AbilityTree::from_single_ability(
-                                                        crate::ability_tree::ability::Ability::KeywordAbility(
+                                            let mut modifications = boseiju_tree::HeapArrayVec::new();
+                                            let gain_ab_mod = continuous_effect_kind::ObjectAbilitiesModification::GainAbility(
+                                                continuous_effect_kind::ObjectGainAbility {
+                                                    ability: boseiju_tree::AbilityTree::from_single_ability(
+                                                        boseiju_tree::ability_tree::ability::Ability::KeywordAbility(
                                                             keyword_ability.clone(),
                                                         ),
                                                     ),
@@ -153,7 +171,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 #[cfg(feature = "spanned_tree")]
                                 span: permanent.span().merge(&keyword_ability.span()),
                             },
-                            duration: time::ForwardDuration::UntilEndOfTurn {
+                            duration: ForwardDuration::UntilEndOfTurn {
                                 #[cfg(feature = "spanned_tree")]
                                 span: *this_turn_span,
                             },

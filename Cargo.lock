@@ -141,6 +141,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "boseiju_wasm"
+version = "0.0.1"
+dependencies = [
+ "boseiju_lexer",
+ "boseiju_parser",
+ "boseiju_span",
+ "boseiju_tree",
+ "idris",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

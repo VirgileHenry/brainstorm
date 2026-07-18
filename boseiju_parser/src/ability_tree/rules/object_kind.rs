@@ -7,7 +7,7 @@ mod land_kind;
 mod permanent_kind;
 mod spell_kind;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         artifact_kind::rules().collect::<Vec<_>>(),
         card_kind::rules().collect::<Vec<_>>(),

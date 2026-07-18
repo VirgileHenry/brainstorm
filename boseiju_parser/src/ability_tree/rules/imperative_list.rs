@@ -1,26 +1,31 @@
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::utils::dummy;
+use crate::ParserNode;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* All imperatives without an explicit executing player, so the owner of the effect is the executing player */
     let imperative_lists = vec![
         /* An imperative on its own can make a imperative list */
         ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::Imperative { imperative: dummy() }.id()]),
-            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::Imperative {
+                imperative: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::ImperativeList {
+                imperatives: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Imperative { imperative }] => Ok(ParserNode::ImperativeList {
-                    imperatives: crate::ability_tree::imperative_list::ImperativeList {
+                    imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
                         imperatives: {
-                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            let mut imperatives = boseiju_tree::HeapArrayVec::new();
                             imperatives.push(imperative.clone());
                             imperatives
                         },
@@ -35,24 +40,33 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<imperative> and <imperative>" can make an imperative list */
         ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            merged: ParserNode::ImperativeList {
+                imperatives: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
-                    imperatives: crate::ability_tree::imperative_list::ImperativeList {
+                    imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
                         imperatives: {
-                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            let mut imperatives = boseiju_tree::HeapArrayVec::new();
                             imperatives.push(imp1.clone());
                             imperatives.push(imp2.clone());
                             imperatives
@@ -68,30 +82,39 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<imperative>, then <imperative>" can make an imperative list */
         ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            merged: ParserNode::ImperativeList {
+                imperatives: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
-                    imperatives: crate::ability_tree::imperative_list::ImperativeList {
+                    imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
                         imperatives: {
-                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            let mut imperatives = boseiju_tree::HeapArrayVec::new();
                             imperatives.push(imp1.clone());
                             imperatives.push(imp2.clone());
                             imperatives
@@ -107,30 +130,39 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<imperative>. then <imperative>" can make an imperative list */
         ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            merged: ParserNode::ImperativeList {
+                imperatives: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Then { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
-                    imperatives: crate::ability_tree::imperative_list::ImperativeList {
+                    imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
                         imperatives: {
-                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            let mut imperatives = boseiju_tree::HeapArrayVec::new();
                             imperatives.push(imp1.clone());
                             imperatives.push(imp2.clone());
                             imperatives
@@ -146,24 +178,33 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<imperative>. <imperative>" can make an imperative list */
         ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            merged: ParserNode::ImperativeList {
+                imperatives: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
-                    imperatives: crate::ability_tree::imperative_list::ImperativeList {
+                    imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
                         imperatives: {
-                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            let mut imperatives = boseiju_tree::HeapArrayVec::new();
                             imperatives.push(imp1.clone());
                             imperatives.push(imp2.clone());
                             imperatives
@@ -179,32 +220,44 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<imperative>. <imperative>. <imperative>" can make an imperative list */
         ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot {
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Imperative { imperative: dummy() }.id(),
+                ParserNode::Imperative {
+                    imperative: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::ImperativeList { imperatives: dummy() }.id(),
+            merged: ParserNode::ImperativeList {
+                imperatives: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
                     ParserNode::Imperative { imperative: imp2 },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Dot { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
                     ParserNode::Imperative { imperative: imp3 },
                 ] => Ok(ParserNode::ImperativeList {
-                    imperatives: crate::ability_tree::imperative_list::ImperativeList {
+                    imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
                         imperatives: {
-                            let mut imperatives = crate::utils::HeapArrayVec::new();
+                            let mut imperatives = boseiju_tree::HeapArrayVec::new();
                             imperatives.push(imp1.clone());
                             imperatives.push(imp2.clone());
                             imperatives.push(imp3.clone());

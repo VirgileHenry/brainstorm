@@ -1,32 +1,40 @@
-use crate::ability_tree::conditional;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::conditional;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [/* "<player> controls <permanent reference>" condition */ ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Player { player: dummy() }.id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Control {
+            ParserNode::Player {
+                player: Default::default(),
+            }
+            .id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Permanent { permanent: dummy() }.id(),
+            ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
         ]),
-        merged: ParserNode::Condition { condition: dummy() }.id(),
+        merged: ParserNode::Condition {
+            condition: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::Player { player },
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Control { .. })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control { .. })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::Condition {
                 condition: conditional::Condition::PlayerControlsObject(conditional::ConditionPlayerControlsPermanent {

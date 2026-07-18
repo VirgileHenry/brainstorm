@@ -1,23 +1,24 @@
 use super::ParserNode;
-use crate::ability_tree::terminals;
-use crate::lexer::tokens::Token;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::Mana { mana: dummy() }).id()]),
-            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id()]),
+            merged: ParserNode::ManaCost {
+                mana_cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::Mana { mana })] => Ok(ParserNode::ManaCost {
-                    mana_cost: terminals::ManaCost {
-                        cost: std::iter::once(mana.clone()).collect(),
+                &[ParserNode::LexerToken(Token::ManaSymbol(mana_symbol))] => Ok(ParserNode::ManaCost {
+                    mana_cost: boseiju_tree::ability_tree::mana_cost::ManaCost {
+                        symbols: std::iter::once(mana_symbol.clone()).collect(),
                         #[cfg(feature = "spanned_tree")]
-                        span: mana.span(),
+                        span: mana_symbol.span(),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -26,17 +27,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
             ]),
-            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            merged: ParserNode::ManaCost {
+                mana_cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
+                    ParserNode::LexerToken(Token::ManaSymbol(m1)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m2)),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: terminals::ManaCost {
-                        cost: [m1.clone(), m2.clone()].into_iter().collect(),
+                    mana_cost: boseiju_tree::ability_tree::mana_cost::ManaCost {
+                        symbols: [m1.clone(), m2.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
                         span: m1.span().merge(&m2.span()),
                     },
@@ -47,19 +51,22 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
             ]),
-            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            merged: ParserNode::ManaCost {
+                mana_cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m3 }),
+                    ParserNode::LexerToken(Token::ManaSymbol(m1)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m2)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m3)),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: terminals::ManaCost {
-                        cost: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
+                    mana_cost: boseiju_tree::ability_tree::mana_cost::ManaCost {
+                        symbols: [m1.clone(), m2.clone(), m3.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
                         span: m1.span().merge(&m3.span()),
                     },
@@ -70,21 +77,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
             ]),
-            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            merged: ParserNode::ManaCost {
+                mana_cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m3 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m4 }),
+                    ParserNode::LexerToken(Token::ManaSymbol(m1)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m2)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m3)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m4)),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: terminals::ManaCost {
-                        cost: [m1.clone(), m2.clone(), m3.clone(), m4.clone()].into_iter().collect(),
+                    mana_cost: boseiju_tree::ability_tree::mana_cost::ManaCost {
+                        symbols: [m1.clone(), m2.clone(), m3.clone(), m4.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
                         span: m1.span().merge(&m4.span()),
                     },
@@ -95,23 +105,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
-                ParserNode::LexerToken(Token::Mana { mana: dummy() }).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
+                ParserNode::LexerToken(Token::ManaSymbol(Default::default())).id(),
             ]),
-            merged: ParserNode::ManaCost { mana_cost: dummy() }.id(),
+            merged: ParserNode::ManaCost {
+                mana_cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::Mana { mana: m1 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m2 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m3 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m4 }),
-                    ParserNode::LexerToken(Token::Mana { mana: m5 }),
+                    ParserNode::LexerToken(Token::ManaSymbol(m1)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m2)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m3)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m4)),
+                    ParserNode::LexerToken(Token::ManaSymbol(m5)),
                 ] => Ok(ParserNode::ManaCost {
-                    mana_cost: terminals::ManaCost {
-                        cost: [m1.clone(), m2.clone(), m3.clone(), m4.clone(), m5.clone()]
+                    mana_cost: boseiju_tree::ability_tree::mana_cost::ManaCost {
+                        symbols: [m1.clone(), m2.clone(), m3.clone(), m4.clone(), m5.clone()]
                             .into_iter()
                             .collect(),
                         #[cfg(feature = "spanned_tree")]

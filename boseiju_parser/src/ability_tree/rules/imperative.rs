@@ -12,27 +12,32 @@ mod lose_life_rules;
 mod put_counters_rules;
 mod remove_counters_rules;
 
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     let default_imperative_rules = vec![
         /* "<imperative kind>" -> imperative, where the executing player is "you" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ImperativeKind { imperative: dummy() }.id()]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::Imperative {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ImperativeKind { imperative }] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative {
+                    imperative: boseiju_tree::ability_tree::imperative::Imperative {
                         kind: imperative.clone(),
-                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
                             span: imperative.span().empty_at_start(),
                         },
@@ -47,17 +52,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<player> <imperative kind>" -> imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player { player: dummy() }.id(),
-                ParserNode::ImperativeKind { imperative: dummy() }.id(),
+                ParserNode::Player {
+                    player: Default::default(),
+                }
+                .id(),
+                ParserNode::ImperativeKind {
+                    imperative: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Imperative { imperative: dummy() }.id(),
+            merged: ParserNode::Imperative {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     /* Little comment to stop these two being on a single line */
                     ParserNode::Player { player },
                     ParserNode::ImperativeKind { imperative },
                 ] => Ok(ParserNode::Imperative {
-                    imperative: crate::ability_tree::imperative::Imperative {
+                    imperative: boseiju_tree::ability_tree::imperative::Imperative {
                         kind: imperative.clone(),
                         executing_player: player.clone(),
                         #[cfg(feature = "spanned_tree")]

@@ -1,23 +1,31 @@
-use crate::ability_tree::object;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<count> <specified creature>" is a creature */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::SpecifiedCreature { creature: dummy() }.id(),
+                ParserNode::CountSpecifier {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedCreature {
+                    creature: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Creature { creature: dummy() }.id(),
+            merged: ParserNode::Creature {
+                creature: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CountSpecifier { count },
@@ -36,8 +44,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified creature>" is a creature with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature { creature: dummy() }.id()]),
-            merged: ParserNode::Creature { creature: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedCreature {
+                creature: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::Creature {
+                creature: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::Creature {
                     creature: object::Creature::Reference(object::reference::CreatureReference {

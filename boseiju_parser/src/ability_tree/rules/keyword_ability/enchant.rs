@@ -2,22 +2,24 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::ability_tree::terminals;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_lexer::terminal;
+use boseiju_tree::ability_tree::ability;
+use boseiju_tree::ability_tree::number;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [/* "enchant creature" */ ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+            ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                 keyword_ability: mtg_data::KeywordAbility::Enchant,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::CardType(terminals::CardType {
+            ParserNode::LexerToken(Token::CardType(terminal::CardType {
                 card_type: mtg_data::CardType::Creature,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
@@ -25,66 +27,58 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             .id(),
         ]),
         merged: ParserNode::KeywordAbility {
-            keyword_ability: dummy(),
+            keyword_ability: Default::default(),
         }
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Enchant,
                     #[cfg(feature = "spanned_tree")]
                         span: enchant_span,
                 })),
-                ParserNode::LexerToken(Token::CardType(terminals::CardType {
+                ParserNode::LexerToken(Token::CardType(terminal::CardType {
                     card_type: mtg_data::CardType::Creature,
                     #[cfg(feature = "spanned_tree")]
                         span: creature_span,
                 })),
             ] => Ok(ParserNode::KeywordAbility {
-                keyword_ability: crate::ability_tree::ability::KeywordAbility {
-                    keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Enchant(
-                        crate::ability_tree::ability::keyword_ability::EnchantKeywordAbility {
-                            enchantable_object: crate::ability_tree::object::Permanent::Reference(
-                                crate::ability_tree::object::reference::PermanentReference {
-                                    count: crate::ability_tree::object::CountSpecifier::Target(
-                                        crate::ability_tree::number::Number::Number(crate::ability_tree::number::FixedNumber {
-                                            number: 1,
+                keyword_ability: ability::KeywordAbility {
+                    keyword: ability::keyword_ability::ExpandedKeywordAbility::Enchant(
+                        ability::keyword_ability::EnchantKeywordAbility {
+                            enchantable_object: object::Permanent::Reference(object::reference::PermanentReference {
+                                count: object::CountSpecifier::Target(number::Number::Number(number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: enchant_span.empty_at_end(),
+                                })),
+                                permanent: object::specified_object::SpecifiedPermanent {
+                                    kind: object::kind::PermanentKind::Creature(object::specified_object::SpecifiedCreature {
+                                        kind: object::kind::CreatureKind::Creature {
                                             #[cfg(feature = "spanned_tree")]
-                                            span: enchant_span.empty_at_end(),
-                                        }),
-                                    ),
-                                    permanent: crate::ability_tree::object::specified_object::SpecifiedPermanent {
-                                        kind: crate::ability_tree::object::kind::PermanentKind::Creature(
-                                            crate::ability_tree::object::specified_object::SpecifiedCreature {
-                                                kind: crate::ability_tree::object::kind::CreatureKind::Creature {
-                                                    #[cfg(feature = "spanned_tree")]
-                                                    span: *creature_span,
-                                                },
-                                                specifiers: None,
-                                                #[cfg(feature = "spanned_tree")]
-                                                span: *creature_span,
-                                            },
-                                        ),
+                                            span: *creature_span,
+                                        },
                                         specifiers: None,
                                         #[cfg(feature = "spanned_tree")]
                                         span: *creature_span,
-                                    },
+                                    }),
+                                    specifiers: None,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *creature_span,
                                 },
-                            ),
+                                #[cfg(feature = "spanned_tree")]
+                                span: *creature_span,
+                            }),
                             #[cfg(feature = "spanned_tree")]
                             span: creature_span.merge(enchant_span),
                         },
                     ),
                     /* Fixme */
-                    ability: crate::ability_tree::ability::WrittenAbility::Spell(
-                        crate::ability_tree::ability::spell::SpellAbility {
-                            effects: crate::utils::HeapArrayVec::new(),
-                            #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
-                        },
-                    ),
+                    ability: ability::WrittenAbility::Spell(ability::spell::SpellAbility {
+                        effects: boseiju_tree::HeapArrayVec::new(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    }),
                     #[cfg(feature = "spanned_tree")]
                     span: creature_span.merge(enchant_span),
                 },

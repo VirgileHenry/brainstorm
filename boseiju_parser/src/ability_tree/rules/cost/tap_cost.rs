@@ -1,37 +1,39 @@
-use crate::lexer::tokens::Token;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* The special tap cost "{T}" is an imperative cost to tap self */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::TapUntapCost(
-                crate::lexer::tokens::intermediates::TapUntapCost::Tap {
+                boseiju_lexer::intermediate::TapUntapCost::Tap {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
-            merged: ParserNode::ImperativeAsCost { cost: dummy() }.id(),
+            merged: ParserNode::ImperativeAsCost {
+                cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TapUntapCost(crate::lexer::tokens::intermediates::TapUntapCost::Tap {
+                    ParserNode::LexerToken(Token::TapUntapCost(boseiju_lexer::intermediate::TapUntapCost::Tap {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                 ] => Ok(ParserNode::ImperativeAsCost {
-                    cost: crate::ability_tree::imperative::Imperative {
-                        kind: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                            crate::ability_tree::imperative::KeywordAction {
-                                keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Tap(
-                                    crate::ability_tree::imperative::tap::TapKeywordAction {
-                                        permanent: crate::ability_tree::object::Permanent::SelfReferencing(
-                                            crate::ability_tree::object::SelfReferencing {
+                    cost: boseiju_tree::ability_tree::imperative::Imperative {
+                        kind: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                            boseiju_tree::ability_tree::imperative::KeywordAction {
+                                keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Tap(
+                                    boseiju_tree::ability_tree::imperative::tap::TapKeywordAction {
+                                        permanent: boseiju_tree::ability_tree::object::Permanent::SelfReferencing(
+                                            boseiju_tree::ability_tree::object::SelfReferencing {
                                                 #[cfg(feature = "spanned_tree")]
                                                 span: *span,
                                             },
@@ -40,9 +42,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         span: *span,
                                     },
                                 ),
-                                ability: crate::ability_tree::imperative::tap::ability(
-                                    &crate::ability_tree::object::Permanent::SelfReferencing(
-                                        crate::ability_tree::object::SelfReferencing {
+                                ability: boseiju_tree::ability_tree::imperative::tap::ability(
+                                    &boseiju_tree::ability_tree::object::Permanent::SelfReferencing(
+                                        boseiju_tree::ability_tree::object::SelfReferencing {
                                             #[cfg(feature = "spanned_tree")]
                                             span: *span,
                                         },
@@ -54,7 +56,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: *span,
                             },
                         ),
-                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
                             span: span.empty_at_end(),
                         },
@@ -69,27 +71,30 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* The special untap cost "{Q}" is an imperative cost to untap self */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::TapUntapCost(
-                crate::lexer::tokens::intermediates::TapUntapCost::Untap {
+                boseiju_lexer::intermediate::TapUntapCost::Untap {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
-            merged: ParserNode::ImperativeAsCost { cost: dummy() }.id(),
+            merged: ParserNode::ImperativeAsCost {
+                cost: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TapUntapCost(crate::lexer::tokens::intermediates::TapUntapCost::Untap {
+                    ParserNode::LexerToken(Token::TapUntapCost(boseiju_lexer::intermediate::TapUntapCost::Untap {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                 ] => Ok(ParserNode::ImperativeAsCost {
-                    cost: crate::ability_tree::imperative::Imperative {
-                        kind: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                            crate::ability_tree::imperative::KeywordAction {
-                                keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Untap(
-                                    crate::ability_tree::imperative::untap::UntapKeywordAction {
-                                        permanent: crate::ability_tree::object::Permanent::SelfReferencing(
-                                            crate::ability_tree::object::SelfReferencing {
+                    cost: boseiju_tree::ability_tree::imperative::Imperative {
+                        kind: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                            boseiju_tree::ability_tree::imperative::KeywordAction {
+                                keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Untap(
+                                    boseiju_tree::ability_tree::imperative::untap::UntapKeywordAction {
+                                        permanent: boseiju_tree::ability_tree::object::Permanent::SelfReferencing(
+                                            boseiju_tree::ability_tree::object::SelfReferencing {
                                                 #[cfg(feature = "spanned_tree")]
                                                 span: *span,
                                             },
@@ -98,9 +103,9 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         span: *span,
                                     },
                                 ),
-                                ability: crate::ability_tree::imperative::untap::ability(
-                                    &crate::ability_tree::object::Permanent::SelfReferencing(
-                                        crate::ability_tree::object::SelfReferencing {
+                                ability: boseiju_tree::ability_tree::imperative::untap::ability(
+                                    &boseiju_tree::ability_tree::object::Permanent::SelfReferencing(
+                                        boseiju_tree::ability_tree::object::SelfReferencing {
                                             #[cfg(feature = "spanned_tree")]
                                             span: *span,
                                         },
@@ -112,7 +117,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                 span: *span,
                             },
                         ),
-                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
                             #[cfg(feature = "spanned_tree")]
                             span: span.empty_at_end(),
                         },

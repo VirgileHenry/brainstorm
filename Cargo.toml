@@ -6,7 +6,7 @@ members = [
     "boseiju_parser",
     "boseiju_span",
     "boseiju_tree",
-#   "boseiju_wasm",
+    "boseiju_wasm",
     "idris",
     "krark",
     "mtg_cardbase",

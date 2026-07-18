@@ -2,38 +2,43 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Descend <number> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::AbilityWord(intermediates::AbilityWord {
+            ParserNode::LexerToken(Token::AbilityWord(intermediate::AbilityWord {
                 ability_word: mtg_data::AbilityWord::Descend,
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Number { number: dummy() }.id(),
+            ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
         ]),
-        merged: ParserNode::AbilityWord { ability_word: dummy() }.id(),
+        merged: ParserNode::AbilityWord {
+            ability_word: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::AbilityWord(intermediates::AbilityWord {
+                ParserNode::LexerToken(Token::AbilityWord(intermediate::AbilityWord {
                     ability_word: mtg_data::AbilityWord::Descend,
                     #[cfg(feature = "spanned_tree")]
                         span: descend_span,
                 })),
                 ParserNode::Number { number },
             ] => Ok(ParserNode::AbilityWord {
-                ability_word: crate::ability_tree::ability::ability_word::ExpandedAbilityWord::Descend(
-                    crate::ability_tree::ability::ability_word::DescendAbilityWord {
+                ability_word: boseiju_tree::ability_tree::ability::ability_word::ExpandedAbilityWord::Descend(
+                    boseiju_tree::ability_tree::ability::ability_word::DescendAbilityWord {
                         amount: number.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: number.span().merge(descend_span),

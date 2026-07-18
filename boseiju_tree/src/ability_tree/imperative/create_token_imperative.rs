@@ -127,7 +127,7 @@ pub enum CreatedTokenKind {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    NewToken(crate::card::layout::token::TokenLayout),
+    NewToken(crate::card::layout::TokenLayout),
 }
 
 impl Node for CreatedTokenKind {

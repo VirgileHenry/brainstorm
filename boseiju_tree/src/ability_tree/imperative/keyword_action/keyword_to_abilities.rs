@@ -1,8 +1,8 @@
-use crate::lexer::tokens::intermediates;
 use crate::tree::ability::spell::SpellAbility;
 use crate::tree::imperative::KeywordAction;
 use crate::tree::imperative::keyword_action::ExpandedKeywordAction;
 use crate::tree::imperative::keyword_action::StandaloneKeywordAction;
+use boseiju_lexer::intermediate;
 use boseiju_lexer::terminal;
 
 pub fn keyword_action_to_abilities(keyword: intermediates::TensedKeywordAction) -> Result<KeywordAction, &'static str> {

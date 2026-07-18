@@ -10,80 +10,80 @@
 //! We define a bunch of submodules named after ability tree nodes, and each submodule is
 //! responsible for creating the rules that can create this ability tree node.
 
-// mod ability;
-// mod ability_tree;
-// mod ability_word;
-// mod activated_ability;
-// mod conditional;
-// mod continuous_effect;
-// mod cost;
-// mod cost_modifications;
-// mod count_specifier;
-// mod event;
-// mod imperative;
-// mod imperative_list;
-// mod instant;
-// mod keyword_ability;
-// mod keyword_action;
-// mod mana;
-// mod number;
-// mod object;
-// mod object_count;
-// mod object_kind;
-// mod object_specifiers;
-// mod player;
-// mod power_toughness_modifiers;
-// mod replacement_effect;
-// mod specified_object;
-// mod spell_ability;
-// mod statement;
-// mod statik;
-// mod time;
-// mod token;
-// mod triggered_ability;
-// mod triggered_condition;
-// mod x_definition;
-// mod zone;
+mod ability;
+mod ability_tree;
+mod ability_word;
+mod activated_ability;
+mod conditional;
+mod continuous_effect;
+mod cost;
+mod cost_modifications;
+mod count_specifier;
+mod event;
+mod imperative;
+mod imperative_list;
+mod instant;
+mod keyword_ability;
+mod keyword_action;
+mod mana;
+mod number;
+mod object;
+mod object_count;
+mod object_kind;
+mod object_specifiers;
+mod player;
+mod power_toughness_modifiers;
+mod replacement_effect;
+mod specified_object;
+mod spell_ability;
+mod statement;
+mod statik;
+mod time;
+mod token;
+mod triggered_ability;
+mod triggered_condition;
+mod x_definition;
+mod zone;
 
 use crate::ability_tree::node::ParserNode;
 
 pub fn default_rules() -> impl Iterator<Item = ParserRule> {
     /* Mmh, I think this will create vtables for Iterator<Item = ParserRule> ? */
     let rules_iters: Vec<Box<dyn Iterator<Item = ParserRule>>> = vec![
-        // Box::new(ability::rules()),
-        // Box::new(ability_tree::rules()),
-        // Box::new(ability_word::rules()),
-        // Box::new(activated_ability::rules()),
-        // Box::new(continuous_effect::rules()),
-        // Box::new(cost::rules()),
-        // Box::new(cost_modifications::rules()),
-        // Box::new(count_specifier::rules()),
-        // Box::new(event::rules()),
-        // Box::new(conditional::rules()),
-        // Box::new(imperative::rules()),
-        // Box::new(imperative_list::rules()),
-        // Box::new(instant::rules()),
-        // Box::new(keyword_ability::rules()),
-        // Box::new(keyword_action::rules()),
-        // Box::new(mana::rules()),
-        // Box::new(number::rules()),
-        // Box::new(object::rules()),
-        // Box::new(object_count::rules()),
-        // Box::new(object_kind::rules()),
-        // Box::new(object_specifiers::rules()),
-        // Box::new(player::rules()),
-        // Box::new(power_toughness_modifiers::rules()),
-        // Box::new(replacement_effect::rules()),
-        // Box::new(specified_object::rules()),
-        // Box::new(spell_ability::rules()),
-        // Box::new(statement::rules()),
-        // Box::new(statik::rules()),
-        // Box::new(token::rules()),
-        // Box::new(time::rules()),
-        // Box::new(triggered_ability::rules()),
-        // Box::new(triggered_condition::rules()),
-        // Box::new(x_definition::rules()),
-        // Box::new(zone::rules()),
+        Box::new(ability::rules()),
+        Box::new(ability_tree::rules()),
+        Box::new(ability_word::rules()),
+        Box::new(activated_ability::rules()),
+        Box::new(continuous_effect::rules()),
+        Box::new(cost::rules()),
+        Box::new(cost_modifications::rules()),
+        Box::new(count_specifier::rules()),
+        Box::new(event::rules()),
+        Box::new(conditional::rules()),
+        Box::new(imperative::rules()),
+        Box::new(imperative_list::rules()),
+        Box::new(instant::rules()),
+        Box::new(keyword_ability::rules()),
+        Box::new(keyword_action::rules()),
+        Box::new(mana::rules()),
+        Box::new(number::rules()),
+        Box::new(object::rules()),
+        Box::new(object_count::rules()),
+        Box::new(object_kind::rules()),
+        Box::new(object_specifiers::rules()),
+        Box::new(player::rules()),
+        Box::new(power_toughness_modifiers::rules()),
+        Box::new(replacement_effect::rules()),
+        Box::new(specified_object::rules()),
+        Box::new(spell_ability::rules()),
+        Box::new(statement::rules()),
+        Box::new(statik::rules()),
+        Box::new(token::rules()),
+        Box::new(time::rules()),
+        Box::new(triggered_ability::rules()),
+        Box::new(triggered_condition::rules()),
+        Box::new(x_definition::rules()),
+        Box::new(zone::rules()),
         Box::new(std::iter::empty()), /* Fixme: remove me */
     ];
     rules_iters.into_iter().flatten()

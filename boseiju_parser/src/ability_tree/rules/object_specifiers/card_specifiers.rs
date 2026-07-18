@@ -1,20 +1,25 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     let common_specifiers = vec![/* "<color specifier>" is a card specifier */ ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::ColorSpecifier { specifier: dummy() }.id()]),
-        merged: ParserNode::CardSpecifier { specifier: dummy() }.id(),
+        expanded: RuleLhs::new(&[ParserNode::ColorSpecifier {
+            specifier: Default::default(),
+        }
+        .id()]),
+        merged: ParserNode::CardSpecifier {
+            specifier: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::ColorSpecifier { specifier }] => Ok(ParserNode::CardSpecifier {
                 specifier: object::specified_object::CardSpecifier::Color(specifier.clone()),
@@ -28,26 +33,32 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "with mana value <number>" makes a mana value specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::CardProperty(intermediates::CardProperty::ManaValue {
+                ParserNode::LexerToken(Token::CardProperty(intermediate::CardProperty::ManaValue {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::CardSpecifier { specifier: dummy() }.id(),
+            merged: ParserNode::CardSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::CardProperty(intermediates::CardProperty::ManaValue { .. })),
+                    ParserNode::LexerToken(Token::CardProperty(intermediate::CardProperty::ManaValue { .. })),
                     ParserNode::Number { number },
                 ] => Ok(ParserNode::CardSpecifier {
                     specifier: object::specified_object::CardSpecifier::WithCharacteristic(
@@ -67,20 +78,23 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "with <keyword ability>" makes a keyword ability specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
             ]),
-            merged: ParserNode::CardSpecifier { specifier: dummy() }.id(),
+            merged: ParserNode::CardSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::With {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -105,8 +119,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
     let merging_specifiers = vec![
         /* "<card specifier>" on its own can make a card specifiers node */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::CardSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::CardSpecifiers { specifiers: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::CardSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::CardSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::CardSpecifier { specifier }] => Ok(ParserNode::CardSpecifiers {
                     specifiers: object::specified_object::Specifiers::Single(specifier.clone()),
@@ -118,10 +138,19 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "<card specifier> <card specifier>" -> and list */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CardSpecifier { specifier: dummy() }.id(),
-                ParserNode::CardSpecifier { specifier: dummy() }.id(),
+                ParserNode::CardSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
+                ParserNode::CardSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::CardSpecifiers { specifiers: dummy() }.id(),
+            merged: ParserNode::CardSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CardSpecifier { specifier: s1 },
@@ -140,19 +169,28 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "<card specifier> or <card specifier>" -> or list */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CardSpecifier { specifier: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                ParserNode::CardSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::CardSpecifier { specifier: dummy() }.id(),
+                ParserNode::CardSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::CardSpecifiers { specifiers: dummy() }.id(),
+            merged: ParserNode::CardSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CardSpecifier { specifier: s1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
                     ParserNode::CardSpecifier { specifier: s2 },
                 ] => Ok(ParserNode::CardSpecifiers {
                     specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {

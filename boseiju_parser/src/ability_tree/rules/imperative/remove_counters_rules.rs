@@ -1,57 +1,72 @@
-use crate::ability_tree::terminals;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_lexer::terminal;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    let remove_counters_rules = terminals::Counter::all()
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
+    let remove_counters_rules = terminal::Counter::all()
         .flat_map(|counter| {
             [
                 /* "remove <number> <counter> from <permanent ref>": remove counters imperative */
                 ParserRule {
                     expanded: RuleLhs::new(&[
-                        ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
-                            #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
+                        ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                            token: intermediate::PlayerAction::Remove {
+                                #[cfg(feature = "spanned_tree")]
+                                span: Default::default(),
+                            },
+                            tense: boseiju_lexer::Tense::BaseForm,
                         }))
                         .id(),
-                        ParserNode::Number { number: dummy() }.id(),
+                        ParserNode::Number {
+                            number: Default::default(),
+                        }
+                        .id(),
                         ParserNode::LexerToken(Token::Counter(counter.clone())).id(),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }))
                         .id(),
-                        ParserNode::Permanent { permanent: dummy() }.id(),
+                        ParserNode::Permanent {
+                            permanent: Default::default(),
+                        }
+                        .id(),
                     ]),
-                    merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+                    merged: ParserNode::ImperativeKind {
+                        imperative: Default::default(),
+                    }
+                    .id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
-                            ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
-                                #[cfg(feature = "spanned_tree")]
-                                span,
+                            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                                token:
+                                    intermediate::PlayerAction::Remove {
+                                        #[cfg(feature = "spanned_tree")]
+                                            span: remove_span,
+                                    },
+                                tense: boseiju_lexer::Tense::BaseForm,
                             })),
                             ParserNode::Number { number },
                             ParserNode::LexerToken(Token::Counter(counter)),
-                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
                             ParserNode::Permanent { permanent },
                         ] => Ok(ParserNode::ImperativeKind {
-                            imperative: crate::ability_tree::imperative::ImperativeKind::RemoveCounters(
-                                crate::ability_tree::imperative::RemoveCountersImperative {
+                            imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::RemoveCounters(
+                                boseiju_tree::ability_tree::imperative::RemoveCountersImperative {
                                     object: permanent.clone(),
                                     counters: {
-                                        let mut counters = crate::utils::HeapArrayVec::new();
-                                        counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
+                                        let mut counters = boseiju_tree::HeapArrayVec::new();
+                                        counters.push(boseiju_tree::ability_tree::imperative::RemovableCounterOnPermanent {
                                             amount: number.clone(),
-                                            counter: crate::ability_tree::imperative::RemovableCounterKind::NewCounter(
+                                            counter: boseiju_tree::ability_tree::imperative::RemovableCounterKind::NewCounter(
                                                 counter.clone(),
                                             ),
                                             #[cfg(feature = "spanned_tree")]
@@ -60,7 +75,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         counters
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: span.merge(&permanent.span()),
+                                    span: remove_span.merge(&permanent.span()),
                                 },
                             ),
                         }),
@@ -71,46 +86,62 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 /* "remove <number> <counter> from among <permanent ref>": remove counters imperative */
                 ParserRule {
                     expanded: RuleLhs::new(&[
-                        ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
-                            #[cfg(feature = "spanned_tree")]
-                            span: Default::default(),
+                        ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                            token: intermediate::PlayerAction::Remove {
+                                #[cfg(feature = "spanned_tree")]
+                                span: Default::default(),
+                            },
+                            tense: boseiju_lexer::Tense::BaseForm,
                         }))
                         .id(),
-                        ParserNode::Number { number: dummy() }.id(),
+                        ParserNode::Number {
+                            number: Default::default(),
+                        }
+                        .id(),
                         ParserNode::LexerToken(Token::Counter(counter.clone())).id(),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }))
                         .id(),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among {
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }))
                         .id(),
-                        ParserNode::Permanent { permanent: dummy() }.id(),
+                        ParserNode::Permanent {
+                            permanent: Default::default(),
+                        }
+                        .id(),
                     ]),
-                    merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+                    merged: ParserNode::ImperativeKind {
+                        imperative: Default::default(),
+                    }
+                    .id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
-                            ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
-                                #[cfg(feature = "spanned_tree")]
-                                span,
+                            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                                token:
+                                    intermediate::PlayerAction::Remove {
+                                        #[cfg(feature = "spanned_tree")]
+                                            span: remove_span,
+                                    },
+                                tense: boseiju_lexer::Tense::BaseForm,
                             })),
                             ParserNode::Number { number },
                             ParserNode::LexerToken(Token::Counter(counter)),
-                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
-                            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
+                            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among { .. })),
                             ParserNode::Permanent { permanent },
                         ] => Ok(ParserNode::ImperativeKind {
-                            imperative: crate::ability_tree::imperative::ImperativeKind::RemoveCounters(
-                                crate::ability_tree::imperative::RemoveCountersImperative {
+                            imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::RemoveCounters(
+                                boseiju_tree::ability_tree::imperative::RemoveCountersImperative {
                                     object: permanent.clone(),
                                     counters: {
-                                        let mut counters = crate::utils::HeapArrayVec::new();
-                                        counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
+                                        let mut counters = boseiju_tree::HeapArrayVec::new();
+                                        counters.push(boseiju_tree::ability_tree::imperative::RemovableCounterOnPermanent {
                                             amount: number.clone(),
-                                            counter: crate::ability_tree::imperative::RemovableCounterKind::NewCounter(
+                                            counter: boseiju_tree::ability_tree::imperative::RemovableCounterKind::NewCounter(
                                                 counter.clone(),
                                             ),
                                             #[cfg(feature = "spanned_tree")]
@@ -119,7 +150,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                                         counters
                                     },
                                     #[cfg(feature = "spanned_tree")]
-                                    span: span.merge(&permanent.span()),
+                                    span: remove_span.merge(&permanent.span()),
                                 },
                             ),
                         }),
@@ -133,53 +164,69 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
 
     let remove_any_counter_rules = vec![ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
+            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                token: intermediate::PlayerAction::Remove {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+                tense: boseiju_lexer::Tense::BaseForm,
+            }))
+            .id(),
+            ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
+            ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Counter {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Number { number: dummy() }.id(),
-            ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From {
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
+            ParserNode::Permanent {
+                permanent: Default::default(),
+            }
             .id(),
-            ParserNode::Permanent { permanent: dummy() }.id(),
         ]),
-        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+        merged: ParserNode::ImperativeKind {
+            imperative: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::PlayerAction(intermediates::PlayerAction::Remove {
-                    #[cfg(feature = "spanned_tree")]
-                        span: remove_span,
+                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    token:
+                        intermediate::PlayerAction::Remove {
+                            #[cfg(feature = "spanned_tree")]
+                                span: remove_span,
+                        },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 })),
                 ParserNode::Number { number },
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Counter {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Counter {
                     #[cfg(feature = "spanned_tree")]
                         span: counter_span,
                 })),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::From { .. })),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Among { .. })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among { .. })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::RemoveCounters(
-                    crate::ability_tree::imperative::RemoveCountersImperative {
+                imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::RemoveCounters(
+                    boseiju_tree::ability_tree::imperative::RemoveCountersImperative {
                         object: permanent.clone(),
                         counters: {
-                            let mut counters = crate::utils::HeapArrayVec::new();
-                            counters.push(crate::ability_tree::imperative::RemovableCounterOnPermanent {
+                            let mut counters = boseiju_tree::HeapArrayVec::new();
+                            counters.push(boseiju_tree::ability_tree::imperative::RemovableCounterOnPermanent {
                                 amount: number.clone(),
-                                counter: crate::ability_tree::imperative::RemovableCounterKind::AnyCounter {
+                                counter: boseiju_tree::ability_tree::imperative::RemovableCounterKind::AnyCounter {
                                     #[cfg(feature = "spanned_tree")]
                                     span: *counter_span,
                                 },

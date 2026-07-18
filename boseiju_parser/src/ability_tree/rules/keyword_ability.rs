@@ -30,6 +30,7 @@ mod reconfigure;
 mod reinforce;
 mod renown;
 mod ripple;
+mod standalone;
 mod surge;
 mod suspend;
 mod vanishing;
@@ -40,27 +41,26 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    let standalone_keyword_abilities = crate::ability_tree::terminals::StandaloneKeywordAbility::all()
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
+    let standalone_keyword_abilities = boseiju_lexer::terminal::StandaloneKeywordAbility::all()
         .map(|keyword_ability| ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                 keyword_ability: keyword_ability.into(),
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
             merged: ParserNode::KeywordAbility {
-                keyword_ability: dummy(),
+                keyword_ability: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::LexerToken(Token::KeywordAbility(keyword))] => Ok(ParserNode::KeywordAbility {
-                    keyword_ability: crate::ability_tree::ability::keyword_ability::keyword_to_abilities(*keyword)?,
+                    keyword_ability: standalone::keyword_to_abilities(*keyword)?,
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

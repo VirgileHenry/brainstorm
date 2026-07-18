@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreateKeywordAction {
     pub amount: crate::ability_tree::number::Number,
-    pub token: crate::card::layout::token::TokenLayout, /* Fixme ? */
+    pub token: crate::card::layout::TokenLayout, /* Fixme ? */
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
@@ -77,7 +77,7 @@ impl Default for CreateKeywordAction {
 
 pub fn ability(
     _amount: &crate::ability_tree::number::Number,
-    _token: &crate::card::layout::token::TokenLayout,
+    _token: &crate::card::layout::TokenLayout,
     #[cfg(feature = "spanned_tree")] span: boseiju_span::Span,
 ) -> crate::ability_tree::ability::spell::SpellAbility {
     /* Fixme: unimplemented */

@@ -1,25 +1,32 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = ParserRule> {
     let common_specifiers = vec![
         /* "<control specifier>" is a permanent specifier */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ControlSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::ControlSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ControlSpecifier { specifier }] => Ok(ParserNode::PermanentSpecifier {
-                    specifier: crate::ability_tree::object::specified_object::PermanentSpecifier::Control(specifier.clone()),
+                    specifier: boseiju_tree::ability_tree::object::specified_object::PermanentSpecifier::Control(
+                        specifier.clone(),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -27,11 +34,17 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         },
         /* "<color specifier>" is a permanent specifier */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ColorSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::ColorSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentSpecifier {
+                specifier: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::ColorSpecifier { specifier }] => Ok(ParserNode::PermanentSpecifier {
-                    specifier: crate::ability_tree::object::specified_object::PermanentSpecifier::Color(specifier.clone()),
+                    specifier: boseiju_tree::ability_tree::object::specified_object::PermanentSpecifier::Color(specifier.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -42,8 +55,14 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
     let merging_specifiers = vec![
         /* "<permanent specifier>" on its own can make a permanent specifiers node */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::PermanentSpecifier { specifier: dummy() }.id()]),
-            merged: ParserNode::PermanentSpecifiers { specifiers: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::PermanentSpecifier {
+                specifier: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::PermanentSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::PermanentSpecifier { specifier }] => Ok(ParserNode::PermanentSpecifiers {
                     specifiers: object::specified_object::Specifiers::Single(specifier.clone()),
@@ -55,10 +74,19 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "<permanent specifier> <permanent specifier>" -> and list */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
-                ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
+                ParserNode::PermanentSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
+                ParserNode::PermanentSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PermanentSpecifiers { specifiers: dummy() }.id(),
+            merged: ParserNode::PermanentSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::PermanentSpecifier { specifier: s1 },
@@ -77,19 +105,28 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "<permanent specifier> or <permanent specifier>" -> or list */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or {
+                ParserNode::PermanentSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::PermanentSpecifier { specifier: dummy() }.id(),
+                ParserNode::PermanentSpecifier {
+                    specifier: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PermanentSpecifiers { specifiers: dummy() }.id(),
+            merged: ParserNode::PermanentSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::PermanentSpecifier { specifier: s1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
                     ParserNode::PermanentSpecifier { specifier: s2 },
                 ] => Ok(ParserNode::PermanentSpecifiers {
                     specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {

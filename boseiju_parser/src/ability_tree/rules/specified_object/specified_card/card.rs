@@ -1,3 +1,1 @@
-
-
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {}
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {}

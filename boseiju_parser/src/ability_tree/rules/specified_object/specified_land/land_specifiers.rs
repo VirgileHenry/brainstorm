@@ -1,24 +1,32 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "<count> <land kind> <land specifiers>" makes a specified land  */
 
     let specifiers_to_specified_lands = ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LandKind { land: dummy() }.id(),
-            ParserNode::LandSpecifiers { specifiers: dummy() }.id(),
+            ParserNode::LandKind {
+                land: Default::default(),
+            }
+            .id(),
+            ParserNode::LandSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
         ]),
-        merged: ParserNode::SpecifiedLand { land: dummy() }.id(),
+        merged: ParserNode::SpecifiedLand {
+            land: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LandKind { land }, ParserNode::LandSpecifiers { specifiers }] => Ok(ParserNode::SpecifiedLand {
                 land: object::specified_object::SpecifiedLand {
@@ -34,12 +42,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     };
 
     /* land subtypes can be used in place of the "land" marker, adding a specifier */
-    let subtype_to_land_specifiers = crate::ability_tree::terminals::LandSubtype::all().map(|subtype| ParserRule {
+    let subtype_to_land_specifiers = boseiju_lexer::terminal::LandSubtype::all().map(|subtype| ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::LandSubtype(subtype.clone())).id(),
-            ParserNode::LandSpecifiers { specifiers: dummy() }.id(),
+            ParserNode::LandSpecifiers {
+                specifiers: Default::default(),
+            }
+            .id(),
         ]),
-        merged: ParserNode::SpecifiedLand { land: dummy() }.id(),
+        merged: ParserNode::SpecifiedLand {
+            land: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::LexerToken(Token::LandSubtype(subtype)),

@@ -1,57 +1,60 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::event;
+use boseiju_tree::ability_tree::state;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<permanent reference> becomes tapped" is a permanent gains state event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Become {
+                ParserNode::Permanent {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::CardState(intermediates::CardState::Tapped {
+                ParserNode::LexerToken(Token::CardState(intermediate::CardState::Tapped {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event {
+                event: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Become { .. })),
-                    ParserNode::LexerToken(Token::CardState(intermediates::CardState::Tapped {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
+                    ParserNode::LexerToken(Token::CardState(intermediate::CardState::Tapped {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
                 ] => Ok(ParserNode::Event {
-                    event: crate::ability_tree::event::Event::ObjectGainsState(
-                        crate::ability_tree::event::ObjectGainsStateEvent::PermanentGainsState(
-                            crate::ability_tree::event::PermanentGainsStateEvent {
-                                permanent: permanent.clone(),
-                                state: crate::ability_tree::state::PermanentState::Tapped(
-                                    crate::ability_tree::state::PermanentTappedState {
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: *end_span,
-                                    },
-                                ),
+                    event: event::Event::ObjectGainsState(event::ObjectGainsStateEvent::PermanentGainsState(
+                        event::PermanentGainsStateEvent {
+                            permanent: permanent.clone(),
+                            state: state::PermanentState::Tapped(state::PermanentTappedState {
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.span().merge(end_span),
-                            },
-                        ),
-                    ),
+                                span: *end_span,
+                            }),
+                            #[cfg(feature = "spanned_tree")]
+                            span: permanent.span().merge(end_span),
+                        },
+                    )),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -60,43 +63,45 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent reference> becomes untapped" is a permanent gains state event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Become {
+                ParserNode::Permanent {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::CardState(intermediates::CardState::Untapped {
+                ParserNode::LexerToken(Token::CardState(intermediate::CardState::Untapped {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event {
+                event: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Become { .. })),
-                    ParserNode::LexerToken(Token::CardState(intermediates::CardState::Untapped {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
+                    ParserNode::LexerToken(Token::CardState(intermediate::CardState::Untapped {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),
                 ] => Ok(ParserNode::Event {
-                    event: crate::ability_tree::event::Event::ObjectGainsState(
-                        crate::ability_tree::event::ObjectGainsStateEvent::PermanentGainsState(
-                            crate::ability_tree::event::PermanentGainsStateEvent {
-                                permanent: permanent.clone(),
-                                state: crate::ability_tree::state::PermanentState::Untapped(
-                                    crate::ability_tree::state::PermanentUntappedState {
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: *end_span,
-                                    },
-                                ),
+                    event: event::Event::ObjectGainsState(event::ObjectGainsStateEvent::PermanentGainsState(
+                        event::PermanentGainsStateEvent {
+                            permanent: permanent.clone(),
+                            state: state::PermanentState::Untapped(state::PermanentUntappedState {
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.span().merge(end_span),
-                            },
-                        ),
-                    ),
+                                span: *end_span,
+                            }),
+                            #[cfg(feature = "spanned_tree")]
+                            span: permanent.span().merge(end_span),
+                        },
+                    )),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -105,47 +110,49 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<permanent reference> becomes the target of <spell>" is a permanent gains state event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent { permanent: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Become {
+                ParserNode::Permanent {
+                    permanent: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::CardState(intermediates::CardState::Untapped {
+                ParserNode::LexerToken(Token::CardState(intermediate::CardState::Untapped {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Event { event: dummy() }.id(),
+            merged: ParserNode::Event {
+                event: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Become { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
                         #[cfg(feature = "spanned_tree")]
                             span: the_span,
                     })),
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Of { .. })),
+                    ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
                     ParserNode::Spell { spell },
                 ] => Ok(ParserNode::Event {
-                    event: crate::ability_tree::event::Event::ObjectGainsState(
-                        crate::ability_tree::event::ObjectGainsStateEvent::PermanentGainsState(
-                            crate::ability_tree::event::PermanentGainsStateEvent {
-                                permanent: permanent.clone(),
-                                state: crate::ability_tree::state::PermanentState::Targeted(
-                                    crate::ability_tree::state::PermanentTargetedState {
-                                        spell: spell.clone(),
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: spell.span().merge(the_span),
-                                    },
-                                ),
+                    event: event::Event::ObjectGainsState(event::ObjectGainsStateEvent::PermanentGainsState(
+                        event::PermanentGainsStateEvent {
+                            permanent: permanent.clone(),
+                            state: state::PermanentState::Targeted(state::PermanentTargetedState {
+                                spell: spell.clone(),
                                 #[cfg(feature = "spanned_tree")]
-                                span: permanent.span().merge(&spell.span()),
-                            },
-                        ),
-                    ),
+                                span: spell.span().merge(the_span),
+                            }),
+                            #[cfg(feature = "spanned_tree")]
+                            span: permanent.span().merge(&spell.span()),
+                        },
+                    )),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

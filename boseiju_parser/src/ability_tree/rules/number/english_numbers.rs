@@ -1,28 +1,30 @@
-use crate::ability_tree::number;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::number;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "An" is the number 1: "an enchantment card" -> "1 enchantment card" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Number { number: dummy() }.id(),
+            merged: ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -39,17 +41,20 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "A" is the number 1: "a creature" -> "1 creature" */
         ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+            expanded: RuleLhs::new(
+                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
-                .id(),
-            ]),
-            merged: ParserNode::Number { number: dummy() }.id(),
+                .id()],
+            ),
+            merged: ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),

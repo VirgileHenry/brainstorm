@@ -10,6 +10,7 @@ pub mod mana_cost;
 pub mod number;
 pub mod object;
 pub mod player;
+pub mod power_toughness;
 pub mod replacement_effect;
 pub mod state;
 pub mod statement;
@@ -38,6 +39,14 @@ impl AbilityTree {
     pub fn empty() -> AbilityTree {
         AbilityTree {
             abilities: crate::HeapArrayVec::new(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+
+    pub fn from_single_ability(ability: ability::Ability) -> Self {
+        AbilityTree {
+            abilities: std::iter::once(ability).collect(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

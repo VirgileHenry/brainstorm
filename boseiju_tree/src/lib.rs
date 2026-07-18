@@ -20,7 +20,6 @@ use node_kind::NodeKind;
 /// This constant strongly impact the size of the tree, and is mostly floored by exisiting MTG cards.
 pub const MAX_CHILDREN_PER_NODE: usize = 12;
 
-/*
 /// Small trait to make AbilityTreeNode require the Spanned trait when the spanned_tree feature is active.
 #[cfg(not(feature = "spanned_tree"))]
 pub trait SpannedHelper {}
@@ -29,10 +28,9 @@ impl<T> SpannedHelper for T {}
 
 /// Small trait to make AbilityTreeNode require the Spanned trait when the spanned_tree feature is active.
 #[cfg(feature = "spanned_tree")]
-pub trait SpannedHelper: span::Spanned {}
+pub trait SpannedHelper: boseiju_span::Spanned {}
 #[cfg(feature = "spanned_tree")]
-impl<T: span::Spanned> SpannedHelper for T {}
-*/
+impl<T: boseiju_span::Spanned> SpannedHelper for T {}
 
 /// Trait to reunite all the types of the ability trees to a single "node" type.
 ///
@@ -78,7 +76,7 @@ impl<T: span::Spanned> SpannedHelper for T {}
 /// ```
 /// Here, this is a shortcut for having a `EmptyVariant(EmptyVariantData)` where the
 /// data would be an empty struct.
-pub trait Node /*:  SpannedHelper Fixme: this is nice for the webdemo but somehow crashes the rust analyzer */ {
+pub trait Node: SpannedHelper {
     /// Get the node id.
     ///
     /// This identifier is unique to the kind of node it is, allowing to rebuild the node kind

@@ -86,6 +86,12 @@ impl std::fmt::Display for ManaSymbol {
     }
 }
 
+impl Default for ManaSymbol {
+    fn default() -> Self {
+        Self::Snow
+    }
+}
+
 /// A mana symbol with a number on it, representing a fixed amount of any kind of mana.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]

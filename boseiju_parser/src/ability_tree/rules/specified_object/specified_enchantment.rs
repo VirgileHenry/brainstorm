@@ -1,7 +1,7 @@
 mod enchantment;
 mod enchantment_specifiers;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         enchantment::rules().collect::<Vec<_>>(),
         enchantment_specifiers::rules().collect::<Vec<_>>(),

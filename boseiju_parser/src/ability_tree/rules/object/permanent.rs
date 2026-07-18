@@ -1,25 +1,33 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<count> <specified permanent>" is a permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier { count: dummy() }.id(),
-                ParserNode::SpecifiedPermanent { permanent: dummy() }.id(),
+                ParserNode::CountSpecifier {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedPermanent {
+                    permanent: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::CountSpecifier { count },
@@ -38,8 +46,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "<specified permanent>" is a permanent with an implicit "all" */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::SpecifiedPermanent { permanent: dummy() }.id()]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            expanded: RuleLhs::new(&[ParserNode::SpecifiedPermanent {
+                permanent: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedPermanent { permanent }] => Ok(ParserNode::Permanent {
                     permanent: object::Permanent::Reference(object::reference::PermanentReference {
@@ -59,17 +73,23 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "another <specified permanent>" is a + other permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Another {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpecifiedPermanent { permanent: dummy() }.id(),
+                ParserNode::SpecifiedPermanent {
+                    permanent: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Another {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Another {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
@@ -97,17 +117,23 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "this <specified permanent>" is a self referencing permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::This {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpecifiedPermanent { permanent: dummy() }.id(),
+                ParserNode::SpecifiedPermanent {
+                    permanent: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::This {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -129,15 +155,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<card own name>" is a self referencing permanent */
         /* Fixme: this rule shall only be used when parsing permanents, otherwise cards may think they are permanents */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardOwnName(intermediates::CardOwnName {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardOwnName(intermediate::CardOwnName {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::CardOwnName(intermediates::CardOwnName {
+                    ParserNode::LexerToken(Token::CardOwnName(intermediate::CardOwnName {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -154,16 +183,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "enchanted <specified permanent>" is an attached permanent creature reference */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
-                intermediates::AttachedObject::AttachedPermanent {
+                intermediate::AttachedObject::AttachedPermanent {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::AttachedObject(intermediates::AttachedObject::AttachedPermanent {
+                    ParserNode::LexerToken(Token::AttachedObject(intermediate::AttachedObject::AttachedPermanent {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -180,16 +212,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "enchanted creature" and "equipped creature" can be upscaled to enchanted permanents */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
-                intermediates::AttachedObject::AttachedCreature {
+                intermediate::AttachedObject::AttachedCreature {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::AttachedObject(intermediates::AttachedObject::AttachedCreature {
+                    ParserNode::LexerToken(Token::AttachedObject(intermediate::AttachedObject::AttachedCreature {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -206,16 +241,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "fortified land" can be upscaled to attached permanent */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
-                intermediates::AttachedObject::FortifiedLand {
+                intermediate::AttachedObject::FortifiedLand {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::AttachedObject(intermediates::AttachedObject::FortifiedLand {
+                    ParserNode::LexerToken(Token::AttachedObject(intermediate::AttachedObject::FortifiedLand {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -232,16 +270,19 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "it" makes a previously mentionned permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Permanent { permanent: dummy() }.id(),
+            merged: ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::It {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),

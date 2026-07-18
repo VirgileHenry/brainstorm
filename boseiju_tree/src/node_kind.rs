@@ -186,6 +186,7 @@ pub enum NodeKind {
     PlayerSpecifierIdMarker,
     PlayerSpecifierObjectController,
     PlayerSpecifierObjectOwner,
+    PowerToughness,
     PowerToughnessModifiers,
     PowerToughnessModifiersMinusMinus,
     PowerToughnessModifiersMinusPlus,

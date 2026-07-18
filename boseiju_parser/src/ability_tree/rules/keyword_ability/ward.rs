@@ -2,53 +2,56 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::ability;
+use boseiju_tree::ability_tree::cost;
+use boseiju_tree::ability_tree::imperative;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* Ward with a mana cost, no long hyphen */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Ward,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ManaCost { mana_cost: dummy() }.id(),
+                ParserNode::ManaCost {
+                    mana_cost: Default::default(),
+                }
+                .id(),
             ]),
             merged: ParserNode::KeywordAbility {
-                keyword_ability: dummy(),
+                keyword_ability: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                    ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                         keyword_ability: mtg_data::KeywordAbility::Ward,
                         #[cfg(feature = "spanned_tree")]
                             span: ward_span,
                     })),
                     ParserNode::ManaCost { mana_cost },
                 ] => Ok(ParserNode::KeywordAbility {
-                    keyword_ability: crate::ability_tree::ability::KeywordAbility {
-                        keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Ward(
-                            crate::ability_tree::ability::keyword_ability::WardKeywordAbility {
-                                cost: crate::ability_tree::cost::Cost {
-                                    costs: [crate::ability_tree::imperative::Imperative {
-                                        kind: crate::ability_tree::imperative::ImperativeKind::PayMana(
-                                            crate::ability_tree::imperative::PayManaImperative {
-                                                amount: mana_cost.clone(),
-                                                #[cfg(feature = "spanned_tree")]
-                                                span: mana_cost.span(),
-                                            },
-                                        ),
-                                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                    keyword_ability: ability::KeywordAbility {
+                        keyword: ability::keyword_ability::ExpandedKeywordAbility::Ward(
+                            ability::keyword_ability::WardKeywordAbility {
+                                cost: cost::Cost {
+                                    costs: [imperative::Imperative {
+                                        kind: imperative::ImperativeKind::PayMana(imperative::PayManaImperative {
+                                            amount: mana_cost.clone(),
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: mana_cost.span(),
+                                        }),
+                                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
                                             #[cfg(feature = "spanned_tree")]
                                             span: mana_cost.span().empty_at_start(),
                                         },
@@ -65,13 +68,11 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                             },
                         ),
                         /* Fixme */
-                        ability: crate::ability_tree::ability::WrittenAbility::Spell(
-                            crate::ability_tree::ability::spell::SpellAbility {
-                                effects: crate::utils::HeapArrayVec::new(),
-                                #[cfg(feature = "spanned_tree")]
-                                span: Default::default(),
-                            },
-                        ),
+                        ability: ability::WrittenAbility::Spell(ability::spell::SpellAbility {
+                            effects: boseiju_tree::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        }),
                         #[cfg(feature = "spanned_tree")]
                         span: ward_span.merge(&mana_cost.span),
                     },
@@ -83,49 +84,50 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Ward with a different cost require a long hyphen */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                     keyword_ability: mtg_data::KeywordAbility::Ward,
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash {
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::LongDash {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Cost { cost: dummy() }.id(),
+                ParserNode::Cost {
+                    cost: Default::default(),
+                }
+                .id(),
             ]),
             merged: ParserNode::KeywordAbility {
-                keyword_ability: dummy(),
+                keyword_ability: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::KeywordAbility(intermediates::KeywordAbility {
+                    ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
                         keyword_ability: mtg_data::KeywordAbility::Ward,
                         #[cfg(feature = "spanned_tree")]
                             span: ward_span,
                     })),
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::LongDash { .. })),
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::LongDash { .. })),
                     ParserNode::Cost { cost },
                 ] => Ok(ParserNode::KeywordAbility {
-                    keyword_ability: crate::ability_tree::ability::KeywordAbility {
-                        keyword: crate::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Ward(
-                            crate::ability_tree::ability::keyword_ability::WardKeywordAbility {
+                    keyword_ability: ability::KeywordAbility {
+                        keyword: ability::keyword_ability::ExpandedKeywordAbility::Ward(
+                            ability::keyword_ability::WardKeywordAbility {
                                 cost: cost.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: ward_span.merge(&cost.span()),
                             },
                         ),
                         /* Fixme */
-                        ability: crate::ability_tree::ability::WrittenAbility::Spell(
-                            crate::ability_tree::ability::spell::SpellAbility {
-                                effects: crate::utils::HeapArrayVec::new(),
-                                #[cfg(feature = "spanned_tree")]
-                                span: Default::default(),
-                            },
-                        ),
+                        ability: ability::WrittenAbility::Spell(ability::spell::SpellAbility {
+                            effects: boseiju_tree::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        }),
                         #[cfg(feature = "spanned_tree")]
                         span: ward_span.merge(&cost.span()),
                     },

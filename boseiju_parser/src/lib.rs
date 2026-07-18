@@ -2,6 +2,7 @@ mod ability_tree;
 mod card;
 
 pub use ability_tree::ParserError;
+pub use ability_tree::ParserNode;
 pub use card::CardParseError;
 pub use card::LayoutParseError;
 

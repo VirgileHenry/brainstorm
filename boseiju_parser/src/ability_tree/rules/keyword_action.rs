@@ -40,6 +40,7 @@ mod reveal;
 mod sacrifice;
 mod scry;
 mod search;
+mod standalone;
 mod support;
 mod surveil;
 mod suspect;
@@ -53,25 +54,37 @@ use super::ParserNode;
 use super::ParserRule;
 use super::ParserRuleDeclarationLocation;
 use super::RuleLhs;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    let keyword_actions_to_imperatives = crate::ability_tree::terminals::StandaloneKeywordAction::all()
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
+    let keyword_actions_to_imperatives = boseiju_lexer::terminal::StandaloneKeywordAction::all()
         .map(|keyword_action| ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: keyword_action.into(),
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id()]),
-            merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+            expanded: RuleLhs::new(&[
+                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    token: intermediate::KeywordAction {
+                        keyword_action: keyword_action.into(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::ImperativeKind {
+                imperative: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::LexerToken(Token::KeywordAction(keyword))] => Ok(ParserNode::ImperativeKind {
-                    imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                        crate::ability_tree::imperative::keyword_action_to_abilities(*keyword)?,
+                &[
+                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                        token: keyword,
+                        tense: boseiju_lexer::Tense::BaseForm,
+                    })),
+                ] => Ok(ParserNode::ImperativeKind {
+                    imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                        standalone::keyword_action_to_abilities(*keyword)?,
                     ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

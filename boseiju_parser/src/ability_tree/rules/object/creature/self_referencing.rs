@@ -1,32 +1,37 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "this <specified creature>" is a self referencing creature */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::This {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::SpecifiedCreature { creature: dummy() }.id(),
+                ParserNode::SpecifiedCreature {
+                    creature: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::Creature { creature: dummy() }.id(),
+            merged: ParserNode::Creature {
+                creature: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::This {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::This {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -48,15 +53,18 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<card own name>" is a self referencing creature */
         /* Fixme: this rule shall only be used when parsing creatures, otherwise permanents may think they are creatures */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardOwnName(intermediates::CardOwnName {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardOwnName(intermediate::CardOwnName {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id()]),
-            merged: ParserNode::Creature { creature: dummy() }.id(),
+            merged: ParserNode::Creature {
+                creature: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::CardOwnName(intermediates::CardOwnName {
+                    ParserNode::LexerToken(Token::CardOwnName(intermediate::CardOwnName {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),

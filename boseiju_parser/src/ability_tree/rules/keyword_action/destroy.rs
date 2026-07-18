@@ -1,47 +1,59 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Destroy <permanent> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Destroy,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
-            ParserNode::Permanent { permanent: dummy() }.id(),
-        ]),
-        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
-        reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+            ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                token: intermediate::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Destroy,
                     #[cfg(feature = "spanned_tree")]
-                        span: destroy_span,
+                    span: Default::default(),
+                },
+                tense: boseiju_lexer::Tense::BaseForm,
+            }))
+            .id(),
+            ParserNode::Permanent {
+                permanent: Default::default(),
+            }
+            .id(),
+        ]),
+        merged: ParserNode::ImperativeKind {
+            imperative: Default::default(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    token:
+                        intermediate::KeywordAction {
+                            keyword_action: mtg_data::KeywordAction::Destroy,
+                            #[cfg(feature = "spanned_tree")]
+                                span: destroy_span,
+                        },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                    crate::ability_tree::imperative::KeywordAction {
-                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Destroy(
-                            crate::ability_tree::imperative::destroy::DestroyKeywordAction {
+                imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    boseiju_tree::ability_tree::imperative::KeywordAction {
+                        keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Destroy(
+                            boseiju_tree::ability_tree::imperative::destroy::DestroyKeywordAction {
                                 permanent: permanent.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: permanent.span().merge(destroy_span),
                             },
                         ),
-                        ability: crate::ability_tree::imperative::destroy::ability(
+                        ability: boseiju_tree::ability_tree::imperative::destroy::ability(
                             permanent,
                             #[cfg(feature = "spanned_tree")]
                             permanent.span().merge(destroy_span),

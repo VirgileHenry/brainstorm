@@ -1,51 +1,60 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::action;
+use boseiju_tree::ability_tree::event;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
-    crate::ability_tree::terminals::DamageKind::all().flat_map(|damage_kind| {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
+    boseiju_lexer::terminal::DamageKind::all().flat_map(|damage_kind| {
         [
             /* "<creature reference> deals <damage kind>" */
             ParserRule {
                 expanded: RuleLhs::new(&[
-                    ParserNode::Creature { creature: dummy() }.id(),
-                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals {
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
+                    ParserNode::Creature {
+                        creature: Default::default(),
+                    }
+                    .id(),
+                    ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                        token: intermediate::ActionKeyword::Deals {
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     }))
                     .id(),
                     ParserNode::LexerToken(Token::DamageKind(damage_kind)).id(),
                 ]),
-                merged: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::Creature { creature },
-                        ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals { .. })),
+                        ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                            token: intermediate::ActionKeyword::Deals { .. },
+                            tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                        })),
                         ParserNode::LexerToken(Token::DamageKind(damage_kind)),
                     ] => Ok(ParserNode::Event {
-                        event: crate::ability_tree::event::Event::CreaturePerformsAction(
-                            crate::ability_tree::event::CreaturePerformsActionEvent {
-                                action: crate::ability_tree::action::CreatureAction::DealsDamage(
-                                    crate::ability_tree::action::CreatureDealsDamageAction {
-                                        creature: creature.clone(),
-                                        damage_kind: damage_kind.clone(),
-                                        to_player: None,
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: creature.span().merge(&damage_kind.span()),
-                                    },
-                                ),
+                        event: event::Event::CreaturePerformsAction(event::CreaturePerformsActionEvent {
+                            action: action::CreatureAction::DealsDamage(action::CreatureDealsDamageAction {
+                                creature: creature.clone(),
+                                damage_kind: damage_kind.clone(),
+                                to_player: None,
                                 #[cfg(feature = "spanned_tree")]
                                 span: creature.span().merge(&damage_kind.span()),
-                            },
-                        ),
+                            }),
+                            #[cfg(feature = "spanned_tree")]
+                            span: creature.span().merge(&damage_kind.span()),
+                        }),
                     }),
                     _ => Err("Provided tokens do not match rule definition"),
                 },
@@ -54,44 +63,55 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
             /* "<creature reference> deals to <player>" */
             ParserRule {
                 expanded: RuleLhs::new(&[
-                    ParserNode::Creature { creature: dummy() }.id(),
-                    ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals {
-                        #[cfg(feature = "spanned_tree")]
-                        span: Default::default(),
+                    ParserNode::Creature {
+                        creature: Default::default(),
+                    }
+                    .id(),
+                    ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                        token: intermediate::ActionKeyword::Deals {
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     }))
                     .id(),
                     ParserNode::LexerToken(Token::DamageKind(damage_kind)).id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::Player { player: dummy() }.id(),
+                    ParserNode::Player {
+                        player: Default::default(),
+                    }
+                    .id(),
                 ]),
-                merged: ParserNode::Event { event: dummy() }.id(),
+                merged: ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::Creature { creature },
-                        ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Deals { .. })),
+                        ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                            token: intermediate::ActionKeyword::Deals { .. },
+                            tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                        })),
                         ParserNode::LexerToken(Token::DamageKind(damage_kind)),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::To { .. })),
+                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
                         ParserNode::Player { player },
                     ] => Ok(ParserNode::Event {
-                        event: crate::ability_tree::event::Event::CreaturePerformsAction(
-                            crate::ability_tree::event::CreaturePerformsActionEvent {
-                                action: crate::ability_tree::action::CreatureAction::DealsDamage(
-                                    crate::ability_tree::action::CreatureDealsDamageAction {
-                                        creature: creature.clone(),
-                                        damage_kind: damage_kind.clone(),
-                                        to_player: Some(player.clone()),
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: creature.span().merge(&damage_kind.span()),
-                                    },
-                                ),
+                        event: event::Event::CreaturePerformsAction(event::CreaturePerformsActionEvent {
+                            action: action::CreatureAction::DealsDamage(action::CreatureDealsDamageAction {
+                                creature: creature.clone(),
+                                damage_kind: damage_kind.clone(),
+                                to_player: Some(player.clone()),
                                 #[cfg(feature = "spanned_tree")]
                                 span: creature.span().merge(&damage_kind.span()),
-                            },
-                        ),
+                            }),
+                            #[cfg(feature = "spanned_tree")]
+                            span: creature.span().merge(&damage_kind.span()),
+                        }),
                     }),
                     _ => Err("Provided tokens do not match rule definition"),
                 },

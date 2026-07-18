@@ -1,27 +1,29 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "enchanted creature" and "equipped creature" are attached object creature */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
-            intermediates::AttachedObject::AttachedCreature {
+            intermediate::AttachedObject::AttachedCreature {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             },
         ))
         .id()]),
-        merged: ParserNode::Creature { creature: dummy() }.id(),
+        merged: ParserNode::Creature {
+            creature: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::AttachedObject(intermediates::AttachedObject::AttachedCreature {
+                ParserNode::LexerToken(Token::AttachedObject(intermediate::AttachedObject::AttachedCreature {
                     #[cfg(feature = "spanned_tree")]
                     span,
                 })),

@@ -1,4 +1,4 @@
-impl crate::card::Parse for boseiju_tree::card::layout::normal::NormalLayout {
+impl crate::card::Parse for boseiju_tree::card::layout::NormalLayout {
     type Source = mtg_cardbase::Card;
     type Error = crate::card::layout::LayoutParseError;
 

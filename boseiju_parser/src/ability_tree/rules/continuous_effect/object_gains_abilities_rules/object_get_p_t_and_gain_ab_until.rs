@@ -1,65 +1,86 @@
-use crate::ability_tree::ability::statik::continuous_effect::*;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [/* "<object> gets +n/+n and has <ability>" */ ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Creature { creature: dummy() }.id(),
-            ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get {
+            ParserNode::Creature {
+                creature: Default::default(),
+            }
+            .id(),
+            ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                token: intermediate::ActionKeyword::Get {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+                tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+            }))
+            .id(),
+            ParserNode::PowerToughnessModifiers {
+                modifiers: Default::default(),
+            }
+            .id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::PowerToughnessModifiers { modifiers: dummy() }.id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And {
+            ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Gain {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
+            ParserNode::Ability {
+                ability: Default::default(),
+            }
             .id(),
-            ParserNode::Ability { ability: dummy() }.id(),
-            ParserNode::ForwardDuration { duration: dummy() }.id(),
+            ParserNode::ForwardDuration {
+                duration: Default::default(),
+            }
+            .id(),
         ]),
-        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
+        merged: ParserNode::ImperativeKind {
+            imperative: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::Creature { creature },
-                ParserNode::LexerToken(Token::ActionKeyword(intermediates::ActionKeyword::Get { .. })),
+                ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                    token: intermediate::ActionKeyword::Get { .. },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                })),
                 ParserNode::PowerToughnessModifiers { modifiers },
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::And { .. })),
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Gain {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Gain {
                     #[cfg(feature = "spanned_tree")]
                         span: gain_ab_span,
                 })),
                 ParserNode::Ability { ability },
                 ParserNode::ForwardDuration { duration },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
-                    crate::ability_tree::imperative::GenerateContinuousEffectImperative {
+                imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::GenerateContinuousEffect(
+                    boseiju_tree::ability_tree::imperative::GenerateContinuousEffectImperative {
                         effect: ContinuousEffect {
-                            effect: ContinuousEffectKind::ModifyObjectAbilities(ModifyObjectEffect {
+                            effect: continuous_effect_kind::ContinuousEffectKind::ModifyObjectAbilities(continuous_effect_kind::ModifyObjectEffect {
                                 object: creature.to_permanent(),
                                 modifications: {
-                                    let mut modifications = crate::utils::HeapArrayVec::new();
-                                    modifications.push(ObjectAbilitiesModification::CharacteristicModification(
-                                        ObjectCharacteristicModification::PowerToughnessModifiers(modifiers.clone()),
+                                    let mut modifications = boseiju_tree::HeapArrayVec::new();
+                                    modifications.push(continuous_effect_kind::ObjectAbilitiesModification::CharacteristicModification(
+                                        continuous_effect_kind::ObjectCharacteristicModification::PowerToughnessModifiers(modifiers.clone()),
                                     ));
-                                    modifications.push(ObjectAbilitiesModification::GainAbility(ObjectGainAbility {
-                                        ability: crate::AbilityTree::from_single_ability(ability.clone()),
+                                    modifications.push(continuous_effect_kind::ObjectAbilitiesModification::GainAbility(continuous_effect_kind::ObjectGainAbility {
+                                        ability: boseiju_tree::AbilityTree::from_single_ability(ability.clone()),
                                         #[cfg(feature = "spanned_tree")]
                                         span: gain_ab_span.merge(&ability.span()),
                                     }));

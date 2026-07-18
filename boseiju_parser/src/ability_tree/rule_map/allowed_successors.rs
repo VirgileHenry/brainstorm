@@ -35,7 +35,7 @@ impl AllowedSuccessors {
     /// `C` is allowed after `A`, since we might have a legal merge `A, C, D -> A, B`.
     ///
     /// This functions also return wheteher the set was updated or not.
-    pub fn allow_rule_first_token_from_result(&mut self, rule: &crate::parser::rules::ParserRule) -> bool {
+    pub fn allow_rule_first_token_from_result(&mut self, rule: &crate::ability_tree::rules::ParserRule) -> bool {
         if self.allowed_successors.contains(&rule.result) {
             let rule_first_token = usize::from(rule.from.first());
             self.allowed_successors.insert(rule_first_token)

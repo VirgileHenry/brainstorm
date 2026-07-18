@@ -7,7 +7,7 @@ mod land_specifiers;
 mod permanent_specifiers;
 mod spell_specifiers;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         artifact_specifiers::rules().collect::<Vec<_>>(),
         card_specifiers::rules().collect::<Vec<_>>(),

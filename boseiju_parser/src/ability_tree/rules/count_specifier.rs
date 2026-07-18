@@ -1,29 +1,31 @@
 use super::ParserNode;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "A" is the minimal count specifier */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+            expanded: super::RuleLhs::new(
+                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
-                .id(),
-            ]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+                .id()],
+            ),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::A {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                 ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::A {
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::A {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
                     },
@@ -35,21 +37,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "An" is also the minimal count specifier. Is this `allomorphy` ? */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::An {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                 ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::A {
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::A {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
                     },
@@ -61,11 +66,17 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* Numbers on their own can make count specifiers */
         /* Fixme: check what cards fails without it, maybe this is too much */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::Number { number: dummy() }.id()]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+            expanded: super::RuleLhs::new(&[ParserNode::Number {
+                number: Default::default(),
+            }
+            .id()]),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Number { number }] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::Count(number.clone()),
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::Count(number.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -74,20 +85,26 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* A count specifier can be made from a number and the special "target" word */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target {
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target { .. })),
+                    ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target { .. })),
                 ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::Target(number.clone()),
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::Target(number.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -96,27 +113,30 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "Target" alone is a shortcut for "a target" */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::CountSpecifier(
-                intermediates::CountSpecifier::Target {
+                intermediate::CountSpecifier::Target {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 },
             ))
             .id()]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::Target {
+                    ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                 ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::Target(crate::ability_tree::number::Number::Number(
-                        crate::ability_tree::number::FixedNumber {
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::Target(
+                        boseiju_tree::ability_tree::number::Number::Number(boseiju_tree::ability_tree::number::FixedNumber {
                             number: 1,
                             #[cfg(feature = "spanned_tree")]
                             span: *span,
-                        },
-                    )),
+                        }),
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -125,21 +145,24 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "All" is a count specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::All {
+                ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::All {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::All {
+                    ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::All {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
                 ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::All {
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::All {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
                     },
@@ -150,24 +173,36 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         },
         /* "The next" is a count specifier */
         super::ParserRule {
-            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::CountSpecifier(
-                intermediates::CountSpecifier::TheNext {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
-                },
-            ))
-            .id()]),
-            merged: ParserNode::CountSpecifier { count: dummy() }.id(),
+                }))
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Next {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::CountSpecifier {
+                count: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::CountSpecifier(intermediates::CountSpecifier::TheNext {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
                         #[cfg(feature = "spanned_tree")]
-                        span,
+                            span: start_span,
+                    })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Next {
+                        #[cfg(feature = "spanned_tree")]
+                            span: end_span,
                     })),
                 ] => Ok(ParserNode::CountSpecifier {
-                    count: crate::ability_tree::object::CountSpecifier::TheNext {
+                    count: boseiju_tree::ability_tree::object::CountSpecifier::TheNext {
                         #[cfg(feature = "spanned_tree")]
-                        span: *span,
+                        span: start_span.merge(end_span),
                     },
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

@@ -3,7 +3,7 @@ mod object_gains_state;
 mod permanent_performs_action;
 mod player_performs_action;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         creature_performs_action::rules().collect::<Vec<_>>(),
         object_gains_state::rules().collect::<Vec<_>>(),

@@ -1,57 +1,67 @@
-use crate::ability_tree::ability::statik::continuous_effect::*;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates::PowerToughnessModElements;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate::NumberOperation;
+use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "+<number>/+<nmber>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar {
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PowerToughnessModifiers { modifiers: dummy() }.id(),
+            merged: ParserNode::PowerToughnessModifiers {
+                modifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Number { number: power },
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar { .. })),
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: PowerToughnessModifiers::PlusPlus(PowerToughnessModifiersPlusPlus {
-                        power_mod: power.clone(),
-                        toughness_mod: toughness.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: toughness.span().merge(start_span),
-                    }),
+                    modifiers: continuous_effect_kind::PowerToughnessModifiers::PlusPlus(
+                        continuous_effect_kind::PowerToughnessModifiersPlusPlus {
+                            power_mod: power.clone(),
+                            toughness_mod: toughness.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: toughness.span().merge(start_span),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -60,42 +70,53 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "+<number>/-<nmber>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar {
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PowerToughnessModifiers { modifiers: dummy() }.id(),
+            merged: ParserNode::PowerToughnessModifiers {
+                modifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Number { number: power },
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar { .. })),
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: PowerToughnessModifiers::PlusMinus(PowerToughnessModifiersPlusMinus {
-                        power_mod: power.clone(),
-                        toughness_mod: toughness.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: toughness.span().merge(start_span),
-                    }),
+                    modifiers: continuous_effect_kind::PowerToughnessModifiers::PlusMinus(
+                        continuous_effect_kind::PowerToughnessModifiersPlusMinus {
+                            power_mod: power.clone(),
+                            toughness_mod: toughness.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: toughness.span().merge(start_span),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -104,42 +125,53 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "-<number>/+<nmber>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar {
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PowerToughnessModifiers { modifiers: dummy() }.id(),
+            merged: ParserNode::PowerToughnessModifiers {
+                modifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Number { number: power },
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar { .. })),
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: PowerToughnessModifiers::MinusPlus(PowerToughnessModifiersMinusPlus {
-                        power_mod: power.clone(),
-                        toughness_mod: toughness.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: toughness.span().merge(start_span),
-                    }),
+                    modifiers: continuous_effect_kind::PowerToughnessModifiers::MinusPlus(
+                        continuous_effect_kind::PowerToughnessModifiersMinusPlus {
+                            power_mod: power.clone(),
+                            toughness_mod: toughness.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: toughness.span().merge(start_span),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -148,42 +180,53 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "-<number>/-<nmber>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar {
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Number { number: dummy() }.id(),
+                ParserNode::Number {
+                    number: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::PowerToughnessModifiers { modifiers: dummy() }.id(),
+            merged: ParserNode::PowerToughnessModifiers {
+                modifiers: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Number { number: power },
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Bar { .. })),
-                    ParserNode::LexerToken(Token::PowerToughnessModElements(PowerToughnessModElements::Minus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: PowerToughnessModifiers::MinusMinus(PowerToughnessModifiersMinusMinus {
-                        power_mod: power.clone(),
-                        toughness_mod: toughness.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: toughness.span().merge(start_span),
-                    }),
+                    modifiers: continuous_effect_kind::PowerToughnessModifiers::MinusMinus(
+                        continuous_effect_kind::PowerToughnessModifiersMinusMinus {
+                            power_mod: power.clone(),
+                            toughness_mod: toughness.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: toughness.span().merge(start_span),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

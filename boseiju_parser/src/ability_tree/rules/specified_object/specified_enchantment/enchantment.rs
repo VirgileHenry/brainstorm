@@ -1,21 +1,26 @@
-use crate::ability_tree::object;
-use crate::lexer::tokens::Token;
-use crate::parser::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_tree::ability_tree::object;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "<enchantment kind>" makes a specified enchantment  */
 
     let specifiers_to_specified_enchantments = ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::EnchantmentKind { enchantment: dummy() }.id()]),
-        merged: ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
+        expanded: RuleLhs::new(&[ParserNode::EnchantmentKind {
+            enchantment: Default::default(),
+        }
+        .id()]),
+        merged: ParserNode::SpecifiedEnchantment {
+            enchantment: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::EnchantmentKind { enchantment }] => Ok(ParserNode::SpecifiedEnchantment {
                 enchantment: object::specified_object::SpecifiedEnchantment {
@@ -31,9 +36,12 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
     };
 
     /* enchantment subtypes can be used in place of the "enchantment" marker, adding a specifier */
-    let subtype_to_enchantment_specifiers = crate::ability_tree::terminals::EnchantmentSubtype::all().map(|subtype| ParserRule {
+    let subtype_to_enchantment_specifiers = boseiju_lexer::terminal::EnchantmentSubtype::all().map(|subtype| ParserRule {
         expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::EnchantmentSubtype(subtype.clone())).id()]),
-        merged: ParserNode::SpecifiedEnchantment { enchantment: dummy() }.id(),
+        merged: ParserNode::SpecifiedEnchantment {
+            enchantment: Default::default(),
+        }
+        .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[ParserNode::LexerToken(Token::EnchantmentSubtype(subtype))] => Ok(ParserNode::SpecifiedEnchantment {
                 enchantment: object::specified_object::SpecifiedEnchantment {

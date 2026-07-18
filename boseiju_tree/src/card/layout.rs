@@ -1,5 +1,8 @@
-pub mod normal;
-pub mod token;
+mod normal;
+mod token;
+
+pub use normal::NormalLayout;
+pub use token::TokenLayout;
 
 /// Grouping of functions common to all layouts
 pub trait LayoutImpl: Sized {
@@ -11,7 +14,7 @@ pub trait LayoutImpl: Sized {
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Layout {
-    Normal { layout: normal::NormalLayout },
+    Normal { layout: NormalLayout },
     Split {},
     Flip {},
     Transform {},
@@ -27,7 +30,7 @@ pub enum Layout {
     Planar {},
     Scheme {},
     Vanguard {},
-    Token { layout: token::TokenLayout },
+    Token { layout: TokenLayout },
     DoubleFaced {},
     Emblem {},
 }

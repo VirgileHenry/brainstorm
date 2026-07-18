@@ -8,6 +8,7 @@ pub use error::LexerError;
 pub use span::LexerSpan;
 pub use token::Token;
 pub use token::intermediate;
+pub use token::tensed::Tense;
 pub use token::terminal;
 
 /// Preprocess a card oracle text to properly lex it.

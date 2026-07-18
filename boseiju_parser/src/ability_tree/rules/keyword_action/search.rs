@@ -1,66 +1,77 @@
-use crate::ability_tree::zone;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::parser::rules::ParserNode;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::rules::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Search you library for <card> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
-                keyword_action: mtg_data::KeywordAction::Search,
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
-            ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
-            ParserNode::LexerToken(Token::OwnableZone(zone::OwnableZone::Library {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::For {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id(),
-            ParserNode::Card { card: dummy() }.id(),
-        ]),
-        merged: ParserNode::ImperativeKind { imperative: dummy() }.id(),
-        reduction: |nodes: &[ParserNode]| match &nodes {
-            &[
-                ParserNode::LexerToken(Token::KeywordAction(intermediates::KeywordAction {
+            ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                token: intermediate::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Search,
                     #[cfg(feature = "spanned_tree")]
-                        span: search_span,
+                    span: Default::default(),
+                },
+                tense: boseiju_lexer::Tense::BaseForm,
+            }))
+            .id(),
+            ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::LexerToken(Token::OwnableZone(boseiju_lexer::terminal::OwnableZone::Library {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::For {
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::Card {
+                card: Default::default(),
+            }
+            .id(),
+        ]),
+        merged: ParserNode::ImperativeKind {
+            imperative: Default::default(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    token:
+                        intermediate::KeywordAction {
+                            keyword_action: mtg_data::KeywordAction::Search,
+                            #[cfg(feature = "spanned_tree")]
+                                span: search_span,
+                        },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 })),
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your { .. })),
-                ParserNode::LexerToken(Token::OwnableZone(zone::OwnableZone::Library { .. })),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::For { .. })),
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your { .. })),
+                ParserNode::LexerToken(Token::OwnableZone(boseiju_lexer::terminal::OwnableZone::Library { .. })),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::For { .. })),
                 ParserNode::Card { card },
             ] => Ok(ParserNode::ImperativeKind {
-                imperative: crate::ability_tree::imperative::ImperativeKind::KeywordAction(
-                    crate::ability_tree::imperative::KeywordAction {
-                        keyword: crate::ability_tree::imperative::ExpandedKeywordAction::Search(
-                            crate::ability_tree::imperative::search::SearchKeywordAction {
+                imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
+                    boseiju_tree::ability_tree::imperative::KeywordAction {
+                        keyword: boseiju_tree::ability_tree::imperative::ExpandedKeywordAction::Search(
+                            boseiju_tree::ability_tree::imperative::search::SearchKeywordAction {
                                 card: card.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: card.span().merge(search_span),
                             },
                         ),
-                        ability: crate::ability_tree::imperative::search::ability(
+                        ability: boseiju_tree::ability_tree::imperative::search::ability(
                             card,
                             #[cfg(feature = "spanned_tree")]
                             card.span().merge(search_span),

@@ -1,7 +1,7 @@
 mod land;
 mod land_specifiers;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         land::rules().collect::<Vec<_>>(),
         land_specifiers::rules().collect::<Vec<_>>(),

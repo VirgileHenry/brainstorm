@@ -1,35 +1,40 @@
 use super::ParserNode;
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates;
-use crate::utils::dummy;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "At <instant>" make trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::At {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::RecurrentInstant { instant: dummy() }.id(),
+                ParserNode::RecurrentInstant {
+                    instant: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::At {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
                     ParserNode::RecurrentInstant { instant },
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::AtInstant(instant.clone()),
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::AtInstant(instant.clone()),
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
                         span: instant.span().merge(at_span),
@@ -42,43 +47,52 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "At <instant>, if <condition>" make conditonnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::At {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::RecurrentInstant { instant: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::RecurrentInstant {
+                    instant: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::At {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
                     ParserNode::RecurrentInstant { instant },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
                     ParserNode::Condition { condition },
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::AtInstant(instant.clone()),
-                        condition: Some(crate::ability_tree::conditional::Conditional::If(
-                            crate::ability_tree::conditional::ConditionalIf {
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::AtInstant(instant.clone()),
+                        condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                            boseiju_tree::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: condition.span().merge(if_span),
@@ -95,24 +109,30 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<whenever> <event>" is a trigger condition */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Event { event: dummy() }.id(),
+                ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
                         span: event.span().merge(start_span),
@@ -125,24 +145,30 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<when> <event>" is a trigger condition */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Event { event: dummy() }.id(),
+                ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
                         condition: None,
                         #[cfg(feature = "spanned_tree")]
                         span: event.span().merge(start_span),
@@ -155,43 +181,52 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* <whenever> <event>, if <condition> can also make a conditionnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Event { event: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
                     ParserNode::Condition { condition },
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
-                        condition: Some(crate::ability_tree::conditional::Conditional::If(
-                            crate::ability_tree::conditional::ConditionalIf {
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
+                        condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                            boseiju_tree::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: condition.span().merge(if_span),
@@ -208,43 +243,52 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* <when> <event>, if <condition> can also make a conditionnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Event { event: dummy() }.id(),
-                ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma {
+                ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Condition { condition: dummy() }.id(),
+                ParserNode::Condition {
+                    condition: Default::default(),
+                }
+                .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(Token::ControlFlow(intermediates::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
                     ParserNode::Condition { condition },
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
-                        condition: Some(crate::ability_tree::conditional::Conditional::If(
-                            crate::ability_tree::conditional::ConditionalIf {
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
+                        condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                            boseiju_tree::ability_tree::conditional::ConditionalIf {
                                 condition: condition.clone(),
                                 #[cfg(feature = "spanned_tree")]
                                 span: condition.span().merge(if_span),
@@ -261,53 +305,59 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<whenever> <event> during your turn" is a conditional without comma or if */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Event { event: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::During {
+                ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Turn {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Turn {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::Whenever {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::During {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
                         #[cfg(feature = "spanned_tree")]
                             span: during_span,
                     })),
                     /* Fixme: a bit weird for a "your turn" ? Maybe it shall be a single token */
-                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your { .. })),
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Turn {
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your { .. })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Turn {
                         #[cfg(feature = "spanned_tree")]
                             span: turn_span,
                     })),
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
-                        condition: Some(crate::ability_tree::conditional::Conditional::If(
-                            crate::ability_tree::conditional::ConditionalIf {
-                                condition: crate::ability_tree::conditional::Condition::ThisIsYourTurn(
-                                    crate::ability_tree::conditional::ConditionThisIsYourTurn {
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
+                        condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                            boseiju_tree::ability_tree::conditional::ConditionalIf {
+                                condition: boseiju_tree::ability_tree::conditional::Condition::ThisIsYourTurn(
+                                    boseiju_tree::ability_tree::conditional::ConditionThisIsYourTurn {
                                         #[cfg(feature = "spanned_tree")]
                                         span: during_span.merge(turn_span),
                                     },
@@ -327,53 +377,59 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         /* "<when> <event> during your turn" is a conditional without comma or if */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::Event { event: dummy() }.id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::During {
+                ParserNode::Event {
+                    event: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Turn {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Turn {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
             ]),
-            merged: ParserNode::TriggerCondition { condition: dummy() }.id(),
+            merged: ParserNode::TriggerCondition {
+                condition: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::When {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediates::EnglishKeyword::During {
+                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
                         #[cfg(feature = "spanned_tree")]
                             span: during_span,
                     })),
                     /* Fixme: a bit weird for a "your turn" ? Maybe it shall be a single token */
-                    ParserNode::LexerToken(Token::AmbiguousToken(intermediates::AmbiguousToken::Your { .. })),
-                    ParserNode::LexerToken(Token::VhyToSortLater(intermediates::VhyToSortLater::Turn {
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your { .. })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Turn {
                         #[cfg(feature = "spanned_tree")]
                             span: turn_span,
                     })),
                 ] => Ok(ParserNode::TriggerCondition {
-                    condition: crate::ability_tree::ability::triggered::TriggerCondition {
-                        kind: crate::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
-                        condition: Some(crate::ability_tree::conditional::Conditional::If(
-                            crate::ability_tree::conditional::ConditionalIf {
-                                condition: crate::ability_tree::conditional::Condition::ThisIsYourTurn(
-                                    crate::ability_tree::conditional::ConditionThisIsYourTurn {
+                    condition: boseiju_tree::ability_tree::ability::triggered::TriggerCondition {
+                        kind: boseiju_tree::ability_tree::ability::triggered::TriggerConditionKind::Event(event.clone()),
+                        condition: Some(boseiju_tree::ability_tree::conditional::Conditional::If(
+                            boseiju_tree::ability_tree::conditional::ConditionalIf {
+                                condition: boseiju_tree::ability_tree::conditional::Condition::ThisIsYourTurn(
+                                    boseiju_tree::ability_tree::conditional::ConditionThisIsYourTurn {
                                         #[cfg(feature = "spanned_tree")]
                                         span: during_span.merge(turn_span),
                                     },

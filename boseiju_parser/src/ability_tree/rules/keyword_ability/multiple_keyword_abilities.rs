@@ -1,31 +1,33 @@
-use crate::lexer::tokens::Token;
-use crate::lexer::tokens::intermediates::ControlFlow;
-use crate::parser::ParserNode;
-use crate::parser::node::MultipleKeywordAbilities;
-use crate::parser::rules::ParserRule;
-use crate::parser::rules::ParserRuleDeclarationLocation;
-use crate::parser::rules::RuleLhs;
-use crate::utils::dummy;
+use crate::ability_tree::ParserNode;
+use crate::ability_tree::node::MultipleKeywordAbilities;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate::ControlFlow;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
-use crate::ability_tree::AbilityTreeNode;
+use boseiju_span::Spanned;
 
-pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Multiple keyword abilities can be found separated by commas. */
     [
         /* "<keyword ability>" (1 rep) */
         ParserRule {
             expanded: RuleLhs::new(&[ParserNode::KeywordAbility {
-                keyword_ability: dummy(),
+                keyword_ability: Default::default(),
             }
             .id()]),
-            merged: ParserNode::MultipleKeywordAbilities { abilities: dummy() }.id(),
+            merged: ParserNode::MultipleKeywordAbilities {
+                abilities: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::KeywordAbility { keyword_ability }] => Ok(ParserNode::MultipleKeywordAbilities {
                     abilities: MultipleKeywordAbilities {
                         abilities: {
-                            let mut abilities = crate::utils::HeapArrayVec::new();
+                            let mut abilities = boseiju_tree::HeapArrayVec::new();
                             abilities.push(keyword_ability.clone());
                             abilities
                         },
@@ -41,7 +43,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
@@ -50,11 +52,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
             ]),
-            merged: ParserNode::MultipleKeywordAbilities { abilities: dummy() }.id(),
+            merged: ParserNode::MultipleKeywordAbilities {
+                abilities: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::KeywordAbility { keyword_ability: ab1 },
@@ -63,7 +68,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::MultipleKeywordAbilities {
                     abilities: MultipleKeywordAbilities {
                         abilities: {
-                            let mut abilities = crate::utils::HeapArrayVec::new();
+                            let mut abilities = boseiju_tree::HeapArrayVec::new();
                             for ab in [ab1.clone(), ab2.clone()].into_iter() {
                                 abilities.push(ab.clone());
                             }
@@ -81,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
@@ -90,7 +95,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
@@ -99,11 +104,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
             ]),
-            merged: ParserNode::MultipleKeywordAbilities { abilities: dummy() }.id(),
+            merged: ParserNode::MultipleKeywordAbilities {
+                abilities: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::KeywordAbility { keyword_ability: ab1 },
@@ -114,7 +122,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::MultipleKeywordAbilities {
                     abilities: MultipleKeywordAbilities {
                         abilities: {
-                            let mut abilities = crate::utils::HeapArrayVec::new();
+                            let mut abilities = boseiju_tree::HeapArrayVec::new();
                             for ab in [ab1.clone(), ab2.clone(), ab3.clone()].into_iter() {
                                 abilities.push(ab.clone());
                             }
@@ -132,7 +140,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
@@ -141,7 +149,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
@@ -150,7 +158,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
                 ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma {
@@ -159,11 +167,14 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
-                    keyword_ability: dummy(),
+                    keyword_ability: Default::default(),
                 }
                 .id(),
             ]),
-            merged: ParserNode::MultipleKeywordAbilities { abilities: dummy() }.id(),
+            merged: ParserNode::MultipleKeywordAbilities {
+                abilities: Default::default(),
+            }
+            .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::KeywordAbility { keyword_ability: ab1 },
@@ -176,7 +187,7 @@ pub fn rules() -> impl Iterator<Item = crate::parser::rules::ParserRule> {
                 ] => Ok(ParserNode::MultipleKeywordAbilities {
                     abilities: MultipleKeywordAbilities {
                         abilities: {
-                            let mut abilities = crate::utils::HeapArrayVec::new();
+                            let mut abilities = boseiju_tree::HeapArrayVec::new();
                             for ab in [ab1.clone(), ab2.clone(), ab3.clone(), ab4.clone()].into_iter() {
                                 abilities.push(ab.clone());
                             }
