@@ -81,7 +81,7 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    LockedDoor {
+    Locked {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -173,6 +173,10 @@ pub enum CardState {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Unlocked {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Unprepared {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -211,7 +215,7 @@ impl boseiju_span::Spanned for CardState {
             Self::Foretold { span } => *span,
             Self::Goaded { span } => *span,
             Self::Kicked { span } => *span,
-            Self::LockedDoor { span } => *span,
+            Self::Locked { span } => *span,
             Self::LookedAt { span } => *span,
             Self::Modified { span } => *span,
             Self::Monstrous { span } => *span,
@@ -234,6 +238,7 @@ impl boseiju_span::Spanned for CardState {
             Self::Transformed { span } => *span,
             Self::Unattached { span } => *span,
             Self::Unblocked { span } => *span,
+            Self::Unlocked { span } => *span,
             Self::Unprepared { span } => *span,
             Self::Untapped { span } => *span,
             Self::Warped { span } => *span,
@@ -325,7 +330,7 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardState {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "locked door" => Ok(CardState::LockedDoor {
+            "locked" => Ok(CardState::Locked {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -414,6 +419,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardState {
                 span: span.into(),
             }),
             "unblocked" => Ok(CardState::Unblocked {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unlocked" => Ok(Self::Unlocked {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

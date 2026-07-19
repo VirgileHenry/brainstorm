@@ -45,6 +45,10 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Modal {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Monocolored {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -114,6 +118,7 @@ impl boseiju_span::Spanned for CardProperty {
             Self::Level { span } => *span,
             Self::Loyalty { span } => *span,
             Self::ManaValue { span } => *span,
+            Self::Modal { span } => *span,
             Self::Monocolored { span } => *span,
             Self::Multicolored { span } => *span,
             Self::Name { span } => *span,
@@ -176,6 +181,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardProperty {
                 span: span.into(),
             }),
             "mana cost" | "mana costs" | "mana value" | "mana values" => Ok(CardProperty::ManaValue {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "modal" => Ok(CardProperty::Modal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

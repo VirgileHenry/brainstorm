@@ -41,7 +41,9 @@ pub enum Token {
     InstantSorcerySubtype(terminal::InstantSorcerySubtype),
     KeywordAbility(intermediate::KeywordAbility),
     LandSubtype(terminal::LandSubtype),
+    Legality(intermediate::Legality),
     ManaSymbol(terminal::ManaSymbol),
+    MiscObjectName(intermediate::MiscObjectName),
     NamedCard(terminal::NamedCard),
     NamedChoice(terminal::NamedChoice),
     NamedDungeon(terminal::NamedDungeon),
@@ -71,6 +73,7 @@ pub enum Token {
     TensedActionKeyword(intermediate::TensedActionKeyword),
     TensedKeywordAction(intermediate::TensedKeywordAction),
     TensedPlayerAction(intermediate::TensedPlayerAction),
+    UncardSpecialTerm(intermediate::UncardSpecialTerm),
     VhyToSortLater(intermediate::VhyToSortLater),
     WinLoseClause(intermediate::WinLoseClause),
 }
@@ -147,8 +150,12 @@ impl Token {
             Some(Self::KeywordAbility(token))
         } else if let Ok(token) = terminal::LandSubtype::try_from(&span) {
             Some(Self::LandSubtype(token))
+        } else if let Ok(token) = intermediate::Legality::try_from(&span) {
+            Some(Self::Legality(token))
         } else if let Ok(token) = terminal::ManaSymbol::try_from(&span) {
             Some(Self::ManaSymbol(token))
+        } else if let Ok(token) = intermediate::MiscObjectName::try_from(&span) {
+            Some(Self::MiscObjectName(token))
         } else if let Ok(token) = terminal::NamedCard::try_from(&span) {
             Some(Self::NamedCard(token))
         } else if let Ok(token) = terminal::NamedChoice::try_from(&span) {
@@ -207,6 +214,8 @@ impl Token {
             Some(Self::TensedKeywordAction(token))
         } else if let Ok(token) = intermediate::TensedPlayerAction::try_from(&span) {
             Some(Self::TensedPlayerAction(token))
+        } else if let Ok(token) = intermediate::UncardSpecialTerm::try_from(&span) {
+            Some(Self::UncardSpecialTerm(token))
         } else if let Ok(token) = intermediate::VhyToSortLater::try_from(&span) {
             Some(Self::VhyToSortLater(token))
         } else if let Ok(token) = intermediate::WinLoseClause::try_from(&span) {
@@ -256,7 +265,9 @@ impl boseiju_span::Spanned for Token {
             Self::InstantSorcerySubtype(child) => child.span(),
             Self::KeywordAbility(child) => child.span(),
             Self::LandSubtype(child) => child.span(),
+            Self::Legality(child) => child.span(),
             Self::ManaSymbol(child) => child.span(),
+            Self::MiscObjectName(child) => child.span(),
             Self::NamedCard(child) => child.span(),
             Self::NamedChoice(child) => child.span(),
             Self::NamedDungeon(child) => child.span(),
@@ -286,6 +297,7 @@ impl boseiju_span::Spanned for Token {
             Self::TensedActionKeyword(child) => child.span(),
             Self::TensedKeywordAction(child) => child.span(),
             Self::TensedPlayerAction(child) => child.span(),
+            Self::UncardSpecialTerm(child) => child.span(),
             Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),
         }

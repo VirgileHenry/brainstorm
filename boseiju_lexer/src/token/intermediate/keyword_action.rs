@@ -211,6 +211,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for TensedKeywordAction {
                     #[cfg(feature = "spanned_tree")]
                     span: span.into(),
                 })),
+                "playing" => Ok(Tensed::present_participle(KeywordAction {
+                    keyword_action: mtg_data::KeywordAction::Play,
+                    #[cfg(feature = "spanned_tree")]
+                    span: span.into(),
+                })),
                 "plays" => Ok(Tensed::third_person_singular_present(KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Play,
                     #[cfg(feature = "spanned_tree")]

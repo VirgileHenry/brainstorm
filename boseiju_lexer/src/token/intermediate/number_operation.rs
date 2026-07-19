@@ -93,6 +93,14 @@ pub enum NumberOperation {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    RoundedDown {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    RoundedUp {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     RoundUp {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -134,6 +142,8 @@ impl boseiju_span::Spanned for NumberOperation {
             Self::PowerX { span } => *span,
             Self::Reduce { span } => *span,
             Self::RoundDown { span } => *span,
+            Self::RoundedDown { span } => *span,
+            Self::RoundedUp { span } => *span,
             Self::RoundUp { span } => *span,
             Self::Smaller { span } => *span,
             Self::Substract { span } => *span,
@@ -234,6 +244,14 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for NumberOperation {
                 span: span.into(),
             }),
             "round down" => Ok(Self::RoundDown {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rounded down" => Ok(Self::RoundedDown {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rounded up" => Ok(Self::RoundedUp {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

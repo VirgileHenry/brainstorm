@@ -9,6 +9,10 @@ pub enum FormatSpecific {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    ChaosEnsue {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     DraftRound {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -37,6 +41,7 @@ impl boseiju_span::Spanned for FormatSpecific {
         match self {
             Self::Ante { span } => *span,
             Self::BoosterPack { span } => *span,
+            Self::ChaosEnsue { span } => *span,
             Self::DraftRound { span } => *span,
             Self::PlanarDeck { span } => *span,
             Self::Team { span } => *span,
@@ -55,6 +60,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for FormatSpecific {
                 span: span.into(),
             }),
             "booster pack" | "booster packs" => Ok(Self::BoosterPack {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "chaos ensue" | "chaos ensues" => Ok(Self::ChaosEnsue {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

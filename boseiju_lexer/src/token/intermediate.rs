@@ -25,6 +25,8 @@ mod game_term;
 mod global_zone;
 mod keyword_ability;
 mod keyword_action;
+mod legality;
+mod misc_object_name;
 mod non_kind;
 mod number;
 mod number_operation;
@@ -35,6 +37,7 @@ mod player_properties;
 mod player_specifier;
 mod special_costs;
 mod tap_untap_cost;
+mod uncard_special_term;
 mod win_lose_clauses;
 
 pub use ability_kind::AbilityKind;
@@ -63,6 +66,8 @@ pub use global_zone::GlobalZone;
 pub use keyword_ability::KeywordAbility;
 pub use keyword_action::KeywordAction;
 pub use keyword_action::TensedKeywordAction;
+pub use legality::Legality;
+pub use misc_object_name::MiscObjectName;
 pub use non_kind::NonKind;
 pub use number::Number;
 pub use number_operation::NumberOperation;
@@ -74,48 +79,17 @@ pub use player_properties::PlayerProperties;
 pub use player_specifier::PlayerSpecifier;
 pub use special_costs::SpecialCost;
 pub use tap_untap_cost::TapUntapCost;
+pub use uncard_special_term::UncardSpecialTerm;
 pub use win_lose_clauses::WinLoseClause;
 
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
-    AnyTime {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    NextTime {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     ActivationCost {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Modal {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    ChaosEnsue {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Devotion {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     StartingWithYou {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    RoundedUp {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    RoundedDown {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    InAnyCombinationOfColors {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -128,10 +102,6 @@ pub enum VhyToSortLater {
         span: boseiju_span::Span,
     },
     FollowedBy {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Playing {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -159,14 +129,6 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    OneTimeBoon {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    TheLastTime {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     StartTheGame {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -191,27 +153,11 @@ pub enum VhyToSortLater {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    HeightOfAtLeastOneFoot {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     WithThoseCharacteristics {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
     JustBeneath {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Marked {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Door {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    UnlockedDoor {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -244,14 +190,6 @@ pub enum VhyToSortLater {
         span: boseiju_span::Span,
     },
     Immediatly {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Legal {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Illegal {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -289,40 +227,25 @@ pub enum VhyToSortLater {
 impl boseiju_span::Spanned for VhyToSortLater {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::AnyTime { span } => *span,
-            Self::NextTime { span } => *span,
             Self::ActivationCost { span } => *span,
-            Self::Modal { span } => *span,
-            Self::ChaosEnsue { span } => *span,
-            Self::Devotion { span } => *span,
             Self::StartingWithYou { span } => *span,
-            Self::RoundedUp { span } => *span,
-            Self::RoundedDown { span } => *span,
-            Self::InAnyCombinationOfColors { span } => *span,
             Self::Unspent { span } => *span,
             Self::Perpetually { span } => *span,
             Self::FollowedBy { span } => *span,
-            Self::Playing { span } => *span,
             Self::AtTheBeginningOfTheGame { span } => *span,
             Self::ManaSymbol { span } => *span,
             Self::Mode { span } => *span,
             Self::Continuously { span } => *span,
             Self::WorthOfModes { span } => *span,
             Self::Including { span } => *span,
-            Self::OneTimeBoon { span } => *span,
-            Self::TheLastTime { span } => *span,
             Self::StartTheGame { span } => *span,
             Self::TheSameWay { span } => *span,
             Self::AsPartOf { span } => *span,
             Self::SoOn { span } => *span,
             Self::Choice { span } => *span,
             Self::Affect { span } => *span,
-            Self::HeightOfAtLeastOneFoot { span } => *span,
             Self::WithThoseCharacteristics { span } => *span,
             Self::JustBeneath { span } => *span,
-            Self::Marked { span } => *span,
-            Self::Door { span } => *span,
-            Self::UnlockedDoor { span } => *span,
             Self::Received { span } => *span,
             Self::ColorPair { span } => *span,
             Self::Multiple { span } => *span,
@@ -331,8 +254,6 @@ impl boseiju_span::Spanned for VhyToSortLater {
             Self::Previously { span } => *span,
             Self::TheValueOf { span } => *span,
             Self::Immediatly { span } => *span,
-            Self::Legal { span } => *span,
-            Self::Illegal { span } => *span,
             Self::Determined { span } => *span,
             Self::Label { span } => *span,
             Self::Circled { span } => *span,
@@ -348,43 +269,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
-            "any time" => Ok(Self::AnyTime {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "the next time" => Ok(Self::NextTime {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "activation cost" | "activation costs" => Ok(Self::ActivationCost {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "modal" => Ok(Self::Modal {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "chaos ensue" | "chaos ensues" => Ok(Self::ChaosEnsue {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "devotion" => Ok(Self::Devotion {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "starting with you" => Ok(Self::StartingWithYou {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "rounded up" => Ok(Self::RoundedUp {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "rounded down" => Ok(Self::RoundedDown {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "in any combination of colors" => Ok(Self::InAnyCombinationOfColors {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -397,10 +286,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
                 span: span.into(),
             }),
             "followed by" => Ok(Self::FollowedBy {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "playing" => Ok(Self::Playing {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -428,14 +313,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "one-time boon" => Ok(Self::OneTimeBoon {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "the last time" => Ok(Self::TheLastTime {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "start the game" | "started the game" => Ok(Self::StartTheGame {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -460,27 +337,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "height of at least one foot" => Ok(Self::HeightOfAtLeastOneFoot {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "with those characteristics" => Ok(Self::WithThoseCharacteristics {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "just beneath" => Ok(Self::JustBeneath {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "marked" => Ok(Self::Marked {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "door" => Ok(Self::Door {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "unlocked door" | "unlocked doors" => Ok(Self::UnlockedDoor {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -509,14 +370,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
                 span: span.into(),
             }),
             "the value of" => Ok(Self::TheValueOf {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "legal" => Ok(Self::Legal {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "illegal" => Ok(Self::Illegal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

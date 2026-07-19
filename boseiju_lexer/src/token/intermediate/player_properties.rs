@@ -1,6 +1,10 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PlayerProperties {
+    Devotion {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     HandSize {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -43,6 +47,7 @@ pub enum PlayerProperties {
 impl boseiju_span::Spanned for PlayerProperties {
     fn span(&self) -> boseiju_span::Span {
         match self {
+            Self::Devotion { span } => *span,
             Self::HandSize { span } => *span,
             Self::LifeTotal { span } => *span,
             Self::MaximumHandSize { span } => *span,
@@ -60,6 +65,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for PlayerProperties {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
+            "devotion" => Ok(Self::Devotion {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "hand size" => Ok(Self::HandSize {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
