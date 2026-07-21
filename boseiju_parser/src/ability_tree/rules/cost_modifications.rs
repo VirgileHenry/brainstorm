@@ -15,12 +15,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     mana_cost: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Less {
+                ParserNode::LexerToken(Token::EnglishComparison(intermediate::EnglishComparison::Less {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -42,8 +42,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Less { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::EnglishComparison(intermediate::EnglishComparison::Less { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                     ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
@@ -74,12 +74,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     mana_cost: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::More {
+                ParserNode::LexerToken(Token::EnglishComparison(intermediate::EnglishComparison::More {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -101,8 +101,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::More { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::EnglishComparison(intermediate::EnglishComparison::More { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                     ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
@@ -133,7 +133,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     mana_cost: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -155,7 +155,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::ManaCost { mana_cost },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                     ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {

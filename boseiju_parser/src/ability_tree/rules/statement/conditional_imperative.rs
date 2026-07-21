@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "if <condition>, <imperative>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
@@ -79,7 +79,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -111,7 +111,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::ImperativeList { imperatives: imp1 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),

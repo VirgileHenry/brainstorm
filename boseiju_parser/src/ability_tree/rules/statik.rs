@@ -41,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "as long as <condition>, <static ab kind>" -> static ability */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::AsLongAs {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::AsLongAs {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -66,7 +66,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::AsLongAs {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::AsLongAs {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -100,7 +100,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     kind: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -117,7 +117,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::StaticAbilityKind { kind },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),

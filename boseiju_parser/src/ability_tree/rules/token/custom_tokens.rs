@@ -34,7 +34,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .map(|(c1, c2)| ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::Color(c1)).id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -48,7 +48,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::LexerToken(Token::Color(c1)),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And { .. })),
                     ParserNode::LexerToken(Token::Color(c2)),
                 ] => Ok(ParserNode::Colors {
                     colors: boseiju_tree::ability_tree::colors::Colors::from_iter([c1.color, c2.color].into_iter()),
@@ -114,7 +114,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     type_line: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -133,7 +133,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::PowerToughness { power_toughness },
                     ParserNode::Colors { colors },
                     ParserNode::CreatureTokenTypeLine { type_line },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With { .. })),
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::TokenDefinition {
                     token: boseiju_tree::card::layout::TokenLayout {

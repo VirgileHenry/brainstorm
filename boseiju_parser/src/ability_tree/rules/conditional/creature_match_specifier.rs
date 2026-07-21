@@ -23,7 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -41,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Is { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A { .. })),
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A { .. })),
                     ParserNode::CreatureSpecifier { specifier },
                 ] => Ok(ParserNode::Condition {
                     condition: boseiju_tree::ability_tree::conditional::Condition::ObjectMatchSpecifiers(
@@ -65,12 +65,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     creature: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -87,8 +87,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Creature { creature },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A { .. })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A { .. })),
                     ParserNode::CreatureSpecifier { specifier },
                 ] => Ok(ParserNode::Condition {
                     condition: boseiju_tree::ability_tree::conditional::Condition::ObjectMatchSpecifiers(

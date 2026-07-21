@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "where X is the number of <permanent reference> on the battlefield" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Where {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Where {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -50,13 +50,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Where {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Where {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::LexerToken(Token::Number(intermediate::Number::X { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Is { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The { .. })),
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The { .. })),
                     ParserNode::LexerToken(Token::Number(intermediate::Number::NumberOf { .. })),
                     ParserNode::GameStateNumber { number },
                 ] => Ok(ParserNode::XDefinition {

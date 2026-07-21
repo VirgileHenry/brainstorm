@@ -115,7 +115,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "others" is a another specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Other {
+                ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Other {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -127,7 +127,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Other {
+                    ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Other {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),

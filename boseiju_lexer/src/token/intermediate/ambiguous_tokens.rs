@@ -7,7 +7,12 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AmbiguousToken {
-    /// Ambiguous between the player action and the creature action.
+    /// Possessive / Contracted copula
+    ApostropheS {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    /// player action / creature action.
     Attack {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -96,6 +101,7 @@ pub enum AmbiguousToken {
 impl boseiju_span::Spanned for AmbiguousToken {
     fn span(&self) -> boseiju_span::Span {
         match self {
+            Self::ApostropheS { span } => *span,
             Self::Attack { span } => *span,
             Self::Chaos { span } => *span,
             Self::Color { span } => *span,
@@ -119,6 +125,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for AmbiguousToken {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
+            "'s" | "'" => Ok(Self::ApostropheS {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "attack" | "attacks" | "attacked" => Ok(Self::Attack {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),

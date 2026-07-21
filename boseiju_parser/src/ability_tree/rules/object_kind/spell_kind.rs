@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     spell: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -81,7 +81,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::SpellKind { spell: c1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or { .. })),
                     ParserNode::SpellKind { spell: c2 },
                 ] => Ok(ParserNode::SpellKind {
                     spell: object::kind::SpellKind::OneAmong(object::OneAmong {

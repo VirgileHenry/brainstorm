@@ -76,7 +76,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     }))
                     .id(),
                     ParserNode::LexerToken(Token::DamageKind(damage_kind)).id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
@@ -98,7 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                         })),
                         ParserNode::LexerToken(Token::DamageKind(damage_kind)),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                         ParserNode::Player { player },
                     ] => Ok(ParserNode::Event {
                         event: event::Event::CreaturePerformsAction(event::CreaturePerformsActionEvent {

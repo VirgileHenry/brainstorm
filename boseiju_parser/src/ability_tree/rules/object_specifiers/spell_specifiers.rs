@@ -107,7 +107,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
                     specifier: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -124,7 +124,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::SpellSpecifier { specifier: s1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or { .. })),
                     ParserNode::SpellSpecifier { specifier: s2 },
                 ] => Ok(ParserNode::SpellSpecifiers {
                     specifiers: object::specified_object::Specifiers::Or(object::specified_object::SpecifierOrList {

@@ -12,7 +12,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "An" is the number 1: "an enchantment card" -> "1 enchantment card" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::An {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -24,7 +24,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::An {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "A" is the number 1: "a creature" -> "1 creature" */
         ParserRule {
             expanded: RuleLhs::new(
-                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
+                &[ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -54,7 +54,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),

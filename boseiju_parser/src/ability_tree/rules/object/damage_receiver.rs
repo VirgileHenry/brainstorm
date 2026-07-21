@@ -47,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "any target" can be used as a damage receiver reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Any {
+                ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Any {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -64,7 +64,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Any {
+                    ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Any {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -85,7 +85,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "it" makes a previously mentionned damage receiver */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
+                ParserNode::LexerToken(Token::EnglishPronoun(intermediate::EnglishPronoun::It {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -97,7 +97,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
+                    ParserNode::LexerToken(Token::EnglishPronoun(intermediate::EnglishPronoun::It {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),

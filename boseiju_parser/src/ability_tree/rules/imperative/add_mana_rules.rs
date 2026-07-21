@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     mana: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -95,7 +95,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::ManaToAdd { mana: m1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or { .. })),
                     ParserNode::ManaToAdd { mana: m2 },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::AddMana(
@@ -139,7 +139,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -167,7 +167,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::ManaToAdd { mana: m2 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Or { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::Or { .. })),
                     ParserNode::ManaToAdd { mana: m3 },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::AddMana(
@@ -194,12 +194,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Any {
+                ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Any {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -218,8 +218,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Mana { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Any { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Any { .. })),
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Color {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,

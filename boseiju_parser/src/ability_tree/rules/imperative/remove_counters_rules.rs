@@ -30,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         }
                         .id(),
                         ParserNode::LexerToken(Token::Counter(counter.clone())).id(),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }))
@@ -56,7 +56,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             })),
                             ParserNode::Number { number },
                             ParserNode::LexerToken(Token::Counter(counter)),
-                            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
+                            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
+                                ..
+                            })),
                             ParserNode::Permanent { permanent },
                         ] => Ok(ParserNode::ImperativeKind {
                             imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::RemoveCounters(
@@ -99,12 +101,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         }
                         .id(),
                         ParserNode::LexerToken(Token::Counter(counter.clone())).id(),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }))
                         .id(),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among {
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Among {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }))
@@ -130,8 +132,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             })),
                             ParserNode::Number { number },
                             ParserNode::LexerToken(Token::Counter(counter)),
-                            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
-                            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among { .. })),
+                            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
+                                ..
+                            })),
+                            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Among {
+                                ..
+                            })),
                             ParserNode::Permanent { permanent },
                         ] => Ok(ParserNode::ImperativeKind {
                             imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::RemoveCounters(
@@ -181,12 +187,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
+            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among {
+            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Among {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
@@ -215,8 +221,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     #[cfg(feature = "spanned_tree")]
                         span: counter_span,
                 })),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Among { .. })),
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From { .. })),
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Among { .. })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::ImperativeKind {
                 imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::RemoveCounters(

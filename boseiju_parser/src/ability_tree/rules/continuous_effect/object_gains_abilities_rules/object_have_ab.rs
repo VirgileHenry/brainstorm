@@ -91,7 +91,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     keyword_ability: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -112,7 +112,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_1,
                     },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And { .. })),
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_2,
                     },
@@ -184,7 +184,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -210,7 +210,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         keyword_ability: kw_ab_2,
                     },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And { .. })),
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_3,
                     },

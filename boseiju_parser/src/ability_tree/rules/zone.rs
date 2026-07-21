@@ -98,7 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         player: Default::default(),
                     }
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS {
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
@@ -112,7 +112,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
                         ParserNode::Player { player },
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS { .. })),
+                        ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                         ParserNode::LexerToken(Token::OwnableZone(zone)),
                     ] => Ok(ParserNode::ZoneReference {
                         zone: boseiju_tree::ability_tree::zone::ZoneReference::OwnedZone(

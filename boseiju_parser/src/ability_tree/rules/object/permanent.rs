@@ -73,7 +73,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "another <specified permanent>" is a + other permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Another {
+                ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Another {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -89,7 +89,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Another {
+                    ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Another {
                         #[cfg(feature = "spanned_tree")]
                             span: another_span,
                     })),
@@ -117,7 +117,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "this <specified permanent>" is a self referencing permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::This {
+                ParserNode::LexerToken(Token::EnglishDemonstrative(intermediate::EnglishDemonstrative::This {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -133,7 +133,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::This {
+                    ParserNode::LexerToken(Token::EnglishDemonstrative(intermediate::EnglishDemonstrative::This {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -270,7 +270,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "it" makes a previously mentionned permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
+                ParserNode::LexerToken(Token::EnglishPronoun(intermediate::EnglishPronoun::It {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -282,7 +282,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
+                    ParserNode::LexerToken(Token::EnglishPronoun(intermediate::EnglishPronoun::It {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),

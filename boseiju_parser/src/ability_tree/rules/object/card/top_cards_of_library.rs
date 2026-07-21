@@ -12,12 +12,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "the top cards of <player>'s library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top {
+                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -27,7 +27,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -36,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     player: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -53,18 +53,18 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top { .. })),
+                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card {
                         #[cfg(feature = "spanned_tree")]
                             span: card_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS { .. })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::OwnableZone(boseiju_lexer::terminal::OwnableZone::Library {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
@@ -90,12 +90,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "the top cards of your library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top {
+                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -105,7 +105,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -127,16 +127,16 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top { .. })),
+                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card {
                         #[cfg(feature = "spanned_tree")]
                             span: card_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
                         #[cfg(feature = "spanned_tree")]
                             span: your_span,
@@ -169,12 +169,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "the top cards of their library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top {
+                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -184,12 +184,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Their {
+                ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Their {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -206,17 +206,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top { .. })),
+                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card {
                         #[cfg(feature = "spanned_tree")]
                             span: card_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Their {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Their {
                         #[cfg(feature = "spanned_tree")]
                             span: their_span,
                     })),
@@ -248,12 +248,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "the top <number> cards of <player>'s library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top {
+                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -267,7 +267,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -276,7 +276,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     player: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -293,16 +293,16 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top { .. })),
+                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::ApostropheS { .. })),
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::OwnableZone(boseiju_lexer::terminal::OwnableZone::Library {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
@@ -322,12 +322,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "the top <number> cards of your library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top {
+                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -341,7 +341,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -363,14 +363,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top { .. })),
+                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
                         #[cfg(feature = "spanned_tree")]
                             span: your_span,
@@ -397,12 +397,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "the top <number> cards of their library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top {
+                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -416,12 +416,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Their {
+                ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Their {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -438,15 +438,15 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Top { .. })),
+                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Their {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Their {
                         #[cfg(feature = "spanned_tree")]
                             span: their_span,
                     })),

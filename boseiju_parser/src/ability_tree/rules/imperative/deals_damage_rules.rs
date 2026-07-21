@@ -36,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::DamageKind(terminal::DamageKind::Damage { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                     ParserNode::DamageReceiver { receiver: to },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::DealsDamage(
@@ -99,13 +99,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         //             span: Default::default(),
         //         }))
         //         .id(),
-        //         ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+        //         ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
         //             #[cfg(feature = "spanned_tree")]
         //             span: Default::default(),
         //         }))
         //         .id(),
         //         ParserNode::ObjectReference { reference: Default::default() }.id(),
-        //         ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
+        //         ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And {
         //             #[cfg(feature = "spanned_tree")]
         //             span: Default::default(),
         //         }))
@@ -116,7 +116,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         //             span: Default::default(),
         //         }))
         //         .id(),
-        //         ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+        //         ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
         //             #[cfg(feature = "spanned_tree")]
         //             span: Default::default(),
         //         }))
@@ -130,12 +130,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         //             ParserNode::LexerToken(Token::ActionKeyword(intermediate::ActionKeyword::Deals { .. })),
         //             ParserNode::Number { number: num_d1 },
         //             ParserNode::LexerToken(Token::DamageKind(intermediate::DamageKind::Damage { .. })),
-        //             ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+        //             ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
         //             ParserNode::ObjectReference { reference: to_d1 },
-        //             ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
+        //             ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And { .. })),
         //             ParserNode::Number { number: num_d2 },
         //             ParserNode::LexerToken(Token::DamageKind(intermediate::DamageKind::Damage { .. })),
-        //             ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+        //             ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
         //             ParserNode::ObjectReference { reference: to_d2 },
         //         ] => Ok(ParserNode::ImperativeKind {
         //             imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::DealsDamage(

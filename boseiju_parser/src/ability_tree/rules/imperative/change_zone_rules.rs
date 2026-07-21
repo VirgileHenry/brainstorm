@@ -23,7 +23,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: start_span,
                     })),
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::ChangeZone(
@@ -76,7 +76,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     card: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -85,7 +85,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     zone: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -106,9 +106,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: start_span,
                     })),
                     ParserNode::Card { card },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From { .. })),
                     ParserNode::ZoneReference { zone: from_zone },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::ChangeZone(
@@ -140,7 +140,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     card: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -149,7 +149,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     zone: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::On {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::On {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -174,9 +174,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::Card { card },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::From { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::From { .. })),
                     ParserNode::ZoneReference { zone: from_zone },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::On { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::On { .. })),
                     ParserNode::ZoneReference { zone: to_zone },
                 ] => Ok(ParserNode::ImperativeKind {
                     imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::ChangeZone(

@@ -22,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     creature: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Cant {
+                ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -40,7 +40,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Creature { creature },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Cant { .. })),
+                    ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant { .. })),
                     ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Blocks {
                         #[cfg(feature = "spanned_tree")]
                             span: block_span,
@@ -76,7 +76,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     creature: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Cant {
+                ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -99,7 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Creature { creature },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Cant { .. })),
+                    ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant { .. })),
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Be { .. })),
                     ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Blocks {
                         #[cfg(feature = "spanned_tree")]

@@ -133,12 +133,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Permanent { permanent },
                     ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: the_span,
                     })),
                     ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                     ParserNode::Spell { spell },
                 ] => Ok(ParserNode::Event {
                     event: event::Event::ObjectGainsState(event::ObjectGainsStateEvent::PermanentGainsState(

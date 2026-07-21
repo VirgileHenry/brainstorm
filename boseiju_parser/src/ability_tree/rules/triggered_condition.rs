@@ -11,7 +11,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "At <instant>" make trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -27,7 +27,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
@@ -47,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "At <instant>, if <condition>" make conditonnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -77,13 +77,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
                     ParserNode::RecurrentInstant { instant },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
@@ -109,7 +109,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<whenever> <event>" is a trigger condition */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Whenever {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -125,7 +125,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Whenever {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -145,7 +145,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<when> <event>" is a trigger condition */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::When {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -161,7 +161,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::When {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -181,7 +181,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* <whenever> <event>, if <condition> can also make a conditionnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Whenever {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -195,7 +195,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -211,13 +211,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Whenever {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
@@ -243,7 +243,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* <when> <event>, if <condition> can also make a conditionnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::When {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -257,7 +257,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -273,13 +273,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::When {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),
@@ -305,7 +305,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<whenever> <event> during your turn" is a conditional without comma or if */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Whenever {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -314,7 +314,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     event: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
+                ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::During {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -336,12 +336,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Whenever {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::Whenever {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::During {
                         #[cfg(feature = "spanned_tree")]
                             span: during_span,
                     })),
@@ -377,7 +377,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<when> <event> during your turn" is a conditional without comma or if */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
+                ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::When {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -386,7 +386,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     event: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
+                ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::During {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -408,12 +408,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::When {
+                    ParserNode::LexerToken(Token::EnglishWh(intermediate::EnglishWh::When {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Event { event },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::During {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::During {
                         #[cfg(feature = "spanned_tree")]
                             span: during_span,
                     })),

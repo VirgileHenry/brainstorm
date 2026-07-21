@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "at <instant>, <spell ability>" can be a delayed triggered ability, thus a generate dta imperative. */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::At {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),

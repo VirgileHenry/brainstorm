@@ -66,7 +66,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ability: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -85,7 +85,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::TriggerCondition { condition: trigger_cond },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::SpellAbility { ability },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::If {
+                    ParserNode::LexerToken(Token::EnglishConditional(intermediate::EnglishConditional::If {
                         #[cfg(feature = "spanned_tree")]
                             span: if_span,
                     })),

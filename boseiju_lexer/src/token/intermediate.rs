@@ -4,6 +4,10 @@
 mod ability_kind;
 mod ability_word;
 mod action_keywords;
+mod adverbial_additive;
+mod adverbial_manner;
+mod adverbial_positional;
+mod adverbial_restrictive;
 mod ambiguous_tokens;
 mod attached_permanent;
 mod bid;
@@ -19,7 +23,20 @@ mod creature_grouping;
 mod day_night;
 mod die_roll;
 mod direction;
-mod english_keywords;
+mod english_article;
+mod english_comparison;
+mod english_conditional;
+mod english_conjunction;
+mod english_demonstrative;
+mod english_determiner;
+mod english_keyword;
+mod english_modal_auxiliary;
+mod english_negation;
+mod english_possessive;
+mod english_preprosition;
+mod english_pronoun;
+mod english_temporal;
+mod english_wh;
 mod format_specific;
 mod game_term;
 mod global_zone;
@@ -44,6 +61,10 @@ pub use ability_kind::AbilityKind;
 pub use ability_word::AbilityWord;
 pub use action_keywords::ActionKeyword;
 pub use action_keywords::TensedActionKeyword;
+pub use adverbial_additive::AdverbialAdditive;
+pub use adverbial_manner::AdverbialManner;
+pub use adverbial_positional::AdverbialPositional;
+pub use adverbial_restrictive::AdverbialRestrictive;
 pub use ambiguous_tokens::AmbiguousToken;
 pub use attached_permanent::AttachedObject;
 pub use bid::Bid;
@@ -59,7 +80,20 @@ pub use creature_grouping::CreatureGrouping;
 pub use day_night::DayNight;
 pub use die_roll::DieRoll;
 pub use direction::Direction;
-pub use english_keywords::EnglishKeyword;
+pub use english_article::EnglishArticle;
+pub use english_comparison::EnglishComparison;
+pub use english_conditional::EnglishConditional;
+pub use english_conjunction::EnglishConjunction;
+pub use english_demonstrative::EnglishDemonstrative;
+pub use english_determiner::EnglishDeterminer;
+pub use english_keyword::EnglishKeyword;
+pub use english_modal_auxiliary::EnglishModalAuxiliary;
+pub use english_negation::EnglishNegation;
+pub use english_possessive::EnglishPossessive;
+pub use english_preprosition::EnglishPreprosition;
+pub use english_pronoun::EnglishPronoun;
+pub use english_temporal::EnglishTemporal;
+pub use english_wh::EnglishWh;
 pub use format_specific::FormatSpecific;
 pub use game_term::GameTerm;
 pub use global_zone::GlobalZone;
@@ -86,10 +120,6 @@ pub use win_lose_clauses::WinLoseClause;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
     ActivationCost {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    StartingWithYou {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -228,7 +258,6 @@ impl boseiju_span::Spanned for VhyToSortLater {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::ActivationCost { span } => *span,
-            Self::StartingWithYou { span } => *span,
             Self::Unspent { span } => *span,
             Self::Perpetually { span } => *span,
             Self::FollowedBy { span } => *span,
@@ -270,10 +299,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
             "activation cost" | "activation costs" => Ok(Self::ActivationCost {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "starting with you" => Ok(Self::StartingWithYou {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

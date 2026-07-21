@@ -8,6 +8,10 @@ pub mod terminal;
 pub enum Token {
     AbilityKind(intermediate::AbilityKind),
     AbilityWord(intermediate::AbilityWord),
+    AdverbialAdditive(intermediate::AdverbialAdditive),
+    AdverbialManner(intermediate::AdverbialManner),
+    AdverbialPositional(intermediate::AdverbialPositional),
+    AdverbialRestrictive(intermediate::AdverbialRestrictive),
     AmbiguousToken(intermediate::AmbiguousToken),
     ArtifactSubtype(terminal::ArtifactSubtype),
     AttachedObject(intermediate::AttachedObject),
@@ -33,6 +37,19 @@ pub enum Token {
     Direction(intermediate::Direction),
     EnchantmentSubtype(terminal::EnchantmentSubtype),
     EnglishKeyword(intermediate::EnglishKeyword),
+    EnglishArticle(intermediate::EnglishArticle),
+    EnglishComparison(intermediate::EnglishComparison),
+    EnglishConditional(intermediate::EnglishConditional),
+    EnglishConjunction(intermediate::EnglishConjunction),
+    EnglishDemonstrative(intermediate::EnglishDemonstrative),
+    EnglishDeterminer(intermediate::EnglishDeterminer),
+    EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary),
+    EnglishNegation(intermediate::EnglishNegation),
+    EnglishPossessive(intermediate::EnglishPossessive),
+    EnglishPreprosition(intermediate::EnglishPreprosition),
+    EnglishPronoun(intermediate::EnglishPronoun),
+    EnglishTemporal(intermediate::EnglishTemporal),
+    EnglishWh(intermediate::EnglishWh),
     FlavorWord(terminal::FlavorWord),
     FormatSpecific(intermediate::FormatSpecific),
     ForwardDuration(terminal::ForwardDuration),
@@ -84,6 +101,14 @@ impl Token {
             Some(Self::AbilityKind(token))
         } else if let Ok(token) = intermediate::AbilityWord::try_from(&span) {
             Some(Self::AbilityWord(token))
+        } else if let Ok(token) = intermediate::AdverbialAdditive::try_from(&span) {
+            Some(Self::AdverbialAdditive(token))
+        } else if let Ok(token) = intermediate::AdverbialManner::try_from(&span) {
+            Some(Self::AdverbialManner(token))
+        } else if let Ok(token) = intermediate::AdverbialPositional::try_from(&span) {
+            Some(Self::AdverbialPositional(token))
+        } else if let Ok(token) = intermediate::AdverbialRestrictive::try_from(&span) {
+            Some(Self::AdverbialRestrictive(token))
         } else if let Ok(token) = intermediate::AmbiguousToken::try_from(&span) {
             Some(Self::AmbiguousToken(token))
         } else if let Ok(token) = terminal::ArtifactSubtype::try_from(&span) {
@@ -134,6 +159,32 @@ impl Token {
             Some(Self::EnchantmentSubtype(token))
         } else if let Ok(token) = intermediate::EnglishKeyword::try_from(&span) {
             Some(Self::EnglishKeyword(token))
+        } else if let Ok(token) = intermediate::EnglishArticle::try_from(&span) {
+            Some(Self::EnglishArticle(token))
+        } else if let Ok(token) = intermediate::EnglishComparison::try_from(&span) {
+            Some(Self::EnglishComparison(token))
+        } else if let Ok(token) = intermediate::EnglishConditional::try_from(&span) {
+            Some(Self::EnglishConditional(token))
+        } else if let Ok(token) = intermediate::EnglishConjunction::try_from(&span) {
+            Some(Self::EnglishConjunction(token))
+        } else if let Ok(token) = intermediate::EnglishDemonstrative::try_from(&span) {
+            Some(Self::EnglishDemonstrative(token))
+        } else if let Ok(token) = intermediate::EnglishDeterminer::try_from(&span) {
+            Some(Self::EnglishDeterminer(token))
+        } else if let Ok(token) = intermediate::EnglishModalAuxiliary::try_from(&span) {
+            Some(Self::EnglishModalAuxiliary(token))
+        } else if let Ok(token) = intermediate::EnglishNegation::try_from(&span) {
+            Some(Self::EnglishNegation(token))
+        } else if let Ok(token) = intermediate::EnglishPossessive::try_from(&span) {
+            Some(Self::EnglishPossessive(token))
+        } else if let Ok(token) = intermediate::EnglishPreprosition::try_from(&span) {
+            Some(Self::EnglishPreprosition(token))
+        } else if let Ok(token) = intermediate::EnglishPronoun::try_from(&span) {
+            Some(Self::EnglishPronoun(token))
+        } else if let Ok(token) = intermediate::EnglishTemporal::try_from(&span) {
+            Some(Self::EnglishTemporal(token))
+        } else if let Ok(token) = intermediate::EnglishWh::try_from(&span) {
+            Some(Self::EnglishWh(token))
         } else if let Ok(token) = terminal::FlavorWord::try_from(&span) {
             Some(Self::FlavorWord(token))
         } else if let Ok(token) = intermediate::FormatSpecific::try_from(&span) {
@@ -232,6 +283,10 @@ impl boseiju_span::Spanned for Token {
         match self {
             Self::AbilityKind(child) => child.span(),
             Self::AbilityWord(child) => child.span(),
+            Self::AdverbialAdditive(child) => child.span(),
+            Self::AdverbialManner(child) => child.span(),
+            Self::AdverbialPositional(child) => child.span(),
+            Self::AdverbialRestrictive(child) => child.span(),
             Self::AmbiguousToken(child) => child.span(),
             Self::ArtifactSubtype(child) => child.span(),
             Self::AttachedObject(child) => child.span(),
@@ -257,6 +312,19 @@ impl boseiju_span::Spanned for Token {
             Self::Direction(child) => child.span(),
             Self::EnchantmentSubtype(child) => child.span(),
             Self::EnglishKeyword(child) => child.span(),
+            Self::EnglishArticle(child) => child.span(),
+            Self::EnglishComparison(child) => child.span(),
+            Self::EnglishConditional(child) => child.span(),
+            Self::EnglishConjunction(child) => child.span(),
+            Self::EnglishDemonstrative(child) => child.span(),
+            Self::EnglishDeterminer(child) => child.span(),
+            Self::EnglishModalAuxiliary(child) => child.span(),
+            Self::EnglishNegation(child) => child.span(),
+            Self::EnglishPossessive(child) => child.span(),
+            Self::EnglishPreprosition(child) => child.span(),
+            Self::EnglishPronoun(child) => child.span(),
+            Self::EnglishTemporal(child) => child.span(),
+            Self::EnglishWh(child) => child.span(),
             Self::FlavorWord(child) => child.span(),
             Self::FormatSpecific(child) => child.span(),
             Self::ForwardDuration(child) => child.span(),

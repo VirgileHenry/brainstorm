@@ -1,19 +1,11 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NumberOperation {
-    Above {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     BarSymbol {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Below {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Between {
+    CombinationOf {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -33,23 +25,11 @@ pub enum NumberOperation {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Higher {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Highest {
+    Half {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
     Increased {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Lower {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Lowest {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -105,11 +85,19 @@ pub enum NumberOperation {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Smaller {
+    Substract {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Substract {
+    Times {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Total {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Twice {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -119,19 +107,14 @@ pub enum NumberOperation {
 impl boseiju_span::Spanned for NumberOperation {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::Above { span } => *span,
             Self::BarSymbol { span } => *span,
-            Self::Below { span } => *span,
-            Self::Between { span } => *span,
+            Self::CombinationOf { span } => *span,
             Self::Difference { span } => *span,
             Self::Divide { span } => *span,
             Self::Even { span } => *span,
             Self::Excess { span } => *span,
-            Self::Higher { span } => *span,
-            Self::Highest { span } => *span,
+            Self::Half { span } => *span,
             Self::Increased { span } => *span,
-            Self::Lower { span } => *span,
-            Self::Lowest { span } => *span,
             Self::Match { span } => *span,
             Self::MaximumOf { span } => *span,
             Self::Minus { span } => *span,
@@ -145,8 +128,10 @@ impl boseiju_span::Spanned for NumberOperation {
             Self::RoundedDown { span } => *span,
             Self::RoundedUp { span } => *span,
             Self::RoundUp { span } => *span,
-            Self::Smaller { span } => *span,
             Self::Substract { span } => *span,
+            Self::Times { span } => *span,
+            Self::Total { span } => *span,
+            Self::Twice { span } => *span,
         }
     }
 }
@@ -155,19 +140,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for NumberOperation {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
-            "above" => Ok(Self::Above {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "/" => Ok(Self::BarSymbol {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "below" => Ok(Self::Below {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "between" => Ok(Self::Between {
+            "combination of" => Ok(Self::CombinationOf {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -187,23 +164,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for NumberOperation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "higher" => Ok(Self::Higher {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "highest" => Ok(Self::Highest {
+            "half" => Ok(Self::Half {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "increased" => Ok(Self::Increased {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "lower" => Ok(Self::Lower {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "lowest" => Ok(Self::Lowest {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -259,11 +224,19 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for NumberOperation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "smaller" => Ok(Self::Smaller {
+            "subtract" => Ok(Self::Substract {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "subtract" => Ok(Self::Substract {
+            "times" => Ok(Self::Times {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "total" => Ok(Self::Total {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "twice" => Ok(Self::Twice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

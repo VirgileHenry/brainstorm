@@ -63,17 +63,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             /* "the beginning of your <step>" is a owned instant */
             super::ParserRule {
                 expanded: super::RuleLhs::new(&[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Beginning {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Beginning {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
@@ -91,12 +91,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                        ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                             #[cfg(feature = "spanned_tree")]
                                 span: start_span,
                         })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Beginning { .. })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                        ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Beginning { .. })),
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                         ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
                             #[cfg(feature = "spanned_tree")]
                                 span: player_span,
@@ -120,17 +120,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             /* "the beginning of each <step>" is a owned instant for all players */
             super::ParserRule {
                 expanded: super::RuleLhs::new(&[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Beginning {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Beginning {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
@@ -148,12 +148,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                        ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                             #[cfg(feature = "spanned_tree")]
                                 span: start_span,
                         })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Beginning { .. })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                        ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Beginning { .. })),
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                         ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::All {
                             #[cfg(feature = "spanned_tree")]
                                 span: player_span,
@@ -177,17 +177,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             /* "the beginning of your next <step>" is an incoming instant for "you" player */
             super::ParserRule {
                 expanded: super::RuleLhs::new(&[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Beginning {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Beginning {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
@@ -197,7 +197,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Next {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Next {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }))
@@ -210,17 +210,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                        ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                             #[cfg(feature = "spanned_tree")]
                                 span: start_span,
                         })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Beginning { .. })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Of { .. })),
+                        ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Beginning { .. })),
+                        ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
                         ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Your {
                             #[cfg(feature = "spanned_tree")]
                                 span: player_span,
                         })),
-                        ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Next { .. })),
+                        ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Next { .. })),
                         ParserNode::LexerToken(Token::Step(step)),
                     ] => Ok(ParserNode::IncomingInstant {
                         instant: boseiju_tree::ability_tree::time::IncomingInstant::NextStepOrPhase(

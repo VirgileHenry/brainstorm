@@ -8,7 +8,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "A" is the minimal count specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(
-                &[ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
+                &[ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -20,7 +20,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::A {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "An" is also the minimal count specifier. Is this `allomorphy` ? */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::An {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -49,7 +49,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::An {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::An {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -174,12 +174,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "The next" is a count specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Next {
+                ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Next {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -191,11 +191,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::The {
+                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Next {
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Next {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
                     })),

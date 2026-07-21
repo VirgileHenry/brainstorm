@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     imperative: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And {
+                ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::And { .. })),
+                    ParserNode::LexerToken(Token::EnglishConjunction(intermediate::EnglishConjunction::And { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
@@ -91,7 +91,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then {
+                ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Then {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -109,7 +109,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then { .. })),
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Then { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {
@@ -139,7 +139,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then {
+                ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Then {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -157,7 +157,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Imperative { imperative: imp1 },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Then { .. })),
+                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Then { .. })),
                     ParserNode::Imperative { imperative: imp2 },
                 ] => Ok(ParserNode::ImperativeList {
                     imperatives: boseiju_tree::ability_tree::imperative_list::ImperativeList {

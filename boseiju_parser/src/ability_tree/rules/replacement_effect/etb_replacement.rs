@@ -168,7 +168,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -176,12 +176,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 ParserNode::Number { number: Default::default() }.id(),
                 ParserNode::LexerToken(Token::Counter(counter))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::On {
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::On {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
+                ParserNode::LexerToken(Token::EnglishPronoun(intermediate::EnglishPronoun::It {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -195,14 +195,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span: enters_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::With {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
                         #[cfg(feature = "spanned_tree")]
                         span: with_span,
                     })),
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::Counter(counter)),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::On { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::It {
+                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::On { .. })),
+                    ParserNode::LexerToken(Token::EnglishPronoun(intermediate::EnglishPronoun::It {
                         #[cfg(feature = "spanned_tree")]
                         span: end_span,
                     })),

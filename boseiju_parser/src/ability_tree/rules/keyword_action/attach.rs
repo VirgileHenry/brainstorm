@@ -26,7 +26,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 permanent: Default::default(),
             }
             .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To {
+            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
@@ -52,7 +52,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     tense: boseiju_lexer::Tense::BaseForm,
                 })),
                 ParserNode::Permanent { permanent: object },
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::To { .. })),
+                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
                 ParserNode::Permanent { permanent: to },
             ] => Ok(ParserNode::ImperativeKind {
                 imperative: boseiju_tree::ability_tree::imperative::ImperativeKind::KeywordAction(
