@@ -57,6 +57,10 @@ pub enum EnglishTemporal {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Previous {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Proceeding {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -101,6 +105,7 @@ impl boseiju_span::Spanned for EnglishTemporal {
             Self::Next { span } => *span,
             Self::Now { span } => *span,
             Self::Once { span } => *span,
+            Self::Previous { span } => *span,
             Self::Proceeding { span } => *span,
             Self::Since { span } => *span,
             Self::Still { span } => *span,
@@ -168,6 +173,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishTemporal {
                 span: span.into(),
             }),
             "once" => Ok(Self::Once {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "previous" => Ok(Self::Previous {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

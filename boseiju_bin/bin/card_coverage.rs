@@ -143,21 +143,29 @@ fn main() -> std::io::Result<()> {
     println!("|-----|-----|-----|-----|-----|");
 
     for (category, results) in categories_results.iter() {
-        if results.total > 0 {
-            println!(
-                "|{}|{}|{} ({}%)|{} ({}%)|{} ({}%)|",
-                category.name,
-                results.total,
-                results.json_parsed,
-                results.json_parsed * 100 / results.total,
-                results.oracle_text_lexed,
-                results.oracle_text_lexed * 100 / results.json_parsed,
-                results.fully_parsed,
-                results.fully_parsed * 100 / results.oracle_text_lexed,
-            );
-        } else {
-            println!("|{}|0|skipped|skipped|skipped|", category.name);
-        }
+        println!(
+            "|{}|{}|{} ({}%)|{} ({}%)|{} ({}%)|",
+            category.name,
+            results.total,
+            results.json_parsed,
+            if results.total > 0 {
+                results.json_parsed * 100 / results.total
+            } else {
+                100
+            },
+            results.oracle_text_lexed,
+            if results.json_parsed > 0 {
+                results.oracle_text_lexed * 100 / results.json_parsed
+            } else {
+                100
+            },
+            results.fully_parsed,
+            if results.oracle_text_lexed > 0 {
+                results.fully_parsed * 100 / results.oracle_text_lexed
+            } else {
+                100
+            },
+        );
     }
 
     Ok(())

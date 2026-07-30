@@ -41,6 +41,10 @@ pub enum EnglishPreprosition {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Onto {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     To {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -73,6 +77,7 @@ impl boseiju_span::Spanned for EnglishPreprosition {
             Self::Into { span } => *span,
             Self::Of { span } => *span,
             Self::On { span } => *span,
+            Self::Onto { span } => *span,
             Self::To { span } => *span,
             Self::Under { span } => *span,
             Self::With { span } => *span,
@@ -122,6 +127,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishPreprosition {
                 span: span.into(),
             }),
             "on" => Ok(Self::On {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "onto" => Ok(Self::Onto {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

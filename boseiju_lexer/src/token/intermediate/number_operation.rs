@@ -232,7 +232,7 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for NumberOperation {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "total" => Ok(Self::Total {
+            "total" | "totals" => Ok(Self::Total {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -2,6 +2,7 @@
 //! they exist to create more complex ability structures.
 
 mod ability_kind;
+mod ability_property;
 mod ability_word;
 mod action_keywords;
 mod adverbial_additive;
@@ -58,6 +59,7 @@ mod uncard_special_term;
 mod win_lose_clauses;
 
 pub use ability_kind::AbilityKind;
+pub use ability_property::AbilityProperty;
 pub use ability_word::AbilityWord;
 pub use action_keywords::ActionKeyword;
 pub use action_keywords::TensedActionKeyword;
@@ -119,10 +121,6 @@ pub use win_lose_clauses::WinLoseClause;
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VhyToSortLater {
-    ActivationCost {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     Unspent {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -132,14 +130,6 @@ pub enum VhyToSortLater {
         span: boseiju_span::Span,
     },
     FollowedBy {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    AtTheBeginningOfTheGame {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    ManaSymbol {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -257,12 +247,9 @@ pub enum VhyToSortLater {
 impl boseiju_span::Spanned for VhyToSortLater {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::ActivationCost { span } => *span,
             Self::Unspent { span } => *span,
             Self::Perpetually { span } => *span,
             Self::FollowedBy { span } => *span,
-            Self::AtTheBeginningOfTheGame { span } => *span,
-            Self::ManaSymbol { span } => *span,
             Self::Mode { span } => *span,
             Self::Continuously { span } => *span,
             Self::WorthOfModes { span } => *span,
@@ -298,10 +285,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
-            "activation cost" | "activation costs" => Ok(Self::ActivationCost {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
             "unspent" => Ok(Self::Unspent {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -311,14 +294,6 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for VhyToSortLater {
                 span: span.into(),
             }),
             "followed by" => Ok(Self::FollowedBy {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "at the beginning of the game" => Ok(Self::AtTheBeginningOfTheGame {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "mana symbol" | "mana symbols" => Ok(Self::ManaSymbol {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -7,6 +7,7 @@ pub mod terminal;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
     AbilityKind(intermediate::AbilityKind),
+    AbilityProperty(intermediate::AbilityProperty),
     AbilityWord(intermediate::AbilityWord),
     AdverbialAdditive(intermediate::AdverbialAdditive),
     AdverbialManner(intermediate::AdverbialManner),
@@ -99,6 +100,8 @@ impl Token {
     pub fn try_from_span(span: crate::span::LexerSpan) -> Option<Token> {
         if let Ok(token) = intermediate::AbilityKind::try_from(&span) {
             Some(Self::AbilityKind(token))
+        } else if let Ok(token) = intermediate::AbilityProperty::try_from(&span) {
+            Some(Self::AbilityProperty(token))
         } else if let Ok(token) = intermediate::AbilityWord::try_from(&span) {
             Some(Self::AbilityWord(token))
         } else if let Ok(token) = intermediate::AdverbialAdditive::try_from(&span) {
@@ -282,6 +285,7 @@ impl boseiju_span::Spanned for Token {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::AbilityKind(child) => child.span(),
+            Self::AbilityProperty(child) => child.span(),
             Self::AbilityWord(child) => child.span(),
             Self::AdverbialAdditive(child) => child.span(),
             Self::AdverbialManner(child) => child.span(),

@@ -45,6 +45,10 @@ pub enum GameTerm {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    ManaSymbol {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Marked {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -118,6 +122,7 @@ impl boseiju_span::Spanned for GameTerm {
             Self::Life { span } => *span,
             Self::MagicSubgame { span } => *span,
             Self::Mana { span } => *span,
+            Self::ManaSymbol { span } => *span,
             Self::Marked { span } => *span,
             Self::MostRecentTurn { span } => *span,
             Self::OriginalSpell { span } => *span,
@@ -181,6 +186,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 span: span.into(),
             }),
             "mana" => Ok(Self::Mana {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "mana symbol" | "mana symbols" => Ok(Self::ManaSymbol {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
