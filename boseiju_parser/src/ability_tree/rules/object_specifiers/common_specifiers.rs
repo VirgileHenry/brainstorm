@@ -41,9 +41,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     player: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Control {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
             ]),
@@ -54,9 +57,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control {
-                        #[cfg(feature = "spanned_tree")]
-                            span: end_span,
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token:
+                            intermediate::EnglishVerb::Control {
+                                #[cfg(feature = "spanned_tree")]
+                                    span: end_span,
+                            },
+                        tense: boseiju_lexer::Tense::BaseForm,
                     })),
                 ] => Ok(ParserNode::ControlSpecifier {
                     specifier: boseiju_tree::ability_tree::object::specified_object::ControlSpecifier {
@@ -70,21 +77,27 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
-        /* "<player> don't controls" is a control specifier */
+        /* "<player> don't control" is a control specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::Player {
                     player: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::DoNot {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Control {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
             ]),
@@ -95,10 +108,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Player { player },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Dont { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control {
-                        #[cfg(feature = "spanned_tree")]
-                            span: end_span,
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::DoNot { .. },
+                        tense: boseiju_lexer::Tense::BaseForm,
+                    })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token:
+                            intermediate::EnglishVerb::Control {
+                                #[cfg(feature = "spanned_tree")]
+                                    span: end_span,
+                            },
+                        tense: boseiju_lexer::Tense::BaseForm,
                     })),
                 ] => Ok(ParserNode::ControlSpecifier {
                     specifier: boseiju_tree::ability_tree::object::specified_object::ControlSpecifier {

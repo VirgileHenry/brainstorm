@@ -128,7 +128,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "put <card reference> from <zone> onto <zone> */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                     token: intermediate::ActionKeyword::Put {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -165,7 +165,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                         token:
                             intermediate::ActionKeyword::Put {
                                 #[cfg(feature = "spanned_tree")]

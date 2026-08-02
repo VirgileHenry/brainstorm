@@ -9,6 +9,10 @@ pub enum AdverbialPositional {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    JustBeneath {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Top {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -21,6 +25,7 @@ impl boseiju_span::Spanned for AdverbialPositional {
         match self {
             Self::Back { span } => *span,
             Self::Bottom { span } => *span,
+            Self::JustBeneath { span } => *span,
             Self::Top { span } => *span,
         }
     }
@@ -35,6 +40,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for AdverbialPositional {
                 span: span.into(),
             }),
             "bottom" => Ok(Self::Bottom {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "just beneath" => Ok(Self::JustBeneath {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

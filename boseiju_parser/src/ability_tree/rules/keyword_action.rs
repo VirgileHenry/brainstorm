@@ -62,7 +62,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     let keyword_actions_to_imperatives = boseiju_lexer::terminal::StandaloneKeywordAction::all()
         .map(|keyword_action| ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token: intermediate::KeywordAction {
                         keyword_action: keyword_action.into(),
                         #[cfg(feature = "spanned_tree")]
@@ -78,7 +78,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                         token: keyword,
                         tense: boseiju_lexer::Tense::BaseForm,
                     })),

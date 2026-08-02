@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "add <mana to add>" allows to make an add mana imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token: intermediate::PlayerAction::Add {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                         token:
                             intermediate::PlayerAction::Add {
                                 #[cfg(feature = "spanned_tree")]
@@ -58,7 +58,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "add <mana to add> or <mana to add>" allows to make an add mana imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token: intermediate::PlayerAction::Add {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -86,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                         token:
                             intermediate::PlayerAction::Add {
                                 #[cfg(feature = "spanned_tree")]
@@ -113,7 +113,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "add <mana to add>, <mana to add>, or <mana to add>" allows to make an add mana imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token: intermediate::PlayerAction::Add {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -155,7 +155,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                         token:
                             intermediate::PlayerAction::Add {
                                 #[cfg(feature = "spanned_tree")]

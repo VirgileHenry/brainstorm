@@ -1,45 +1,44 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum CountSpecifier {
-    All {
+pub enum EnglishAdverb {
+    Continuously {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Multiple {
+    Differently {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Target {
+    Perpetually {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for CountSpecifier {
+impl boseiju_span::Spanned for EnglishAdverb {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::All { span } => *span,
-            Self::Multiple { span } => *span,
-            Self::Target { span } => *span,
+            Self::Continuously { span } => *span,
+            Self::Differently { span } => *span,
+            Self::Perpetually { span } => *span,
         }
     }
 }
 
-impl<'src> TryFrom<&crate::LexerSpan<'src>> for CountSpecifier {
+impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishAdverb {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
-            /* Fixme: split these ? */
-            "all" | "each" => Ok(Self::All {
+            "continuously" => Ok(Self::Continuously {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "multiple" => Ok(Self::Multiple {
+            "differently" => Ok(Self::Differently {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "target" | "targets" => Ok(Self::Target {
+            "perpetually" => Ok(Self::Perpetually {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

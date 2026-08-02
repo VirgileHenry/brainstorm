@@ -12,6 +12,11 @@ pub enum AmbiguousToken {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    /// Conjunction / Preposition / Adverb
+    As {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     /// player action / creature action.
     Attack {
         #[cfg(feature = "spanned_tree")]
@@ -102,6 +107,7 @@ impl boseiju_span::Spanned for AmbiguousToken {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::ApostropheS { span } => *span,
+            Self::As { span } => *span,
             Self::Attack { span } => *span,
             Self::Chaos { span } => *span,
             Self::Color { span } => *span,
@@ -126,6 +132,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for AmbiguousToken {
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
             "'s" | "'" => Ok(Self::ApostropheS {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "as" => Ok(Self::As {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

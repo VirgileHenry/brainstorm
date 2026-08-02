@@ -18,9 +18,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     creature: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Is {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Be {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
@@ -40,7 +43,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Creature { creature },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Is { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Be { .. },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                    })),
                     ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A { .. })),
                     ParserNode::CreatureSpecifier { specifier },
                 ] => Ok(ParserNode::Condition {

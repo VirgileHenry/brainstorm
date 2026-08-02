@@ -24,9 +24,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Is {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Be {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
@@ -55,7 +58,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: start_span,
                     })),
                     ParserNode::LexerToken(Token::Number(intermediate::Number::X { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Is { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Be { .. },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                    })),
                     ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The { .. })),
                     ParserNode::LexerToken(Token::Number(intermediate::Number::NumberOf { .. })),
                     ParserNode::GameStateNumber { number },

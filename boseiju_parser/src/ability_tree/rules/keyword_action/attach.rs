@@ -13,7 +13,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* Attach <permanent> to <permanent> */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+            ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                 token: intermediate::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Attach,
                     #[cfg(feature = "spanned_tree")]
@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token:
                         intermediate::KeywordAction {
                             keyword_action: mtg_data::KeywordAction::Attach,

@@ -84,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "as <permanent reference> enters, <spell ability>" is an etb perform action */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::As {
+                ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::As {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -114,7 +114,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::As {
+                    ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::As {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),

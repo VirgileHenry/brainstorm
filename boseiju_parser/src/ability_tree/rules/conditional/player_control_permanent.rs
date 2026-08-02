@@ -17,9 +17,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 player: Default::default(),
             }
             .id(),
-            ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
+            ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                token: intermediate::EnglishVerb::Control {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+                tense: boseiju_lexer::Tense::BaseForm,
             }))
             .id(),
             ParserNode::Permanent {
@@ -34,7 +37,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::Player { player },
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Control { .. })),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Control { .. },
+                    tense: boseiju_lexer::Tense::BaseForm,
+                })),
                 ParserNode::Permanent { permanent },
             ] => Ok(ParserNode::Condition {
                 condition: conditional::Condition::PlayerControlsObject(conditional::ConditionPlayerControlsPermanent {

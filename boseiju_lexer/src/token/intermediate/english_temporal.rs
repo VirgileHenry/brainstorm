@@ -37,7 +37,7 @@ pub enum EnglishTemporal {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Immediatly {
+    Immediately {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -58,6 +58,10 @@ pub enum EnglishTemporal {
         span: boseiju_span::Span,
     },
     Previous {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Previously {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -100,12 +104,13 @@ impl boseiju_span::Spanned for EnglishTemporal {
             Self::EachTime { span } => *span,
             Self::End { span } => *span,
             Self::Ended { span } => *span,
-            Self::Immediatly { span } => *span,
+            Self::Immediately { span } => *span,
             Self::Last { span } => *span,
             Self::Next { span } => *span,
             Self::Now { span } => *span,
             Self::Once { span } => *span,
             Self::Previous { span } => *span,
+            Self::Previously { span } => *span,
             Self::Proceeding { span } => *span,
             Self::Since { span } => *span,
             Self::Still { span } => *span,
@@ -156,7 +161,7 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishTemporal {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "immediatly" => Ok(Self::Immediatly {
+            "immediately" => Ok(Self::Immediately {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -177,6 +182,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishTemporal {
                 span: span.into(),
             }),
             "previous" => Ok(Self::Previous {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "previously" => Ok(Self::Previously {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -62,7 +62,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
@@ -93,7 +93,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
-                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
                                 keyword_action: mtg_data::KeywordAction::Cast,
@@ -132,7 +132,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
@@ -163,12 +163,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     cost: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::InAdditionTo {
+                ParserNode::LexerToken(Token::AdverbialAdditive(intermediate::AdverbialAdditive::InAdditionTo {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token: intermediate::PlayerAction::Pay {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -176,7 +176,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     tense: boseiju_lexer::Tense::PresentParticiple,
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Its {
+                ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Its {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -200,7 +200,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Player { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
-                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
                                 keyword_action: mtg_data::KeywordAction::Cast,
@@ -213,12 +213,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::ZoneReference { zone },
                     ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::By { .. })),
                     ParserNode::Cost { cost: inner },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::InAdditionTo { .. })),
-                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    ParserNode::LexerToken(Token::AdverbialAdditive(intermediate::AdverbialAdditive::InAdditionTo { .. })),
+                    ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                         token: intermediate::PlayerAction::Pay { .. },
                         tense: boseiju_lexer::Tense::PresentParticiple,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Its { .. })),
+                    ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Its { .. })),
                     ParserNode::LexerToken(Token::EnglishDeterminer(intermediate::EnglishDeterminer::Other { .. })),
                     ParserNode::LexerToken(Token::CardProperty(intermediate::CardProperty::Cost {
                         #[cfg(feature = "spanned_tree")]

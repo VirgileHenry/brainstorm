@@ -115,9 +115,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Have {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
@@ -136,9 +139,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: this_turn_span,
                     })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                        #[cfg(feature = "spanned_tree")]
-                            span: have_span,
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token:
+                            intermediate::EnglishVerb::Have {
+                                #[cfg(feature = "spanned_tree")]
+                                    span: has_span,
+                            },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::ImperativeKind {
@@ -158,7 +165,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                                         ),
                                                     ),
                                                     #[cfg(feature = "spanned_tree")]
-                                                    span: keyword_ability.span().merge(have_span),
+                                                    span: keyword_ability.span().merge(has_span),
                                                 },
                                             );
                                             modifications.push(gain_ab_mod);

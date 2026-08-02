@@ -1,53 +1,45 @@
+/// Fixme: what's this ? we can do better
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum ChoiceReference {
-    Color {
+pub enum Mode {
+    Choice {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Direction {
+    Mode {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    HasntBeenChosen {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Quality {
+    WorthOfModes {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for ChoiceReference {
+impl boseiju_span::Spanned for Mode {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::Color { span } => *span,
-            Self::Direction { span } => *span,
-            Self::HasntBeenChosen { span } => *span,
-            Self::Quality { span } => *span,
+            Self::Choice { span } => *span,
+            Self::Mode { span } => *span,
+            Self::WorthOfModes { span } => *span,
         }
     }
 }
 
-impl<'src> TryFrom<&crate::LexerSpan<'src>> for ChoiceReference {
+impl<'src> TryFrom<&crate::LexerSpan<'src>> for Mode {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
-            "chosen color" => Ok(Self::Color {
+            "choice" | "choices" => Ok(Self::Choice {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "chosen direction" => Ok(Self::Direction {
+            "mode" => Ok(Self::Mode {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "hasn't been chosen" => Ok(Self::HasntBeenChosen {
-                #[cfg(feature = "spanned_tree")]
-                span: span.into(),
-            }),
-            "quality" => Ok(Self::Quality {
+            "worth of modes" => Ok(Self::WorthOfModes {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

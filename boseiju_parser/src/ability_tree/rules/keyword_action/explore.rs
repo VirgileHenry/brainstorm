@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 creature: Default::default(),
             }
             .id(),
-            ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+            ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                 token: intermediate::KeywordAction {
                     keyword_action: mtg_data::KeywordAction::Explore,
                     #[cfg(feature = "spanned_tree")]
@@ -34,7 +34,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
                 ParserNode::Creature { creature },
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token:
                         intermediate::KeywordAction {
                             keyword_action: mtg_data::KeywordAction::Explore,

@@ -19,7 +19,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     card: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                     token: intermediate::ActionKeyword::Deals {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -53,7 +53,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Card { card: dealer },
-                    ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                         token: intermediate::ActionKeyword::Deals { .. },
                         tense: boseiju_lexer::Tense::BaseForm,
                     })),

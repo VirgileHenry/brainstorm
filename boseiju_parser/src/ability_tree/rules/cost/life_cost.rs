@@ -9,7 +9,7 @@ use idris::Idris;
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     std::iter::once(/* "pay <number> life" */ ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+            ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                 token: intermediate::PlayerAction::Pay {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -33,7 +33,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token:
                         intermediate::PlayerAction::Pay {
                             #[cfg(feature = "spanned_tree")]

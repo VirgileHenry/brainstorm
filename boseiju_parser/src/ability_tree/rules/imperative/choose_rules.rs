@@ -104,7 +104,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* From a choose clause and choices, we can make a choose imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token: intermediate::PlayerAction::Choose {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -132,7 +132,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                    ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                         token:
                             intermediate::PlayerAction::Choose {
                                 #[cfg(feature = "spanned_tree")]

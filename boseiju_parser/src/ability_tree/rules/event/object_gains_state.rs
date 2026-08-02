@@ -20,9 +20,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Become {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::CardState(intermediate::CardState::Tapped {
@@ -38,7 +41,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Become { .. },
+                        tense: boseiju_lexer::Tense::BaseForm,
+                    })),
                     ParserNode::LexerToken(Token::CardState(intermediate::CardState::Tapped {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
@@ -67,9 +73,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Become {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::CardState(intermediate::CardState::Untapped {
@@ -85,7 +94,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Become { .. },
+                        tense: boseiju_lexer::Tense::BaseForm,
+                    })),
                     ParserNode::LexerToken(Token::CardState(intermediate::CardState::Untapped {
                         #[cfg(feature = "spanned_tree")]
                             span: end_span,
@@ -114,9 +126,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Become {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::CardState(intermediate::CardState::Untapped {
@@ -132,7 +147,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Become { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Become { .. },
+                        tense: boseiju_lexer::Tense::BaseForm,
+                    })),
                     ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
                         #[cfg(feature = "spanned_tree")]
                             span: the_span,

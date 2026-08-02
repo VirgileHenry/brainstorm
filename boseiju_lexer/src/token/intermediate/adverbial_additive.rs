@@ -13,6 +13,10 @@ pub enum AdverbialAdditive {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    InAdditionTo {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Likewise {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -26,6 +30,7 @@ impl boseiju_span::Spanned for AdverbialAdditive {
             Self::Additional { span } => *span,
             Self::AdditionalTime { span } => *span,
             Self::Also { span } => *span,
+            Self::InAdditionTo { span } => *span,
             Self::Likewise { span } => *span,
         }
     }
@@ -44,6 +49,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for AdverbialAdditive {
                 span: span.into(),
             }),
             "also" => Ok(Self::Also {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "in addition to" => Ok(Self::InAdditionTo {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

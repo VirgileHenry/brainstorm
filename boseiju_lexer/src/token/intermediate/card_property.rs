@@ -33,6 +33,10 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Label {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Level {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -97,6 +101,14 @@ pub enum CardProperty {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Type {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    WithThoseCharacteristics {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Worthy {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -115,6 +127,7 @@ impl boseiju_span::Spanned for CardProperty {
             Self::Cost { span } => *span,
             Self::DoubleFaced { span } => *span,
             Self::Historic { span } => *span,
+            Self::Label { span } => *span,
             Self::Level { span } => *span,
             Self::Loyalty { span } => *span,
             Self::ManaValue { span } => *span,
@@ -131,6 +144,8 @@ impl boseiju_span::Spanned for CardProperty {
             Self::TextBox { span } => *span,
             Self::TotalToxicValue { span } => *span,
             Self::Toughness { span } => *span,
+            Self::Type { span } => *span,
+            Self::WithThoseCharacteristics { span } => *span,
             Self::Worthy { span } => *span,
         }
     }
@@ -169,6 +184,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardProperty {
                 span: span.into(),
             }),
             "historic" => Ok(CardProperty::Historic {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "label" => Ok(CardProperty::Label {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -233,6 +252,14 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for CardProperty {
                 span: span.into(),
             }),
             "toughness" => Ok(CardProperty::Toughness {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "types" => Ok(CardProperty::Type {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "with those characteristics" => Ok(Self::WithThoseCharacteristics {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

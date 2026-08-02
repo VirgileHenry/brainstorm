@@ -25,6 +25,10 @@ pub enum Number {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    None {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     NumberLiteral {
         num: u32,
         #[cfg(feature = "spanned_tree")]
@@ -68,6 +72,10 @@ pub enum Number {
         span: boseiju_span::Span,
     },
     TheNumberYouChose {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    TheRest {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -115,6 +123,7 @@ impl boseiju_span::Spanned for Number {
             Self::AsMany { span } => *span,
             Self::ChosenNumber { span } => *span,
             Self::HowMany { span } => *span,
+            Self::None { span } => *span,
             Self::NumberLiteral { span, .. } => *span,
             Self::NumberOf { span } => *span,
             Self::Ordinal { span, .. } => *span,
@@ -126,6 +135,7 @@ impl boseiju_span::Spanned for Number {
             Self::TheHighestNumber { span } => *span,
             Self::TheLowestNumber { span } => *span,
             Self::TheNumberYouChose { span } => *span,
+            Self::TheRest { span } => *span,
             Self::TheSameNumber { span } => *span,
             Self::ThriceThatMany { span } => *span,
             Self::TwiceThatMany { span } => *span,
@@ -211,6 +221,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for Number {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "none" => Ok(Self::None {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "or more" | "or greater" => Ok(Self::OrMore {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -240,6 +254,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for Number {
                 span: span.into(),
             }),
             "the number you chose" => Ok(Self::TheNumberYouChose {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the rest" => Ok(Self::TheRest {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

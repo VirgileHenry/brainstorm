@@ -20,9 +20,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Have {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
@@ -37,9 +40,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token:
+                            intermediate::EnglishVerb::Have {
+                                #[cfg(feature = "spanned_tree")]
+                                span,
+                            },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::ContinuousEffect {
@@ -82,9 +89,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Have {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
@@ -108,7 +118,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Have { .. },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                    })),
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_1,
                     },
@@ -161,9 +174,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Have {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::KeywordAbility {
@@ -201,7 +217,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Have { .. },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
+                    })),
                     ParserNode::KeywordAbility {
                         keyword_ability: kw_ab_1,
                     },
@@ -260,9 +279,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     permanent: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Have {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
                 ParserNode::Ability {
@@ -277,9 +299,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
                     ParserNode::Permanent { permanent },
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Has {
-                        #[cfg(feature = "spanned_tree")]
-                        span,
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token:
+                            intermediate::EnglishVerb::Have {
+                                #[cfg(feature = "spanned_tree")]
+                                span,
+                            },
+                        tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
                     ParserNode::Ability { ability },
                 ] => Ok(ParserNode::ContinuousEffect {

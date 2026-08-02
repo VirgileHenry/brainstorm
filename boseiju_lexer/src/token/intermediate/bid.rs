@@ -13,11 +13,11 @@ pub enum Bid {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    Stands {
+    Stakes {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
-    StartTheBidding {
+    Stands {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -34,8 +34,8 @@ impl boseiju_span::Spanned for Bid {
             Self::BiddingEnds { span } => *span,
             Self::HighBid { span } => *span,
             Self::HighBidder { span } => *span,
+            Self::Stakes { span } => *span,
             Self::Stands { span } => *span,
-            Self::StartTheBidding { span } => *span,
             Self::WinTheBidding { span } => *span,
         }
     }
@@ -57,11 +57,11 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for Bid {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "stands" => Ok(Self::Stands {
+            "stakes" => Ok(Self::Stakes {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
-            "start the bidding" => Ok(Self::StartTheBidding {
+            "stands" => Ok(Self::Stands {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

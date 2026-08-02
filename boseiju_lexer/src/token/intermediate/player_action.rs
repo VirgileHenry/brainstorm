@@ -51,6 +51,10 @@ pub enum PlayerAction {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Copy {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Count {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -289,6 +293,7 @@ impl boseiju_span::Spanned for PlayerAction {
             Self::Circle { span } => *span,
             Self::CommitACrime { span } => *span,
             Self::CompletedADungeon { span } => *span,
+            Self::Copy { span } => *span,
             Self::Count { span } => *span,
             Self::Cycle { span } => *span,
             Self::Decide { span } => *span,
@@ -451,6 +456,22 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for TensedPlayerAction {
                 span: span.into(),
             })),
             "completed" => Ok(Tensed::simple_past(PlayerAction::CompletedADungeon {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "copy" => Ok(Tensed::base_form(PlayerAction::Copy {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "copies" => Ok(Tensed::third_person_singular_present(PlayerAction::Copy {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "copied" => Ok(Tensed::simple_past(PlayerAction::Copy {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            })),
+            "copying" => Ok(Tensed::present_participle(PlayerAction::Copy {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             })),

@@ -81,9 +81,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Be {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
+                ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                    token: intermediate::EnglishVerb::Be {
+                        #[cfg(feature = "spanned_tree")]
+                        span: Default::default(),
+                    },
+                    tense: boseiju_lexer::Tense::BaseForm,
                 }))
                 .id(),
                 ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Blocks {
@@ -100,7 +103,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Creature { creature },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant { .. })),
-                    ParserNode::LexerToken(Token::EnglishKeyword(intermediate::EnglishKeyword::Be { .. })),
+                    ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
+                        token: intermediate::EnglishVerb::Be { .. },
+                        tense: boseiju_lexer::Tense::BaseForm,
+                    })),
                     ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Blocks {
                         #[cfg(feature = "spanned_tree")]
                             span: block_span,

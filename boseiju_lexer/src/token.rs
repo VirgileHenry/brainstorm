@@ -9,6 +9,7 @@ pub enum Token {
     AbilityKind(intermediate::AbilityKind),
     AbilityProperty(intermediate::AbilityProperty),
     AbilityWord(intermediate::AbilityWord),
+    ActionKeyword(intermediate::TensedActionKeyword),
     AdverbialAdditive(intermediate::AdverbialAdditive),
     AdverbialManner(intermediate::AdverbialManner),
     AdverbialPositional(intermediate::AdverbialPositional),
@@ -37,7 +38,8 @@ pub enum Token {
     Die(intermediate::DieRoll),
     Direction(intermediate::Direction),
     EnchantmentSubtype(terminal::EnchantmentSubtype),
-    EnglishKeyword(intermediate::EnglishKeyword),
+    EnglishAdjective(intermediate::EnglishAdjective),
+    EnglishAdverb(intermediate::EnglishAdverb),
     EnglishArticle(intermediate::EnglishArticle),
     EnglishComparison(intermediate::EnglishComparison),
     EnglishConditional(intermediate::EnglishConditional),
@@ -50,6 +52,7 @@ pub enum Token {
     EnglishPreprosition(intermediate::EnglishPreprosition),
     EnglishPronoun(intermediate::EnglishPronoun),
     EnglishTemporal(intermediate::EnglishTemporal),
+    EnglishVerb(intermediate::TensedEnglishVerb),
     EnglishWh(intermediate::EnglishWh),
     FlavorWord(terminal::FlavorWord),
     FormatSpecific(intermediate::FormatSpecific),
@@ -58,10 +61,12 @@ pub enum Token {
     GlobalZone(intermediate::GlobalZone),
     InstantSorcerySubtype(terminal::InstantSorcerySubtype),
     KeywordAbility(intermediate::KeywordAbility),
+    KeywordAction(intermediate::TensedKeywordAction),
     LandSubtype(terminal::LandSubtype),
     Legality(intermediate::Legality),
     ManaSymbol(terminal::ManaSymbol),
     MiscObjectName(intermediate::MiscObjectName),
+    Mode(intermediate::Mode),
     NamedCard(terminal::NamedCard),
     NamedChoice(terminal::NamedChoice),
     NamedDungeon(terminal::NamedDungeon),
@@ -80,19 +85,16 @@ pub enum Token {
     PartnerKind(intermediate::PartnerKind),
     Phase(terminal::Phase),
     PlaneswalkerSubtype(terminal::PlaneswalkerSubtype),
+    PlayerAction(intermediate::TensedPlayerAction),
     PlayerDesignation(intermediate::PlayerDesignation),
     PlayerProperties(intermediate::PlayerProperties),
     PlayerSpecifier(intermediate::PlayerSpecifier),
     SagaChapterNumber(terminal::SagaChapterNumber),
-    SpecialCost(intermediate::SpecialCost),
     Step(terminal::Step),
     Supertype(terminal::Supertype),
+    Symbol(intermediate::Symbol),
     TapUntapCost(intermediate::TapUntapCost),
-    TensedActionKeyword(intermediate::TensedActionKeyword),
-    TensedKeywordAction(intermediate::TensedKeywordAction),
-    TensedPlayerAction(intermediate::TensedPlayerAction),
     UncardSpecialTerm(intermediate::UncardSpecialTerm),
-    VhyToSortLater(intermediate::VhyToSortLater),
     WinLoseClause(intermediate::WinLoseClause),
 }
 
@@ -104,6 +106,8 @@ impl Token {
             Some(Self::AbilityProperty(token))
         } else if let Ok(token) = intermediate::AbilityWord::try_from(&span) {
             Some(Self::AbilityWord(token))
+        } else if let Ok(token) = intermediate::TensedActionKeyword::try_from(&span) {
+            Some(Self::ActionKeyword(token))
         } else if let Ok(token) = intermediate::AdverbialAdditive::try_from(&span) {
             Some(Self::AdverbialAdditive(token))
         } else if let Ok(token) = intermediate::AdverbialManner::try_from(&span) {
@@ -160,8 +164,10 @@ impl Token {
             Some(Self::Direction(token))
         } else if let Ok(token) = terminal::EnchantmentSubtype::try_from(&span) {
             Some(Self::EnchantmentSubtype(token))
-        } else if let Ok(token) = intermediate::EnglishKeyword::try_from(&span) {
-            Some(Self::EnglishKeyword(token))
+        } else if let Ok(token) = intermediate::EnglishAdjective::try_from(&span) {
+            Some(Self::EnglishAdjective(token))
+        } else if let Ok(token) = intermediate::EnglishAdverb::try_from(&span) {
+            Some(Self::EnglishAdverb(token))
         } else if let Ok(token) = intermediate::EnglishArticle::try_from(&span) {
             Some(Self::EnglishArticle(token))
         } else if let Ok(token) = intermediate::EnglishComparison::try_from(&span) {
@@ -186,6 +192,8 @@ impl Token {
             Some(Self::EnglishPronoun(token))
         } else if let Ok(token) = intermediate::EnglishTemporal::try_from(&span) {
             Some(Self::EnglishTemporal(token))
+        } else if let Ok(token) = intermediate::TensedEnglishVerb::try_from(&span) {
+            Some(Self::EnglishVerb(token))
         } else if let Ok(token) = intermediate::EnglishWh::try_from(&span) {
             Some(Self::EnglishWh(token))
         } else if let Ok(token) = terminal::FlavorWord::try_from(&span) {
@@ -202,6 +210,8 @@ impl Token {
             Some(Self::InstantSorcerySubtype(token))
         } else if let Ok(token) = intermediate::KeywordAbility::try_from(&span) {
             Some(Self::KeywordAbility(token))
+        } else if let Ok(token) = intermediate::TensedKeywordAction::try_from(&span) {
+            Some(Self::KeywordAction(token))
         } else if let Ok(token) = terminal::LandSubtype::try_from(&span) {
             Some(Self::LandSubtype(token))
         } else if let Ok(token) = intermediate::Legality::try_from(&span) {
@@ -210,6 +220,8 @@ impl Token {
             Some(Self::ManaSymbol(token))
         } else if let Ok(token) = intermediate::MiscObjectName::try_from(&span) {
             Some(Self::MiscObjectName(token))
+        } else if let Ok(token) = intermediate::Mode::try_from(&span) {
+            Some(Self::Mode(token))
         } else if let Ok(token) = terminal::NamedCard::try_from(&span) {
             Some(Self::NamedCard(token))
         } else if let Ok(token) = terminal::NamedChoice::try_from(&span) {
@@ -246,6 +258,8 @@ impl Token {
             Some(Self::Phase(token))
         } else if let Ok(token) = terminal::PlaneswalkerSubtype::try_from(&span) {
             Some(Self::PlaneswalkerSubtype(token))
+        } else if let Ok(token) = intermediate::TensedPlayerAction::try_from(&span) {
+            Some(Self::PlayerAction(token))
         } else if let Ok(token) = intermediate::PlayerDesignation::try_from(&span) {
             Some(Self::PlayerDesignation(token))
         } else if let Ok(token) = intermediate::PlayerProperties::try_from(&span) {
@@ -254,24 +268,16 @@ impl Token {
             Some(Self::PlayerSpecifier(token))
         } else if let Ok(token) = terminal::SagaChapterNumber::try_from(&span) {
             Some(Self::SagaChapterNumber(token))
-        } else if let Ok(token) = intermediate::SpecialCost::try_from(&span) {
-            Some(Self::SpecialCost(token))
         } else if let Ok(token) = terminal::Step::try_from(&span) {
             Some(Self::Step(token))
         } else if let Ok(token) = terminal::Supertype::try_from(&span) {
             Some(Self::Supertype(token))
+        } else if let Ok(token) = intermediate::Symbol::try_from(&span) {
+            Some(Self::Symbol(token))
         } else if let Ok(token) = intermediate::TapUntapCost::try_from(&span) {
             Some(Self::TapUntapCost(token))
-        } else if let Ok(token) = intermediate::TensedActionKeyword::try_from(&span) {
-            Some(Self::TensedActionKeyword(token))
-        } else if let Ok(token) = intermediate::TensedKeywordAction::try_from(&span) {
-            Some(Self::TensedKeywordAction(token))
-        } else if let Ok(token) = intermediate::TensedPlayerAction::try_from(&span) {
-            Some(Self::TensedPlayerAction(token))
         } else if let Ok(token) = intermediate::UncardSpecialTerm::try_from(&span) {
             Some(Self::UncardSpecialTerm(token))
-        } else if let Ok(token) = intermediate::VhyToSortLater::try_from(&span) {
-            Some(Self::VhyToSortLater(token))
         } else if let Ok(token) = intermediate::WinLoseClause::try_from(&span) {
             Some(Self::WinLoseClause(token))
         } else {
@@ -287,6 +293,7 @@ impl boseiju_span::Spanned for Token {
             Self::AbilityKind(child) => child.span(),
             Self::AbilityProperty(child) => child.span(),
             Self::AbilityWord(child) => child.span(),
+            Self::ActionKeyword(child) => child.span(),
             Self::AdverbialAdditive(child) => child.span(),
             Self::AdverbialManner(child) => child.span(),
             Self::AdverbialPositional(child) => child.span(),
@@ -315,7 +322,8 @@ impl boseiju_span::Spanned for Token {
             Self::Die(child) => child.span(),
             Self::Direction(child) => child.span(),
             Self::EnchantmentSubtype(child) => child.span(),
-            Self::EnglishKeyword(child) => child.span(),
+            Self::EnglishAdjective(child) => child.span(),
+            Self::EnglishAdverb(child) => child.span(),
             Self::EnglishArticle(child) => child.span(),
             Self::EnglishComparison(child) => child.span(),
             Self::EnglishConditional(child) => child.span(),
@@ -328,6 +336,7 @@ impl boseiju_span::Spanned for Token {
             Self::EnglishPreprosition(child) => child.span(),
             Self::EnglishPronoun(child) => child.span(),
             Self::EnglishTemporal(child) => child.span(),
+            Self::EnglishVerb(child) => child.span(),
             Self::EnglishWh(child) => child.span(),
             Self::FlavorWord(child) => child.span(),
             Self::FormatSpecific(child) => child.span(),
@@ -336,10 +345,12 @@ impl boseiju_span::Spanned for Token {
             Self::GlobalZone(child) => child.span(),
             Self::InstantSorcerySubtype(child) => child.span(),
             Self::KeywordAbility(child) => child.span(),
+            Self::KeywordAction(child) => child.span(),
             Self::LandSubtype(child) => child.span(),
             Self::Legality(child) => child.span(),
             Self::ManaSymbol(child) => child.span(),
             Self::MiscObjectName(child) => child.span(),
+            Self::Mode(child) => child.span(),
             Self::NamedCard(child) => child.span(),
             Self::NamedChoice(child) => child.span(),
             Self::NamedDungeon(child) => child.span(),
@@ -358,19 +369,16 @@ impl boseiju_span::Spanned for Token {
             Self::PartnerKind(child) => child.span(),
             Self::Phase(child) => child.span(),
             Self::PlaneswalkerSubtype(child) => child.span(),
+            Self::PlayerAction(child) => child.span(),
             Self::PlayerDesignation(child) => child.span(),
             Self::PlayerProperties(child) => child.span(),
             Self::PlayerSpecifier(child) => child.span(),
             Self::SagaChapterNumber(child) => child.span(),
-            Self::SpecialCost(child) => child.span(),
             Self::Step(child) => child.span(),
             Self::Supertype(child) => child.span(),
+            Self::Symbol(child) => child.span(),
             Self::TapUntapCost(child) => child.span(),
-            Self::TensedActionKeyword(child) => child.span(),
-            Self::TensedKeywordAction(child) => child.span(),
-            Self::TensedPlayerAction(child) => child.span(),
             Self::UncardSpecialTerm(child) => child.span(),
-            Self::VhyToSortLater(child) => child.span(),
             Self::WinLoseClause(child) => child.span(),
         }
     }

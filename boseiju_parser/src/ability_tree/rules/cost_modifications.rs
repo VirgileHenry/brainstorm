@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::ManaCost { mana_cost },
                     ParserNode::LexerToken(Token::EnglishComparison(intermediate::EnglishComparison::Less { .. })),
                     ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
-                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
                                 keyword_action: mtg_data::KeywordAction::Cast,
@@ -84,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
@@ -103,7 +103,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::ManaCost { mana_cost },
                     ParserNode::LexerToken(Token::EnglishComparison(intermediate::EnglishComparison::More { .. })),
                     ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
-                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
                                 keyword_action: mtg_data::KeywordAction::Cast,
@@ -138,7 +138,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token: intermediate::KeywordAction {
                         keyword_action: mtg_data::KeywordAction::Cast,
                         #[cfg(feature = "spanned_tree")]
@@ -156,7 +156,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::ManaCost { mana_cost },
                     ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
-                    ParserNode::LexerToken(Token::TensedKeywordAction(intermediate::TensedKeywordAction {
+                    ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                         token:
                             intermediate::KeywordAction {
                                 keyword_action: mtg_data::KeywordAction::Cast,

@@ -5,6 +5,10 @@ pub enum UncardSpecialTerm {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Item {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     OneTimeBoon {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -16,6 +20,7 @@ impl boseiju_span::Spanned for UncardSpecialTerm {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::OneTimeBoon { span } => *span,
+            Self::Item { span } => *span,
             Self::HeightOfAtLeastOneFoot { span } => *span,
         }
     }
@@ -26,6 +31,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for UncardSpecialTerm {
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
             "height of at least one foot" => Ok(Self::HeightOfAtLeastOneFoot {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "item" | "items" => Ok(Self::Item {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -17,11 +17,27 @@ pub enum ControlFlow {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Instead {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     LongDash {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
     NewLine {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    RatherThan {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    SoOn {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    TheSameIsTrueFor {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -35,8 +51,12 @@ impl boseiju_span::Spanned for ControlFlow {
             Self::Colons { span } => *span,
             Self::Comma { span } => *span,
             Self::Dot { span } => *span,
+            Self::Instead { span } => *span,
             Self::LongDash { span } => *span,
             Self::NewLine { span } => *span,
+            Self::RatherThan { span } => *span,
+            Self::SoOn { span } => *span,
+            Self::TheSameIsTrueFor { span } => *span,
         }
     }
 }
@@ -61,11 +81,27 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for ControlFlow {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "instead" => Ok(ControlFlow::Instead {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "—" => Ok(ControlFlow::LongDash {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
             "\n" => Ok(ControlFlow::NewLine {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "rather than" => Ok(Self::RatherThan {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "so on" => Ok(Self::SoOn {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "the same is true for" => Ok(Self::TheSameIsTrueFor {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

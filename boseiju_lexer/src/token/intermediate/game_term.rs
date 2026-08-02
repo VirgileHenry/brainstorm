@@ -9,6 +9,10 @@ pub enum GameTerm {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    ColorPair {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     Effect {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -22,6 +26,14 @@ pub enum GameTerm {
         span: boseiju_span::Span,
     },
     Heal {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Instance {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Kind {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -57,6 +69,10 @@ pub enum GameTerm {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Order {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     OriginalSpell {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -66,6 +82,10 @@ pub enum GameTerm {
         span: boseiju_span::Span,
     },
     Phase {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Pile {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -82,6 +102,10 @@ pub enum GameTerm {
         span: boseiju_span::Span,
     },
     Spell {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    StartingWith {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -105,6 +129,14 @@ pub enum GameTerm {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    Unspent {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Word {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
 }
 
 #[cfg(feature = "spanned_tree")]
@@ -113,10 +145,13 @@ impl boseiju_span::Spanned for GameTerm {
         match self {
             Self::Card { span } => *span,
             Self::CardPool { span } => *span,
+            Self::ColorPair { span } => *span,
             Self::Effect { span } => *span,
             Self::ExtraTurn { span } => *span,
             Self::GenericManaCost { span } => *span,
             Self::Heal { span } => *span,
+            Self::Instance { span } => *span,
+            Self::Kind { span } => *span,
             Self::LegendRule { span } => *span,
             Self::LethalDamage { span } => *span,
             Self::Life { span } => *span,
@@ -125,18 +160,23 @@ impl boseiju_span::Spanned for GameTerm {
             Self::ManaSymbol { span } => *span,
             Self::Marked { span } => *span,
             Self::MostRecentTurn { span } => *span,
+            Self::Order { span } => *span,
             Self::OriginalSpell { span } => *span,
             Self::Permanent { span } => *span,
             Self::Phase { span } => *span,
+            Self::Pile { span } => *span,
             Self::PlayingArea { span } => *span,
             Self::Radiation { span } => *span,
             Self::Source { span } => *span,
             Self::Spell { span } => *span,
+            Self::StartingWith { span } => *span,
             Self::Step { span } => *span,
             Self::TheGame { span } => *span,
             Self::TheStack { span } => *span,
             Self::Trigger { span } => *span,
             Self::TurnOrder { span } => *span,
+            Self::Unspent { span } => *span,
+            Self::Word { span } => *span,
         }
     }
 }
@@ -153,6 +193,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "color pair" | "color pairs" => Ok(Self::ColorPair {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "effect" | "effects" => Ok(Self::Effect {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -166,6 +210,14 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 span: span.into(),
             }),
             "healed" => Ok(Self::Heal {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "instance" | "instances" => Ok(Self::Instance {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "kind" | "kinds" => Ok(Self::Kind {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -201,6 +253,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            "order" => Ok(Self::Order {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
             "original spell" => Ok(Self::OriginalSpell {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
@@ -210,6 +266,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 span: span.into(),
             }),
             "phase" | "phases" => Ok(Self::Phase {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "pile" | "piles" => Ok(Self::Pile {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -226,6 +286,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 span: span.into(),
             }),
             "spell" | "spells" => Ok(Self::Spell {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "starting with" => Ok(Self::StartingWith {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -246,6 +310,14 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for GameTerm {
                 span: span.into(),
             }),
             "turn order" => Ok(Self::TurnOrder {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "unspent" => Ok(Self::Unspent {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "word" | "words" => Ok(Self::Word {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 /* "remove <number> <counter> from <permanent ref>": remove counters imperative */
                 ParserRule {
                     expanded: RuleLhs::new(&[
-                        ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                        ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                             token: intermediate::PlayerAction::Remove {
                                 #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
@@ -46,7 +46,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     .id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
-                            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                            ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                                 token:
                                     intermediate::PlayerAction::Remove {
                                         #[cfg(feature = "spanned_tree")]
@@ -88,7 +88,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 /* "remove <number> <counter> from among <permanent ref>": remove counters imperative */
                 ParserRule {
                     expanded: RuleLhs::new(&[
-                        ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                        ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                             token: intermediate::PlayerAction::Remove {
                                 #[cfg(feature = "spanned_tree")]
                                 span: Default::default(),
@@ -122,7 +122,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     .id(),
                     reduction: |nodes: &[ParserNode]| match &nodes {
                         &[
-                            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                            ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                                 token:
                                     intermediate::PlayerAction::Remove {
                                         #[cfg(feature = "spanned_tree")]
@@ -170,7 +170,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
 
     let remove_any_counter_rules = vec![ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+            ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                 token: intermediate::PlayerAction::Remove {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
@@ -208,7 +208,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::LexerToken(Token::TensedPlayerAction(intermediate::TensedPlayerAction {
+                ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                     token:
                         intermediate::PlayerAction::Remove {
                             #[cfg(feature = "spanned_tree")]

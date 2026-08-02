@@ -5,6 +5,10 @@ pub enum EnglishPreprosition {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
+    AsPartOf {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
     At {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -26,6 +30,10 @@ pub enum EnglishPreprosition {
         span: boseiju_span::Span,
     },
     In {
+        #[cfg(feature = "spanned_tree")]
+        span: boseiju_span::Span,
+    },
+    Including {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
     },
@@ -68,12 +76,14 @@ impl boseiju_span::Spanned for EnglishPreprosition {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Among { span } => *span,
+            Self::AsPartOf { span } => *span,
             Self::At { span } => *span,
             Self::Beyond { span } => *span,
             Self::By { span } => *span,
             Self::For { span } => *span,
             Self::From { span } => *span,
             Self::In { span } => *span,
+            Self::Including { span } => *span,
             Self::Into { span } => *span,
             Self::Of { span } => *span,
             Self::On { span } => *span,
@@ -91,6 +101,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishPreprosition {
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {
             "among" => Ok(Self::Among {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "as part of" => Ok(Self::AsPartOf {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
@@ -115,6 +129,10 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishPreprosition {
                 span: span.into(),
             }),
             "in" => Ok(Self::In {
+                #[cfg(feature = "spanned_tree")]
+                span: span.into(),
+            }),
+            "including" => Ok(Self::Including {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),

@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     let put_counters_rules = terminal::Counter::all()
         .map(|counter| ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                     token: intermediate::ActionKeyword::Put {
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::TensedActionKeyword(intermediate::TensedActionKeyword {
+                    ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                         token:
                             intermediate::ActionKeyword::Put {
                                 #[cfg(feature = "spanned_tree")]
