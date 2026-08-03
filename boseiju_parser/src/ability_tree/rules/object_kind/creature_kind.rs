@@ -1,0 +1,40 @@
+use crate::ParserNode;
+use crate::ability_tree::rules::ParserRule;
+use crate::ability_tree::rules::ParserRuleDeclarationLocation;
+use crate::ability_tree::rules::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::terminal;
+use boseiju_tree::ability_tree::object;
+use idris::Idris;
+
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
+    /* "creature" is the basic creature kind */
+    std::iter::once(ParserRule {
+        expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::CardType(terminal::CardType {
+            card_type: mtg_data::CardType::Creature,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }))
+        .id()]),
+        merged: ParserNode::CreatureKind {
+            creature: Default::default(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::CardType(terminal::CardType {
+                    card_type: mtg_data::CardType::Creature,
+                    #[cfg(feature = "spanned_tree")]
+                    span,
+                })),
+            ] => Ok(ParserNode::CreatureKind {
+                creature: object::kind::CreatureKind::Creature {
+                    #[cfg(feature = "spanned_tree")]
+                    span: *span,
+                },
+            }),
+            _ => Err("Provided tokens do not match rule definition"),
+        },
+        creation_loc: ParserRuleDeclarationLocation::here(),
+    })
+}

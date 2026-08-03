@@ -1,6 +1,17 @@
 # https://doc.rust-lang.org/cargo/reference/workspaces.html
 [workspace]
-members = ["krark", "mtg-cardbase", "mtg-data", "boseiju", "idris", "boseiju_wasm"]
+members = [
+    "boseiju_bin",
+    "boseiju_lexer",
+    "boseiju_parser",
+    "boseiju_span",
+    "boseiju_tree",
+    "boseiju_wasm",
+    "idris",
+    "krark",
+    "mtg_cardbase",
+    "mtg_data",
+]
 resolver = "3"
 
 [workspace.package]
@@ -12,17 +23,21 @@ edition = "2024"
 
 [workspace.dependencies]
 # Own crates as dependencies
-boseiju = { path = "boseiju" }
-boseiju_wasm = { path = "boseiju_wasm" }
+boseiju_lexer = { path = "boseiju_lexer" }
+boseiju_parser = { path = "boseiju_parser" }
+boseiju_span = { path = "boseiju_span" }
+boseiju_tree = { path = "boseiju_tree" }
+# boseiju_wasm = { path = "boseiju_wasm" }
 idris = { path = "idris" }
-idris-derive = { path = "idris-derive" }
+idris_derive = { path = "idris_derive" }
 krark = { path = "krark" }
-mtg-data = { path = "mtg-data" }
-mtg-cardbase = { path = "mtg-cardbase" }
+mtg_data = { path = "mtg_data" }
+mtg_cardbase = { path = "mtg_cardbase" }
+
 # Additional dependencies
 arrayvec = { version = "0.7.6", features = ["serde"] }
 lazy_static = "1.5.0"
 regex = "1.11.3"
 serde = { version = "1.0.221", features=["derive"] }
 serde_json = "1.0.145"
-ts-rs = { version = "12.0.0", features = ["uuid-impl", "arrayvec-impl"] }
+uuid = { version = "1.18.1", features = ["serde"] }

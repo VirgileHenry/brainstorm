@@ -1,0 +1,63 @@
+use super::ParserNode;
+use super::ParserRule;
+use super::ParserRuleDeclarationLocation;
+use super::RuleLhs;
+use boseiju_lexer::Token;
+use boseiju_lexer::intermediate;
+#[cfg(feature = "spanned_tree")]
+use boseiju_span::Spanned;
+use idris::Idris;
+
+pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
+    /* Fabricate <number> */
+    std::iter::once(ParserRule {
+        expanded: RuleLhs::new(&[
+            ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
+                keyword_ability: mtg_data::KeywordAbility::Fabricate,
+                #[cfg(feature = "spanned_tree")]
+                span: Default::default(),
+            }))
+            .id(),
+            ParserNode::Number {
+                number: Default::default(),
+            }
+            .id(),
+        ]),
+        merged: ParserNode::KeywordAbility {
+            keyword_ability: Default::default(),
+        }
+        .id(),
+        reduction: |nodes: &[ParserNode]| match &nodes {
+            &[
+                ParserNode::LexerToken(Token::KeywordAbility(intermediate::KeywordAbility {
+                    keyword_ability: mtg_data::KeywordAbility::Fabricate,
+                    #[cfg(feature = "spanned_tree")]
+                        span: fabricate_span,
+                })),
+                ParserNode::Number { number },
+            ] => Ok(ParserNode::KeywordAbility {
+                keyword_ability: boseiju_tree::ability_tree::ability::KeywordAbility {
+                    keyword: boseiju_tree::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Fabricate(
+                        boseiju_tree::ability_tree::ability::keyword_ability::FabricateKeywordAbility {
+                            amount: number.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: number.span().merge(fabricate_span),
+                        },
+                    ),
+                    /* Fixme */
+                    ability: boseiju_tree::ability_tree::ability::WrittenAbility::Spell(
+                        boseiju_tree::ability_tree::ability::spell::SpellAbility {
+                            effects: boseiju_tree::HeapArrayVec::new(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: Default::default(),
+                        },
+                    ),
+                    #[cfg(feature = "spanned_tree")]
+                    span: number.span().merge(fabricate_span),
+                },
+            }),
+            _ => Err("Provided tokens do not match rule definition"),
+        },
+        creation_loc: ParserRuleDeclarationLocation::here(),
+    })
+}

@@ -1,0 +1,71 @@
+Abandon
+Activate
+Adapt
+Airbend
+Amass
+Assemble
+Attach
+Behold
+Blight
+Bolster
+Cast
+Clash
+Cloak
+Collect evidence
+Conjure
+Connive
+Convert
+Counter
+Create
+Destroy
+Detain
+Discard
+Discover
+Double
+Earthbend
+Endure
+Exchange
+Exert
+Exile
+Explore
+Fateseal
+Fight
+Forage
+Goad
+Harness
+Heist
+Incubate
+Investigate
+Learn
+Manifest
+Manifest dread
+Meld
+Mill
+Monstrosity
+Open an Attraction
+Pass the Ball
+Planeswalk
+Play
+Plot
+Populate
+Proliferate
+Regenerate
+Reveal
+Roll to Visit Your Attractions
+Sacrifice
+Scry
+Search
+Seek
+Set in motion
+Shuffle
+Support
+Surveil
+Suspect
+Tap
+Time Travel
+Transform
+Triple
+Untap
+Venture into the dungeon
+Vote
+Waterbend

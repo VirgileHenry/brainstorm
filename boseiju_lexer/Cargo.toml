@@ -1,0 +1,26 @@
+[package]
+name = "boseiju_lexer"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+edition.workspace = true
+
+[dependencies]
+arrayvec = { workspace = true }
+boseiju_span = { workspace = true, optional = true }
+idris = { workspace = true }
+idris_derive = { workspace = true }
+lazy_static = { workspace = true }
+mtg_cardbase = { workspace = true }
+mtg_data = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+
+[features]
+default = ["spanned_tree"]
+spanned_tree = ["dep:boseiju_span"]
+
+[[bin]]
+name = "generate_epithet_map"
+path = "bin/generate_epithet_map.rs"

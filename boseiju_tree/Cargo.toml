@@ -1,0 +1,23 @@
+[package]
+name = "boseiju_tree"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+edition.workspace = true
+
+[dependencies]
+arrayvec = { workspace = true }
+boseiju_lexer = { workspace = true }
+boseiju_span = { workspace = true, optional = true }
+idris = { workspace = true }
+idris_derive = { workspace = true }
+mtg_cardbase = { workspace = true }
+mtg_data = { workspace = true }
+serde = { workspace = true }
+serde-big-array = "0.5.1"
+uuid = { workspace = true }
+
+[features]
+default = ["spanned_tree"]
+spanned_tree = ["dep:boseiju_span"]

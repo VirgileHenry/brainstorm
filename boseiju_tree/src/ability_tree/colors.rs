@@ -1,0 +1,198 @@
+use crate::Node;
+use crate::MAX_CHILDREN_PER_NODE;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct Colors {
+    pub white: bool,
+    pub blue: bool,
+    pub black: bool,
+    pub red: bool,
+    pub green: bool,
+    #[cfg(feature = "spanned_tree")]
+    span: boseiju_span::Span,
+}
+
+impl Colors {
+    pub fn empty() -> Colors {
+        Colors {
+            white: false,
+            blue: false,
+            black: false,
+            red: false,
+            green: false,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+
+    pub fn contains(&self, other: &Self) -> bool {
+        (self.white || !other.white)
+            && (self.blue || !other.blue)
+            && (self.black || !other.black)
+            && (self.red || !other.red)
+            && (self.green || !other.green)
+    }
+
+    pub fn from_single(color: mtg_data::Color) -> Self {
+        Self::from_iter(std::iter::once(color))
+    }
+
+    pub fn from_iter<I: Iterator<Item = mtg_data::Color>>(colors: I) -> Self {
+        let mut result = Self::empty();
+        for color in colors {
+            match color {
+                mtg_data::Color::Black => result.black = true,
+                mtg_data::Color::Blue => result.blue = true,
+                mtg_data::Color::Green => result.green = true,
+                mtg_data::Color::Red => result.red = true,
+                mtg_data::Color::White => result.white = true,
+                _ => { /* Dafuk ? */ }
+            }
+        }
+        result
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = mtg_data::Color> {
+        [
+            (self.white, mtg_data::Color::White),
+            (self.blue, mtg_data::Color::Blue),
+            (self.black, mtg_data::Color::Black),
+            (self.red, mtg_data::Color::Red),
+            (self.green, mtg_data::Color::Green),
+        ]
+        .into_iter()
+        .filter_map(|(on, name)| on.then_some(name))
+    }
+
+    pub fn from_bitmask(bitmask: i16) -> Self {
+        Colors {
+            white: (bitmask & (1 << 0)) > 0,
+            blue: (bitmask & (1 << 1)) > 0,
+            black: (bitmask & (1 << 2)) > 0,
+            red: (bitmask & (1 << 3)) > 0,
+            green: (bitmask & (1 << 4)) > 0,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+
+    pub fn to_bitmask(&self) -> i16 {
+        let white = if self.white { 1 << 0 } else { 0 };
+        let blue = if self.blue { 1 << 1 } else { 0 };
+        let black = if self.black { 1 << 2 } else { 0 };
+        let red = if self.red { 1 << 3 } else { 0 };
+        let green = if self.green { 1 << 4 } else { 0 };
+        white | blue | black | red | green
+    }
+}
+
+impl Node for Colors {
+    fn node_id(&self) -> usize {
+        use idris::Idris;
+        crate::node_kind::NodeKind::Colors.id()
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
+        arrayvec::ArrayVec::new_const()
+    }
+
+    fn data(&self) -> Option<crate::AbTreeNodeData> {
+        Some(crate::AbTreeNodeData::Color { value: self.clone() })
+    }
+
+    fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "{self}")
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "colors"
+    }
+}
+
+#[cfg(feature = "spanned_tree")]
+impl boseiju_span::Spanned for Colors {
+    fn span(&self) -> boseiju_span::Span {
+        self.span
+    }
+}
+
+impl std::fmt::Display for Colors {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use std::fmt::Write;
+        let mut colors = self.iter().peekable();
+        while let Some(next) = colors.next() {
+            f.write_char(next.as_char())?;
+            if colors.peek().is_some() {
+                f.write_char(' ')?;
+            }
+        }
+        Ok(())
+    }
+}
+
+impl Default for Colors {
+    fn default() -> Self {
+        Self {
+            white: false,
+            blue: false,
+            black: false,
+            red: false,
+            green: false,
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
+
+impl<S: AsRef<str>> TryFrom<&[S]> for Colors {
+    type Error = ColorsParsingError;
+    fn try_from(colors: &[S]) -> Result<Self, Self::Error> {
+        use std::str::FromStr;
+        let mut result = Colors::empty();
+
+        for color_str in colors {
+            let color_flag = match mtg_data::Color::from_str(color_str.as_ref())? {
+                mtg_data::Color::Colorless => return Err(ColorsParsingError::ColorlessInColors),
+                mtg_data::Color::White => &mut result.white,
+                mtg_data::Color::Blue => &mut result.blue,
+                mtg_data::Color::Black => &mut result.black,
+                mtg_data::Color::Red => &mut result.red,
+                mtg_data::Color::Green => &mut result.green,
+            };
+            if *color_flag {
+                return Err(ColorsParsingError::DuplicateColor);
+            } else {
+                *color_flag = true;
+            }
+        }
+
+        Ok(result)
+    }
+}
+
+#[derive(Debug)]
+pub enum ColorsParsingError {
+    ColorlessInColors,
+    DuplicateColor,
+    InvalidColor(mtg_data::ColorParsingError),
+}
+
+impl From<mtg_data::ColorParsingError> for ColorsParsingError {
+    fn from(error: mtg_data::ColorParsingError) -> Self {
+        Self::InvalidColor(error)
+    }
+}
+
+impl std::fmt::Display for ColorsParsingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ColorlessInColors => write!(f, "\"Coloress\" is invalid in color combinations"),
+            Self::DuplicateColor => write!(f, "Duplicate color in color combination"),
+            Self::InvalidColor(error) => write!(f, "Invalid color in combination: {error}"),
+        }
+    }
+}
+
+impl std::error::Error for ColorsParsingError {}

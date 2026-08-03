@@ -1,0 +1,39 @@
+Artifact subtypes:
+missing
+    lander
+    mutagen
+    vibranium
+should not be there
+    terminus
+
+Keyword ability:
+to solve (as per the wiki, not in CR ?)
+trample over planeswalkers (in CR)
+
+Keyword action:
+missing
+    triple
+
+Flavor words:
+wrong apostrophes ?
+missing
+    No One Dies!
+    Fight!
+    Cosmic Awareness
+    Trick Arrows
+    Seismic Takedown
+    Net, Explosive, Boomerang
+    Sonic Attack
+    Designed Only for Killing
+    Chain
+    Mental Organism
+    Cybernetic Senses
+    I LOVE Squirrels!
+    Solar Beam
+    Street Justice
+    Legal Justice
+    Unbreakable Skin
+    Lethal Voice
+    Sense the Good
+    Insatiable Hunger
+    Origami-Fu

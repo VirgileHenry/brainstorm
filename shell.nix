@@ -4,6 +4,8 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.cargo
     pkgs.cargo-flamegraph
+    pkgs.clippy
+    pkgs.cargo-llvm-cov # Fuck me, can't get this to work
     pkgs.rustc
     pkgs.rustfmt
     pkgs.python313

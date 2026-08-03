@@ -20,7 +20,7 @@ pub extern "C" fn lexer_preprocessor(
     let card_name = utils::ptr_len_to_str(card_name_ptr, card_name_len);
     let oracle_text = utils::ptr_len_to_str(oracle_text_ptr, oracle_text_len);
 
-    let preprocessed = boseiju::preprocess(card_name, oracle_text);
+    let preprocessed = boseiju_lexer::preprocess(card_name, oracle_text);
     utils::rust_string_to_ptr(preprocessed)
 }
 
@@ -31,11 +31,13 @@ pub extern "C" fn lex(
     oracle_text_ptr: *const u8,
     oracle_text_len: usize,
 ) -> *const u8 {
+    use boseiju_span::Spanned;
+
     let card_name = utils::ptr_len_to_str(card_name_ptr, card_name_len);
     let oracle_text = utils::ptr_len_to_str(oracle_text_ptr, oracle_text_len);
 
-    let preprocessed = boseiju::preprocess(card_name, oracle_text);
-    let tokens = match boseiju::lex(&preprocessed) {
+    let preprocessed = boseiju_lexer::preprocess(card_name, oracle_text);
+    let tokens = match boseiju_lexer::lex(&preprocessed) {
         Ok(tokens) => tokens,
         Err(e) => return utils::rust_string_to_ptr(format!("{{\"err\":{}}}", utils::lexer_error_to_json(e))),
     };
@@ -76,17 +78,17 @@ pub extern "C" fn parse(
     let card_name = utils::ptr_len_to_str(card_name_ptr, card_name_len);
     let oracle_text = utils::ptr_len_to_str(oracle_text_ptr, oracle_text_len);
 
-    let preprocessed = boseiju::preprocess(card_name, oracle_text);
-    let tokens = match boseiju::lex(&preprocessed) {
+    let preprocessed = boseiju_lexer::preprocess(card_name, oracle_text);
+    let tokens = match boseiju_lexer::lex(&preprocessed) {
         Ok(tokens) => tokens,
         Err(e) => return utils::rust_string_to_ptr(format!("{{\"err\":{}}}", utils::lexer_error_to_json(e))),
     };
-    let ab_tree = match boseiju::parse(tokens.as_slice()) {
+    let ab_tree = match boseiju_parser::parse_ability_tree(tokens.as_slice()) {
         Ok(tree) => tree,
         Err(e) => return utils::rust_string_to_ptr(format!("{{\"err\":{}}}", utils::parser_error_to_json(e))),
     };
 
-    let (nodes, _) = build_tree_nodes(&ab_tree as &dyn boseiju::ability_tree::AbilityTreeNode);
+    let (nodes, _) = build_tree_nodes(&ab_tree as &dyn boseiju_tree::Node);
 
     let result = match serde_json::to_string(&nodes) {
         Ok(serialized) => format!("{{\"nodes\":{serialized}}}"),
@@ -96,11 +98,11 @@ pub extern "C" fn parse(
     utils::rust_string_to_ptr(result)
 }
 
-fn build_tree_nodes(tree: &dyn boseiju::ability_tree::AbilityTreeNode) -> (Vec<Node>, usize) {
+fn build_tree_nodes(tree: &dyn boseiju_tree::Node) -> (Vec<Node>, usize) {
     let mut result = Vec::new();
 
     let children = tree.children();
-    let span = tree.node_span();
+    let span = tree.span();
 
     let mut layer = 1; /* 0 is for lexer tokens */
 
