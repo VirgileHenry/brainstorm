@@ -46,7 +46,10 @@ jobs:
           cargo doc --release --no-deps \
             -p mtg_cardbase \
             -p mtg_data \
-            -p boseiju \
+            -p boseiju_lexer \
+            -p boseiju_parser \
+            -p boseiju_span \
+            -p boseiju_tree \
             -p idris
           mkdir -p boseiju_webdemo/doc
           cp -r target/doc/* boseiju_webdemo/doc/
