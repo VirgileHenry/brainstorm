@@ -25,6 +25,10 @@ name = "export_for_urza"
 path = "bin/export_for_urza.rs"
 
 [[bin]]
+name = "export_for_urza_smol"
+path = "bin/export_for_urza_smol.rs"
+
+[[bin]]
 name = "export_for_webdemo"
 path = "bin/export_for_webdemo.rs"
 
