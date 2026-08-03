@@ -125,7 +125,7 @@ fn main() -> std::io::Result<()> {
     ];
 
     let categories_results = categories
-        .iter()
+        .into_iter()
         .map(|category| {
             let mut results = CoverageTestResults::default();
             for (card, result) in cards_parsing_results.iter() {
@@ -138,35 +138,7 @@ fn main() -> std::io::Result<()> {
         .collect::<Vec<_>>();
 
     /* Finally, we can display the output */
-    println!("");
-    println!("| Category | Cards total | JSON Parsed | Lexed | Parsed |");
-    println!("|-----|-----|-----|-----|-----|");
-
-    for (category, results) in categories_results.iter() {
-        println!(
-            "|{}|{}|{} ({}%)|{} ({}%)|{} ({}%)|",
-            category.name,
-            results.total,
-            results.json_parsed,
-            if results.total > 0 {
-                results.json_parsed * 100 / results.total
-            } else {
-                100
-            },
-            results.oracle_text_lexed,
-            if results.json_parsed > 0 {
-                results.oracle_text_lexed * 100 / results.json_parsed
-            } else {
-                100
-            },
-            results.fully_parsed,
-            if results.oracle_text_lexed > 0 {
-                results.fully_parsed * 100 / results.oracle_text_lexed
-            } else {
-                100
-            },
-        );
-    }
+    display_results(categories_results.as_slice());
 
     Ok(())
 }
@@ -187,7 +159,6 @@ fn run_card(card: &mtg_cardbase::Card) -> TestResult {
     }
 }
 
-/// Doc
 fn card_legal_in(card: &mtg_cardbase::Card, format: mtg_data::Format) -> bool {
     let legality = match format {
         mtg_data::Format::Commander => &card.legalities.commander,
@@ -195,4 +166,56 @@ fn card_legal_in(card: &mtg_cardbase::Card, format: mtg_data::Format) -> bool {
         _ => unreachable!(),
     };
     legality == "legal" || legality == "restricted"
+}
+
+/// Print the result on the standard output, in markdown format.
+///
+/// Some efforts are made so that the results are also somewhat readable in a text format.
+fn display_results(categories_results: &[(CoverageTestCase, CoverageTestResults)]) {
+    fn pct(num: usize, den: usize) -> usize {
+        if den > 0 { num * 100 / den } else { 100 }
+    }
+
+    let headers = ["Category", "Cards total", "JSON Parsed", "Lexed", "Parsed"];
+
+    let rows: Vec<[String; 5]> = categories_results
+        .iter()
+        .map(|(category, r)| {
+            [
+                category.name.to_string(),
+                r.total.to_string(),
+                format!("{} ({}%)", r.json_parsed, pct(r.json_parsed, r.total)),
+                format!("{} ({}%)", r.oracle_text_lexed, pct(r.oracle_text_lexed, r.json_parsed)),
+                format!("{} ({}%)", r.fully_parsed, pct(r.fully_parsed, r.oracle_text_lexed)),
+            ]
+        })
+        .collect();
+
+    /* Compute column width for pretty display (max length) */
+    let mut widths: [usize; 5] = headers.map(|h| h.len());
+    for row in &rows {
+        for (w, cell) in widths.iter_mut().zip(row.iter()) {
+            *w = (*w).max(cell.len());
+        }
+    }
+
+    /* Display the table */
+    println!();
+    let fmt_row = |cells: &[&str]| {
+        let line: Vec<String> = cells
+            .iter()
+            .zip(widths.iter())
+            .map(|(c, w)| format!(" {:<w$} ", c, w = w))
+            .collect();
+        println!("|{}|", line.join("|"));
+    };
+
+    /* Header */
+    fmt_row(&headers);
+    /* Header separator */
+    println!("|{}|", widths.iter().map(|w| "-".repeat(w + 2)).collect::<Vec<_>>().join("|"));
+    /* Rows */
+    for row in &rows {
+        fmt_row(&row.each_ref().map(|s| s.as_str()));
+    }
 }

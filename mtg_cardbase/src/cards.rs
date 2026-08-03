@@ -7,11 +7,11 @@ impl AllCardsIter {
         /* All possible serach paths ? */
         const SEARCH_PATHS: &[&'static str] = &[
             /* Cargo bin run the executables from the workspaces */
-            "mtg_cardbase/data/cards.json",
+            "mtg_cardbase/data/cards.jsonl",
             /* Cargo test run them from the crates, so we need to go back */
-            "../mtg_cardbase/data/cards.json",
+            "../mtg_cardbase/data/cards.jsonl",
             /* Brainstorm can be used as a lib, so we shall account for that too */
-            "../brainstorm/mtg_cardbase/data/cards.json",
+            "../brainstorm/mtg_cardbase/data/cards.jsonl",
         ];
         /*
             If this throws an error, you might be missing the card database.
@@ -21,10 +21,16 @@ impl AllCardsIter {
         for search_path in SEARCH_PATHS {
             if let Ok(cards) = std::fs::read_to_string(search_path) {
                 cards_json = Some(cards);
+                break;
             }
         }
         let cards_json = cards_json.expect("Missing json card database!");
-        let all_cards: Vec<crate::Card> = serde_json::from_str(&cards_json).expect("Invalid json for provided card list!");
+        let all_cards: Vec<crate::Card> = cards_json
+            .lines()
+            .map(|card_json| serde_json::from_str(card_json))
+            .collect::<Result<Vec<_>, _>>()
+            .expect("Invalid json for provided card list");
+
         Self(all_cards)
     }
 
