@@ -85,6 +85,7 @@ impl Default for NormalLayout {
             mana_cost: Default::default(),
             card_type: Default::default(),
             abilities: Default::default(),
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
     }

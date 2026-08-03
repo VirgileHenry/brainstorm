@@ -6,6 +6,7 @@ pub struct AbilityWord {
     pub span: boseiju_span::Span,
 }
 
+#[cfg(feature = "spanned_tree")]
 impl boseiju_span::Spanned for AbilityWord {
     fn span(&self) -> boseiju_span::Span {
         self.span

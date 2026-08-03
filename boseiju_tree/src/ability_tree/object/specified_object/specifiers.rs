@@ -26,15 +26,27 @@ pub enum Specifiers<T: Specifier + Node> {
 impl<T> Specifiers<T>
 where
     T: Specifier + Node + Clone,
+{
+    pub fn merge_specifiers(&self, other: Self) -> Self {
+        match (self, other) {
+            (current, Self::Single(single)) => current.add_factor_specifier(single),
+            (Self::Single(single), current) => current.add_factor_specifier(single.clone()),
+            _ => unimplemented!("fuck me"),
+        }
+    }
+}
+
+#[cfg(feature = "spanned_tree")]
+impl<T> Specifiers<T>
+where
+    T: Specifier + Node + Clone,
     T: boseiju_span::Spanned,
 {
     pub fn add_factor_specifier(&self, factor_specifier: T) -> Self {
-        #[cfg(feature = "spanned_tree")]
         use boseiju_span::Spanned;
 
         match self {
             Self::Single(specifier) => Self::And(SpecifierAndList {
-                #[cfg(feature = "spanned_tree")]
                 span: self.span().merge(&factor_specifier.span()),
                 specifiers: {
                     let mut specifiers = crate::HeapArrayVec::new();
@@ -44,7 +56,6 @@ where
                 },
             }),
             Self::And(and) => Self::And(SpecifierAndList {
-                #[cfg(feature = "spanned_tree")]
                 span: and.span.merge(&factor_specifier.span()),
                 specifiers: {
                     let mut and_specifiers = and.specifiers.clone();
@@ -62,7 +73,6 @@ where
                 }
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
-                    #[cfg(feature = "spanned_tree")]
                     span: or.span.merge(&factor_specifier.span()),
                 }
             }),
@@ -73,18 +83,55 @@ where
                 }
                 SpecifierOrOfAndList {
                     specifiers: or_specifiers,
-                    #[cfg(feature = "spanned_tree")]
                     span: or_of_and.span.merge(&factor_specifier.span()),
                 }
             }),
         }
     }
-
-    pub fn merge_specifiers(&self, other: Self) -> Self {
-        match (self, other) {
-            (current, Self::Single(single)) => current.add_factor_specifier(single),
-            (Self::Single(single), current) => current.add_factor_specifier(single.clone()),
-            _ => unimplemented!("fuck me"),
+}
+#[cfg(not(feature = "spanned_tree"))]
+impl<T> Specifiers<T>
+where
+    T: Specifier + Node + Clone,
+{
+    pub fn add_factor_specifier(&self, factor_specifier: T) -> Self {
+        match self {
+            Self::Single(specifier) => Self::And(SpecifierAndList {
+                specifiers: {
+                    let mut specifiers = crate::HeapArrayVec::new();
+                    specifiers.push(specifier.clone());
+                    specifiers.push(factor_specifier);
+                    specifiers
+                },
+            }),
+            Self::And(and) => Self::And(SpecifierAndList {
+                specifiers: {
+                    let mut and_specifiers = and.specifiers.clone();
+                    and_specifiers.push(factor_specifier);
+                    and_specifiers
+                },
+            }),
+            Self::Or(or) => Self::OrOfAnd({
+                let mut or_specifiers = crate::HeapArrayVec::new();
+                for specifier in or.specifiers.iter() {
+                    let mut and_specifiers = arrayvec::ArrayVec::new_const();
+                    and_specifiers.push(specifier.clone());
+                    and_specifiers.push(factor_specifier.clone());
+                    or_specifiers.push(and_specifiers);
+                }
+                SpecifierOrOfAndList {
+                    specifiers: or_specifiers,
+                }
+            }),
+            Self::OrOfAnd(or_of_and) => Self::OrOfAnd({
+                let mut or_specifiers = or_of_and.specifiers.clone();
+                for and_specifiers in or_specifiers.iter_mut() {
+                    and_specifiers.push(factor_specifier.clone());
+                }
+                SpecifierOrOfAndList {
+                    specifiers: or_specifiers,
+                }
+            }),
         }
     }
 }

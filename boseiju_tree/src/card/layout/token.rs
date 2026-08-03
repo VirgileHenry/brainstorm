@@ -93,6 +93,7 @@ impl Default for TokenLayout {
             card_type: Default::default(),
             color_identity: Default::default(),
             abilities: Default::default(),
+            #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }
     }

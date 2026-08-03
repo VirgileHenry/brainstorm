@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::AttachedObject;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::PreviouslyMentionned;
@@ -27,6 +27,7 @@ impl Permanent {
         use crate::ability_tree::object::kind::CardKind;
         use crate::ability_tree::object::reference::CardReference;
         use crate::ability_tree::object::specified_object::SpecifiedCard;
+        #[cfg(feature = "spanned_tree")]
         use boseiju_span::Spanned;
 
         match self {

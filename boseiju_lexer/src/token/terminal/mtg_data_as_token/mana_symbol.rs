@@ -36,6 +36,7 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for ManaSymbol {
         use std::str::FromStr;
         Ok(Self {
             mana_symbol: mtg_data::ManaSymbol::from_str(span.text)?,
+            #[cfg(feature = "spanned_tree")]
             span: span.into(),
         })
     }

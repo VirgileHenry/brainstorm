@@ -21,8 +21,12 @@ regex = { workspace = true }
 uuid = { workspace = true }
 
 [features]
-default = ["spanned_tree"]
-spanned_tree = ["dep:boseiju_span"]
+default = []
+spanned_tree = [
+    "dep:boseiju_span",
+    "boseiju_lexer/spanned_tree",
+    "boseiju_tree/spanned_tree",
+]
 
 [[bin]]
 name = "debug"

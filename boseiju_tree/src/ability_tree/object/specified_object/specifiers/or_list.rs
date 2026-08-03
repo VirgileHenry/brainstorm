@@ -15,6 +15,7 @@ pub struct SpecifierOrList<T: Specifier + Node> {
     pub span: boseiju_span::Span,
 }
 
+#[cfg(feature = "spanned_tree")]
 impl<T> SpecifierOrList<T>
 where
     T: Specifier + Node + Clone,
@@ -30,8 +31,25 @@ where
         }
         SpecifierOrOfAndList {
             specifiers: or_specifiers,
-            #[cfg(feature = "spanned_tree")]
             span: self.span.merge(&factor_specifier.span()),
+        }
+    }
+}
+#[cfg(not(feature = "spanned_tree"))]
+impl<T> SpecifierOrList<T>
+where
+    T: Specifier + Node + Clone,
+{
+    pub fn add_factor_specifier(&self, factor_specifier: T) -> SpecifierOrOfAndList<T> {
+        let mut or_specifiers = crate::HeapArrayVec::new();
+        for prev_specifier in self.specifiers.iter() {
+            let mut and_specifiers = arrayvec::ArrayVec::new_const();
+            and_specifiers.push(prev_specifier.clone());
+            and_specifiers.push(factor_specifier.clone());
+            or_specifiers.push(and_specifiers);
+        }
+        SpecifierOrOfAndList {
+            specifiers: or_specifiers,
         }
     }
 }

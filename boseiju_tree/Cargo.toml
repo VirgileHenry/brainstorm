@@ -19,5 +19,5 @@ serde-big-array = "0.5.1"
 uuid = { workspace = true }
 
 [features]
-default = ["spanned_tree"]
+default = []
 spanned_tree = ["dep:boseiju_span"]

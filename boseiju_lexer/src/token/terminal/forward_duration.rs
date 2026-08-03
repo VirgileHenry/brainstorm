@@ -30,6 +30,7 @@ impl Default for ForwardDuration {
     }
 }
 
+#[cfg(feature = "spanned_tree")]
 impl boseiju_span::Spanned for ForwardDuration {
     fn span(&self) -> boseiju_span::Span {
         match self {
