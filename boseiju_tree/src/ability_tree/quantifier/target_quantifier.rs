@@ -1,63 +1,64 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
 
-/// A Artifact reference.
+/// A condition that is met when a given event has occured in a given timeframe.
+///
+/// Examples are, "if you attacked this turn" or "if a creature died this turn".
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ArtifactReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
-    pub artifact: crate::ability_tree::object::specified_object::SpecifiedArtifact,
+pub struct TargetQuantifier {
+    pub number: crate::ability_tree::number::Number,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl Node for ArtifactReference {
+impl crate::Node for TargetQuantifier {
     fn node_id(&self) -> usize {
         use idris::Idris;
-        crate::NodeKind::ArtifactReference.id()
+        crate::NodeKind::TargetQuantifier.id()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.count as &dyn Node);
-        children.push(&self.artifact as &dyn Node);
+        children.push(&self.number as &dyn Node);
         children
     }
 
     fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "Artifact reference:")?;
-        out.push_inter_branch()?;
-        write!(out, "count:")?;
+        write!(out, "target quantifier:")?;
         out.push_final_branch()?;
-        self.count.display(out)?;
-        out.pop_branch();
-        out.next_final_branch()?;
-        write!(out, "artifact:")?;
-        out.push_final_branch()?;
-        self.artifact.display(out)?;
-        out.pop_branch();
+        self.number.display(out)?;
         out.pop_branch();
         Ok(())
     }
 
     fn node_tag(&self) -> &'static str {
-        "Artifact reference"
+        "target quantifier"
     }
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for ArtifactReference {
+impl boseiju_span::Spanned for TargetQuantifier {
     fn span(&self) -> boseiju_span::Span {
         self.span
     }
 }
 
-impl Default for ArtifactReference {
+impl idris::Idris for TargetQuantifier {
+    const COUNT: usize = 1;
+    fn id(&self) -> usize {
+        0
+    }
+    fn name_from_id(_: usize) -> &'static str {
+        "TargetQuantifier"
+    }
+}
+
+impl Default for TargetQuantifier {
     fn default() -> Self {
         Self {
-            count: Default::default(),
-            artifact: Default::default(),
+            number: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

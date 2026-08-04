@@ -154,10 +154,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                 span: card_span.empty_at_start(),
                             },
                         ),
-                        player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                            #[cfg(feature = "spanned_tree")]
-                            span: *your_span,
-                        },
+                        player: boseiju_tree::ability_tree::player::PlayerReference::You(
+                            boseiju_tree::ability_tree::player::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *your_span,
+                            },
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
                     }),
@@ -167,6 +169,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
         /* "the top cards of their library" is a card reference */
+        /* Fixme: need context to properly parse this
         ParserRule {
             expanded: RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
@@ -233,7 +236,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                 span: card_span.empty_at_start(),
                             },
                         ),
-                        player: boseiju_tree::ability_tree::player::PlayerSpecifier::PerviouslyMentionnedPlayer {
+                        player: boseiju_tree::ability_tree::player::PlayerReference::PerviouslyMentionnedPlayer {
                             #[cfg(feature = "spanned_tree")]
                             span: *their_span,
                         },
@@ -244,7 +247,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
-        },
+        }, */
         /* "the top <number> cards of <player>'s library" is a card reference */
         ParserRule {
             expanded: RuleLhs::new(&[
@@ -382,85 +385,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 ] => Ok(ParserNode::Card {
                     card: object::Card::TopCardsOfLibrary(object::TopCardsOfLibrary {
                         amount: number.clone(),
-                        player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                            #[cfg(feature = "spanned_tree")]
-                            span: *your_span,
-                        },
-                        #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(end_span),
-                    }),
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
-        /* "the top <number> cards of their library" is a card reference */
-        ParserRule {
-            expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::Number {
-                    number: Default::default(),
-                }
-                .id(),
-                ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Their {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::OwnableZone(boseiju_lexer::terminal::OwnableZone::Library {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-            ]),
-            merged: ParserNode::Card {
-                card: Default::default(),
-            }
-            .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
-                        #[cfg(feature = "spanned_tree")]
-                            span: start_span,
-                    })),
-                    ParserNode::LexerToken(Token::AdverbialPositional(intermediate::AdverbialPositional::Top { .. })),
-                    ParserNode::Number { number },
-                    ParserNode::LexerToken(Token::GameTerm(intermediate::GameTerm::Card { .. })),
-                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::Of { .. })),
-                    ParserNode::LexerToken(Token::EnglishPossessive(intermediate::EnglishPossessive::Their {
-                        #[cfg(feature = "spanned_tree")]
-                            span: their_span,
-                    })),
-                    ParserNode::LexerToken(Token::OwnableZone(boseiju_lexer::terminal::OwnableZone::Library {
-                        #[cfg(feature = "spanned_tree")]
-                            span: end_span,
-                    })),
-                ] => Ok(ParserNode::Card {
-                    card: object::Card::TopCardsOfLibrary(object::TopCardsOfLibrary {
-                        amount: number.clone(),
-                        player: boseiju_tree::ability_tree::player::PlayerSpecifier::PerviouslyMentionnedPlayer {
-                            #[cfg(feature = "spanned_tree")]
-                            span: *their_span,
-                        },
+                        player: boseiju_tree::ability_tree::player::PlayerReference::You(
+                            boseiju_tree::ability_tree::player::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *your_span,
+                            },
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: start_span.merge(end_span),
                     }),

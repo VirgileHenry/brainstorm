@@ -8,6 +8,7 @@ use boseiju_lexer::terminal;
 use boseiju_tree::ability_tree::ability;
 use boseiju_tree::ability_tree::number;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
@@ -47,11 +48,15 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     keyword: ability::keyword_ability::ExpandedKeywordAbility::Enchant(
                         ability::keyword_ability::EnchantKeywordAbility {
                             enchantable_object: object::Permanent::Reference(object::reference::PermanentReference {
-                                count: object::CountSpecifier::Target(number::Number::Number(number::FixedNumber {
-                                    number: 1,
+                                count: quantifier::Quantifier::Target(quantifier::TargetQuantifier {
+                                    number: number::Number::Number(number::FixedNumber {
+                                        number: 1,
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: enchant_span.empty_at_end(),
+                                    }),
                                     #[cfg(feature = "spanned_tree")]
                                     span: enchant_span.empty_at_end(),
-                                })),
+                                }),
                                 permanent: object::specified_object::SpecifiedPermanent {
                                     kind: object::kind::PermanentKind::Creature(object::specified_object::SpecifiedCreature {
                                         kind: object::kind::CreatureKind::Creature {

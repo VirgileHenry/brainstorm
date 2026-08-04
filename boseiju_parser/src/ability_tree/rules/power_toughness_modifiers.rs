@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "+<number>/+<nmber>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -45,13 +45,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
                     ParserNode::Number { number: power },
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
                     modifiers: continuous_effect_kind::PowerToughnessModifiers::PlusPlus(
@@ -70,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "+<number>/-<nmber>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -100,7 +100,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -139,7 +139,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -161,7 +161,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     })),
                     ParserNode::Number { number: power },
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
                     modifiers: continuous_effect_kind::PowerToughnessModifiers::MinusPlus(

@@ -4,8 +4,8 @@ mod x_definition;
 pub use game_state_number::*;
 pub use x_definition::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A number.
 ///
@@ -24,10 +24,6 @@ pub enum Number {
     },
     Number(FixedNumber),
     OrMore(OrMoreNumber),
-    ThatMany {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
     UpTo(UpToNumber),
     X(XNumber),
 }
@@ -46,9 +42,8 @@ impl Node for Number {
             Self::OrMore(child) => children.push(child as &dyn Node),
             Self::UpTo(child) => children.push(child as &dyn Node),
             Self::X(child) => children.push(child as &dyn Node),
-            Self::AnyNumber { .. } | Self::ThatMany { .. } => children.push(crate::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::NodeKind::Number(self.clone()).id(),
-            ) as &dyn Node),
+            Self::AnyNumber { .. } => children
+                .push(crate::dummy_terminal::TreeNodeDummyTerminal::new(crate::NodeKind::Number(self.clone()).id()) as &dyn Node),
         }
         children
     }
@@ -60,7 +55,6 @@ impl Node for Number {
             Self::Number(number) => number.display(out)?,
             Self::OrMore(number) => number.display(out)?,
             Self::UpTo(number) => number.display(out)?,
-            Self::ThatMany { .. } => write!(out, "that many")?,
             Self::X(number) => number.display(out)?,
         }
         Ok(())
@@ -79,7 +73,6 @@ impl boseiju_span::Spanned for Number {
             Self::Number(child) => child.span(),
             Self::OrMore(child) => child.span(),
             Self::UpTo(child) => child.span(),
-            Self::ThatMany { span } => *span,
             Self::X(child) => child.span(),
         }
     }

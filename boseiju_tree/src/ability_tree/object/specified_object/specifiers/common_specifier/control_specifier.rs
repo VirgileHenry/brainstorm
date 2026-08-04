@@ -1,11 +1,11 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A specifier for who controls a permanents.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ControlSpecifier {
-    pub controller: crate::ability_tree::player::PlayerSpecifier,
+    pub controller: crate::ability_tree::player::PlayerReference,
     pub controlled: bool,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

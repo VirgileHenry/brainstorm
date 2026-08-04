@@ -1,12 +1,12 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Card reference that references the top X cards of one's library.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TopCardsOfLibrary {
     pub amount: crate::ability_tree::number::Number,
-    pub player: crate::ability_tree::player::PlayerSpecifier,
+    pub player: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

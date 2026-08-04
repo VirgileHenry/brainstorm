@@ -1,11 +1,11 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A DamageReceiver reference.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DamageReceiverReference {
-    pub count: crate::ability_tree::object::CountSpecifier,
+    pub count: crate::ability_tree::quantifier::Quantifier,
     pub kind: crate::ability_tree::object::kind::DamageReceiverKind, /* Fixme: specified */
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

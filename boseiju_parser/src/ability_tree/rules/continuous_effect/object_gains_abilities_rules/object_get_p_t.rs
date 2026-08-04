@@ -12,7 +12,7 @@ use idris::Idris;
 use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
-    /* "<creature> get <power toughness modifiers>" */
+    /* "<creature> gets <power toughness modifiers>" */
     [ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::Creature {

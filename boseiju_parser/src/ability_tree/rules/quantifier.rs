@@ -3,6 +3,9 @@ use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use idris::Idris;
 
+#[cfg(feature = "spanned_tree")]
+use boseiju_span::Spanned;
+
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "A" is the minimal count specifier */
@@ -14,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id()],
             ),
-            merged: ParserNode::CountSpecifier {
+            merged: ParserNode::Quantifier {
                 count: Default::default(),
             }
             .id(),
@@ -24,11 +27,20 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::A {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
+                ] => Ok(ParserNode::Quantifier {
+                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Count(
+                        boseiju_tree::ability_tree::quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *span,
+                                },
+                            ),
+                            #[cfg(feature = "spanned_tree")]
+                            span: *span,
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -43,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::CountSpecifier {
+            merged: ParserNode::Quantifier {
                 count: Default::default(),
             }
             .id(),
@@ -53,11 +65,20 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::A {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    },
+                ] => Ok(ParserNode::Quantifier {
+                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Count(
+                        boseiju_tree::ability_tree::quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *span,
+                                },
+                            ),
+                            #[cfg(feature = "spanned_tree")]
+                            span: *span,
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -65,18 +86,25 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         },
         /* Numbers on their own can make count specifiers */
         /* Fixme: check what cards fails without it, maybe this is too much */
+        /* Fixme: as sais in the quantifier node, maybe this is nooot super clean */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::Number {
                 number: Default::default(),
             }
             .id()]),
-            merged: ParserNode::CountSpecifier {
+            merged: ParserNode::Quantifier {
                 count: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Number { number }] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::Count(number.clone()),
+                &[ParserNode::Number { number }] => Ok(ParserNode::Quantifier {
+                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Count(
+                        boseiju_tree::ability_tree::quantifier::CountQuantifier {
+                            number: number.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: number.span(),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -95,7 +123,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::CountSpecifier {
+            merged: ParserNode::Quantifier {
                 count: Default::default(),
             }
             .id(),
@@ -103,8 +131,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target { .. })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::Target(number.clone()),
+                ] => Ok(ParserNode::Quantifier {
+                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Target(
+                        boseiju_tree::ability_tree::quantifier::TargetQuantifier {
+                            number: number.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: number.span(),
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
@@ -119,7 +153,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 },
             ))
             .id()]),
-            merged: ParserNode::CountSpecifier {
+            merged: ParserNode::Quantifier {
                 count: Default::default(),
             }
             .id(),
@@ -129,13 +163,19 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::Target(
-                        boseiju_tree::ability_tree::number::Number::Number(boseiju_tree::ability_tree::number::FixedNumber {
-                            number: 1,
+                ] => Ok(ParserNode::Quantifier {
+                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Target(
+                        boseiju_tree::ability_tree::quantifier::TargetQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: span.empty_at_start(),
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: *span,
-                        }),
+                        },
                     ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
@@ -151,7 +191,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::CountSpecifier {
+            merged: ParserNode::Quantifier {
                 count: Default::default(),
             }
             .id(),
@@ -161,49 +201,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::All {
+                ] => Ok(ParserNode::Quantifier {
+                    count: boseiju_tree::ability_tree::quantifier::Quantifier::All(boseiju_tree::ability_tree::quantifier::All {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
-                    },
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: super::ParserRuleDeclarationLocation::here(),
-        },
-        /* "The next" is a count specifier */
-        super::ParserRule {
-            expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-                ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Next {
-                    #[cfg(feature = "spanned_tree")]
-                    span: Default::default(),
-                }))
-                .id(),
-            ]),
-            merged: ParserNode::CountSpecifier {
-                count: Default::default(),
-            }
-            .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::The {
-                        #[cfg(feature = "spanned_tree")]
-                            span: start_span,
-                    })),
-                    ParserNode::LexerToken(Token::EnglishTemporal(intermediate::EnglishTemporal::Next {
-                        #[cfg(feature = "spanned_tree")]
-                            span: end_span,
-                    })),
-                ] => Ok(ParserNode::CountSpecifier {
-                    count: boseiju_tree::ability_tree::object::CountSpecifier::TheNext {
-                        #[cfg(feature = "spanned_tree")]
-                        span: start_span.merge(end_span),
-                    },
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

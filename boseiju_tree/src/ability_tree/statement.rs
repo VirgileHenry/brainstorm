@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::imperative_list::ImperativeList;
 
 /// Fixme: doc
@@ -66,7 +66,7 @@ impl Default for Statement {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MayAbility {
-    pub player: crate::ability_tree::player::PlayerSpecifier,
+    pub player: crate::ability_tree::player::PlayerReference,
     pub action: crate::ability_tree::imperative_list::ImperativeList,
     pub if_it_is_done: Option<Box<Statement>>,
     pub if_not_done: Option<Box<Statement>>,

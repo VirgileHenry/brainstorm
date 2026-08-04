@@ -143,33 +143,6 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             creation_loc: ParserRuleDeclarationLocation::here(),
         },
         */
-        /* "that many" number */
-        ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::Number(intermediate::Number::ThatMany {
-                #[cfg(feature = "spanned_tree")]
-                span: Default::default(),
-            }))
-            .id()]),
-            merged: ParserNode::Number {
-                number: Default::default(),
-            }
-            .id(),
-            reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::LexerToken(Token::Number(intermediate::Number::ThatMany {
-                        #[cfg(feature = "spanned_tree")]
-                            span: number_span,
-                    })),
-                ] => Ok(ParserNode::Number {
-                    number: number::Number::ThatMany {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *number_span,
-                    },
-                }),
-                _ => Err("Provided tokens do not match rule definition"),
-            },
-            creation_loc: ParserRuleDeclarationLocation::here(),
-        },
     ]
     .into_iter()
 }

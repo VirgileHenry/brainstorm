@@ -5,6 +5,7 @@ use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -37,10 +38,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 ParserNode::SpecifiedCreature { creature },
             ] => Ok(ParserNode::Creature {
                 creature: object::Creature::Reference(object::reference::CreatureReference {
-                    count: object::CountSpecifier::A {
+                    count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
+                        number: boseiju_tree::ability_tree::number::Number::Number(
+                            boseiju_tree::ability_tree::number::FixedNumber {
+                                number: 1,
+                                #[cfg(feature = "spanned_tree")]
+                                span: *another_span,
+                            },
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: *another_span,
-                    },
+                    }),
                     creature: creature.add_factor_specifier(object::specified_object::CreatureSpecifier::Another(
                         object::specified_object::AnotherObjectSpecifier {
                             #[cfg(feature = "spanned_tree")]

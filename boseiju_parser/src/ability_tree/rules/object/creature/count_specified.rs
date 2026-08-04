@@ -3,6 +3,7 @@ use crate::ability_tree::rules::ParserRule;
 use crate::ability_tree::rules::ParserRuleDeclarationLocation;
 use crate::ability_tree::rules::RuleLhs;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -13,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<count> <specified creature>" is a creature */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier {
+                ParserNode::Quantifier {
                     count: Default::default(),
                 }
                 .id(),
@@ -27,10 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::CountSpecifier { count },
-                    ParserNode::SpecifiedCreature { creature },
-                ] => Ok(ParserNode::Creature {
+                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::Creature {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
                         count: count.clone(),
                         creature: creature.clone(),
@@ -55,10 +53,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::Creature {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
-                        count: object::CountSpecifier::All {
+                        count: quantifier::Quantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: creature.span().empty_at_start(),
-                        },
+                        }),
                         creature: creature.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: creature.span(),

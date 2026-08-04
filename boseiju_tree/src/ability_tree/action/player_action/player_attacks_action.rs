@@ -1,12 +1,12 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An action for when a creature attacks.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerAttacksAction {
-    pub player: crate::ability_tree::player::PlayerSpecifier,
-    pub attacked_player: Option<crate::ability_tree::player::PlayerSpecifier>,
+    pub player: crate::ability_tree::player::PlayerReference,
+    pub attacked_player: Option<crate::ability_tree::player::PlayerReference>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

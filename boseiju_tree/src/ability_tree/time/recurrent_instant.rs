@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A recurrent instant is an instant that appear in a recurrent manner.
 /// For instance, "the beginning of your turn".
@@ -7,7 +7,7 @@ use crate::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RecurrentInstant {
     pub step_or_phase: crate::ability_tree::time::StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerSpecifier,
+    pub owner: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

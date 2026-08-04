@@ -5,6 +5,7 @@ use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -15,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<count> <specified spell>" is a spell */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier {
+                ParserNode::Quantifier {
                     count: Default::default(),
                 }
                 .id(),
@@ -29,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
+                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
                         count: count.clone(),
                         spell: spell.clone(),
@@ -67,10 +68,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::SpecifiedSpell { spell },
                 ] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: object::CountSpecifier::A {
+                        count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *another_span,
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
-                        },
+                        }),
                         spell: spell.add_factor_specifier(object::specified_object::SpellSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]
@@ -98,10 +106,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: object::CountSpecifier::All {
+                        count: quantifier::Quantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: spell.span().empty_at_start(),
-                        },
+                        }),
                         spell: spell.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: spell.span(),

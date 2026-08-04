@@ -8,6 +8,7 @@ use boseiju_tree::ability_tree::ability::statik::continuous_effect::ContinuousEf
 use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
 use boseiju_tree::ability_tree::action;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -118,10 +119,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                 continuous_effect_kind::CreatureCantDoAction {
                                     action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
                                         creature: object::Creature::Reference(object::reference::CreatureReference {
-                                            count: object::CountSpecifier::All {
+                                            count: quantifier::Quantifier::All(quantifier::All {
                                                 #[cfg(feature = "spanned_tree")]
                                                 span: block_span.empty_at_end(),
-                                            },
+                                            }),
                                             creature: object::specified_object::SpecifiedCreature {
                                                 kind: object::kind::CreatureKind::Creature {
                                                     #[cfg(feature = "spanned_tree")]

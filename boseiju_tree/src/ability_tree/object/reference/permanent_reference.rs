@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A permanent reference.
 ///
@@ -7,7 +7,7 @@ use crate::MAX_CHILDREN_PER_NODE;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PermanentReference {
-    pub count: crate::ability_tree::object::CountSpecifier,
+    pub count: crate::ability_tree::quantifier::Quantifier,
     pub permanent: crate::ability_tree::object::specified_object::SpecifiedPermanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

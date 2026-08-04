@@ -5,6 +5,7 @@ use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -15,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<count> <specified permanent>" is a permanent */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier {
+                ParserNode::Quantifier {
                     count: Default::default(),
                 }
                 .id(),
@@ -29,10 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::CountSpecifier { count },
-                    ParserNode::SpecifiedPermanent { permanent },
-                ] => Ok(ParserNode::Permanent {
+                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedPermanent { permanent }] => Ok(ParserNode::Permanent {
                     permanent: object::Permanent::Reference(object::reference::PermanentReference {
                         count: count.clone(),
                         permanent: permanent.clone(),
@@ -57,10 +55,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedPermanent { permanent }] => Ok(ParserNode::Permanent {
                     permanent: object::Permanent::Reference(object::reference::PermanentReference {
-                        count: object::CountSpecifier::All {
+                        count: quantifier::Quantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: permanent.span().empty_at_start(),
-                        },
+                        }),
                         permanent: permanent.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: permanent.span(),
@@ -96,10 +94,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::SpecifiedPermanent { permanent },
                 ] => Ok(ParserNode::Permanent {
                     permanent: object::Permanent::Reference(object::reference::PermanentReference {
-                        count: object::CountSpecifier::A {
+                        count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *another_span,
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
-                        },
+                        }),
                         permanent: permanent.add_factor_specifier(object::specified_object::PermanentSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]

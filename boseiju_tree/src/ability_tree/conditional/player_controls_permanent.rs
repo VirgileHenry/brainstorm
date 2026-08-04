@@ -7,7 +7,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionPlayerControlsPermanent {
-    pub player: crate::ability_tree::player::PlayerSpecifier,
+    pub player: crate::ability_tree::player::PlayerReference,
     pub permanent: crate::ability_tree::object::Permanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

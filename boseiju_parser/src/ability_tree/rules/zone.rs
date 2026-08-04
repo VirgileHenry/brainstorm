@@ -78,10 +78,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         zone: boseiju_tree::ability_tree::zone::ZoneReference::OwnedZone(
                             boseiju_tree::ability_tree::zone::OwnedZone {
                                 zone: zone.clone(),
-                                owner: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                                    #[cfg(feature = "spanned_tree")]
-                                    span: *owner_span,
-                                },
+                                owner: boseiju_tree::ability_tree::player::PlayerReference::You(
+                                    boseiju_tree::ability_tree::player::You {
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *owner_span,
+                                    },
+                                ),
                                 #[cfg(feature = "spanned_tree")]
                                 span: owner_span.merge(&zone.span()),
                             },

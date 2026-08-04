@@ -1,7 +1,6 @@
 mod artifact;
 mod attached_object;
 mod card;
-mod count_specifier;
 mod creature;
 mod damage_receiver;
 mod enchantment;
@@ -20,7 +19,6 @@ pub use artifact::Artifact;
 pub use attached_object::AttachedObject;
 pub use card::Card;
 pub use card::TopCardsOfLibrary;
-pub use count_specifier::CountSpecifier;
 pub use creature::Creature;
 pub use damage_receiver::AnyTarget;
 pub use damage_receiver::DamageReceiver;

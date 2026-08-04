@@ -1,11 +1,11 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A Enchantment reference.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EnchantmentReference {
-    pub count: crate::ability_tree::object::CountSpecifier,
+    pub count: crate::ability_tree::quantifier::Quantifier,
     pub enchantment: crate::ability_tree::object::specified_object::SpecifiedEnchantment,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

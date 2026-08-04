@@ -1,11 +1,11 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A creature reference.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureReference {
-    pub count: crate::ability_tree::object::CountSpecifier,
+    pub count: crate::ability_tree::quantifier::Quantifier,
     pub creature: crate::ability_tree::object::specified_object::SpecifiedCreature,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

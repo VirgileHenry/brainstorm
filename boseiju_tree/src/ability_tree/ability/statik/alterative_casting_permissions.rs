@@ -8,7 +8,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlternativeCastingPermissions {
-    pub player: crate::ability_tree::player::PlayerSpecifier,
+    pub player: crate::ability_tree::player::PlayerReference,
     pub object: crate::ability_tree::object::Card,
     pub from_zone: crate::ability_tree::zone::ZoneReference,
     pub additional_cost: Option<crate::ability_tree::cost::Cost>,

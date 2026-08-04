@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An incoming instant is an instant that is defined from the moment it is resolved.
 /// For instance, "the beginning of your next turn" is an incoming instant.
@@ -66,7 +66,7 @@ impl Default for IncomingInstant {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IncomingNextStepOrPhase {
     pub step_or_phase: crate::ability_tree::time::StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerSpecifier,
+    pub owner: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
@@ -120,7 +120,7 @@ impl Default for IncomingNextStepOrPhase {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IncomingStepInNextTurn {
     pub step_or_phase: crate::ability_tree::time::StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerSpecifier,
+    pub owner: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

@@ -11,6 +11,7 @@ pub mod number;
 pub mod object;
 pub mod player;
 pub mod power_toughness;
+pub mod quantifier;
 pub mod replacement_effect;
 pub mod state;
 pub mod statement;

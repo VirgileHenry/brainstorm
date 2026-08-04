@@ -5,6 +5,7 @@ use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -15,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<count> <specified land>" is a land */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier {
+                ParserNode::Quantifier {
                     count: Default::default(),
                 }
                 .id(),
@@ -29,7 +30,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
+                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
                     land: object::Land::Reference(object::reference::LandReference {
                         count: count.clone(),
                         land: land.clone(),
@@ -54,10 +55,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
                     land: object::Land::Reference(object::reference::LandReference {
-                        count: object::CountSpecifier::All {
+                        count: quantifier::Quantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: land.span().empty_at_start(),
-                        },
+                        }),
                         land: land.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: land.span(),
@@ -93,10 +94,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::SpecifiedLand { land },
                 ] => Ok(ParserNode::Land {
                     land: object::Land::Reference(object::reference::LandReference {
-                        count: object::CountSpecifier::A {
+                        count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *another_span,
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
-                        },
+                        }),
                         land: land.add_factor_specifier(object::specified_object::LandSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]

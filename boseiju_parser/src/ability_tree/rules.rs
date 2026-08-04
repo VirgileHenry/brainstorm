@@ -18,7 +18,6 @@ mod conditional;
 mod continuous_effect;
 mod cost;
 mod cost_modifications;
-mod count_specifier;
 mod event;
 mod imperative;
 mod imperative_list;
@@ -28,11 +27,11 @@ mod keyword_action;
 mod mana;
 mod number;
 mod object;
-mod object_count;
 mod object_kind;
 mod object_specifiers;
 mod player;
 mod power_toughness_modifiers;
+mod quantifier;
 mod replacement_effect;
 mod specified_object;
 mod spell_ability;
@@ -57,7 +56,6 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(continuous_effect::rules()),
         Box::new(cost::rules()),
         Box::new(cost_modifications::rules()),
-        Box::new(count_specifier::rules()),
         Box::new(event::rules()),
         Box::new(conditional::rules()),
         Box::new(imperative::rules()),
@@ -68,11 +66,11 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(mana::rules()),
         Box::new(number::rules()),
         Box::new(object::rules()),
-        Box::new(object_count::rules()),
         Box::new(object_kind::rules()),
         Box::new(object_specifiers::rules()),
         Box::new(player::rules()),
         Box::new(power_toughness_modifiers::rules()),
+        Box::new(quantifier::rules()),
         Box::new(replacement_effect::rules()),
         Box::new(specified_object::rules()),
         Box::new(spell_ability::rules()),
@@ -84,7 +82,6 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(triggered_condition::rules()),
         Box::new(x_definition::rules()),
         Box::new(zone::rules()),
-        Box::new(std::iter::empty()), /* Fixme: remove me */
     ];
     rules_iters.into_iter().flatten()
 }

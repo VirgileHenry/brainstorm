@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -44,7 +44,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -74,7 +74,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         token: intermediate::ActionKeyword::Get { .. },
                         tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -83,7 +83,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: x_span,
                     })),
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::Number { number: toughness },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),
                     ParserNode::XDefinition { definition },
@@ -144,7 +144,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -159,7 +159,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -190,7 +190,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         token: intermediate::ActionKeyword::Get { .. },
                         tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -199,7 +199,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: power_x_span,
                     })),
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::LexerToken(Token::Number(intermediate::Number::X {
                         #[cfg(feature = "spanned_tree")]
                             span: toughness_x_span,
@@ -269,7 +269,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -284,7 +284,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -319,7 +319,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         token: intermediate::ActionKeyword::Get { .. },
                         tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -328,7 +328,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: power_x_span,
                     })),
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::LexerToken(Token::Number(intermediate::Number::X {
                         #[cfg(feature = "spanned_tree")]
                             span: toughness_x_span,
@@ -402,7 +402,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -417,7 +417,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -451,7 +451,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         token: intermediate::ActionKeyword::Get { .. },
                         tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                     })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus {
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
@@ -460,7 +460,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: x_span,
                     })),
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::BarSymbol { .. })),
-                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Plus { .. })),
+                    ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::Number { number: toughness },
                     ParserNode::ForwardDuration { duration },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Comma { .. })),

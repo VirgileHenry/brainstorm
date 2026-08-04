@@ -7,6 +7,7 @@ use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use boseiju_tree::ability_tree::object;
+use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -17,7 +18,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<count> <specified card>" is a card */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier {
+                ParserNode::Quantifier {
                     count: Default::default(),
                 }
                 .id(),
@@ -31,7 +32,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::CountSpecifier { count }, ParserNode::SpecifiedCard { card }] => Ok(ParserNode::Card {
+                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedCard { card }] => Ok(ParserNode::Card {
                     card: object::Card::Reference(object::reference::CardReference {
                         count: count.clone(),
                         card: card.clone(),
@@ -69,10 +70,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::SpecifiedCard { card },
                 ] => Ok(ParserNode::Card {
                     card: object::Card::Reference(object::reference::CardReference {
-                        count: object::CountSpecifier::A {
+                        count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Number(
+                                boseiju_tree::ability_tree::number::FixedNumber {
+                                    number: 1,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *another_span,
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: *another_span,
-                        },
+                        }),
                         card: card.add_factor_specifier(object::specified_object::CardSpecifier::Another(
                             object::specified_object::AnotherObjectSpecifier {
                                 #[cfg(feature = "spanned_tree")]

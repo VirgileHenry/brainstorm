@@ -1,12 +1,12 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A zone that is owned by a player: libraries, hands, graveyards.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OwnedZone {
     pub zone: boseiju_lexer::terminal::OwnableZone,
-    pub owner: crate::ability_tree::player::PlayerSpecifier,
+    pub owner: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

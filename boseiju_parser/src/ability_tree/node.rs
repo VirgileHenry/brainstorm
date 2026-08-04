@@ -22,8 +22,9 @@ use boseiju_tree::ability_tree::number::{GameStateNumber, Number, XDefinition};
 use boseiju_tree::ability_tree::object::kind::*;
 use boseiju_tree::ability_tree::object::specified_object::*;
 use boseiju_tree::ability_tree::object::*;
-use boseiju_tree::ability_tree::player::PlayerSpecifier;
+use boseiju_tree::ability_tree::player::PlayerReference;
 use boseiju_tree::ability_tree::power_toughness::PowerToughness;
+use boseiju_tree::ability_tree::quantifier::Quantifier;
 use boseiju_tree::ability_tree::statement::Statement;
 use boseiju_tree::ability_tree::time::{IncomingInstant, RecurrentInstant};
 use boseiju_tree::ability_tree::type_line::TypeLine;
@@ -56,7 +57,6 @@ pub enum ParserNode {
     Cost { cost: Cost },
     CostModification { cost_modification: CostModification },
     CostModificationEffect { cost_modification: CostModificationEffect },
-    CountSpecifier { count: CountSpecifier },
     CreatedTokenKind { kind: CreatedTokenKind },
     CreatureAction { action: CreatureAction },
     Creature { creature: Creature },
@@ -95,10 +95,11 @@ pub enum ParserNode {
     PermanentSpecifier { specifier: PermanentSpecifier },
     PermanentSpecifiers { specifiers: Specifiers<PermanentSpecifier> },
     PlaneswalkerKind { planeswalker: PlaneswalkerKind },
-    Player { player: PlayerSpecifier },
+    Player { player: PlayerReference },
     PowerToughness { power_toughness: PowerToughness },
     PowerToughnessModifiers { modifiers: PowerToughnessModifiers },
     PutCounterKind { kind: CounterKind },
+    Quantifier { count: Quantifier },
     RecurrentInstant { instant: RecurrentInstant },
     SpecifiedArtifact { artifact: SpecifiedArtifact },
     SpecifiedCard { card: SpecifiedCard },

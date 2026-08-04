@@ -31,10 +31,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                 span: mana_cost.span(),
                             },
                         ),
-                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                            #[cfg(feature = "spanned_tree")]
-                            span: mana_cost.span().empty_at_start(),
-                        },
+                        executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
+                            boseiju_tree::ability_tree::player::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: mana_cost.span().empty_at_start(),
+                            },
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: mana_cost.span(),
                     },
@@ -83,10 +85,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                 span: mana_cost.span().merge(pay_span),
                             },
                         ),
-                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                            #[cfg(feature = "spanned_tree")]
-                            span: pay_span.empty_at_start(),
-                        },
+                        executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
+                            boseiju_tree::ability_tree::player::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: pay_span.empty_at_start(),
+                            },
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: mana_cost.span().merge(pay_span),
                     },

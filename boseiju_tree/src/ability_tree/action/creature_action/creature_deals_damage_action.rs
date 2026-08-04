@@ -7,7 +7,7 @@ use crate::Node;
 pub struct CreatureDealsDamageAction {
     pub creature: crate::ability_tree::object::Creature,
     pub damage_kind: boseiju_lexer::terminal::DamageKind,
-    pub to_player: Option<crate::ability_tree::player::PlayerSpecifier>,
+    pub to_player: Option<crate::ability_tree::player::PlayerReference>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

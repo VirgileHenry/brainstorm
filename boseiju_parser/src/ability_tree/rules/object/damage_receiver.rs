@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<count> <damage receiver kind>" is a damage receiver */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::CountSpecifier {
+                ParserNode::Quantifier {
                     count: Default::default(),
                 }
                 .id(),
@@ -29,17 +29,16 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[
-                    ParserNode::CountSpecifier { count },
-                    ParserNode::DamageReceiverKind { receiver },
-                ] => Ok(ParserNode::DamageReceiver {
-                    receiver: object::DamageReceiver::Reference(object::reference::DamageReceiverReference {
-                        count: count.clone(),
-                        kind: receiver.clone(),
-                        #[cfg(feature = "spanned_tree")]
-                        span: count.span().merge(&receiver.span()),
-                    }),
-                }),
+                &[ParserNode::Quantifier { count }, ParserNode::DamageReceiverKind { receiver }] => {
+                    Ok(ParserNode::DamageReceiver {
+                        receiver: object::DamageReceiver::Reference(object::reference::DamageReceiverReference {
+                            count: count.clone(),
+                            kind: receiver.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: count.span().merge(&receiver.span()),
+                        }),
+                    })
+                }
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),

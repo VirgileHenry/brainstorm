@@ -105,10 +105,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ] => Ok(ParserNode::RecurrentInstant {
                         instant: boseiju_tree::ability_tree::time::RecurrentInstant {
                             step_or_phase: boseiju_tree::ability_tree::time::StepOrPhase::Step(step.clone()),
-                            owner: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                                #[cfg(feature = "spanned_tree")]
-                                span: *player_span,
-                            },
+                            owner: boseiju_tree::ability_tree::player::PlayerReference::You(
+                                boseiju_tree::ability_tree::player::You {
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *player_span,
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&step.span()),
                         },
@@ -162,10 +164,19 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ] => Ok(ParserNode::RecurrentInstant {
                         instant: boseiju_tree::ability_tree::time::RecurrentInstant {
                             step_or_phase: boseiju_tree::ability_tree::time::StepOrPhase::Step(step.clone()),
-                            owner: boseiju_tree::ability_tree::player::PlayerSpecifier::All {
-                                #[cfg(feature = "spanned_tree")]
-                                span: *player_span,
-                            },
+                            owner: boseiju_tree::ability_tree::player::PlayerReference::SpecifiedPlayer(
+                                boseiju_tree::ability_tree::player::SpecifiedPlayer {
+                                    count: boseiju_tree::ability_tree::quantifier::Quantifier::All(
+                                        boseiju_tree::ability_tree::quantifier::All {
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: *player_span,
+                                        },
+                                    ),
+                                    specifiers: None,
+                                    #[cfg(feature = "spanned_tree")]
+                                    span: *player_span,
+                                },
+                            ),
                             #[cfg(feature = "spanned_tree")]
                             span: start_span.merge(&step.span()),
                         },
@@ -226,10 +237,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         instant: boseiju_tree::ability_tree::time::IncomingInstant::NextStepOrPhase(
                             boseiju_tree::ability_tree::time::IncomingNextStepOrPhase {
                                 step_or_phase: boseiju_tree::ability_tree::time::StepOrPhase::Step(step.clone()),
-                                owner: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                                    #[cfg(feature = "spanned_tree")]
-                                    span: *player_span,
-                                },
+                                owner: boseiju_tree::ability_tree::player::PlayerReference::You(
+                                    boseiju_tree::ability_tree::player::You {
+                                        #[cfg(feature = "spanned_tree")]
+                                        span: *player_span,
+                                    },
+                                ),
                                 #[cfg(feature = "spanned_tree")]
                                 span: step.span().merge(start_span),
                             },

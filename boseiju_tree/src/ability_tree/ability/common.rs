@@ -19,6 +19,7 @@ use crate::ability_tree::object::Permanent;
 use crate::ability_tree::object::SelfReferencing;
 use crate::ability_tree::statement::Statement;
 
+/* Fixme: this shall go in the parser ? */
 pub fn treasure_token_ability() -> crate::AbilityTree {
     crate::AbilityTree {
         abilities: {
@@ -49,10 +50,12 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                                         #[cfg(feature = "spanned_tree")]
                                         span: Default::default(),
                                     }),
-                                    executing_player: crate::ability_tree::player::PlayerSpecifier::You {
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: Default::default(),
-                                    },
+                                    executing_player: crate::ability_tree::player::PlayerReference::You(
+                                        crate::ability_tree::player::You {
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: Default::default(),
+                                        },
+                                    ),
                                     #[cfg(feature = "spanned_tree")]
                                     span: Default::default(),
                                 };
@@ -91,10 +94,10 @@ pub fn treasure_token_ability() -> crate::AbilityTree {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
                         }),
-                        executing_player: crate::ability_tree::player::PlayerSpecifier::You {
+                        executing_player: crate::ability_tree::player::PlayerReference::You(crate::ability_tree::player::You {
                             #[cfg(feature = "spanned_tree")]
                             span: Default::default(),
-                        },
+                        }),
                         #[cfg(feature = "spanned_tree")]
                         span: Default::default(),
                     }]

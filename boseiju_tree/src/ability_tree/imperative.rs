@@ -44,8 +44,8 @@ pub use search_imperative::*;
 pub use tap_imperative::*;
 pub use untap_imperative::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An imperative is an instruction a player must follow.
 /// It represents something that shall be done, and can appear in many places:
@@ -57,7 +57,7 @@ use crate::MAX_CHILDREN_PER_NODE;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Imperative {
     pub kind: ImperativeKind,
-    pub executing_player: crate::ability_tree::player::PlayerSpecifier,
+    pub executing_player: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

@@ -1,10 +1,10 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ClashKeywordAction {
-    pub opponent: crate::ability_tree::player::PlayerSpecifier,
+    pub opponent: crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
@@ -63,7 +63,7 @@ impl Default for ClashKeywordAction {
 }
 
 pub fn ability(
-    _opponent: &crate::ability_tree::player::PlayerSpecifier,
+    _opponent: &crate::ability_tree::player::PlayerReference,
     #[cfg(feature = "spanned_tree")] span: boseiju_span::Span,
 ) -> crate::ability_tree::ability::spell::SpellAbility {
     /* Fixme: unimplemented */

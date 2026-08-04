@@ -1,9 +1,9 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::specified_object::SpecifiedCreature;
 use crate::ability_tree::object::specified_object::SpecifiedPlaneswalker;
-use crate::ability_tree::player::PlayerSpecifier;
+use crate::ability_tree::player::PlayerReference;
 
 /// Any object that can receive damages.
 ///
@@ -14,7 +14,7 @@ pub enum DamageReceiverKind {
     Creature(SpecifiedCreature),
     OneAmong(OneAmong<Self>),
     Planeswalker(SpecifiedPlaneswalker),
-    Player(PlayerSpecifier),
+    Player(PlayerReference),
 }
 
 impl crate::Node for DamageReceiverKind {

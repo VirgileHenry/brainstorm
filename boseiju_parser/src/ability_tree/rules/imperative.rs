@@ -37,10 +37,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[ParserNode::ImperativeKind { imperative }] => Ok(ParserNode::Imperative {
                     imperative: boseiju_tree::ability_tree::imperative::Imperative {
                         kind: imperative.clone(),
-                        executing_player: boseiju_tree::ability_tree::player::PlayerSpecifier::You {
-                            #[cfg(feature = "spanned_tree")]
-                            span: imperative.span().empty_at_start(),
-                        },
+                        executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
+                            boseiju_tree::ability_tree::player::You {
+                                #[cfg(feature = "spanned_tree")]
+                                span: imperative.span().empty_at_start(),
+                            },
+                        ),
                         #[cfg(feature = "spanned_tree")]
                         span: imperative.span(),
                     },
