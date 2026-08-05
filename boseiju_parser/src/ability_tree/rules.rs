@@ -30,6 +30,7 @@ mod object;
 mod object_kind;
 mod object_specifiers;
 mod player;
+mod power_toughness;
 mod power_toughness_modifiers;
 mod quantifier;
 mod replacement_effect;
@@ -69,6 +70,7 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(object_kind::rules()),
         Box::new(object_specifiers::rules()),
         Box::new(player::rules()),
+        Box::new(power_toughness::rules()),
         Box::new(power_toughness_modifiers::rules()),
         Box::new(quantifier::rules()),
         Box::new(replacement_effect::rules()),
