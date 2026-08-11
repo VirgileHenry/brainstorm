@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An imperative for returning an object from one zone to another.
 ///
@@ -16,9 +16,8 @@ pub struct ChangeZoneImperative {
 }
 
 impl Node for ChangeZoneImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ChangeZoneImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ChangeZoneImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

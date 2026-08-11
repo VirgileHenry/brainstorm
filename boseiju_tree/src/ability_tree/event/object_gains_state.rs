@@ -6,8 +6,8 @@ pub use creature_gains_state_event::CreatureGainsStateEvent;
 pub use permanent_gains_state_event::PermanentGainsStateEvent;
 pub use spell_gains_state_event::SpellGainsStateEvent;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An event for when objects gains states.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -19,9 +19,8 @@ pub enum ObjectGainsStateEvent {
 }
 
 impl crate::Node for ObjectGainsStateEvent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ObjectGainsStateEvent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ObjectGainsStateEvent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

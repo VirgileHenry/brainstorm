@@ -7,16 +7,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LandReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
+    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
     pub land: crate::ability_tree::object::specified_object::SpecifiedLand,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for LandReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::LandReference.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::LandReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

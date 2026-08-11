@@ -1,4 +1,5 @@
 #[derive(idris_derive::Idris)]
+#[derive(idris_derive::ConstVariants)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ManaSymbol {
@@ -109,6 +110,10 @@ impl idris::Idris for AnyMana {
     }
 }
 
+impl idris::ConstVariants for AnyMana {
+    const VARIANTS: &'static [Self] = &[AnyMana { number: 0 }];
+}
+
 impl std::fmt::Display for AnyMana {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{{{}}}", self.number)
@@ -130,6 +135,12 @@ impl idris::Idris for ColoredMana {
     fn name_from_id(_: usize) -> &'static str {
         "{color}"
     }
+}
+
+impl idris::ConstVariants for ColoredMana {
+    const VARIANTS: &'static [Self] = &[Self {
+        color: crate::Color::Colorless,
+    }];
 }
 
 impl std::fmt::Display for ColoredMana {
@@ -156,6 +167,13 @@ impl idris::Idris for HybridMana {
     }
 }
 
+impl idris::ConstVariants for HybridMana {
+    const VARIANTS: &'static [Self] = &[Self {
+        color_1: crate::Color::Colorless,
+        color_2: crate::Color::Colorless,
+    }];
+}
+
 impl std::fmt::Display for HybridMana {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{{{}/{}}}", self.color_1.as_char(), self.color_2.as_char())
@@ -178,6 +196,13 @@ impl idris::Idris for MonocoloredHybridMana {
     fn name_from_id(_: usize) -> &'static str {
         "{number/color}"
     }
+}
+
+impl idris::ConstVariants for MonocoloredHybridMana {
+    const VARIANTS: &'static [Self] = &[Self {
+        color: crate::Color::Colorless,
+        number: 0,
+    }];
 }
 
 impl std::fmt::Display for MonocoloredHybridMana {
@@ -203,6 +228,12 @@ impl idris::Idris for PhyrexianMana {
     }
 }
 
+impl idris::ConstVariants for PhyrexianMana {
+    const VARIANTS: &'static [Self] = &[Self {
+        color: crate::Color::Colorless,
+    }];
+}
+
 impl std::fmt::Display for PhyrexianMana {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{{{}/p}}", self.color.as_char())
@@ -225,6 +256,13 @@ impl idris::Idris for HybridPhyrexianMana {
     fn name_from_id(_: usize) -> &'static str {
         "{color/color/p}"
     }
+}
+
+impl idris::ConstVariants for HybridPhyrexianMana {
+    const VARIANTS: &'static [Self] = &[Self {
+        color_1: crate::Color::Colorless,
+        color_2: crate::Color::Colorless,
+    }];
 }
 
 impl std::fmt::Display for HybridPhyrexianMana {

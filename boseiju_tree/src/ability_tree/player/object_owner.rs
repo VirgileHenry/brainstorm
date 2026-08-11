@@ -10,9 +10,8 @@ pub struct ObjectOwner {
 }
 
 impl Node for ObjectOwner {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerReferenceObjectOwner.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerReferenceObjectOwner
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +47,7 @@ impl idris::Idris for ObjectOwner {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "ObjectOwner"
+        std::any::type_name::<Self>()
     }
 }
 

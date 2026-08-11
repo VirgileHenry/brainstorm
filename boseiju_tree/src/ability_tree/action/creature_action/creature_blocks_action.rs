@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An action for when a creature blocks.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -12,9 +12,8 @@ pub struct CreatureBlocksAction {
 }
 
 impl crate::Node for CreatureBlocksAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureBlocksAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureBlocksAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

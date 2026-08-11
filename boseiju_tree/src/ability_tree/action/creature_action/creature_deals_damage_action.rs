@@ -7,15 +7,14 @@ use crate::Node;
 pub struct CreatureDealsDamageAction {
     pub creature: crate::ability_tree::object::Creature,
     pub damage_kind: boseiju_lexer::terminal::DamageKind,
-    pub to_player: Option<crate::ability_tree::player::PlayerReference>,
+    pub to_player: Option<crate::ability_tree::player::PassivePlayerReference>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl crate::Node for CreatureDealsDamageAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureDealsDamageAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureDealsDamageAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

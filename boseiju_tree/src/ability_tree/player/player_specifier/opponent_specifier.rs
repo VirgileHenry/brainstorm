@@ -9,9 +9,8 @@ pub struct OpponentSpecifier {
 }
 
 impl Node for OpponentSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::OpponentSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::OpponentSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

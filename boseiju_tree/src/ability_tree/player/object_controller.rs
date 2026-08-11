@@ -10,9 +10,8 @@ pub struct ObjectController {
 }
 
 impl Node for ObjectController {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerReferenceObjectController.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerReferenceObjectController
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +47,7 @@ impl idris::Idris for ObjectController {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "ObjectController"
+        std::any::type_name::<Self>()
     }
 }
 

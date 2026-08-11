@@ -2,8 +2,8 @@ mod characteristic_specifier;
 
 pub use characteristic_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::OwnerSpecifier;
@@ -22,9 +22,8 @@ pub enum CardSpecifier {
 impl Specifier for CardSpecifier {}
 
 impl crate::Node for CardSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CardSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CardSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -5,16 +5,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ArtifactReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
+    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
     pub artifact: crate::ability_tree::object::specified_object::SpecifiedArtifact,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for ArtifactReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ArtifactReference.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ArtifactReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

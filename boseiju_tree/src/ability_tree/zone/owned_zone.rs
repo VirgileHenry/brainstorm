@@ -6,15 +6,14 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OwnedZone {
     pub zone: boseiju_lexer::terminal::OwnableZone,
-    pub owner: crate::ability_tree::player::PlayerReference,
+    pub owner: crate::ability_tree::player::ActivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for OwnedZone {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::OwnedZone.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ZoneReferenceOwnedZone
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

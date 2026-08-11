@@ -31,6 +31,6 @@ impl idris::Idris for CardOwnName {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "CardOwnName"
+        std::any::type_name::<Self>()
     }
 }

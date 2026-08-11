@@ -3,8 +3,8 @@ mod trigger_condition;
 pub use trigger_condition::TriggerCondition;
 pub use trigger_condition::TriggerConditionKind;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A triggered ability is an ability that waits for an event to happen
 /// to put an effect on the stack.
@@ -26,9 +26,8 @@ pub struct TriggeredAbility {
 }
 
 impl Node for TriggeredAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TriggeredAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TriggeredAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -95,9 +94,8 @@ pub struct DelayedTriggerAbility {
 }
 
 impl Node for DelayedTriggerAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DelayedTriggerAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DelayedTriggerAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

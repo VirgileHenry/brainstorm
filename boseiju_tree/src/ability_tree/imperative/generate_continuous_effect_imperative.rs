@@ -12,9 +12,8 @@ pub struct GenerateContinuousEffectImperative {
 }
 
 impl crate::Node for GenerateContinuousEffectImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::GenerateContinuousEffectImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::GenerateContinuousEffectImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

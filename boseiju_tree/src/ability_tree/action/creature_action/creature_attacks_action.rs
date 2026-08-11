@@ -6,15 +6,14 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureAttacksAction {
     pub creature: crate::ability_tree::object::Creature,
-    pub attacked_player: Option<crate::ability_tree::player::PlayerReference>,
+    pub attacked_player: Option<crate::ability_tree::player::PassivePlayerReference>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl crate::Node for CreatureAttacksAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureAttacksAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureAttacksAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

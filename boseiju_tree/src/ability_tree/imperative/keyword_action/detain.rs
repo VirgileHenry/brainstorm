@@ -10,11 +10,9 @@ pub struct DetainKeywordAction {
 }
 
 impl crate::Node for DetainKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Detain).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Detain)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for DetainKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "detain"
+        std::any::type_name::<Self>()
     }
 }
 

@@ -1,5 +1,6 @@
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
+#[derive(idris_derive::ConstVariants)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum LandType {
@@ -105,7 +106,6 @@ impl LandType {
             Self::Tower,
             Self::Town,
             Self::Urzas,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

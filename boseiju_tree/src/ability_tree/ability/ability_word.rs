@@ -2,8 +2,8 @@ mod descend;
 
 pub use descend::DescendAbilityWord;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// This is basically a 1-1 copy of the [`mtg_data::AbilityWord`],
 /// expect all ability word requiring additional text also have this text.
@@ -18,9 +18,8 @@ pub enum ExpandedAbilityWord {
 }
 
 impl crate::Node for ExpandedAbilityWord {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ExpandedAbilityWordIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ExpandedAbilityWordIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -75,15 +74,13 @@ pub struct StandaloneAbilityWord {
 }
 
 impl Node for StandaloneAbilityWord {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ExpandedAbilityWord(self.ability_word.clone()).id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ExpandedAbilityWord(self.ability_word.clone())
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = crate::NodeKind::ExpandedAbilityWord(self.ability_word.clone()).id();
+        let child_id = crate::NodeKind::ExpandedAbilityWord(self.ability_word.clone());
         let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn Node);
         children

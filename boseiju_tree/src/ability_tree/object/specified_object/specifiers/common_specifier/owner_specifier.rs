@@ -5,16 +5,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OwnerSpecifier {
-    pub owner: crate::ability_tree::player::PlayerReference,
+    pub owner: crate::ability_tree::player::PassivePlayerReference,
     pub owned: bool,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for OwnerSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::OwnerSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::OwnerSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

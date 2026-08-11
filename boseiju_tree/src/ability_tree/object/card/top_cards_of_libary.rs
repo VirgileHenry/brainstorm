@@ -6,15 +6,14 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TopCardsOfLibrary {
     pub amount: crate::ability_tree::number::Number,
-    pub player: crate::ability_tree::player::PlayerReference,
+    pub player: crate::ability_tree::player::ActivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for TopCardsOfLibrary {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TopCardsOfLibrary.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TopCardsOfLibrary
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

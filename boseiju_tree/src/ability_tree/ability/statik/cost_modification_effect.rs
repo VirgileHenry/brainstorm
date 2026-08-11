@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Modification of the cost of objects.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -12,9 +12,8 @@ pub struct CostModificationEffect {
 }
 
 impl crate::Node for CostModificationEffect {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CostModificationEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CostModificationEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -72,9 +71,8 @@ pub enum CostModification {
 }
 
 impl crate::Node for CostModification {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CostModification.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CostModification
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -132,9 +130,8 @@ pub struct CostModificationCostMore {
 }
 
 impl Node for CostModificationCostMore {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CostModificationCostMore.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CostModificationCostMore
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -183,9 +180,8 @@ pub struct CostModificationCostLess {
 }
 
 impl Node for CostModificationCostLess {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CostModificationCostLess.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CostModificationCostLess
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -234,9 +230,8 @@ pub struct CostModificationCostSet {
 }
 
 impl Node for CostModificationCostSet {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CostModificationCostSet.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CostModificationCostSet
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

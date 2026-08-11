@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Either a step or a phase, both discrete time elements.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -10,9 +10,8 @@ pub enum StepOrPhase {
 }
 
 impl Node for StepOrPhase {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::StepOrPhase.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::StepOrPhase
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

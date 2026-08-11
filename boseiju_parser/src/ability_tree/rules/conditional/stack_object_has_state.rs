@@ -49,10 +49,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             ] => Ok(ParserNode::Condition {
                 condition: conditional::Condition::StackObjectHasState(conditional::ConditionStackObjectHasState {
                     stack_obj: spell.clone(),
-                    state: boseiju_tree::ability_tree::state::StackObjectState::Countered {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *countered_span,
-                    },
+                    state: boseiju_tree::ability_tree::state::StackObjectState::Countered(
+                        boseiju_tree::ability_tree::state::CounteredState {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *countered_span,
+                        },
+                    ),
                     has_state: true,
                     #[cfg(feature = "spanned_tree")]
                     span: spell.span().merge(countered_span),

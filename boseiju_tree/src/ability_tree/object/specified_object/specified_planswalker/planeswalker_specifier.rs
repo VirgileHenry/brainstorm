@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
@@ -20,9 +20,8 @@ pub enum PlaneswalkerSpecifier {
 impl Specifier for PlaneswalkerSpecifier {}
 
 impl crate::Node for PlaneswalkerSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlaneswalkerSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlaneswalkerSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -86,9 +85,8 @@ pub struct PlaneswalkerSubtypeSpecifier {
 }
 
 impl crate::Node for PlaneswalkerSubtypeSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlaneswalkerSubtypeSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlaneswalkerSubtypeSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

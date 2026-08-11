@@ -14,9 +14,8 @@ pub struct ConditionEventOccured {
 }
 
 impl crate::Node for ConditionEventOccured {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ConditionEventOccured.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ConditionEventOccured
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

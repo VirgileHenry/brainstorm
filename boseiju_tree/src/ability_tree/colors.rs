@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -88,9 +88,8 @@ impl Colors {
 }
 
 impl Node for Colors {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::node_kind::NodeKind::Colors.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::node_kind::NodeKind::Colors
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

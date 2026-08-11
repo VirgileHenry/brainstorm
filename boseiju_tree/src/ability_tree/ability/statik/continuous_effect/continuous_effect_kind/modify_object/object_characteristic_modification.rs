@@ -24,9 +24,8 @@ pub enum ObjectCharacteristicModification {
 }
 
 impl Node for ObjectCharacteristicModification {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ObjectCharacteristicModification.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ObjectCharacteristicModification
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -11,9 +11,8 @@ pub struct KeywordAbilitySpecifier {
 }
 
 impl crate::Node for KeywordAbilitySpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::KeywordAbilitySpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::KeywordAbilitySpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

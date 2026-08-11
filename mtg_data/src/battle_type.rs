@@ -1,5 +1,6 @@
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
+#[derive(idris_derive::ConstVariants)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BattleType {
@@ -35,6 +36,8 @@ impl std::fmt::Display for BattleType {
 
 impl BattleType {
     pub fn all() -> impl Iterator<Item = Self> {
-        [Self::Siege].into_iter()
+        [
+            Self::Siege,
+        ].into_iter()
     }
 }

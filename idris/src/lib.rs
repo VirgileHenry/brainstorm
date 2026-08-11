@@ -21,3 +21,11 @@ impl<T: Idris> Idris for Option<T> {
         }
     }
 }
+
+/// All leaf values of a (possibly nested) marker enum, flattened.
+///
+/// For enums deriving both `Idris` and `ConstVariants` with the same
+/// variant order, `VARIANTS[i].id() == i` holds by construction.
+pub trait ConstVariants: Copy + 'static {
+    const VARIANTS: &'static [Self];
+}

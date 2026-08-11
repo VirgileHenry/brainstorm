@@ -10,11 +10,9 @@ pub struct KickerKeywordAbility {
 }
 
 impl crate::Node for KickerKeywordAbility {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordAbilityNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAbility(KeywordAbilityNodeKind::Kicker).id()
+        crate::NodeKind::KeywordAbility(KeywordAbilityNodeKind::Kicker)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for KickerKeywordAbility {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "kicker"
+        std::any::type_name::<Self>()
     }
 }
 

@@ -14,9 +14,8 @@ pub struct PutCountersImperative {
 }
 
 impl Node for PutCountersImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PutCountersImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PutCountersImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -85,9 +84,8 @@ pub struct CounterOnPermanent {
 }
 
 impl crate::Node for CounterOnPermanent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CounterOnPermanent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CounterOnPermanent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -141,18 +139,17 @@ pub enum CounterKind {
 }
 
 impl Node for CounterKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CounterKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CounterKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
+
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::PreviouslyMentionnedCounter { .. } => children.push(crate::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::NodeKind::PreviouslyMentionnedCounter.id(),
+                crate::NodeKind::PreviouslyMentionnedCounter,
             ) as &dyn Node),
             Self::NewCounter(counter) => children.push(counter as &dyn Node),
         }

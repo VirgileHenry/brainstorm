@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::imperative::Imperative;
 
 /// A cost is something that need to be paid.
@@ -15,9 +15,8 @@ pub struct Cost {
 }
 
 impl crate::Node for Cost {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Cost.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Cost
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

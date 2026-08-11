@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An event for when a spell gains a spell state.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -12,9 +12,8 @@ pub struct SpellGainsStateEvent {
 }
 
 impl crate::Node for SpellGainsStateEvent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpellGainsStateEvent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpellGainsStateEvent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

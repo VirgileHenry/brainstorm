@@ -6,8 +6,8 @@ pub use etb_perform_action::EtbPerformAction;
 pub use etb_with_counters::EtbWithCounters;
 pub use etb_with_state::EtbWithState;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -18,9 +18,8 @@ pub enum EtbModifier {
 }
 
 impl Node for EtbModifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EtbModifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EtbModifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

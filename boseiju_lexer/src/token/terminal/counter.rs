@@ -311,6 +311,7 @@ impl idris::Idris for Counter {
 
 /// Fixme: doc
 #[derive(idris_derive::Idris)]
+#[derive(idris_derive::ConstVariants)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CounterKind {

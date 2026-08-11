@@ -2,8 +2,8 @@ mod enchantment_specifier;
 
 pub use enchantment_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::EnchantmentKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedEnchantment {
 }
 
 impl Node for SpecifiedEnchantment {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedEnchantment.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedEnchantment
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

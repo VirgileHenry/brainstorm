@@ -2,8 +2,8 @@ mod etb_replacement_effect;
 
 pub use etb_replacement_effect::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A replacement effect replaces entirely one event with another.
 ///
@@ -15,9 +15,8 @@ pub enum ReplacementEffect {
 }
 
 impl Node for ReplacementEffect {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ReplacementEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ReplacementEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -52,7 +51,6 @@ impl boseiju_span::Spanned for ReplacementEffect {
         }
     }
 }
-
 
 impl Default for ReplacementEffect {
     fn default() -> Self {

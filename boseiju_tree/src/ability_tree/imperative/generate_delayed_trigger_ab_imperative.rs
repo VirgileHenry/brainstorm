@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Imperative to generate a delayed triggered ability.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -11,9 +11,8 @@ pub struct GenerateDelayedTriggeredAbilityImperative {
 }
 
 impl crate::Node for GenerateDelayedTriggeredAbilityImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::GenerateDelayedTriggeredAbilityImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::GenerateDelayedTriggeredAbilityImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

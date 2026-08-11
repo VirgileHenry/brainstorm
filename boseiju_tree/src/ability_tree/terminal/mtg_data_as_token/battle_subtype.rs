@@ -1,16 +1,15 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
-use idris::Idris;
 
 impl Node for boseiju_lexer::terminal::BattleSubtype {
-    fn node_id(&self) -> usize {
-        crate::NodeKind::MtgData(crate::node_kind::MtgDataNodeKind::BattleSubtypeIdMarker).id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::MtgData(crate::node_kind::MtgDataNodeKind::BattleSubtypeIdMarker)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         let node_kind = crate::node_kind::MtgDataNodeKind::BattleSubtype(self.battle_subtype);
-        let child_id = crate::NodeKind::MtgData(node_kind).id();
+        let child_id = crate::NodeKind::MtgData(node_kind);
         let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn Node);
         children

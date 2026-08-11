@@ -2,8 +2,8 @@ mod incoming_instant;
 mod recurrent_instant;
 mod step_or_phase;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 pub use incoming_instant::*;
 pub use recurrent_instant::*;
@@ -18,9 +18,8 @@ pub enum Instant {
 }
 
 impl Node for Instant {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Instant.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Instant
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -15,16 +15,17 @@ use boseiju_tree::ability_tree::colors::Colors;
 use boseiju_tree::ability_tree::conditional::Condition;
 use boseiju_tree::ability_tree::cost::Cost;
 use boseiju_tree::ability_tree::event::Event;
-use boseiju_tree::ability_tree::imperative::{CreatedTokenKind, Imperative, ImperativeKind, ManaToAdd};
+use boseiju_tree::ability_tree::imperative::{CreatedTokenKind, Imperative, ManaToAdd};
 use boseiju_tree::ability_tree::imperative_list::ImperativeList;
 use boseiju_tree::ability_tree::mana_cost::ManaCost;
 use boseiju_tree::ability_tree::number::{GameStateNumber, Number, XDefinition};
 use boseiju_tree::ability_tree::object::kind::*;
 use boseiju_tree::ability_tree::object::specified_object::*;
 use boseiju_tree::ability_tree::object::*;
-use boseiju_tree::ability_tree::player::PlayerReference;
+use boseiju_tree::ability_tree::player::ActivePlayerReference;
+use boseiju_tree::ability_tree::player::PassivePlayerReference;
 use boseiju_tree::ability_tree::power_toughness::PowerToughness;
-use boseiju_tree::ability_tree::quantifier::Quantifier;
+use boseiju_tree::ability_tree::quantifier::ActiveQuantifier;
 use boseiju_tree::ability_tree::statement::Statement;
 use boseiju_tree::ability_tree::time::{IncomingInstant, RecurrentInstant};
 use boseiju_tree::ability_tree::type_line::TypeLine;
@@ -77,7 +78,6 @@ pub enum ParserNode {
     Imperative { imperative: Imperative },
     ImperativeAsCost { cost: Imperative },
     ImperativeChoices { choices: ImperativeChoices },
-    ImperativeKind { imperative: ImperativeKind },
     ImperativeList { imperatives: ImperativeList },
     IncomingInstant { instant: IncomingInstant },
     KeywordAbility { keyword_ability: KeywordAbility },
@@ -95,11 +95,12 @@ pub enum ParserNode {
     PermanentSpecifier { specifier: PermanentSpecifier },
     PermanentSpecifiers { specifiers: Specifiers<PermanentSpecifier> },
     PlaneswalkerKind { planeswalker: PlaneswalkerKind },
-    Player { player: PlayerReference },
+    PlayerActive { player: ActivePlayerReference },
+    PlayerPassive { player: PassivePlayerReference },
     PowerToughness { power_toughness: PowerToughness },
     PowerToughnessModifiers { modifiers: PowerToughnessModifiers },
     PutCounterKind { kind: CounterKind },
-    Quantifier { count: Quantifier },
+    Quantifier { count: ActiveQuantifier },
     RecurrentInstant { instant: RecurrentInstant },
     SpecifiedArtifact { artifact: SpecifiedArtifact },
     SpecifiedCard { card: SpecifiedCard },

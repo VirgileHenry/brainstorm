@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An object reference is a way to refer to one or more objects in the game.
 ///
@@ -11,23 +11,22 @@ use crate::MAX_CHILDREN_PER_NODE;
 pub enum ArtifactKind {
     Artifact {
         #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span
+        span: boseiju_span::Span,
     },
 }
 
 impl crate::Node for ArtifactKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ArtifactKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ArtifactKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
+
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Artifact { .. } => {
-                let node_id = crate::NodeKind::ArtifactBasicKind.id();
+                let node_id = crate::NodeKind::ArtifactBasicKind;
                 let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(node_id);
                 children.push(child as &dyn Node)
             }
@@ -59,7 +58,6 @@ impl boseiju_span::Spanned for ArtifactKind {
         }
     }
 }
-
 
 impl Default for ArtifactKind {
     fn default() -> Self {

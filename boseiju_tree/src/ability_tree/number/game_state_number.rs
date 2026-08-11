@@ -2,8 +2,8 @@ mod number_of_permanents;
 
 pub use number_of_permanents::NumberOfPermanents;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A number derived from the current state of the game.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -13,9 +13,8 @@ pub enum GameStateNumber {
 }
 
 impl Node for GameStateNumber {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::GameStateNumber.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::GameStateNumber
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

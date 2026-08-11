@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
@@ -20,9 +20,8 @@ pub enum ArtifactSpecifier {
 impl Specifier for ArtifactSpecifier {}
 
 impl crate::Node for ArtifactSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ArtifactSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ArtifactSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -86,9 +85,8 @@ pub struct ArtifactSubtypeSpecifier {
 }
 
 impl crate::Node for ArtifactSubtypeSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ArtifactSubtypeSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ArtifactSubtypeSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

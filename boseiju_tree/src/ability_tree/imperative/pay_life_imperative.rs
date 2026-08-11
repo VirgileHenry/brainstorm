@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Imperative to pay life.
 ///
@@ -13,9 +13,8 @@ pub struct PayLifeImperative {
 }
 
 impl crate::Node for PayLifeImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PayLifeImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PayLifeImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

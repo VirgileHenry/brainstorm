@@ -1,10 +1,9 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
-use idris::Idris;
 
 impl Node for boseiju_lexer::terminal::Color {
-    fn node_id(&self) -> usize {
-        crate::NodeKind::MtgData(crate::node_kind::MtgDataNodeKind::Color).id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::MtgData(crate::node_kind::MtgDataNodeKind::Color)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

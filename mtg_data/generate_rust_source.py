@@ -60,9 +60,9 @@ def generate_enum(enum_name: str, source_file: Path, dest_file: Path) -> None:
     # Enum declaration
     w("#[derive(idris_derive::Idris)]")
     w("#[idris(repr = usize)]")
+    w("#[derive(idris_derive::ConstVariants)]")
     w("#[derive(serde::Serialize, serde::Deserialize)]")
     w("#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]")
-    w('#[cfg_attr(feature = "ts_export", derive(ts_rs::TS))]')
     w(f"pub enum {enum_name} {{")
     for _, variant in variants:
         w(f"    {variant},")

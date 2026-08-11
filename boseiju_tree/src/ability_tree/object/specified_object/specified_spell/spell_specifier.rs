@@ -18,9 +18,8 @@ pub enum SpellSpecifier {
 impl Specifier for SpellSpecifier {}
 
 impl crate::Node for SpellSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpellSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpellSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -75,15 +74,14 @@ impl Default for SpellSpecifier {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CasterSpecifier {
-    pub caster: crate::ability_tree::player::PlayerReference,
+    pub caster: crate::ability_tree::player::PassivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for CasterSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CasterSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CasterSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

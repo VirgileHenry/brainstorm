@@ -12,9 +12,8 @@ pub enum Statement {
 }
 
 impl crate::Node for Statement {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Statement.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Statement
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -66,7 +65,7 @@ impl Default for Statement {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MayAbility {
-    pub player: crate::ability_tree::player::PlayerReference,
+    pub player: crate::ability_tree::player::PassivePlayerReference,
     pub action: crate::ability_tree::imperative_list::ImperativeList,
     pub if_it_is_done: Option<Box<Statement>>,
     pub if_not_done: Option<Box<Statement>>,
@@ -75,9 +74,8 @@ pub struct MayAbility {
 }
 
 impl crate::Node for MayAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::MayAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::MayAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -164,9 +162,8 @@ pub struct ConditionalImperative {
 }
 
 impl crate::Node for ConditionalImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ReplacableImperatives.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ReplacableImperatives
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

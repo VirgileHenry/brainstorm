@@ -1,13 +1,12 @@
 pub mod ability_word;
 pub mod activated;
-pub mod common;
 pub mod keyword_ability;
 pub mod spell;
 pub mod statik;
 pub mod triggered;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// The ability kind regroups all abilities that can be seen on MTG cards.
 /// The different kind of abilities are not abiltities in the MTG ruling sense,
@@ -26,9 +25,8 @@ pub enum Ability {
 }
 
 impl Node for Ability {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::node_kind::NodeKind::AbilityKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::node_kind::NodeKind::AbilityKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -93,9 +91,8 @@ pub enum WrittenAbility {
 }
 
 impl Node for WrittenAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::node_kind::NodeKind::Ability.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::node_kind::NodeKind::Ability
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -162,9 +159,8 @@ pub struct KeywordAbility {
 }
 
 impl Node for KeywordAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::node_kind::NodeKind::KeywordAbilityIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::node_kind::NodeKind::KeywordAbilityIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -226,9 +222,8 @@ pub struct AbilityWordAbility {
 }
 
 impl Node for AbilityWordAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::node_kind::NodeKind::AbilityWordAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::node_kind::NodeKind::AbilityWordAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

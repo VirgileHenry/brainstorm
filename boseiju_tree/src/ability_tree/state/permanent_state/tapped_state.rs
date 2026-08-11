@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -9,9 +9,8 @@ pub struct PermanentTappedState {
 }
 
 impl Node for PermanentTappedState {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PermanentTappedState.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PermanentTappedState
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

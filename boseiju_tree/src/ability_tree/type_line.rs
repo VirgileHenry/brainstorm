@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 use serde_big_array::BigArray;
 
@@ -140,9 +140,8 @@ impl TypeLine {
 }
 
 impl Node for TypeLine {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TypeLineIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TypeLineIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

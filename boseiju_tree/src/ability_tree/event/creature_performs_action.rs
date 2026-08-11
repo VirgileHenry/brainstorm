@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An event for when a creature performs a creature action.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -11,9 +11,8 @@ pub struct CreaturePerformsActionEvent {
 }
 
 impl crate::Node for CreaturePerformsActionEvent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreaturePerformsActionEvent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreaturePerformsActionEvent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

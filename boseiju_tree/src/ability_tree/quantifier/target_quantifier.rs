@@ -13,9 +13,8 @@ pub struct TargetQuantifier {
 }
 
 impl crate::Node for TargetQuantifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TargetQuantifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TargetQuantifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -51,7 +50,7 @@ impl idris::Idris for TargetQuantifier {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "TargetQuantifier"
+        std::any::type_name::<Self>()
     }
 }
 

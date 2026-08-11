@@ -8,8 +8,8 @@ pub use creature_blocks_action::CreatureBlocksAction;
 pub use creature_deals_damage_action::CreatureDealsDamageAction;
 pub use creature_dies_action::CreatureDiesAction;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An action a creature can perform.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -22,9 +22,8 @@ pub enum CreatureAction {
 }
 
 impl crate::Node for CreatureAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -68,7 +67,6 @@ impl boseiju_span::Spanned for CreatureAction {
         }
     }
 }
-
 
 impl Default for CreatureAction {
     fn default() -> Self {

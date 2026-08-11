@@ -17,9 +17,8 @@ pub struct MultipleObjectReferences {
 }
 
 impl AbilityTreeNode for MultipleObjectReferences {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::MultipleObjectReferences.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::MultipleObjectReferences
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {

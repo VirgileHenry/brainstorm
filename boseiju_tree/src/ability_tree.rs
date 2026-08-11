@@ -3,6 +3,7 @@ pub mod action;
 pub mod colors;
 pub mod conditional;
 pub mod cost;
+pub mod deed;
 pub mod event;
 pub mod imperative;
 pub mod imperative_list;
@@ -60,9 +61,8 @@ impl AbilityTree {
 }
 
 impl crate::Node for AbilityTree {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::AbilityTree.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::AbilityTree
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

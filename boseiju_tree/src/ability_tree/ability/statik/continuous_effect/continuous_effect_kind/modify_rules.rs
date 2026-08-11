@@ -2,8 +2,8 @@ mod creature_cant_do_action;
 
 pub use creature_cant_do_action::CreatureCantDoAction;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Continuous effect that modify rules.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -13,9 +13,8 @@ pub enum ModifyRuleEffect {
 }
 
 impl Node for ModifyRuleEffect {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ModifyRuleEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ModifyRuleEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -27,7 +27,7 @@ boseiju_lexer = { path = "boseiju_lexer" }
 boseiju_parser = { path = "boseiju_parser" }
 boseiju_span = { path = "boseiju_span" }
 boseiju_tree = { path = "boseiju_tree" }
-# boseiju_wasm = { path = "boseiju_wasm" }
+boseiju_wasm = { path = "boseiju_wasm" }
 idris = { path = "idris" }
 idris_derive = { path = "idris_derive" }
 krark = { path = "krark" }
@@ -36,8 +36,9 @@ mtg_cardbase = { path = "mtg_cardbase" }
 
 # Additional dependencies
 arrayvec = { version = "0.7.6", features = ["serde"] }
-lazy_static = "1.5.0"
-regex = "1.11.3"
+lazy_static = { version = "1.5.0" }
+regex = { version = "1.11.3" }
 serde = { version = "1.0.221", features=["derive"] }
-serde_json = "1.0.145"
+serde-big-array = { version = "0.5.1" }
+serde_json = { version = "1.0.145" }
 uuid = { version = "1.18.1", features = ["serde"] }

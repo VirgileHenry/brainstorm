@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Marker struct for the special object specifier "another",
 /// which means "any that is not myself".
@@ -11,11 +11,9 @@ pub struct AnotherObjectSpecifier {
 }
 
 impl Node for AnotherObjectSpecifier {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::TerminalNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::Terminal(TerminalNodeKind::AnotherObjectSpecifier).id()
+        crate::NodeKind::Terminal(TerminalNodeKind::AnotherObjectSpecifier)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -38,7 +36,6 @@ impl boseiju_span::Spanned for AnotherObjectSpecifier {
         self.span
     }
 }
-
 
 impl Default for AnotherObjectSpecifier {
     fn default() -> Self {

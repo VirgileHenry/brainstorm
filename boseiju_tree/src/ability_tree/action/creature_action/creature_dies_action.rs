@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An action for when a creature dies.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -11,9 +11,8 @@ pub struct CreatureDiesAction {
 }
 
 impl crate::Node for CreatureDiesAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureDiesAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureDiesAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

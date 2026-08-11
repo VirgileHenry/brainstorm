@@ -5,16 +5,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerAttacksAction {
-    pub player: crate::ability_tree::player::PlayerReference,
-    pub attacked_player: Option<crate::ability_tree::player::PlayerReference>,
+    pub player: crate::ability_tree::player::PassivePlayerReference,
+    pub attacked_player: Option<crate::ability_tree::player::PassivePlayerReference>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl crate::Node for PlayerAttacksAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerAttacksAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerAttacksAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

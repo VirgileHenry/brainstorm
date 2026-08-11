@@ -10,11 +10,9 @@ pub struct CollectEvidenceKeywordAction {
 }
 
 impl crate::Node for CollectEvidenceKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::CollectEvidence).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::CollectEvidence)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Modify set power and toughness of a creature.
 #[derive(idris_derive::Idris)]
@@ -14,9 +14,8 @@ pub enum PowerToughnessModifiers {
 }
 
 impl Node for PowerToughnessModifiers {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughnessModifiers.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughnessModifiers
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -81,9 +80,8 @@ pub struct PowerToughnessModifiersPlusPlus {
 }
 
 impl Node for PowerToughnessModifiersPlusPlus {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughnessModifiersPlusPlus.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughnessModifiersPlusPlus
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -141,7 +139,7 @@ impl idris::Idris for PowerToughnessModifiersPlusPlus {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PowerToughnessModifiersPlusPlus"
+        std::any::type_name::<Self>()
     }
 }
 
@@ -156,9 +154,8 @@ pub struct PowerToughnessModifiersPlusMinus {
 }
 
 impl Node for PowerToughnessModifiersPlusMinus {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughnessModifiersPlusMinus.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughnessModifiersPlusMinus
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -216,7 +213,7 @@ impl idris::Idris for PowerToughnessModifiersPlusMinus {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PowerToughnessModifiersPlusMinus"
+        std::any::type_name::<Self>()
     }
 }
 
@@ -231,9 +228,8 @@ pub struct PowerToughnessModifiersMinusMinus {
 }
 
 impl Node for PowerToughnessModifiersMinusMinus {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughnessModifiersMinusMinus.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughnessModifiersMinusMinus
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -291,7 +287,7 @@ impl idris::Idris for PowerToughnessModifiersMinusMinus {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PowerToughnessModifiersMinusMinus"
+        std::any::type_name::<Self>()
     }
 }
 
@@ -306,9 +302,8 @@ pub struct PowerToughnessModifiersMinusPlus {
 }
 
 impl Node for PowerToughnessModifiersMinusPlus {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughnessModifiersMinusPlus.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughnessModifiersMinusPlus
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -366,7 +361,7 @@ impl idris::Idris for PowerToughnessModifiersMinusPlus {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PowerToughnessModifiersMinusPlus"
+        std::any::type_name::<Self>()
     }
 }
 
@@ -381,9 +376,8 @@ pub struct PowerToughnessModifiersSet {
 }
 
 impl Node for PowerToughnessModifiersSet {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughnessModifiersSet.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughnessModifiersSet
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -439,6 +433,6 @@ impl idris::Idris for PowerToughnessModifiersSet {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PowerToughnessModifiersSet"
+        std::any::type_name::<Self>()
     }
 }

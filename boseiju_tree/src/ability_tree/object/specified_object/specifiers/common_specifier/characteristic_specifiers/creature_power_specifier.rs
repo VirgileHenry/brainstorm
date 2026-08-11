@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// The  creature has subtype specifiers.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -11,9 +11,8 @@ pub struct CreaturePowerSpecifier {
 }
 
 impl crate::Node for CreaturePowerSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreaturePowerSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreaturePowerSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

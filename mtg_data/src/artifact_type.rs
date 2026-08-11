@@ -1,5 +1,6 @@
 #[derive(idris_derive::Idris)]
 #[idris(repr = usize)]
+#[derive(idris_derive::ConstVariants)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ArtifactType {
@@ -121,7 +122,6 @@ impl ArtifactType {
             Self::Treasure,
             Self::Vehicle,
             Self::Vibranium,
-        ]
-        .into_iter()
+        ].into_iter()
     }
 }

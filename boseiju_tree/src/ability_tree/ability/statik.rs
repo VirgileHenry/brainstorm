@@ -2,8 +2,8 @@ pub mod alterative_casting_permissions;
 pub mod continuous_effect;
 pub mod cost_modification_effect;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A static ability, from the comprehensive rules:
 ///
@@ -22,9 +22,8 @@ pub struct StaticAbility {
 }
 
 impl Node for StaticAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::StaticAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::StaticAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -86,9 +85,8 @@ pub enum StaticAbilityKind {
 }
 
 impl Node for StaticAbilityKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::StaticAbilityKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::StaticAbilityKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

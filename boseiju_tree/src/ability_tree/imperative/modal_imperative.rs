@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
 
@@ -17,9 +17,8 @@ pub struct ModalImperative {
 }
 
 impl Node for ModalImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ChooseImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ChooseImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

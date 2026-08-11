@@ -2,8 +2,8 @@ mod card_specifier;
 
 pub use card_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::CardKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedCard {
 }
 
 impl Node for SpecifiedCard {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedCard.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedCard
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

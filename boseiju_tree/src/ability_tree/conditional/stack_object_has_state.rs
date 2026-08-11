@@ -15,9 +15,8 @@ pub struct ConditionStackObjectHasState {
 }
 
 impl crate::Node for ConditionStackObjectHasState {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ConditionStackObjectHasState.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ConditionStackObjectHasState
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

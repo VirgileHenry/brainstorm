@@ -2,8 +2,8 @@ mod top_cards_of_libary;
 
 pub use top_cards_of_libary::TopCardsOfLibrary;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::AttachedObject;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::PreviouslyMentionned;
@@ -27,9 +27,8 @@ pub enum Card {
 }
 
 impl crate::Node for Card {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Card.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Card
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -79,7 +78,6 @@ impl boseiju_span::Spanned for Card {
         }
     }
 }
-
 
 impl Default for Card {
     fn default() -> Self {

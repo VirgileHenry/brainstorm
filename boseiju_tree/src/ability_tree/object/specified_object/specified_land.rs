@@ -3,8 +3,8 @@ mod land_specifier;
 pub use land_specifier::LandSpecifier;
 pub use land_specifier::LandSubtypeSpecifier;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::LandKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -43,9 +43,8 @@ impl SpecifiedLand {
 }
 
 impl Node for SpecifiedLand {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedLand.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedLand
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

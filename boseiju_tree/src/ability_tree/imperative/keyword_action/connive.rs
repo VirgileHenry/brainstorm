@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -10,11 +10,9 @@ pub struct ConniveKeywordAction {
 }
 
 impl crate::Node for ConniveKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Connive).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Connive)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for ConniveKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "connive"
+        std::any::type_name::<Self>()
     }
 }
 

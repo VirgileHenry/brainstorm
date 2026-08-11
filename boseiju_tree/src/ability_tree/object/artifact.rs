@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::AttachedObject;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::PreviouslyMentionned;
@@ -22,9 +22,8 @@ pub enum Artifact {
 }
 
 impl crate::Node for Artifact {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Artifact.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Artifact
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

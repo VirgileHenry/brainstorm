@@ -28,9 +28,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Count(
+                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Count(
                         boseiju_tree::ability_tree::quantifier::CountQuantifier {
-                            number: boseiju_tree::ability_tree::number::Number::Number(
+                            number: boseiju_tree::ability_tree::number::Number::Flat(
                                 boseiju_tree::ability_tree::number::FixedNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
@@ -66,9 +66,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Count(
+                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Count(
                         boseiju_tree::ability_tree::quantifier::CountQuantifier {
-                            number: boseiju_tree::ability_tree::number::Number::Number(
+                            number: boseiju_tree::ability_tree::number::Number::Flat(
                                 boseiju_tree::ability_tree::number::FixedNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
@@ -98,7 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::Number { number }] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Count(
+                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Count(
                         boseiju_tree::ability_tree::quantifier::CountQuantifier {
                             number: number.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -132,7 +132,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target { .. })),
                 ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Target(
+                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Target(
                         boseiju_tree::ability_tree::quantifier::TargetQuantifier {
                             number: number.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -164,9 +164,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::Quantifier::Target(
+                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Target(
                         boseiju_tree::ability_tree::quantifier::TargetQuantifier {
-                            number: boseiju_tree::ability_tree::number::Number::Number(
+                            number: boseiju_tree::ability_tree::number::Number::Flat(
                                 boseiju_tree::ability_tree::number::FixedNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
@@ -202,10 +202,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::Quantifier::All(boseiju_tree::ability_tree::quantifier::All {
-                        #[cfg(feature = "spanned_tree")]
-                        span: *span,
-                    }),
+                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::All(
+                        boseiju_tree::ability_tree::quantifier::All {
+                            #[cfg(feature = "spanned_tree")]
+                            span: *span,
+                        },
+                    ),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

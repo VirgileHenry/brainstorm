@@ -11,9 +11,8 @@ pub struct CreateTokenImperative {
 }
 
 impl Node for CreateTokenImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DealsDamageImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DealsDamageImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -74,9 +73,8 @@ pub struct TokenCreation {
 }
 
 impl Node for TokenCreation {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TokenCreation.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TokenCreation
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -131,20 +129,16 @@ pub enum CreatedTokenKind {
 }
 
 impl Node for CreatedTokenKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ReplacedTokenKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ReplacedTokenKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
-
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::NewToken(child) => children.push(child as &dyn Node),
-            Self::PreviouslyMentionnedToken { .. } => children.push(crate::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::NodeKind::PreviouslyMentionnedToken.id(),
-            ) as &dyn Node),
+            Self::PreviouslyMentionnedToken { .. } => children
+                .push(crate::dummy_terminal::TreeNodeDummyTerminal::new(crate::NodeKind::PreviouslyMentionnedToken) as &dyn Node),
         }
         children
     }

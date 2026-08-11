@@ -10,9 +10,8 @@ pub struct EtbPerformAction {
 }
 
 impl Node for EtbPerformAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EtbPerformAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EtbPerformAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

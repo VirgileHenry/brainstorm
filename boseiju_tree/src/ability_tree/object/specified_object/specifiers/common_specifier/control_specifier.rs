@@ -5,16 +5,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ControlSpecifier {
-    pub controller: crate::ability_tree::player::PlayerReference,
+    pub controller: crate::ability_tree::player::PassivePlayerReference,
     pub controlled: bool,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for ControlSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ControlSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ControlSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

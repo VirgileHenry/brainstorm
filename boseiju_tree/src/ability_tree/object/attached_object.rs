@@ -13,9 +13,8 @@ pub struct AttachedObject {
 }
 
 impl Node for AttachedObject {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::AttachedObject.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::AttachedObject
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -59,9 +59,8 @@ impl Creature {
 }
 
 impl crate::Node for Creature {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Creature.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Creature
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

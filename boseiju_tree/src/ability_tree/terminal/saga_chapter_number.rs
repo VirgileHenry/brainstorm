@@ -1,11 +1,10 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
-use idris::Idris;
 
 impl Node for boseiju_lexer::terminal::SagaChapterNumber {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::TerminalNodeKind;
-        crate::NodeKind::Terminal(TerminalNodeKind::SagaChapterNumber).id()
+        crate::NodeKind::Terminal(TerminalNodeKind::SagaChapterNumber)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

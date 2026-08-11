@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A condition that is met when a given object matches given object specifiers.
 ///
@@ -15,9 +15,8 @@ pub struct ConditionCreatureMatchSpecifier {
 }
 
 impl crate::Node for ConditionCreatureMatchSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ConditionCreatureMatchSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ConditionCreatureMatchSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

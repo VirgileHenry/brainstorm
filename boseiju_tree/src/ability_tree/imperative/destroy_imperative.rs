@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An imperative for "destroying" an object.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -11,9 +11,8 @@ pub struct DestroyImperative {
 }
 
 impl crate::Node for DestroyImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DestroyImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DestroyImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

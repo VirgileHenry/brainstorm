@@ -3,16 +3,21 @@ use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct OtherPlayerSpecifier {
-    pub other_than: Box<crate::ability_tree::player::PlayerReference>,
+pub struct OtherPlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    pub other_than: Box<crate::ability_tree::player::PlayerReference<Q>>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl Node for OtherPlayerSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::OtherPlayerSpecifier.id()
+impl<Q> Node for OtherPlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::OtherPlayerSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -36,13 +41,19 @@ impl Node for OtherPlayerSpecifier {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for OtherPlayerSpecifier {
+impl<Q> boseiju_span::Spanned for OtherPlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         self.span
     }
 }
 
-impl idris::Idris for OtherPlayerSpecifier {
+impl<Q> idris::Idris for OtherPlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
@@ -52,7 +63,10 @@ impl idris::Idris for OtherPlayerSpecifier {
     }
 }
 
-impl Default for OtherPlayerSpecifier {
+impl<Q> Default for OtherPlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn default() -> Self {
         Self {
             other_than: Default::default(),

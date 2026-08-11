@@ -2,8 +2,8 @@ mod artifact_specifier;
 
 pub use artifact_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::ArtifactKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedArtifact {
 }
 
 impl Node for SpecifiedArtifact {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedArtifact.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedArtifact
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

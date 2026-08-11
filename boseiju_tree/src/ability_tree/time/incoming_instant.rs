@@ -14,9 +14,8 @@ pub enum IncomingInstant {
 }
 
 impl Node for IncomingInstant {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::IncomingInstant.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::IncomingInstant
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -66,15 +65,14 @@ impl Default for IncomingInstant {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IncomingNextStepOrPhase {
     pub step_or_phase: crate::ability_tree::time::StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerReference,
+    pub owner: crate::ability_tree::player::PassivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for IncomingNextStepOrPhase {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::IncomingNextStepOrPhase.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::IncomingNextStepOrPhase
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -120,15 +118,14 @@ impl Default for IncomingNextStepOrPhase {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IncomingStepInNextTurn {
     pub step_or_phase: crate::ability_tree::time::StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerReference,
+    pub owner: crate::ability_tree::player::PassivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for IncomingStepInNextTurn {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::IncomingStepInNextTurn.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::IncomingStepInNextTurn
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

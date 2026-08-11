@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -11,11 +11,9 @@ pub struct BeholdKeywordAction {
 }
 
 impl crate::Node for BeholdKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Behold).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Behold)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -51,7 +49,7 @@ impl idris::Idris for BeholdKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "behold"
+        std::any::type_name::<Self>()
     }
 }
 

@@ -2,8 +2,8 @@ mod etb_modifier;
 
 pub use etb_modifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 const MAX_ETB_MODIFIERS: usize = MAX_CHILDREN_PER_NODE - 1;
 
@@ -24,9 +24,8 @@ pub struct EtbReplacementEffect {
 }
 
 impl Node for EtbReplacementEffect {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EtbReplacementEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EtbReplacementEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

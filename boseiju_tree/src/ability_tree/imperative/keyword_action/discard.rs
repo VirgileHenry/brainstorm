@@ -10,11 +10,9 @@ pub struct DiscardKeywordAction {
 }
 
 impl crate::Node for DiscardKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Discard).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Discard)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for DiscardKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "discard"
+        std::any::type_name::<Self>()
     }
 }
 

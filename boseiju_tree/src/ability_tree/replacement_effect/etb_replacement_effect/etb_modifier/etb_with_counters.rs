@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -11,9 +11,8 @@ pub struct EtbWithCounters {
 }
 
 impl Node for EtbWithCounters {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EtbWithCounters.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EtbWithCounters
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

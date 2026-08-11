@@ -11,9 +11,8 @@ pub struct UntapImperative {
 }
 
 impl crate::Node for UntapImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::UntapImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::UntapImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

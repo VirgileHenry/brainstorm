@@ -7,16 +7,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CardReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
+    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
     pub card: crate::ability_tree::object::specified_object::SpecifiedCard,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for CardReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CardReference.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CardReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

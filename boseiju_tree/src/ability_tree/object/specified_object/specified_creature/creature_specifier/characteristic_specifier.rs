@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::CreaturePowerSpecifier;
 use crate::ability_tree::object::specified_object::KeywordAbilitySpecifier;
 
@@ -12,9 +12,8 @@ pub enum CreatureCharacteristicSpecifier {
 }
 
 impl crate::Node for CreatureCharacteristicSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureCharacteristicSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureCharacteristicSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

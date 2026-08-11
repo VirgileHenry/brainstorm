@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 const MAX_COUNTER_AMOUNT: usize = MAX_CHILDREN_PER_NODE - 1;
 
@@ -14,9 +14,8 @@ pub struct RemoveCountersImperative {
 }
 
 impl Node for RemoveCountersImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::RemoveCountersImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::RemoveCountersImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -85,9 +84,8 @@ pub struct RemovableCounterOnPermanent {
 }
 
 impl crate::Node for RemovableCounterOnPermanent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::RemovableCounterOnPermanent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::RemovableCounterOnPermanent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -141,18 +139,17 @@ pub enum RemovableCounterKind {
 }
 
 impl Node for RemovableCounterKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::RemovableCounterKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::RemovableCounterKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
+
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::AnyCounter { .. } => children.push(crate::dummy_terminal::TreeNodeDummyTerminal::new(
-                crate::NodeKind::PreviouslyMentionnedCounter.id(),
+                crate::NodeKind::PreviouslyMentionnedCounter,
             ) as &dyn Node),
             Self::NewCounter(counter) => children.push(counter as &dyn Node),
         }

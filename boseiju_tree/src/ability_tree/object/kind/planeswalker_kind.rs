@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An object reference is a way to refer to one or more objects in the game.
 ///
@@ -16,18 +16,17 @@ pub enum PlaneswalkerKind {
 }
 
 impl crate::Node for PlaneswalkerKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlaneswalkerKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlaneswalkerKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
+
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Planeswalker { .. } => {
-                let node_id = crate::NodeKind::PlaneswalkerBasicKind.id();
+                let node_id = crate::NodeKind::PlaneswalkerBasicKind;
                 let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(node_id);
                 children.push(child as &dyn Node)
             }

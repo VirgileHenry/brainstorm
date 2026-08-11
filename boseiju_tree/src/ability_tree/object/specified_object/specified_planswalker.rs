@@ -2,8 +2,8 @@ mod planeswalker_specifier;
 
 pub use planeswalker_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::PlaneswalkerKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedPlaneswalker {
 }
 
 impl Node for SpecifiedPlaneswalker {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedPlaneswalker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedPlaneswalker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

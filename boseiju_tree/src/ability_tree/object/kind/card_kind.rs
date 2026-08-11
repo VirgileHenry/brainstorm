@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::specified_object::SpecifiedPermanent;
 
@@ -20,20 +20,19 @@ pub enum CardKind {
 }
 
 impl crate::Node for CardKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CardKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CardKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
+
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::OneAmong(child) => children.push(child as &dyn Node),
             Self::Permanent(child) => children.push(child as &dyn Node),
             Self::Card { .. } => {
-                let node_id = crate::NodeKind::CardBasicKind.id();
+                let node_id = crate::NodeKind::CardBasicKind;
                 let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(node_id);
                 children.push(child as &dyn Node)
             }

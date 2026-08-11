@@ -11,11 +11,9 @@ pub struct CreateKeywordAction {
 }
 
 impl crate::Node for CreateKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Create).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Create)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -60,7 +58,7 @@ impl idris::Idris for CreateKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "create"
+        std::any::type_name::<Self>()
     }
 }
 

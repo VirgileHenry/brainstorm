@@ -9,9 +9,8 @@ pub struct All {
 }
 
 impl Node for All {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::You.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::You
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -41,7 +40,7 @@ impl idris::Idris for All {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "All"
+        std::any::type_name::<Self>()
     }
 }
 

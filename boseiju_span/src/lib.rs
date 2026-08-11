@@ -17,6 +17,10 @@ pub struct Span {
 }
 
 impl Span {
+    pub const fn zero() -> Self {
+        Self { start: 0, end: 0 }
+    }
+
     pub fn from_str(source: &str) -> Self {
         Self {
             start: 0,

@@ -8,7 +8,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlternativeCastingPermissions {
-    pub player: crate::ability_tree::player::PlayerReference,
+    pub player: crate::ability_tree::player::ActivePlayerReference,
     pub object: crate::ability_tree::object::Card,
     pub from_zone: crate::ability_tree::zone::ZoneReference,
     pub additional_cost: Option<crate::ability_tree::cost::Cost>,
@@ -17,9 +17,8 @@ pub struct AlternativeCastingPermissions {
 }
 
 impl crate::Node for AlternativeCastingPermissions {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ContinuousEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ContinuousEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

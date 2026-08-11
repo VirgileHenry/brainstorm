@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /* Fixme: maybe "target object becomes tap" is better ?  */
 /* We need a way for the AI to tell "tapping" is equivalent to "being tapped" */
@@ -14,9 +14,8 @@ pub struct TapImperative {
 }
 
 impl crate::Node for TapImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TapImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TapImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

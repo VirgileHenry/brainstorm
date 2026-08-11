@@ -3,7 +3,7 @@ use crate::Node;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::specified_object::SpecifiedCreature;
 use crate::ability_tree::object::specified_object::SpecifiedPlaneswalker;
-use crate::ability_tree::player::PlayerReference;
+use crate::ability_tree::player::ActivePlayerReference;
 
 /// Any object that can receive damages.
 ///
@@ -14,13 +14,12 @@ pub enum DamageReceiverKind {
     Creature(SpecifiedCreature),
     OneAmong(OneAmong<Self>),
     Planeswalker(SpecifiedPlaneswalker),
-    Player(PlayerReference),
+    Player(ActivePlayerReference),
 }
 
 impl crate::Node for DamageReceiverKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DamageReceiverKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DamageReceiverKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

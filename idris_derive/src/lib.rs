@@ -11,6 +11,7 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
                 .into();
         }
     };
+    let mut generics = input.generics.clone();
 
     #[derive(Debug, Clone)]
     struct Offset {
@@ -77,6 +78,10 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
             syn::Fields::Unnamed(unnamed) => match unnamed.unnamed.first() {
                 Some(field) => {
                     let inner_ty = field.ty.clone();
+                    generics
+                        .make_where_clause()
+                        .predicates
+                        .push(syn::parse_quote! { #inner_ty: idris::Idris });
                     match_arms.push(quote::quote! {
                         Self::#ident ( inner ) => (#current_offset + inner.id())
                     });
@@ -102,9 +107,10 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
     }
 
     let count = offset.current();
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     quote::quote! {
-        impl idris::Idris for #enum_name {
+        impl #impl_generics idris::Idris for #enum_name #ty_generics #where_clause {
             const COUNT: usize = #count;
             fn id(&self) -> usize {
                 match self {
@@ -115,6 +121,119 @@ pub fn idris_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream 
                 #( #name_match_arms )*
                 panic!("Invalid id ({}) for {}", id, stringify!(#enum_name))
             }
+        }
+    }
+    .into()
+}
+
+#[proc_macro_derive(ConstVariants)]
+pub fn const_variants_derive(stream: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let input = syn::parse_macro_input!(stream as syn::DeriveInput);
+
+    let enum_name = &input.ident;
+    let enum_data = match &input.data {
+        syn::Data::Enum(data) => data,
+        _ => {
+            return syn::Error::new_spanned(input, "ConstVariants is built for enums only!")
+                .to_compile_error()
+                .into();
+        }
+    };
+    let mut generics = input.generics.clone();
+
+    // COUNT is recomputed here (unit -> +1, recursive -> +inner COUNT) so the
+    // derive stands alone; it mirrors idris' walk, same variant order.
+    let mut count_terms: Vec<proc_macro2::TokenStream> = Vec::new();
+    let mut fill_stmts: Vec<proc_macro2::TokenStream> = Vec::new();
+    let mut placeholder: Option<proc_macro2::TokenStream> = None;
+
+    for variant in enum_data.variants.iter() {
+        let ident = &variant.ident;
+        match &variant.fields {
+            syn::Fields::Unit => {
+                count_terms.push(quote::quote! { 1 });
+                if placeholder.is_none() {
+                    placeholder = Some(quote::quote! { Self::#ident });
+                }
+                fill_stmts.push(quote::quote! {
+                    out[w] = Self::#ident;
+                    w += 1;
+                });
+            }
+            syn::Fields::Unnamed(unnamed) if unnamed.unnamed.len() == 1 => {
+                let inner_ty = &unnamed.unnamed.first().unwrap().ty;
+                generics
+                    .make_where_clause()
+                    .predicates
+                    .push(syn::parse_quote! { #inner_ty: idris::ConstVariants });
+                count_terms.push(quote::quote! {
+                    <#inner_ty as idris::ConstVariants>::VARIANTS.len()
+                });
+                fill_stmts.push(quote::quote! {
+                    {
+                        let inner = <#inner_ty as idris::ConstVariants>::VARIANTS;
+                        let mut j = 0;
+                        while j < inner.len() {
+                            out[w] = Self::#ident(inner[j]);
+                            w += 1;
+                            j += 1;
+                        }
+                    }
+                });
+            }
+            syn::Fields::Named(named) => {
+                // A named variant is a single leaf (one id), matching the Idris derive.
+                let field_inits: Vec<_> = named
+                    .named
+                    .iter()
+                    .map(|f| {
+                        let name = f.ident.as_ref().unwrap();
+                        let ty = &f.ty;
+                        quote::quote! { #name: <#ty>::zero() }
+                    })
+                    .collect();
+                let ctor = quote::quote! { Self::#ident { #( #field_inits, )* } };
+
+                count_terms.push(quote::quote! { 1 });
+                if placeholder.is_none() {
+                    placeholder = Some(ctor.clone());
+                }
+                fill_stmts.push(quote::quote! {
+                    out[w] = #ctor;
+                    w += 1;
+                });
+            }
+            _ => {
+                return syn::Error::new_spanned(
+                    variant,
+                    "ConstVariants only supports unit variants and single-field unnamed (recursive) variants",
+                )
+                .to_compile_error()
+                .into();
+            }
+        }
+    }
+
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    let body = match placeholder {
+        Some(placeholder) => quote::quote! {
+            const VARIANTS: &'static [Self] = &{
+                const LEN: usize = 0 #( + #count_terms )*;
+                let mut out = [#placeholder; LEN];
+                let mut w = 0usize;
+                #( #fill_stmts )*
+                out
+            };
+        },
+        None => quote::quote! {
+            const VARIANTS: &'static [Self] = &[];
+        },
+    };
+
+    quote::quote! {
+        impl #impl_generics idris::ConstVariants for #enum_name #ty_generics #where_clause {
+            #body
         }
     }
     .into()

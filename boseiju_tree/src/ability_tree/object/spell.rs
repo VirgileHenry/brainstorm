@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::PreviouslyMentionned;
 use crate::ability_tree::object::SelfReferencing;
@@ -20,9 +20,8 @@ pub enum Spell {
 }
 
 impl crate::Node for Spell {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Spell.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Spell
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

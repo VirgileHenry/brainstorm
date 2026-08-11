@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::PreviouslyMentionned;
 use crate::ability_tree::object::SelfReferencing;
@@ -21,9 +21,8 @@ pub enum DamageReceiver {
 }
 
 impl crate::Node for DamageReceiver {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DamageReceiver.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DamageReceiver
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -86,9 +85,8 @@ pub struct AnyTarget {
 }
 
 impl Node for AnyTarget {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::AnyTarget.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::AnyTarget
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

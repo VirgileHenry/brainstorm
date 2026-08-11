@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An imperative for sacrificing an object.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -11,9 +11,8 @@ pub struct SacrificeImperative {
 }
 
 impl Node for SacrificeImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SacrificeImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SacrificeImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

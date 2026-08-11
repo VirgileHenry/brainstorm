@@ -4,8 +4,8 @@ mod player_casts_spell_action;
 pub use player_attacks_action::PlayerAttacksAction;
 pub use player_casts_spell_action::PlayerCastsSpellAction;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An action a player can perform.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -16,9 +16,8 @@ pub enum PlayerAction {
 }
 
 impl crate::Node for PlayerAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

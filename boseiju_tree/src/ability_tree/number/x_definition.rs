@@ -4,8 +4,8 @@ mod x_from_game_state;
 pub use x_from_cost::XFromCost;
 pub use x_from_game_state::XFromGameState;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -15,9 +15,8 @@ pub enum XDefinition {
 }
 
 impl Node for XDefinition {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::XDefinition.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::XDefinition
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -55,7 +54,6 @@ impl boseiju_span::Spanned for XDefinition {
         }
     }
 }
-
 
 impl Default for XDefinition {
     fn default() -> Self {

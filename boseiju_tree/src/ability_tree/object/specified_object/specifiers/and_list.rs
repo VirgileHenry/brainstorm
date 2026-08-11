@@ -15,9 +15,8 @@ pub struct SpecifierAndList<T: Specifier + Node> {
 }
 
 impl<T: Specifier + Node> Node for SpecifierAndList<T> {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifierAndList.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifierAndList
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -11,9 +11,8 @@ pub struct AddManaImperative {
 }
 
 impl crate::Node for AddManaImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::AddManaImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::AddManaImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -72,9 +71,8 @@ pub enum ManaToAdd {
 }
 
 impl crate::Node for ManaToAdd {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ManaToAdd.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ManaToAdd
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -134,9 +132,8 @@ pub struct ManaToAddSymbols {
 }
 
 impl crate::Node for ManaToAddSymbols {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ManaToAddSymbols.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ManaToAddSymbols
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -195,9 +192,8 @@ pub struct ManaToAddOfAnyColor {
 }
 
 impl crate::Node for ManaToAddOfAnyColor {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ManaToAddOfAnyColor.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ManaToAddOfAnyColor
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

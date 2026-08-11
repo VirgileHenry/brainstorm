@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
@@ -20,9 +20,8 @@ pub enum EnchantmentSpecifier {
 impl Specifier for EnchantmentSpecifier {}
 
 impl crate::Node for EnchantmentSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EnchantmentSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EnchantmentSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -86,9 +85,8 @@ pub struct EnchantmentSubtypeSpecifier {
 }
 
 impl crate::Node for EnchantmentSubtypeSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EnchantmentSubtypeSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EnchantmentSubtypeSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

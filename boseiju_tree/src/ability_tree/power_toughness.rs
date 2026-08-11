@@ -12,9 +12,8 @@ pub struct PowerToughness {
 }
 
 impl Node for PowerToughness {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PowerToughness.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PowerToughness
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -72,6 +71,6 @@ impl idris::Idris for PowerToughness {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PowerToughness"
+        std::any::type_name::<Self>()
     }
 }

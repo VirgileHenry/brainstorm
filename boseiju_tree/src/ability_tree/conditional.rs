@@ -10,8 +10,8 @@ pub use player_controls_permanent::ConditionPlayerControlsPermanent;
 pub use stack_object_has_state::ConditionStackObjectHasState;
 pub use this_is_your_turn::ConditionThisIsYourTurn;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A conditional clause allows ability to only trigger or happen when some other
 /// conditions are met.
@@ -26,9 +26,8 @@ pub enum Conditional {
 }
 
 impl Node for Conditional {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Conditional.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Conditional
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -67,7 +66,6 @@ impl boseiju_span::Spanned for Conditional {
     }
 }
 
-
 impl Default for Conditional {
     fn default() -> Self {
         Self::If(Default::default())
@@ -84,9 +82,8 @@ pub struct ConditionalIf {
 }
 
 impl Node for ConditionalIf {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ConditionalIf.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ConditionalIf
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -116,7 +113,6 @@ impl boseiju_span::Spanned for ConditionalIf {
     }
 }
 
-
 impl Default for ConditionalIf {
     fn default() -> Self {
         Self {
@@ -137,9 +133,8 @@ pub struct ConditionalUnless {
 }
 
 impl Node for ConditionalUnless {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ConditionalUnless.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ConditionalUnless
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -169,7 +164,6 @@ impl boseiju_span::Spanned for ConditionalUnless {
     }
 }
 
-
 impl Default for ConditionalUnless {
     fn default() -> Self {
         Self {
@@ -192,9 +186,8 @@ pub enum Condition {
 }
 
 impl Node for Condition {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Condition.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Condition
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -241,7 +234,6 @@ impl boseiju_span::Spanned for Condition {
         }
     }
 }
-
 
 impl Default for Condition {
     fn default() -> Self {

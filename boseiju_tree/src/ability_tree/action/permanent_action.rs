@@ -2,8 +2,8 @@ mod permanent_etb_action;
 
 pub use permanent_etb_action::PermanentEtbAction;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An action a permanent can perform.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -13,9 +13,8 @@ pub enum PermanentAction {
 }
 
 impl crate::Node for PermanentAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PermanentAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PermanentAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

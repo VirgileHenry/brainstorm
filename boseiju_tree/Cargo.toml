@@ -15,7 +15,7 @@ idris_derive = { workspace = true }
 mtg_cardbase = { workspace = true }
 mtg_data = { workspace = true }
 serde = { workspace = true }
-serde-big-array = "0.5.1"
+serde-big-array = { workspace = true }
 uuid = { workspace = true }
 
 [features]

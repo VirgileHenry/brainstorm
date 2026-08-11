@@ -1,7 +1,7 @@
 use idris::Idris;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// [`TreeNodeDummyTerminal`] is a type that is used to not have
 /// to create types for all terminals that do not need one.
@@ -16,9 +16,9 @@ use crate::MAX_CHILDREN_PER_NODE;
 ///
 /// This struct can easily be constructed, knowing the node of the children,
 /// and will act as a viable children that gives the correct id, and have no further children or data.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct TreeNodeDummyTerminal {
-    id: usize,
+    node_kind: crate::NodeKind,
 }
 
 impl TreeNodeDummyTerminal {
@@ -33,15 +33,17 @@ impl TreeNodeDummyTerminal {
     ///
     /// We keep a big enough list of all the dummy terminals we might need,
     /// and we always return the one required.
-    pub const fn new(id: usize) -> &'static Self {
-        &Self::STATICS[id]
+    pub fn new(node_kind: crate::NodeKind) -> &'static Self {
+        use idris::Idris;
+        let node_index = node_kind.id();
+        &Self::STATICS[node_index]
     }
 
     /// Shortcut to build the Dummy Terminal for the empty node.
     ///
     /// See [`crate::node_kind::NodeKind::_EmptyNode`] for more info.
     pub fn empty_node() -> &'static Self {
-        let dummy_node_id = crate::NodeKind::_EmptyNode.id();
+        let dummy_node_id = crate::NodeKind::_EmptyNode;
         Self::new(dummy_node_id)
     }
 
@@ -49,15 +51,20 @@ impl TreeNodeDummyTerminal {
     ///
     /// See [`crate::node_kind::NodeKind::_NoneNode`] for more info.
     pub fn none_node() -> &'static Self {
-        let dummy_node_id = crate::NodeKind::_NoneNode.id();
+        let dummy_node_id = crate::NodeKind::_NoneNode;
         Self::new(dummy_node_id)
     }
 
     const fn build_statics<const LENGTH: usize>() -> [Self; LENGTH] {
-        let mut result = [TreeNodeDummyTerminal { id: 0 }; LENGTH];
+        let mut result = [const {
+            let node_kind = crate::NodeKind::_EmptyNode;
+            TreeNodeDummyTerminal { node_kind }
+        }; LENGTH];
+
         let mut i = 0;
         while i < LENGTH {
-            result[i] = TreeNodeDummyTerminal { id: i };
+            let node_kind = <crate::NodeKind as idris::ConstVariants>::VARIANTS[i];
+            result[i] = TreeNodeDummyTerminal { node_kind };
             i += 1;
         }
         result
@@ -65,8 +72,8 @@ impl TreeNodeDummyTerminal {
 }
 
 impl Node for TreeNodeDummyTerminal {
-    fn node_id(&self) -> usize {
-        self.id
+    fn node_id(&self) -> crate::NodeKind {
+        self.node_kind.clone()
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

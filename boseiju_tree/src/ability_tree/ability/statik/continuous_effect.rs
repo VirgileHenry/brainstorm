@@ -19,9 +19,8 @@ pub struct ContinuousEffect {
 }
 
 impl crate::Node for ContinuousEffect {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ContinuousEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ContinuousEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

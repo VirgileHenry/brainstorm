@@ -4,17 +4,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ClashKeywordAction {
-    pub opponent: crate::ability_tree::player::PlayerReference,
+    pub opponent: crate::ability_tree::player::ActivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl crate::Node for ClashKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Clash).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Clash)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for ClashKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "clash"
+        std::any::type_name::<Self>()
     }
 }
 
@@ -63,7 +61,7 @@ impl Default for ClashKeywordAction {
 }
 
 pub fn ability(
-    _opponent: &crate::ability_tree::player::PlayerReference,
+    _opponent: &crate::ability_tree::player::ActivePlayerReference,
     #[cfg(feature = "spanned_tree")] span: boseiju_span::Span,
 ) -> crate::ability_tree::ability::spell::SpellAbility {
     /* Fixme: unimplemented */

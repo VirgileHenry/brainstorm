@@ -12,18 +12,23 @@ use crate::ability_tree::object::specified_object::Specifier;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum PlayerSpecifier {
+pub enum PlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     Ally(AllySpecifier),
     Opponent(OpponentSpecifier),
-    Other(OtherPlayerSpecifier),
+    Other(OtherPlayerSpecifier<Q>),
 }
 
-impl Specifier for PlayerSpecifier {}
+impl<Q> Specifier for PlayerSpecifier<Q> where Q: crate::ability_tree::quantifier::Quantifier {}
 
-impl Node for PlayerSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerSpecifier.id()
+impl<Q> Node for PlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -55,7 +60,10 @@ impl Node for PlayerSpecifier {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for PlayerSpecifier {
+impl<Q> boseiju_span::Spanned for PlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Ally(child) => child.span(),
@@ -65,17 +73,23 @@ impl boseiju_span::Spanned for PlayerSpecifier {
     }
 }
 
-impl idris::Idris for PlayerSpecifier {
+impl<Q> idris::Idris for PlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     const COUNT: usize = 1;
     fn id(&self) -> usize {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "PlayerSpecifier"
+        std::any::type_name::<Self>()
     }
 }
 
-impl Default for PlayerSpecifier {
+impl<Q> Default for PlayerSpecifier<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn default() -> Self {
         Self::Other(Default::default())
     }

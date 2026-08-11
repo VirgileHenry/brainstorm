@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// Condition for a trigger ability.
 ///
@@ -14,9 +14,8 @@ pub struct TriggerCondition {
 }
 
 impl Node for TriggerCondition {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TriggerCondition.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TriggerCondition
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -80,9 +79,8 @@ pub enum TriggerConditionKind {
 }
 
 impl Node for TriggerConditionKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::TriggerConditionKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::TriggerConditionKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

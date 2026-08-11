@@ -7,16 +7,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpellReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
+    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
     pub spell: crate::ability_tree::object::specified_object::SpecifiedSpell,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for SpellReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpellReference.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpellReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

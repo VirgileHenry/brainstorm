@@ -12,7 +12,8 @@
 /// To do this, we create two variants, an IdMarker variant to give the node an id, and a variant
 /// that use the idris derive to recusrively add the nodes to all child variants.
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NodeKind {
     /// A special "no node" kind.
     ///
@@ -96,6 +97,8 @@ pub enum NodeKind {
     DamageReceiverReference,
     DamagesDealt,
     DealsDamageImperative,
+    Deed,
+    DeedKind(DeedNodeKind),
     DelayedTriggerAbility,
     DestroyImperative,
     Enchantment,
@@ -148,9 +151,15 @@ pub enum NodeKind {
     ModifyObjectEffect,
     ModifyRuleEffect,
     MtgData(MtgDataNodeKind),
-    Number(crate::ability_tree::number::Number),
-    NumberIdMarker,
+    Number,
+    NumberAnyNumber,
+    NumberFlatNumber,
+    NumberGameStateNumber,
     NumberOfPermanents,
+    NumberOrMoreNumber,
+    NumberUpToNumber,
+    NumberXDefinition,
+    NumberXNumber,
     ObjectAbilitiesModification,
     ObjectCharacteristicModification,
     ObjectGainAbility,
@@ -159,8 +168,8 @@ pub enum NodeKind {
     OneAmong,
     OpponentSpecifier,
     OtherPlayerSpecifier,
-    OwnedZone,
     OwnerSpecifier,
+    PassiveQuantifier,
     PayLifeImperative,
     PayManaImperative,
     Permanent,
@@ -200,7 +209,7 @@ pub enum NodeKind {
     PreviouslyMentionnedCounter,
     PreviouslyMentionnedToken,
     PutCountersImperative,
-    Quantifier,
+    ActiveQuantifier,
     RecurrentInstant,
     RemovableCounterKind,
     RemovableCounterOnPermanent,
@@ -230,8 +239,9 @@ pub enum NodeKind {
     SpellKind,
     SpellReference,
     SpellSpecifier,
-    StackObjectState(crate::ability_tree::state::StackObjectState),
-    StackObjectStateIdMarker,
+    StackObjectState,
+    StackObjectStateCountered,
+    StackObjectStateKicked,
     Statement,
     StaticAbility,
     StaticAbilityKind,
@@ -251,12 +261,24 @@ pub enum NodeKind {
     XFromCost,
     XFromGameState,
     You,
-    ZoneReference(crate::ability_tree::zone::ZoneReference),
-    ZoneReferenceIdMarker,
+    ZoneReference,
+    ZoneReferenceAnywhere,
+    ZoneReferenceExile,
+    ZoneReferenceOwnedZone,
+    ZoneReferenceTheBattlefield,
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DeedNodeKind {
+    Cast,
+    PayMana,
+}
+
+#[derive(idris_derive::Idris)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MtgDataNodeKind {
     AbilityWord(mtg_data::AbilityWord),
     AbilityWordIdMarker,
@@ -286,7 +308,8 @@ pub enum MtgDataNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum KeywordAbilityNodeKind {
     Affinity,
     Afterlife,
@@ -327,7 +350,8 @@ pub enum KeywordAbilityNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum KeywordActionNodeKind {
     Activate,
     Adapt,
@@ -388,13 +412,15 @@ pub enum KeywordActionNodeKind {
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AbilityWordNodeKind {
     Descend,
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TerminalNodeKind {
     AnotherObjectSpecifier,
     BackwardDurationIdMarker,
@@ -429,38 +455,17 @@ pub enum TerminalNodeKind {
     OwnableZone(boseiju_lexer::terminal::OwnableZone),
     OwnerSpecifierIdMarker,
     OwnerSpecifier(boseiju_lexer::terminal::OwnerSpecifier),
-    Phase(boseiju_lexer::terminal::Phase),
     PhaseIdMarker,
+    Phase(boseiju_lexer::terminal::Phase),
     SagaChapterNumber,
     SelfReferencing,
-    Step(boseiju_lexer::terminal::Step),
     StepIdMarker,
+    Step(boseiju_lexer::terminal::Step),
 }
 
 #[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum TypeLineNodeKind {
-    ArtifactSubtype,
-    BattleSubtype,
-    ConspiracySubtype,
-    CreatureSubtype,
-    DungeonSubtype,
-    EmblemSubtype,
-    EnchantmentSubtype,
-    HeroSubtype,
-    InstantSubtype,
-    KindredSubtype,
-    LandSubtype,
-    PhenomenonSubtype,
-    PlaneSubtype,
-    PlaneswalkerSubtype,
-    SchemeSubtype,
-    SorcerySubtype,
-    VanguardSubtype,
-}
-
-#[derive(idris_derive::Idris)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(idris_derive::ConstVariants)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LayoutNodeKind {
     Normal,
     Split,

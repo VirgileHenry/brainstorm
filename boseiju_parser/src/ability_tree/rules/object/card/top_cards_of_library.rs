@@ -71,7 +71,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::Card {
                     card: object::Card::TopCardsOfLibrary(object::TopCardsOfLibrary {
-                        amount: boseiju_tree::ability_tree::number::Number::Number(
+                        amount: boseiju_tree::ability_tree::number::Number::Flat(
                             boseiju_tree::ability_tree::number::FixedNumber {
                                 number: 1,
                                 #[cfg(feature = "spanned_tree")]
@@ -147,7 +147,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::Card {
                     card: object::Card::TopCardsOfLibrary(object::TopCardsOfLibrary {
-                        amount: boseiju_tree::ability_tree::number::Number::Number(
+                        amount: boseiju_tree::ability_tree::number::Number::Flat(
                             boseiju_tree::ability_tree::number::FixedNumber {
                                 number: 1,
                                 #[cfg(feature = "spanned_tree")]

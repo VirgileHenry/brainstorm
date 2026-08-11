@@ -11,9 +11,8 @@ pub struct XFromGameState {
 }
 
 impl crate::Node for XFromGameState {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::XFromGameState.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::XFromGameState
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

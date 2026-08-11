@@ -8,8 +8,8 @@ pub use object_gains_state::*;
 pub use permanent_performs_action::*;
 pub use player_performs_action::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An event is anything that happens in a Magic: The Gathering game.
 ///
@@ -30,9 +30,8 @@ pub enum Event {
 }
 
 impl crate::Node for Event {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Event.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::Event
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

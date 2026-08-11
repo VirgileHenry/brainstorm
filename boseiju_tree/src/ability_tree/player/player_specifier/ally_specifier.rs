@@ -9,9 +9,8 @@ pub struct AllySpecifier {
 }
 
 impl Node for AllySpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::AllySpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::AllySpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

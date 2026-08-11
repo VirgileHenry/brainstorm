@@ -2,8 +2,8 @@ mod permanent_specifier;
 
 pub use permanent_specifier::PermanentSpecifier;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::PermanentKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedPermanent {
 }
 
 impl Node for SpecifiedPermanent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedPermanent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedPermanent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

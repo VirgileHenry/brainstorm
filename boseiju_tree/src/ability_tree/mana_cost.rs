@@ -19,9 +19,8 @@ impl ManaCost {
 }
 
 impl Node for ManaCost {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ManaCost.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ManaCost
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

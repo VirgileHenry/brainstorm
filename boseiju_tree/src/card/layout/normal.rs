@@ -1,6 +1,5 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
-use idris::Idris;
 
 /// Classic layout for cards, "normal" layout
 #[derive(Debug, Clone)]
@@ -24,9 +23,9 @@ impl crate::card::layout::LayoutImpl for NormalLayout {
 }
 
 impl Node for NormalLayout {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::LayoutNodeKind;
-        crate::NodeKind::Layout(LayoutNodeKind::Normal).id()
+        crate::NodeKind::Layout(LayoutNodeKind::Normal)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

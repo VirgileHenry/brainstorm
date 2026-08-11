@@ -1,10 +1,11 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// States that only creatures can have.
 #[derive(idris_derive::Idris)]
+#[derive(idris_derive::ConstVariants)]
 #[derive(serde::Serialize, serde::Deserialize)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CreatureState {
     /// Attacking creature state.
     Attacking {
@@ -24,15 +25,12 @@ pub enum CreatureState {
 }
 
 impl Node for CreatureState {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureStateIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureStateIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
-
-        let child_id = crate::NodeKind::CreatureState(self.clone()).id();
+        let child_id = crate::NodeKind::CreatureState(self.clone());
         let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
 
         let mut children = arrayvec::ArrayVec::new_const();

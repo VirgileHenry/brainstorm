@@ -119,7 +119,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                                 continuous_effect_kind::CreatureCantDoAction {
                                     action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
                                         creature: object::Creature::Reference(object::reference::CreatureReference {
-                                            count: quantifier::Quantifier::All(quantifier::All {
+                                            count: quantifier::ActiveQuantifier::All(quantifier::All {
                                                 #[cfg(feature = "spanned_tree")]
                                                 span: block_span.empty_at_end(),
                                             }),

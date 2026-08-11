@@ -2,8 +2,8 @@ mod object_characteristic_modification;
 
 pub use object_characteristic_modification::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 const MAX_OBJECT_MODIFICATIONS: usize = MAX_CHILDREN_PER_NODE - 1;
 
@@ -18,9 +18,8 @@ pub struct ModifyObjectEffect {
 }
 
 impl Node for ModifyObjectEffect {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ModifyObjectEffect.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ModifyObjectEffect
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -89,9 +88,8 @@ pub enum ObjectAbilitiesModification {
 }
 
 impl Node for ObjectAbilitiesModification {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ObjectAbilitiesModification.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ObjectAbilitiesModification
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -146,9 +144,8 @@ pub struct ObjectGainAbility {
 }
 
 impl Node for ObjectGainAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ObjectGainAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ObjectGainAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

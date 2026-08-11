@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// The self referencing struct is a special kind of object specifier
 /// that references the objects that carries the ability.
@@ -19,9 +19,8 @@ pub struct PreviouslyMentionned {
 }
 
 impl Node for PreviouslyMentionned {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PreviouslyMentionned.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PreviouslyMentionned
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

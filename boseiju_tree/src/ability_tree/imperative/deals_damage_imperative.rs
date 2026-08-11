@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 const MAX_DAMAGES_DEALT: usize = MAX_CHILDREN_PER_NODE - 1;
 
@@ -18,9 +18,8 @@ pub struct DealsDamageImperative {
 }
 
 impl Node for DealsDamageImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DealsDamageImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DealsDamageImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -92,9 +91,8 @@ pub struct DamagesDealt {
 }
 
 impl Node for DamagesDealt {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DamagesDealt.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DamagesDealt
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

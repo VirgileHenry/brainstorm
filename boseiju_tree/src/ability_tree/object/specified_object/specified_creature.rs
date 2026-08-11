@@ -2,8 +2,8 @@ mod creature_specifier;
 
 pub use creature_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::CreatureKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedCreature {
 }
 
 impl Node for SpecifiedCreature {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedCreature.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedCreature
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

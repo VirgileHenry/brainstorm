@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A spell ability.
 ///
@@ -19,9 +19,8 @@ pub struct SpellAbility {
 }
 
 impl crate::Node for SpellAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpellAbility.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpellAbility
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

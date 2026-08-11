@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -10,11 +10,9 @@ pub struct ReconfigureKeywordAbility {
 }
 
 impl crate::Node for ReconfigureKeywordAbility {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordAbilityNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAbility(KeywordAbilityNodeKind::Reconfigure).id()
+        crate::NodeKind::KeywordAbility(KeywordAbilityNodeKind::Reconfigure)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for ReconfigureKeywordAbility {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "reconfigure"
+        std::any::type_name::<Self>()
     }
 }
 

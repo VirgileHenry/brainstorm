@@ -7,16 +7,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionPlayerControlsPermanent {
-    pub player: crate::ability_tree::player::PlayerReference,
+    pub player: crate::ability_tree::player::PassivePlayerReference,
     pub permanent: crate::ability_tree::object::Permanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl crate::Node for ConditionPlayerControlsPermanent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerControlsPermanent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerControlsPermanent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

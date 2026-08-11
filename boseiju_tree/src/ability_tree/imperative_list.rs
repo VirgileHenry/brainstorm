@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::imperative::Imperative;
 
 /// An imperative list is a list of imperative that should be executed.
@@ -16,9 +16,8 @@ pub struct ImperativeList {
 }
 
 impl Node for ImperativeList {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ImperativeList.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ImperativeList
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

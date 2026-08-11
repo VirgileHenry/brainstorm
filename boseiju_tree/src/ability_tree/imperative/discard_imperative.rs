@@ -11,9 +11,8 @@ pub struct DiscardImperative {
 }
 
 impl crate::Node for DiscardImperative {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DestroyImperative.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DestroyImperative
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

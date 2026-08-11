@@ -53,8 +53,8 @@ pub mod waterbend;
 
 // pub use keyword_to_abilities::keyword_action_to_abilities;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// A Keyword Action.
 ///
@@ -73,9 +73,8 @@ pub struct KeywordAction {
 }
 
 impl Node for KeywordAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::KeywordActionIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::KeywordActionIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -181,9 +180,8 @@ pub enum ExpandedKeywordAction {
 }
 
 impl crate::Node for ExpandedKeywordAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ExpandedKeywordAbilityIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ExpandedKeywordAbilityIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -367,15 +365,13 @@ pub struct StandaloneKeywordAction {
 }
 
 impl Node for StandaloneKeywordAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ExpandedKeywordAction(self.keyword_action.clone()).id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ExpandedKeywordAction(self.keyword_action.clone())
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = crate::NodeKind::ExpandedKeywordAction(self.keyword_action.clone()).id();
+        let child_id = crate::NodeKind::ExpandedKeywordAction(self.keyword_action.clone());
         let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn Node);
         children

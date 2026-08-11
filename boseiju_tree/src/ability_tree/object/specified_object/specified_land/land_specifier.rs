@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
@@ -20,9 +20,8 @@ pub enum LandSpecifier {
 impl Specifier for LandSpecifier {}
 
 impl crate::Node for LandSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::LandSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::LandSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -86,9 +85,8 @@ pub struct LandSubtypeSpecifier {
 }
 
 impl crate::Node for LandSubtypeSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::LandSubtypeSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::LandSubtypeSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

@@ -1,7 +1,12 @@
+mod anywhere;
+mod exile;
 mod owned_zone;
+mod the_battlefield;
 
-use idris::Idris;
+pub use anywhere::Anywhere;
+pub use exile::Exile;
 pub use owned_zone::OwnedZone;
+pub use the_battlefield::TheBattlefield;
 
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
@@ -14,45 +19,34 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ZoneReference {
-    Anywhere {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
-    Exile {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
+    Anywhere(Anywhere),
+    Exile(Exile),
     OwnedZone(OwnedZone),
-    TheBattlefield {
-        #[cfg(feature = "spanned_tree")]
-        span: boseiju_span::Span,
-    },
+    TheBattlefield(TheBattlefield),
 }
 
 impl Node for ZoneReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ZoneReferenceIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ZoneReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::Anywhere(child) => children.push(child as &dyn Node),
+            Self::Exile(child) => children.push(child as &dyn Node),
             Self::OwnedZone(child) => children.push(child as &dyn Node),
-            Self::Anywhere { .. } | Self::Exile { .. } | Self::TheBattlefield { .. } => children.push(
-                crate::dummy_terminal::TreeNodeDummyTerminal::new(crate::NodeKind::ZoneReference(self.clone()).id()) as &dyn Node,
-            ),
+            Self::TheBattlefield(child) => children.push(child as &dyn Node),
         }
         children
     }
 
     fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
-        use std::io::Write;
         match self {
-            Self::Anywhere { .. } => write!(out, "anywhere"),
-            Self::Exile { .. } => write!(out, "exile"),
+            Self::Anywhere(owned) => owned.display(out),
+            Self::Exile(owned) => owned.display(out),
             Self::OwnedZone(owned) => owned.display(out),
-            Self::TheBattlefield { .. } => write!(out, "the battlefield"),
+            Self::TheBattlefield(owned) => owned.display(out),
         }
     }
 
@@ -65,19 +59,16 @@ impl Node for ZoneReference {
 impl boseiju_span::Spanned for ZoneReference {
     fn span(&self) -> boseiju_span::Span {
         match self {
-            Self::Anywhere { span } => *span,
-            Self::Exile { span } => *span,
+            Self::Anywhere(child) => child.span(),
+            Self::Exile(child) => child.span(),
             Self::OwnedZone(child) => child.span(),
-            Self::TheBattlefield { span } => *span,
+            Self::TheBattlefield(child) => child.span(),
         }
     }
 }
 
 impl Default for ZoneReference {
     fn default() -> Self {
-        Self::Anywhere {
-            #[cfg(feature = "spanned_tree")]
-            span: Default::default(),
-        }
+        Self::Anywhere(Default::default())
     }
 }

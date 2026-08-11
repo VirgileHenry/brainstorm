@@ -72,8 +72,8 @@ pub use vanishing::VanishingKeywordAbility;
 pub use ward::WardKeywordAbility;
 pub use warp::WarpKeywordAbility;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// This is basically a 1-1 copy of the [`mtg_data::KeywordAbility`],
 /// expect all keyword abilities required additional text also have this text.
@@ -123,9 +123,8 @@ pub enum ExpandedKeywordAbility {
 }
 
 impl crate::Node for ExpandedKeywordAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ExpandedKeywordAbilityIdMarker.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ExpandedKeywordAbilityIdMarker
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -285,15 +284,13 @@ pub struct StandaloneKeywordAbility {
 }
 
 impl Node for StandaloneKeywordAbility {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ExpandedKeywordAbility(self.keyword_ability.clone()).id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ExpandedKeywordAbility(self.keyword_ability.clone())
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
         let mut children = arrayvec::ArrayVec::new_const();
-        let child_id = crate::NodeKind::ExpandedKeywordAbility(self.keyword_ability.clone()).id();
+        let child_id = crate::NodeKind::ExpandedKeywordAbility(self.keyword_ability.clone());
         let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(child_id);
         children.push(child as &dyn Node);
         children

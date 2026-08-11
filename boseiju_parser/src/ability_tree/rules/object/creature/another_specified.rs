@@ -38,8 +38,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 ParserNode::SpecifiedCreature { creature },
             ] => Ok(ParserNode::Creature {
                 creature: object::Creature::Reference(object::reference::CreatureReference {
-                    count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
-                        number: boseiju_tree::ability_tree::number::Number::Number(
+                    count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                        number: boseiju_tree::ability_tree::number::Number::Flat(
                             boseiju_tree::ability_tree::number::FixedNumber {
                                 number: 1,
                                 #[cfg(feature = "spanned_tree")]

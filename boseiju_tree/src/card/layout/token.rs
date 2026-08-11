@@ -1,6 +1,5 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
-use idris::Idris;
 
 /// Layout of a token
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -25,9 +24,9 @@ impl crate::card::layout::LayoutImpl for TokenLayout {
 }
 
 impl Node for TokenLayout {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::LayoutNodeKind;
-        crate::NodeKind::Layout(LayoutNodeKind::Token).id()
+        crate::NodeKind::Layout(LayoutNodeKind::Token)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

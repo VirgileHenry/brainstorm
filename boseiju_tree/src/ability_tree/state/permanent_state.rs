@@ -6,8 +6,8 @@ pub use tapped_state::PermanentTappedState;
 pub use target_state::PermanentTargetedState;
 pub use untapped_state::PermanentUntappedState;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// States that only creatures can have.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -22,9 +22,8 @@ pub enum PermanentState {
 }
 
 impl Node for PermanentState {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PermanentState.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PermanentState
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -65,7 +64,6 @@ impl boseiju_span::Spanned for PermanentState {
         }
     }
 }
-
 
 impl Default for PermanentState {
     fn default() -> Self {

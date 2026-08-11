@@ -11,9 +11,8 @@ pub struct CardManaValueSpecifier {
 }
 
 impl crate::Node for CardManaValueSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CardManaValueSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CardManaValueSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

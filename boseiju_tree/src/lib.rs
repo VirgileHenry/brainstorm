@@ -81,7 +81,7 @@ pub trait Node: SpannedHelper {
     ///
     /// This identifier is unique to the kind of node it is, allowing to rebuild the node kind
     /// from it. This allows to create a mapping for all node kinds to other objects.
-    fn node_id(&self) -> usize;
+    fn node_id(&self) -> NodeKind;
 
     /// Get all of the nodes children, as abstract ability tree node.
     ///

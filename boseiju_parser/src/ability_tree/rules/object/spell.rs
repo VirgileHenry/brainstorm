@@ -68,8 +68,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::SpecifiedSpell { spell },
                 ] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: quantifier::Quantifier::Count(quantifier::CountQuantifier {
-                            number: boseiju_tree::ability_tree::number::Number::Number(
+                        count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                            number: boseiju_tree::ability_tree::number::Number::Flat(
                                 boseiju_tree::ability_tree::number::FixedNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
@@ -106,7 +106,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: quantifier::Quantifier::All(quantifier::All {
+                        count: quantifier::ActiveQuantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: spell.span().empty_at_start(),
                         }),

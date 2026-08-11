@@ -55,9 +55,8 @@ where
 }
 
 impl<T: Specifier + Node> Node for SpecifierOrList<T> {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifierOrList.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifierOrList
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

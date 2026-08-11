@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// An imperative for tapping an object.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -10,9 +10,8 @@ pub struct XFromCost {
 }
 
 impl crate::Node for XFromCost {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::XFromCost.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::XFromCost
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

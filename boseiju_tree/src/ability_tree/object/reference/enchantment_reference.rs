@@ -5,16 +5,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EnchantmentReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
+    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
     pub enchantment: crate::ability_tree::object::specified_object::SpecifiedEnchantment,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for EnchantmentReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::EnchantmentReference.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::EnchantmentReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

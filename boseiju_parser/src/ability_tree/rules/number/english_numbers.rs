@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Number {
-                    number: number::Number::Number(number::FixedNumber {
+                    number: number::Number::Flat(number::FixedNumber {
                         number: 1,
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
@@ -59,7 +59,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span,
                     })),
                 ] => Ok(ParserNode::Number {
-                    number: number::Number::Number(number::FixedNumber {
+                    number: number::Number::Flat(number::FixedNumber {
                         number: 1,
                         #[cfg(feature = "spanned_tree")]
                         span: *span,

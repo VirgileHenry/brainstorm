@@ -15,9 +15,8 @@ pub struct PlayerAttacksAction {
 }
 
 impl AbilityTreeNode for PlayerAttacksAction {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerAttacksAction.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerAttacksAction
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {

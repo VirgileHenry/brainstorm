@@ -20,9 +20,8 @@ pub enum ContinuousEffectKind {
 }
 
 impl Node for ContinuousEffectKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ContinuousEffectKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ContinuousEffectKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

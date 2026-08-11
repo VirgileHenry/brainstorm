@@ -11,9 +11,8 @@ pub struct OneAmong<T: Node> {
 }
 
 impl<T: Node> Node for OneAmong<T> {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::OneAmong.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::OneAmong
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

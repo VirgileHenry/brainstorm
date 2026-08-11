@@ -4,8 +4,8 @@ mod subtype_specifier;
 pub use characteristic_specifier::*;
 pub use subtype_specifier::*;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::specified_object::AnotherObjectSpecifier;
 use crate::ability_tree::object::specified_object::ColorSpecifier;
 use crate::ability_tree::object::specified_object::ControlSpecifier;
@@ -27,9 +27,8 @@ pub enum CreatureSpecifier {
 impl Specifier for CreatureSpecifier {}
 
 impl crate::Node for CreatureSpecifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::CreatureSpecifier.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::CreatureSpecifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

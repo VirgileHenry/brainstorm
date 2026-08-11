@@ -9,33 +9,33 @@ pub use target_quantifier::TargetQuantifier;
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
 
-/// The quantifier node tells how much of something we are interested in.
+/// The quantifier trait allows to be generic over which quantifier is used.
 ///
-/// Fixme: this include too much stuff:
-/// Triggered abilities (whenever a creature...) should not be a active quantifier
-/// like "destroy target/all creature" are. Sooo perhaps something to change here ?
+/// The only quantifiers are active and passive.
+pub trait Quantifier: Node + std::fmt::Debug + Clone + Eq + PartialEq {}
+
+/// The active quantifier is used to quantify objects we want to act uppon.
 ///
-/// If we want a clean tree, we can't leave it as is
+/// To quantify them, it is by either targetting them or selecting them all.
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Quantifier {
+pub enum ActiveQuantifier {
     All(All),
-    Count(CountQuantifier),
     Target(TargetQuantifier),
 }
 
-impl Node for Quantifier {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::Quantifier.id()
+impl Quantifier for ActiveQuantifier {}
+
+impl Node for ActiveQuantifier {
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ActiveQuantifier
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::All(child) => children.push(child as &dyn Node),
-            Self::Count(child) => children.push(child as &dyn Node),
             Self::Target(child) => children.push(child as &dyn Node),
         }
         children
@@ -43,11 +43,10 @@ impl Node for Quantifier {
 
     fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "quantifier:")?;
+        write!(out, "active quantifier:")?;
         out.push_final_branch()?;
         match self {
             Self::All(child) => child.display(out)?,
-            Self::Count(child) => child.display(out)?,
             Self::Target(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -55,23 +54,78 @@ impl Node for Quantifier {
     }
 
     fn node_tag(&self) -> &'static str {
-        "quantifier"
+        "active quantifier"
     }
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for Quantifier {
+impl boseiju_span::Spanned for ActiveQuantifier {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::All(child) => child.span(),
-            Self::Count(child) => child.span(),
             Self::Target(child) => child.span(),
         }
     }
 }
 
-impl Default for Quantifier {
+impl Default for ActiveQuantifier {
     fn default() -> Self {
         Self::All(Default::default())
+    }
+}
+
+/// The passive quantifier is used to refer to objects to listen for events.
+///
+/// To quantify them, it is by either targetting them or selecting them all.
+#[derive(idris_derive::Idris)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PassiveQuantifier {
+    Count(CountQuantifier),
+}
+
+impl Quantifier for PassiveQuantifier {}
+
+impl Node for PassiveQuantifier {
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PassiveQuantifier
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self {
+            Self::Count(child) => children.push(child as &dyn Node),
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "active quantifier:")?;
+        out.push_final_branch()?;
+        match self {
+            Self::Count(child) => child.display(out)?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "active quantifier"
+    }
+}
+
+#[cfg(feature = "spanned_tree")]
+impl boseiju_span::Spanned for PassiveQuantifier {
+    fn span(&self) -> boseiju_span::Span {
+        match self {
+            Self::Count(child) => child.span(),
+        }
+    }
+}
+
+impl Default for PassiveQuantifier {
+    fn default() -> Self {
+        Self::Count(Default::default())
     }
 }

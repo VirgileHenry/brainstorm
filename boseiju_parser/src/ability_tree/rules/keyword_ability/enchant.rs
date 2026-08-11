@@ -48,8 +48,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     keyword: ability::keyword_ability::ExpandedKeywordAbility::Enchant(
                         ability::keyword_ability::EnchantKeywordAbility {
                             enchantable_object: object::Permanent::Reference(object::reference::PermanentReference {
-                                count: quantifier::Quantifier::Target(quantifier::TargetQuantifier {
-                                    number: number::Number::Number(number::FixedNumber {
+                                count: quantifier::ActiveQuantifier::Target(quantifier::TargetQuantifier {
+                                    number: number::Number::Flat(number::FlatNumber {
                                         number: 1,
                                         #[cfg(feature = "spanned_tree")]
                                         span: enchant_span.empty_at_end(),

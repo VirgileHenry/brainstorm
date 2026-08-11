@@ -166,7 +166,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             step_or_phase: boseiju_tree::ability_tree::time::StepOrPhase::Step(step.clone()),
                             owner: boseiju_tree::ability_tree::player::PlayerReference::SpecifiedPlayer(
                                 boseiju_tree::ability_tree::player::SpecifiedPlayer {
-                                    count: boseiju_tree::ability_tree::quantifier::Quantifier::All(
+                                    count: boseiju_tree::ability_tree::quantifier::PassiveQuantifier::All(
                                         boseiju_tree::ability_tree::quantifier::All {
                                             #[cfg(feature = "spanned_tree")]
                                             span: *player_span,

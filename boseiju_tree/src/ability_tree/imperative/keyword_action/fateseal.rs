@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -10,11 +10,9 @@ pub struct FatesealKeywordAction {
 }
 
 impl crate::Node for FatesealKeywordAction {
-    fn node_id(&self) -> usize {
+    fn node_id(&self) -> crate::NodeKind {
         use crate::node_kind::KeywordActionNodeKind;
-        use idris::Idris;
-
-        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Fateseal).id()
+        crate::NodeKind::KeywordAction(KeywordActionNodeKind::Fateseal)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -48,7 +46,7 @@ impl idris::Idris for FatesealKeywordAction {
         0
     }
     fn name_from_id(_: usize) -> &'static str {
-        "fateseal"
+        std::any::type_name::<Self>()
     }
 }
 

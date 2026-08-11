@@ -12,9 +12,8 @@ pub struct PlayerCastsSpellEvent {
 }
 
 impl crate::AbilityTreeNode for PlayerCastsSpellEvent {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerCastsSpellEvent.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerCastsSpellEvent
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn AbilityTreeNode, MAX_CHILDREN_PER_NODE> {

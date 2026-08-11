@@ -17,17 +17,22 @@ use crate::Node;
 #[derive(idris_derive::Idris)]
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum PlayerReference {
+pub enum PlayerReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     ObjectController(ObjectController),
     ObjectOwner(ObjectOwner),
-    SpecifiedPlayer(SpecifiedPlayer),
+    SpecifiedPlayer(SpecifiedPlayer<Q>),
     You(You),
 }
 
-impl Node for PlayerReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PlayerReference.id()
+impl<Q> Node for PlayerReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -61,7 +66,10 @@ impl Node for PlayerReference {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for PlayerReference {
+impl<Q> boseiju_span::Spanned for PlayerReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::ObjectController(child) => child.span(),
@@ -72,8 +80,14 @@ impl boseiju_span::Spanned for PlayerReference {
     }
 }
 
-impl Default for PlayerReference {
+impl<Q> Default for PlayerReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn default() -> Self {
         Self::You(Default::default())
     }
 }
+
+pub type ActivePlayerReference = PlayerReference<crate::ability_tree::quantifier::ActiveQuantifier>;
+pub type PassivePlayerReference = PlayerReference<crate::ability_tree::quantifier::PassiveQuantifier>;

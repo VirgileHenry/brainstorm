@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 
 /// If condition for event that only applies during your turn.
 ///
@@ -12,9 +12,8 @@ pub struct ConditionThisIsYourTurn {
 }
 
 impl crate::Node for ConditionThisIsYourTurn {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::ThisIsYourTurn.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ThisIsYourTurn
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

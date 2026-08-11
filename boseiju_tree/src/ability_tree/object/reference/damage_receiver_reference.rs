@@ -5,16 +5,15 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DamageReceiverReference {
-    pub count: crate::ability_tree::quantifier::Quantifier,
+    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
     pub kind: crate::ability_tree::object::kind::DamageReceiverKind, /* Fixme: specified */
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for DamageReceiverReference {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::DamageReceiverReference.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::DamageReceiverReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

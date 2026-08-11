@@ -7,15 +7,14 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RecurrentInstant {
     pub step_or_phase: crate::ability_tree::time::StepOrPhase,
-    pub owner: crate::ability_tree::player::PlayerReference,
+    pub owner: crate::ability_tree::player::PassivePlayerReference,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
 impl Node for RecurrentInstant {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::RecurrentInstant.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::RecurrentInstant
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

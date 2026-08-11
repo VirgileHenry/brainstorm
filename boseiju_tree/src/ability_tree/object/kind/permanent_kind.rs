@@ -1,5 +1,5 @@
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::OneAmong;
 use crate::ability_tree::object::specified_object::SpecifiedArtifact;
 use crate::ability_tree::object::specified_object::SpecifiedCreature;
@@ -28,13 +28,12 @@ pub enum PermanentKind {
 }
 
 impl crate::Node for PermanentKind {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::PermanentKind.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PermanentKind
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-        use idris::Idris;
+
 
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
@@ -45,7 +44,7 @@ impl crate::Node for PermanentKind {
             Self::OneAmong(child) => children.push(child as &dyn Node),
             Self::Planeswalker(child) => children.push(child as &dyn Node),
             Self::Permanent { .. } => {
-                let node_id = crate::NodeKind::PermanentBasicKind.id();
+                let node_id = crate::NodeKind::PermanentBasicKind;
                 let child = crate::dummy_terminal::TreeNodeDummyTerminal::new(node_id);
                 children.push(child as &dyn Node)
             }

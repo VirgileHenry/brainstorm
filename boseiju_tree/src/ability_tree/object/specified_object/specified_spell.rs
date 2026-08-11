@@ -2,8 +2,8 @@ mod spell_specifier;
 
 pub use spell_specifier::SpellSpecifier;
 
-use crate::Node;
 use crate::MAX_CHILDREN_PER_NODE;
+use crate::Node;
 use crate::ability_tree::object::kind::SpellKind;
 use crate::ability_tree::object::specified_object::Specifiers;
 
@@ -42,9 +42,8 @@ impl SpecifiedSpell {
 }
 
 impl Node for SpecifiedSpell {
-    fn node_id(&self) -> usize {
-        use idris::Idris;
-        crate::NodeKind::SpecifiedSpell.id()
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::SpecifiedSpell
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
