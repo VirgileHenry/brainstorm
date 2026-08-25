@@ -33,8 +33,6 @@ impl crate::Node for PermanentKind {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-
-
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Artifact(child) => children.push(child as &dyn Node),

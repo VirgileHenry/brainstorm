@@ -114,7 +114,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     type_line: Default::default(),
                 }
                 .id(),
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
+                ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -133,7 +133,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::PowerToughness { power_toughness },
                     ParserNode::Colors { colors },
                     ParserNode::CreatureTokenTypeLine { type_line },
-                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With { .. })),
+                    ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::With { .. })),
                     ParserNode::KeywordAbility { keyword_ability },
                 ] => Ok(ParserNode::TokenDefinition {
                     token: boseiju_tree::card::layout::TokenLayout {

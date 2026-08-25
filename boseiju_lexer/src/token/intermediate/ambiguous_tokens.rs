@@ -155,6 +155,7 @@ impl<'src> TryFrom<&crate::LexerSpan<'src>> for AmbiguousToken {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),
             }),
+            /* Fixme: split up when we know ? */
             "die" | "dies" | "died" | "dying" | "dice" => Ok(Self::Die {
                 #[cfg(feature = "spanned_tree")]
                 span: span.into(),

@@ -26,10 +26,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span,
                 })),
             ] => Ok(ParserNode::ZoneReference {
-                zone: boseiju_tree::ability_tree::zone::ZoneReference::TheBattlefield {
-                    #[cfg(feature = "spanned_tree")]
-                    span: *span,
-                },
+                zone: boseiju_tree::ability_tree::zone::ZoneReference::TheBattlefield(
+                    boseiju_tree::ability_tree::zone::TheBattlefield {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    },
+                ),
             }),
             _ => Err("Provided tokens do not match rule definition"),
         },
@@ -96,7 +98,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             /* Otherwise, any player specifier is valid: "enchanted creature's controller graveyard" is valid */
             super::ParserRule {
                 expanded: super::RuleLhs::new(&[
-                    ParserNode::Player {
+                    ParserNode::PlayerActive {
                         player: Default::default(),
                     }
                     .id(),
@@ -113,7 +115,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::Player { player },
+                        ParserNode::PlayerActive { player },
                         ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                         ParserNode::LexerToken(Token::OwnableZone(zone)),
                     ] => Ok(ParserNode::ZoneReference {

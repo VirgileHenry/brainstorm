@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Creature {
+            merged: ParserNode::CreaturePassive {
                 creature: Default::default(),
             }
             .id(),
@@ -40,7 +40,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         creature,
                         ..
                     },
-                ] => Ok(ParserNode::Creature {
+                ] => Ok(ParserNode::CreaturePassive {
                     creature: object::Creature::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: creature.span().merge(start_span),
@@ -58,7 +58,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id()]),
-            merged: ParserNode::Creature {
+            merged: ParserNode::CreaturePassive {
                 creature: Default::default(),
             }
             .id(),
@@ -68,7 +68,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                ] => Ok(ParserNode::Creature {
+                ] => Ok(ParserNode::CreaturePassive {
                     creature: object::Creature::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: *start_span,

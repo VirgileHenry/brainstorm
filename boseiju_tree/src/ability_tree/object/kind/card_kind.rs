@@ -25,8 +25,6 @@ impl crate::Node for CardKind {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-
-
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::OneAmong(child) => children.push(child as &dyn Node),

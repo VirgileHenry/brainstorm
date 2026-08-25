@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
         ]),
-        merged: ParserNode::Creature {
+        merged: ParserNode::CreaturePassive {
             creature: Default::default(),
         }
         .id(),
@@ -36,11 +36,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span: another_span,
                 })),
                 ParserNode::SpecifiedCreature { creature },
-            ] => Ok(ParserNode::Creature {
+            ] => Ok(ParserNode::CreaturePassive {
                 creature: object::Creature::Reference(object::reference::CreatureReference {
-                    count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                    quantifier: quantifier::PassiveQuantifier::Count(quantifier::CountQuantifier {
                         number: boseiju_tree::ability_tree::number::Number::Flat(
-                            boseiju_tree::ability_tree::number::FixedNumber {
+                            boseiju_tree::ability_tree::number::FlatNumber {
                                 number: 1,
                                 #[cfg(feature = "spanned_tree")]
                                 span: *another_span,

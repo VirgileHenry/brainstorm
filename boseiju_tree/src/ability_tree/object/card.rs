@@ -17,16 +17,22 @@ use crate::ability_tree::object::reference::CardReference;
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Card {
+pub enum Card<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     Attached(AttachedObject),
     OneAmong(OneAmong<Self>),
     PreviouslyMentionned(PreviouslyMentionned),
     SelfReferencing(SelfReferencing),
-    Reference(CardReference),
+    Reference(CardReference<Q>),
     TopCardsOfLibrary(TopCardsOfLibrary),
 }
 
-impl crate::Node for Card {
+impl<Q> crate::Node for Card<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::Card
     }
@@ -66,7 +72,10 @@ impl crate::Node for Card {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for Card {
+impl<Q> boseiju_span::Spanned for Card<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Attached(child) => child.span(),
@@ -79,7 +88,11 @@ impl boseiju_span::Spanned for Card {
     }
 }
 
-impl Default for Card {
+impl<Q> Default for Card<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self::Reference(Default::default())
     }

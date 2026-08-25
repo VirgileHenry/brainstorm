@@ -1,8 +1,10 @@
 mod all;
+mod any;
 mod count_quantifier;
 mod target_quantifier;
 
 pub use all::All;
+pub use any::Any;
 pub use count_quantifier::CountQuantifier;
 pub use target_quantifier::TargetQuantifier;
 
@@ -81,6 +83,7 @@ impl Default for ActiveQuantifier {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PassiveQuantifier {
+    Any(Any),
     Count(CountQuantifier),
 }
 
@@ -94,6 +97,7 @@ impl Node for PassiveQuantifier {
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
+            Self::Any(child) => children.push(child as &dyn Node),
             Self::Count(child) => children.push(child as &dyn Node),
         }
         children
@@ -104,6 +108,7 @@ impl Node for PassiveQuantifier {
         write!(out, "active quantifier:")?;
         out.push_final_branch()?;
         match self {
+            Self::Any(child) => child.display(out)?,
             Self::Count(child) => child.display(out)?,
         }
         out.pop_branch();
@@ -119,6 +124,7 @@ impl Node for PassiveQuantifier {
 impl boseiju_span::Spanned for PassiveQuantifier {
     fn span(&self) -> boseiju_span::Span {
         match self {
+            Self::Any(child) => child.span(),
             Self::Count(child) => child.span(),
         }
     }

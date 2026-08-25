@@ -1,49 +1,3 @@
-mod add_mana_imperative;
-mod change_zone_imperative;
-mod create_token_imperative;
-mod deals_damage_imperative;
-mod destroy_imperative;
-mod discard_imperative;
-mod draw_imperative;
-mod for_each_imperative;
-mod gain_life;
-mod generate_continuous_effect_imperative;
-mod generate_delayed_trigger_ab_imperative;
-mod keyword_action;
-mod lose_life_imperative;
-mod modal_imperative;
-mod pay_life_imperative;
-mod pay_mana_imperative;
-mod put_counters_imperative;
-mod remove_counters_imperative;
-mod sacrifice_imperative;
-mod search_imperative;
-mod tap_imperative;
-mod untap_imperative;
-
-pub use add_mana_imperative::*;
-pub use change_zone_imperative::*;
-pub use create_token_imperative::*;
-pub use deals_damage_imperative::*;
-pub use destroy_imperative::*;
-pub use discard_imperative::*;
-pub use draw_imperative::*;
-pub use for_each_imperative::*;
-pub use gain_life::*;
-pub use generate_continuous_effect_imperative::*;
-pub use generate_delayed_trigger_ab_imperative::*;
-pub use keyword_action::*;
-pub use lose_life_imperative::*;
-pub use modal_imperative::*;
-pub use pay_life_imperative::*;
-pub use pay_mana_imperative::*;
-pub use put_counters_imperative::*;
-pub use remove_counters_imperative::*;
-pub use sacrifice_imperative::*;
-pub use search_imperative::*;
-pub use tap_imperative::*;
-pub use untap_imperative::*;
-
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
 
@@ -54,7 +8,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Imperative {
-    pub kind: crate::ability_tree::deed::ActiveFormDeed,
+    pub action: PlayerAction,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
@@ -66,7 +20,7 @@ impl Node for Imperative {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.kind as &dyn Node);
+        children.push(&self.action as &dyn Node);
         children
     }
 
@@ -74,9 +28,9 @@ impl Node for Imperative {
         use std::io::Write;
         write!(out, "imperative:")?;
         out.push_final_branch()?;
-        write!(out, "deed:")?;
+        write!(out, "action:")?;
         out.push_final_branch()?;
-        self.kind.display(out)?;
+        self.action.display(out)?;
         out.pop_branch();
         out.pop_branch();
         Ok(())
@@ -97,7 +51,165 @@ impl boseiju_span::Spanned for Imperative {
 impl Default for Imperative {
     fn default() -> Self {
         Self {
-            kind: Default::default(),
+            action: Default::default(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
+    }
+}
+
+/// All actions players can take.
+///
+/// This is a sublist of the deeds in the active form, acting
+/// as a barrier to prevent any deed from being a player action.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PlayerAction {
+    AddMana(crate::ability_tree::deed::add_mana::AddManaActive),
+    DealDamages(crate::ability_tree::deed::deal_damages::DealDamages),
+    Destroy(crate::ability_tree::deed::destroy::DestroyActive),
+    Draw(crate::ability_tree::deed::draw::DrawActive),
+    Modal(ModalAction),
+    PutCounters(crate::ability_tree::deed::put_counters::PutCountersActive),
+}
+
+impl Node for PlayerAction {
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::PlayerAction
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        match self {
+            Self::AddMana(child) => children.push(child as &dyn Node),
+            Self::DealDamages(child) => children.push(child as &dyn Node),
+            Self::Destroy(child) => children.push(child as &dyn Node),
+            Self::Draw(child) => children.push(child as &dyn Node),
+            Self::Modal(child) => children.push(child as &dyn Node),
+            Self::PutCounters(child) => children.push(child as &dyn Node),
+        }
+        children
+    }
+
+    fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "player action:")?;
+        out.push_final_branch()?;
+        match self {
+            Self::AddMana(child) => child.display(out)?,
+            Self::DealDamages(child) => child.display(out)?,
+            Self::Destroy(child) => child.display(out)?,
+            Self::Draw(child) => child.display(out)?,
+            Self::Modal(child) => child.display(out)?,
+            Self::PutCounters(child) => child.display(out)?,
+        }
+        out.pop_branch();
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "player action"
+    }
+}
+
+#[cfg(feature = "spanned_tree")]
+impl boseiju_span::Spanned for PlayerAction {
+    fn span(&self) -> boseiju_span::Span {
+        match self {
+            Self::AddMana(child) => child.span(),
+            Self::DealDamages(child) => child.span(),
+            Self::Destroy(child) => child.span(),
+            Self::Draw(child) => child.span(),
+            Self::Modal(child) => child.span(),
+            Self::PutCounters(child) => child.span(),
+        }
+    }
+}
+
+impl Default for PlayerAction {
+    fn default() -> Self {
+        Self::Destroy(Default::default())
+    }
+}
+
+const MAX_CHOICES: usize = MAX_CHILDREN_PER_NODE - 1;
+
+/// An imperative that requires a player to choose between different clauses.
+///
+/// This is common in modal effects.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ModalAction {
+    pub mode_count: crate::ability_tree::number::Number,
+    pub can_choose_same_mode: bool,
+    pub modes: crate::HeapArrayVec<crate::ability_tree::ability::spell::SpellAbility, MAX_CHOICES>,
+    #[cfg(feature = "spanned_tree")]
+    pub span: boseiju_span::Span,
+}
+
+impl Node for ModalAction {
+    fn node_id(&self) -> crate::NodeKind {
+        crate::NodeKind::ChooseImperative
+    }
+
+    fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
+        let mut children = arrayvec::ArrayVec::new_const();
+        children.push(&self.mode_count as &dyn Node);
+        for choice in self.modes.iter() {
+            children.push(choice as &dyn Node);
+        }
+        children
+    }
+
+    fn data(&self) -> Option<crate::AbTreeNodeData> {
+        Some(crate::AbTreeNodeData::Boolean {
+            value: self.can_choose_same_mode,
+        })
+    }
+
+    fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
+        use std::io::Write;
+        write!(out, "modal:")?;
+        out.push_inter_branch()?;
+        write!(out, "number of choices:")?;
+        out.push_final_branch()?;
+        self.mode_count.display(out)?;
+        out.pop_branch();
+        out.next_inter_branch()?;
+        write!(out, "can choose the same mode multiple times: {}", self.can_choose_same_mode)?;
+        out.next_final_branch()?;
+        write!(out, "choices:")?;
+        for choice in self.modes.iter().take(self.modes.len().saturating_sub(1)) {
+            out.push_inter_branch()?;
+            choice.display(out)?;
+            out.pop_branch();
+        }
+        if let Some(choice) = self.modes.last() {
+            out.push_final_branch()?;
+            choice.display(out)?;
+            out.pop_branch();
+        }
+        Ok(())
+    }
+
+    fn node_tag(&self) -> &'static str {
+        "modal imperative"
+    }
+}
+
+#[cfg(feature = "spanned_tree")]
+impl boseiju_span::Spanned for ModalAction {
+    fn span(&self) -> boseiju_span::Span {
+        self.span
+    }
+}
+
+impl Default for ModalAction {
+    fn default() -> Self {
+        Self {
+            mode_count: Default::default(),
+            can_choose_same_mode: false,
+            modes: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),
         }

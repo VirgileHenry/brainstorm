@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpellGainsStateEvent {
-    pub spell: crate::ability_tree::object::Spell,
+    pub spell: crate::ability_tree::object::PassiveSpell,
     pub state: crate::ability_tree::state::StackObjectState, /* Fixme: ambiguous */
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

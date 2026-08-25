@@ -21,8 +21,6 @@ impl crate::Node for ArtifactKind {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-
-
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Artifact { .. } => {
@@ -36,12 +34,9 @@ impl crate::Node for ArtifactKind {
 
     fn display(&self, out: &mut crate::TreeFormatter<'_>) -> std::io::Result<()> {
         use std::io::Write;
-        write!(out, "artifact kind:")?;
-        out.push_final_branch()?;
         match self {
             Self::Artifact { .. } => write!(out, "artifact")?,
         }
-        out.pop_branch();
         Ok(())
     }
 

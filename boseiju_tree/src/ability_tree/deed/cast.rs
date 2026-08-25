@@ -1,22 +1,22 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
 
-/// An deed for a spell being cast.
+/// Deed for a spell being cast.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Cast<F>
+pub struct Cast<Q>
 where
-    F: super::form::DeedForm,
+    Q: crate::ability_tree::quantifier::Quantifier,
 {
-    pub caster: crate::ability_tree::player::PlayerReference<F::Quantifier>,
-    pub spell: crate::ability_tree::object::Spell,
+    pub caster: crate::ability_tree::player::PlayerReference<Q>,
+    pub spell: crate::ability_tree::object::PassiveSpell,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl<F> crate::Node for Cast<F>
+impl<Q> crate::Node for Cast<Q>
 where
-    F: super::form::DeedForm,
+    Q: crate::ability_tree::quantifier::Quantifier,
 {
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::DeedKind(crate::node_kind::DeedNodeKind::Cast)
@@ -52,18 +52,18 @@ where
 }
 
 #[cfg(feature = "spanned_tree")]
-impl<F> boseiju_span::Spanned for Cast<F>
+impl<Q> boseiju_span::Spanned for Cast<Q>
 where
-    F: super::form::DeedForm,
+    Q: crate::ability_tree::quantifier::Quantifier,
 {
     fn span(&self) -> boseiju_span::Span {
         self.span
     }
 }
 
-impl<F> Default for Cast<F>
+impl<Q> Default for Cast<Q>
 where
-    F: super::form::DeedForm,
+    Q: crate::ability_tree::quantifier::Quantifier,
 {
     fn default() -> Self {
         Self {
@@ -74,3 +74,6 @@ where
         }
     }
 }
+
+pub type CastActive = Cast<crate::ability_tree::quantifier::ActiveQuantifier>;
+pub type CastPassive = Cast<crate::ability_tree::quantifier::PassiveQuantifier>;

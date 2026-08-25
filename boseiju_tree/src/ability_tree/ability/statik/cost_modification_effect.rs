@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CostModificationEffect {
-    pub applies_to: crate::ability_tree::object::Spell,
+    pub applies_to: crate::ability_tree::object::PassiveSpell,
     pub modification: CostModification,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

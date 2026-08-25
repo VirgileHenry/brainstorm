@@ -9,7 +9,7 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlternativeCastingPermissions {
     pub player: crate::ability_tree::player::ActivePlayerReference,
-    pub object: crate::ability_tree::object::Card,
+    pub object: crate::ability_tree::object::ActiveCard,
     pub from_zone: crate::ability_tree::zone::ZoneReference,
     pub additional_cost: Option<crate::ability_tree::cost::Cost>,
     #[cfg(feature = "spanned_tree")]

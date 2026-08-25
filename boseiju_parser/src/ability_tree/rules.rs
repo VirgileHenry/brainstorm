@@ -14,36 +14,41 @@ mod ability;
 mod ability_tree;
 mod ability_word;
 mod activated_ability;
-// mod conditional;
-// mod continuous_effect;
-// mod cost;
+mod conditional;
+mod continuous_effect;
+mod continuous_effect_kind;
+mod cost;
 // mod cost_modifications;
-// mod event;
-// mod imperative;
-// mod imperative_list;
-// mod instant;
+mod deed;
+mod event;
+mod imperative;
+mod imperative_list;
+mod instant;
 mod keyword_ability;
 // mod keyword_action;
-// mod mana;
-// mod number;
-// mod object;
-// mod object_kind;
-// mod object_specifiers;
-// mod player;
-// mod power_toughness;
-// mod power_toughness_modifiers;
-// mod quantifier;
-// mod replacement_effect;
-// mod specified_object;
-// mod spell_ability;
-// mod statement;
-// mod statik;
-// mod time;
-// mod token;
+mod mana;
+mod number;
+mod object;
+mod object_kind;
+mod object_mods;
+mod object_specifiers;
+mod player;
+mod player_action;
+mod player_action_modal;
+mod power_toughness;
+mod power_toughness_modifiers;
+mod quantifier;
+mod replacement_effect;
+mod specified_object;
+mod spell_ability;
+mod statement;
+mod statik;
+mod time;
+mod token;
 mod triggered_ability;
-// mod triggered_condition;
-// mod x_definition;
-// mod zone;
+mod triggered_condition;
+mod x_definition;
+mod zone;
 
 use crate::ability_tree::node::ParserNode;
 
@@ -54,36 +59,41 @@ pub fn default_rules() -> impl Iterator<Item = ParserRule> {
         Box::new(ability_tree::rules()),
         Box::new(ability_word::rules()),
         Box::new(activated_ability::rules()),
-        // Box::new(continuous_effect::rules()),
-        // Box::new(cost::rules()),
+        Box::new(continuous_effect::rules()),
+        Box::new(continuous_effect_kind::rules()),
+        Box::new(cost::rules()),
         // Box::new(cost_modifications::rules()),
-        // Box::new(event::rules()),
-        // Box::new(conditional::rules()),
-        // Box::new(imperative::rules()),
-        // Box::new(imperative_list::rules()),
-        // Box::new(instant::rules()),
+        Box::new(deed::rules()),
+        Box::new(event::rules()),
+        Box::new(conditional::rules()),
+        Box::new(imperative::rules()),
+        Box::new(imperative_list::rules()),
+        Box::new(instant::rules()),
         Box::new(keyword_ability::rules()),
         // Box::new(keyword_action::rules()),
-        // Box::new(mana::rules()),
-        // Box::new(number::rules()),
-        // Box::new(object::rules()),
-        // Box::new(object_kind::rules()),
-        // Box::new(object_specifiers::rules()),
-        // Box::new(player::rules()),
-        // Box::new(power_toughness::rules()),
-        // Box::new(power_toughness_modifiers::rules()),
-        // Box::new(quantifier::rules()),
-        // Box::new(replacement_effect::rules()),
-        // Box::new(specified_object::rules()),
-        // Box::new(spell_ability::rules()),
-        // Box::new(statement::rules()),
-        // Box::new(statik::rules()),
-        // Box::new(token::rules()),
-        // Box::new(time::rules()),
+        Box::new(mana::rules()),
+        Box::new(number::rules()),
+        Box::new(object::rules()),
+        Box::new(object_kind::rules()),
+        Box::new(object_mods::rules()),
+        Box::new(object_specifiers::rules()),
+        Box::new(player::rules()),
+        Box::new(player_action::rules()),
+        Box::new(player_action_modal::rules()),
+        Box::new(power_toughness::rules()),
+        Box::new(power_toughness_modifiers::rules()),
+        Box::new(quantifier::rules()),
+        Box::new(replacement_effect::rules()),
+        Box::new(specified_object::rules()),
+        Box::new(spell_ability::rules()),
+        Box::new(statement::rules()),
+        Box::new(statik::rules()),
+        Box::new(token::rules()),
+        Box::new(time::rules()),
         Box::new(triggered_ability::rules()),
-        // Box::new(triggered_condition::rules()),
-        // Box::new(x_definition::rules()),
-        // Box::new(zone::rules()),
+        Box::new(triggered_condition::rules()),
+        Box::new(x_definition::rules()),
+        Box::new(zone::rules()),
     ];
     rules_iters.into_iter().flatten()
 }

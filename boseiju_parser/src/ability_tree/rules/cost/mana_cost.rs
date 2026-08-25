@@ -17,26 +17,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 mana_cost: Default::default(),
             }
             .id()]),
-            merged: ParserNode::ImperativeAsCost {
-                cost: Default::default(),
+            merged: ParserNode::PayMana {
+                deed: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ManaCost { mana_cost }] => Ok(ParserNode::ImperativeAsCost {
-                    cost: boseiju_tree::ability_tree::imperative::Imperative {
-                        kind: boseiju_tree::ability_tree::imperative::ImperativeKind::PayMana(
-                            boseiju_tree::ability_tree::imperative::PayManaImperative {
-                                amount: mana_cost.clone(),
-                                #[cfg(feature = "spanned_tree")]
-                                span: mana_cost.span(),
-                            },
-                        ),
-                        executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
-                            boseiju_tree::ability_tree::player::You {
-                                #[cfg(feature = "spanned_tree")]
-                                span: mana_cost.span().empty_at_start(),
-                            },
-                        ),
+                &[ParserNode::ManaCost { mana_cost }] => Ok(ParserNode::PayMana {
+                    deed: boseiju_tree::ability_tree::deed::pay_mana::PayMana {
+                        amount: mana_cost.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: mana_cost.span(),
                     },
@@ -61,8 +49,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::ImperativeAsCost {
-                cost: Default::default(),
+            merged: ParserNode::PayMana {
+                deed: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
@@ -76,21 +64,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         tense: boseiju_lexer::Tense::BaseForm,
                     })),
                     ParserNode::ManaCost { mana_cost },
-                ] => Ok(ParserNode::ImperativeAsCost {
-                    cost: boseiju_tree::ability_tree::imperative::Imperative {
-                        kind: boseiju_tree::ability_tree::imperative::ImperativeKind::PayMana(
-                            boseiju_tree::ability_tree::imperative::PayManaImperative {
-                                amount: mana_cost.clone(),
-                                #[cfg(feature = "spanned_tree")]
-                                span: mana_cost.span().merge(pay_span),
-                            },
-                        ),
-                        executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
-                            boseiju_tree::ability_tree::player::You {
-                                #[cfg(feature = "spanned_tree")]
-                                span: pay_span.empty_at_start(),
-                            },
-                        ),
+                ] => Ok(ParserNode::PayMana {
+                    deed: boseiju_tree::ability_tree::deed::pay_mana::PayMana {
+                        amount: mana_cost.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: mana_cost.span().merge(pay_span),
                     },

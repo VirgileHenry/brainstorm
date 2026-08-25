@@ -96,7 +96,7 @@ pub use english_determiner::EnglishDeterminer;
 pub use english_modal_auxiliary::EnglishModalAuxiliary;
 pub use english_negation::EnglishNegation;
 pub use english_possessive::EnglishPossessive;
-pub use english_preposition::EnglishPreprosition;
+pub use english_preposition::EnglishPreposition;
 pub use english_pronoun::EnglishPronoun;
 pub use english_temporal::EnglishTemporal;
 pub use english_verb::EnglishVerb;

@@ -9,7 +9,7 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "You" is the most straightforward player reference */
+        /* "You" as an active specified player */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
                 intermediate::PlayerSpecifier::You {
@@ -18,7 +18,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 },
             ))
             .id()]),
-            merged: ParserNode::Player {
+            merged: ParserNode::PlayerActive {
                 player: Default::default(),
             }
             .id(),
@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: player_span,
                     })),
-                ] => Ok(ParserNode::Player {
+                ] => Ok(ParserNode::PlayerActive {
                     player: player::PlayerReference::You(player::You {
                         #[cfg(feature = "spanned_tree")]
                         span: *player_span,
@@ -38,10 +38,39 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "<quantifier> player" makes for a specified player */
+        /* "You" as an passive specified player */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[ParserNode::LexerToken(Token::PlayerSpecifier(
+                intermediate::PlayerSpecifier::You {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::PlayerPassive {
+                player: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::You {
+                        #[cfg(feature = "spanned_tree")]
+                            span: player_span,
+                    })),
+                ] => Ok(ParserNode::PlayerPassive {
+                    player: player::PlayerReference::You(player::You {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *player_span,
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "<active quantifier> player" makes for an active specified player */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -51,18 +80,18 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Player {
+            merged: ParserNode::PlayerActive {
                 player: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Quantifier { count },
+                    ParserNode::QuantifierActive { count },
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Player {
                         #[cfg(feature = "spanned_tree")]
                             span: player_span,
                     })),
-                ] => Ok(ParserNode::Player {
+                ] => Ok(ParserNode::PlayerActive {
                     player: player::PlayerReference::SpecifiedPlayer(player::SpecifiedPlayer {
                         count: count.clone(),
                         specifiers: None,
@@ -74,10 +103,46 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "<quantifier> opponent" makes for a specified player with the "opponent" specifier */
+        /* "<passive quantifier> player" makes for an passive specified player */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Player {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::PlayerPassive {
+                player: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::QuantifierPassive { count },
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Player {
+                        #[cfg(feature = "spanned_tree")]
+                            span: player_span,
+                    })),
+                ] => Ok(ParserNode::PlayerPassive {
+                    player: player::PlayerReference::SpecifiedPlayer(player::SpecifiedPlayer {
+                        count: count.clone(),
+                        specifiers: None,
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(player_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "<active quantifier> opponent" makes for an active specified player with the "opponent" specifier */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -87,18 +152,59 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Player {
+            merged: ParserNode::PlayerActive {
                 player: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Quantifier { count },
+                    ParserNode::QuantifierActive { count },
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Opponent {
                         #[cfg(feature = "spanned_tree")]
                             span: opponent_span,
                     })),
-                ] => Ok(ParserNode::Player {
+                ] => Ok(ParserNode::PlayerActive {
+                    player: player::PlayerReference::SpecifiedPlayer(player::SpecifiedPlayer {
+                        count: count.clone(),
+                        specifiers: Some(boseiju_tree::ability_tree::object::specified_object::Specifiers::Single(
+                            player::player_specifier::PlayerSpecifier::Opponent(player::player_specifier::OpponentSpecifier {
+                                #[cfg(feature = "spanned_tree")]
+                                span: *opponent_span,
+                            }),
+                        )),
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(opponent_span),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: super::ParserRuleDeclarationLocation::here(),
+        },
+        /* "<passive quantifier> opponent" makes for a passive specified player with the "opponent" specifier */
+        super::ParserRule {
+            expanded: super::RuleLhs::new(&[
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Opponent {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                }))
+                .id(),
+            ]),
+            merged: ParserNode::PlayerPassive {
+                player: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::QuantifierPassive { count },
+                    ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Opponent {
+                        #[cfg(feature = "spanned_tree")]
+                            span: opponent_span,
+                    })),
+                ] => Ok(ParserNode::PlayerPassive {
                     player: player::PlayerReference::SpecifiedPlayer(player::SpecifiedPlayer {
                         count: count.clone(),
                         specifiers: Some(boseiju_tree::ability_tree::object::specified_object::Specifiers::Single(
@@ -118,7 +224,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* Object's controller is a player specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Permanent {
+                ParserNode::PermanentActive {
                     permanent: Default::default(),
                 }
                 .id(),
@@ -133,19 +239,19 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Player {
+            merged: ParserNode::PlayerActive {
                 player: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Permanent { permanent },
+                    ParserNode::PermanentActive { permanent },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Controller {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Player {
+                ] => Ok(ParserNode::PlayerActive {
                     player: player::PlayerReference::ObjectController(player::ObjectController {
                         object: Box::new(permanent.clone()),
                         #[cfg(feature = "spanned_tree")]
@@ -159,7 +265,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* Object's owner is a player specifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Card {
+                ParserNode::CardActive {
                     card: Default::default(),
                 }
                 .id(),
@@ -174,19 +280,19 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Player {
+            merged: ParserNode::PlayerActive {
                 player: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Card { card },
+                    ParserNode::CardActive { card },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::PlayerSpecifier(intermediate::PlayerSpecifier::Owner {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Player {
+                ] => Ok(ParserNode::PlayerActive {
                     player: player::PlayerReference::ObjectOwner(player::ObjectOwner {
                         object: Box::new(card.clone()),
                         #[cfg(feature = "spanned_tree")]

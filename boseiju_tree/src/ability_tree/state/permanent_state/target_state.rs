@@ -1,10 +1,11 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
+use crate::ability_tree::quantifier::PassiveQuantifier;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PermanentTargetedState {
-    pub spell: crate::ability_tree::object::Spell,
+    pub spell: crate::ability_tree::object::Spell<PassiveQuantifier>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             /* "<creature reference> deals <damage kind>" */
             ParserRule {
                 expanded: RuleLhs::new(&[
-                    ParserNode::Creature {
+                    ParserNode::CreaturePassive {
                         creature: Default::default(),
                     }
                     .id(),
@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::Creature { creature },
+                        ParserNode::CreaturePassive { creature },
                         ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                             token: intermediate::ActionKeyword::Deals { .. },
                             tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
@@ -63,7 +63,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             /* "<creature reference> deals to <player>" */
             ParserRule {
                 expanded: RuleLhs::new(&[
-                    ParserNode::Creature {
+                    ParserNode::CreaturePassive {
                         creature: Default::default(),
                     }
                     .id(),
@@ -81,7 +81,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         span: Default::default(),
                     }))
                     .id(),
-                    ParserNode::Player {
+                    ParserNode::PlayerPassive {
                         player: Default::default(),
                     }
                     .id(),
@@ -92,14 +92,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 .id(),
                 reduction: |nodes: &[ParserNode]| match &nodes {
                     &[
-                        ParserNode::Creature { creature },
+                        ParserNode::CreaturePassive { creature },
                         ParserNode::LexerToken(Token::ActionKeyword(intermediate::TensedActionKeyword {
                             token: intermediate::ActionKeyword::Deals { .. },
                             tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                         })),
                         ParserNode::LexerToken(Token::DamageKind(damage_kind)),
                         ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::To { .. })),
-                        ParserNode::Player { player },
+                        ParserNode::PlayerPassive { player },
                     ] => Ok(ParserNode::Event {
                         event: event::Event::CreaturePerformsAction(event::CreaturePerformsActionEvent {
                             action: action::CreatureAction::DealsDamage(action::CreatureDealsDamageAction {

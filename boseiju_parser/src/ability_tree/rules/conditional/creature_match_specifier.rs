@@ -14,7 +14,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<creature reference> is a <creature specifier>" condition */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Creature {
+                ParserNode::CreaturePassive {
                     creature: Default::default(),
                 }
                 .id(),
@@ -42,7 +42,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Creature { creature },
+                    ParserNode::CreaturePassive { creature },
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token: intermediate::EnglishVerb::Be { .. },
                         tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<creature reference>'s a <creature specifier>" condition */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Creature {
+                ParserNode::CreaturePassive {
                     creature: Default::default(),
                 }
                 .id(),
@@ -92,7 +92,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Creature { creature },
+                    ParserNode::CreaturePassive { creature },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::ApostropheS { .. })),
                     ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A { .. })),
                     ParserNode::CreatureSpecifier { specifier },

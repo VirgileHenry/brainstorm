@@ -8,7 +8,7 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "A" is the minimal count specifier */
+        /* "A" is the minimal passive quantifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(
                 &[ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::A {
@@ -17,7 +17,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id()],
             ),
-            merged: ParserNode::Quantifier {
+            merged: ParserNode::QuantifierPassive {
                 count: Default::default(),
             }
             .id(),
@@ -27,11 +27,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Count(
+                ] => Ok(ParserNode::QuantifierPassive {
+                    count: boseiju_tree::ability_tree::quantifier::PassiveQuantifier::Count(
                         boseiju_tree::ability_tree::quantifier::CountQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *span,
@@ -46,7 +46,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* "An" is also the minimal count specifier. Is this `allomorphy` ? */
+        /* "An" is also the minimal passive quantifier specifier. Is this `allomorphy` ? */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::LexerToken(Token::EnglishArticle(intermediate::EnglishArticle::An {
@@ -55,7 +55,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Quantifier {
+            merged: ParserNode::QuantifierPassive {
                 count: Default::default(),
             }
             .id(),
@@ -65,11 +65,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Count(
+                ] => Ok(ParserNode::QuantifierPassive {
+                    count: boseiju_tree::ability_tree::quantifier::PassiveQuantifier::Count(
                         boseiju_tree::ability_tree::quantifier::CountQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *span,
@@ -84,21 +84,19 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* Numbers on their own can make count specifiers */
-        /* Fixme: check what cards fails without it, maybe this is too much */
-        /* Fixme: as sais in the quantifier node, maybe this is nooot super clean */
+        /* Numbers on their own can make passive quantifiers */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[ParserNode::Number {
                 number: Default::default(),
             }
             .id()]),
-            merged: ParserNode::Quantifier {
+            merged: ParserNode::QuantifierPassive {
                 count: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Number { number }] => Ok(ParserNode::Quantifier {
-                    count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Count(
+                &[ParserNode::Number { number }] => Ok(ParserNode::QuantifierPassive {
+                    count: boseiju_tree::ability_tree::quantifier::PassiveQuantifier::Count(
                         boseiju_tree::ability_tree::quantifier::CountQuantifier {
                             number: number.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -110,7 +108,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             },
             creation_loc: super::ParserRuleDeclarationLocation::here(),
         },
-        /* A count specifier can be made from a number and the special "target" word */
+        /* "<number> target" is an active quantifier */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
                 ParserNode::Number {
@@ -123,7 +121,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Quantifier {
+            merged: ParserNode::QuantifierActive {
                 count: Default::default(),
             }
             .id(),
@@ -131,7 +129,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 &[
                     ParserNode::Number { number },
                     ParserNode::LexerToken(Token::CountSpecifier(intermediate::CountSpecifier::Target { .. })),
-                ] => Ok(ParserNode::Quantifier {
+                ] => Ok(ParserNode::QuantifierActive {
                     count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Target(
                         boseiju_tree::ability_tree::quantifier::TargetQuantifier {
                             number: number.clone(),
@@ -153,7 +151,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 },
             ))
             .id()]),
-            merged: ParserNode::Quantifier {
+            merged: ParserNode::QuantifierActive {
                 count: Default::default(),
             }
             .id(),
@@ -163,11 +161,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Quantifier {
+                ] => Ok(ParserNode::QuantifierActive {
                     count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::Target(
                         boseiju_tree::ability_tree::quantifier::TargetQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: span.empty_at_start(),
@@ -191,7 +189,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Quantifier {
+            merged: ParserNode::QuantifierActive {
                 count: Default::default(),
             }
             .id(),
@@ -201,7 +199,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Quantifier {
+                ] => Ok(ParserNode::QuantifierActive {
                     count: boseiju_tree::ability_tree::quantifier::ActiveQuantifier::All(
                         boseiju_tree::ability_tree::quantifier::All {
                             #[cfg(feature = "spanned_tree")]

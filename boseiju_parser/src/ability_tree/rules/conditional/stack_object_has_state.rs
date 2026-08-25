@@ -13,7 +13,7 @@ use boseiju_span::Spanned;
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Spell {
+            ParserNode::SpellPassive {
                 spell: Default::default(),
             }
             .id(),
@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::Spell { spell },
+                ParserNode::SpellPassive { spell },
                 ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                     token: intermediate::EnglishVerb::Be { .. },
                     tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,

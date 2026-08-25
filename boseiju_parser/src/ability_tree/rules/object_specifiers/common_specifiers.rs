@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> controls" is a control specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -56,7 +56,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token:
                             intermediate::EnglishVerb::Control {
@@ -80,7 +80,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> don't control" is a control specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -107,7 +107,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token: intermediate::EnglishVerb::DoNot { .. },
                         tense: boseiju_lexer::Tense::BaseForm,

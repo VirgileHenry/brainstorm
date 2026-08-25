@@ -10,7 +10,7 @@ pub struct All {
 
 impl Node for All {
     fn node_id(&self) -> crate::NodeKind {
-        crate::NodeKind::You
+        crate::NodeKind::QuantifierAll
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

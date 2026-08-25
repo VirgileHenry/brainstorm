@@ -1,6 +1,4 @@
-mod etb_replacement_effect;
-
-pub use etb_replacement_effect::*;
+pub mod etb;
 
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
@@ -11,7 +9,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ReplacementEffect {
-    Etb(EtbReplacementEffect),
+    Etb(etb::EtbReplacementEffect),
 }
 
 impl Node for ReplacementEffect {

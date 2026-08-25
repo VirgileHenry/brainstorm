@@ -1,6 +1,9 @@
+mod atomic_cost;
+
+pub use atomic_cost::AtomicCost;
+
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
-use crate::ability_tree::imperative::Imperative;
 
 /// A cost is something that need to be paid.
 ///
@@ -9,12 +12,12 @@ use crate::ability_tree::imperative::Imperative;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Cost {
-    pub costs: crate::HeapArrayVec<Imperative, MAX_CHILDREN_PER_NODE>,
+    pub costs: crate::HeapArrayVec<atomic_cost::AtomicCost, MAX_CHILDREN_PER_NODE>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl crate::Node for Cost {
+impl Node for Cost {
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::Cost
     }

@@ -1,6 +1,6 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let oracle_text = "Each player secretly chooses a number 0 or greater, then all players reveal those numbers simultaneously and determine the highest and lowest numbers revealed this way. Wheel of Misfortune deals damage equal to the highest number to each player who chose that number. Each player who didn't choose the lowest number discards their hand, then draws seven cards.";
-    let card_name = "wheel of misfortune";
+    let oracle_text = "{R}: This creature gets +1/+0 until end of turn.";
+    let card_name = "Pinpoint Avalanche";
 
     let preprocessed = boseiju_lexer::preprocess(card_name, oracle_text);
     let tokens = boseiju_lexer::lex(&preprocessed)?;

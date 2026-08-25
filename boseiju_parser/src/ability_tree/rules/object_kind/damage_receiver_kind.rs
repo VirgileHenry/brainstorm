@@ -45,7 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         },
         /* "<player specifier>" can be used as a damage receiver kind */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::Player {
+            expanded: RuleLhs::new(&[ParserNode::PlayerActive {
                 player: Default::default(),
             }
             .id()]),
@@ -54,7 +54,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Player { player }] => Ok(ParserNode::DamageReceiverKind {
+                &[ParserNode::PlayerActive { player }] => Ok(ParserNode::DamageReceiverKind {
                     receiver: object::kind::DamageReceiverKind::Player(player.clone()),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),

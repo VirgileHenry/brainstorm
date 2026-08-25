@@ -67,7 +67,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::GameStateNumber { number },
                 ] => Ok(ParserNode::XDefinition {
                     definition: boseiju_tree::ability_tree::number::XDefinition::FromGameState(
-                        boseiju_tree::ability_tree::number::XFromGameState {
+                        boseiju_tree::ability_tree::number::x_definition::XFromGameState {
                             x_value: number.clone(),
                             #[cfg(feature = "spanned_tree")]
                             span: number.span().merge(start_span),

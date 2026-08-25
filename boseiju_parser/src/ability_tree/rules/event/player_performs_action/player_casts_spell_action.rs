@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "<player> cast <spell>" */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Player {
+            ParserNode::PlayerPassive {
                 player: Default::default(),
             }
             .id(),
@@ -28,7 +28,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
             }))
             .id(),
-            ParserNode::Spell {
+            ParserNode::SpellPassive {
                 spell: Default::default(),
             }
             .id(),
@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::Player { player },
+                ParserNode::PlayerPassive { player },
                 ParserNode::LexerToken(Token::KeywordAction(intermediate::TensedKeywordAction {
                     token:
                         intermediate::KeywordAction {
@@ -48,7 +48,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         },
                     tense: boseiju_lexer::Tense::ThirdPersonSingularPresent,
                 })),
-                ParserNode::Spell { spell },
+                ParserNode::SpellPassive { spell },
             ] => Ok(ParserNode::Event {
                 event: event::Event::PlayerPerformsAction(event::PlayerPerformsActionEvent {
                     action: action::PlayerAction::CastsSpell(action::PlayerCastsSpellAction {

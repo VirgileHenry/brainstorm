@@ -1,13 +1,10 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
 
-/// Imperative to pay mana.
+/// Deed to pay mana.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PayMana<F>
-where
-    F: super::form::DeedForm,
-{
+pub struct PayMana {
     pub amount: crate::ability_tree::mana_cost::ManaCost,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
@@ -15,7 +12,7 @@ where
 
 impl crate::Node for PayMana {
     fn node_id(&self) -> crate::NodeKind {
-        crate::NodeKind::DeedKind(crate::node_kind::DeedNodeKind::Cast)
+        crate::NodeKind::DeedKind(crate::node_kind::DeedNodeKind::PayMana)
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
@@ -28,7 +25,7 @@ impl crate::Node for PayMana {
         use std::io::Write;
         write!(out, "pay mana:")?;
         out.push_final_branch()?;
-        write!(out, "mana:")?;
+        write!(out, "amount:")?;
         out.push_final_branch()?;
         self.amount.display(out)?;
         out.pop_branch();

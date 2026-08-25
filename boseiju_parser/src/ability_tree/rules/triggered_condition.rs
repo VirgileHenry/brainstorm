@@ -11,7 +11,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "At <instant>" make trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
+                ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -27,7 +27,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
+                    ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),
@@ -47,7 +47,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "At <instant>, if <condition>" make conditonnal trigger conditions */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
+                ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::At {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -77,7 +77,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::At {
+                    ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::At {
                         #[cfg(feature = "spanned_tree")]
                             span: at_span,
                     })),

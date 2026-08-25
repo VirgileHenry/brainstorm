@@ -12,10 +12,10 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "<count> <damage receiver kind>" is a damage receiver */
+        /* "<quantifier active> <damage receiver kind>" is a damage receiver */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -29,16 +29,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Quantifier { count }, ParserNode::DamageReceiverKind { receiver }] => {
-                    Ok(ParserNode::DamageReceiver {
-                        receiver: object::DamageReceiver::Reference(object::reference::DamageReceiverReference {
-                            count: count.clone(),
-                            kind: receiver.clone(),
-                            #[cfg(feature = "spanned_tree")]
-                            span: count.span().merge(&receiver.span()),
-                        }),
-                    })
-                }
+                &[
+                    ParserNode::QuantifierActive { count },
+                    ParserNode::DamageReceiverKind { receiver },
+                ] => Ok(ParserNode::DamageReceiver {
+                    receiver: object::DamageReceiver::Reference(object::reference::DamageReceiverReference {
+                        quantifier: count.clone(),
+                        kind: receiver.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(&receiver.span()),
+                    }),
+                }),
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),

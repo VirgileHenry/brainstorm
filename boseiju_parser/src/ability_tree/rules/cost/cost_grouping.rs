@@ -13,7 +13,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
         /* "<imperative cost>" makes up a cost */
         ParserRule {
-            expanded: RuleLhs::new(&[ParserNode::ImperativeAsCost {
+            expanded: RuleLhs::new(&[ParserNode::AtomicCost {
                 cost: Default::default(),
             }
             .id()]),
@@ -22,7 +22,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::ImperativeAsCost { cost }] => Ok(ParserNode::Cost {
+                &[ParserNode::AtomicCost { cost }] => Ok(ParserNode::Cost {
                     cost: boseiju_tree::ability_tree::cost::Cost {
                         costs: [cost.clone()].into_iter().collect(),
                         #[cfg(feature = "spanned_tree")]
@@ -36,7 +36,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<imperative cost>, <imperative cost>" makes up a cost */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -45,7 +45,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -56,9 +56,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeAsCost { cost: c1 },
+                    ParserNode::AtomicCost { cost: c1 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c2 },
+                    ParserNode::AtomicCost { cost: c2 },
                 ] => Ok(ParserNode::Cost {
                     cost: boseiju_tree::ability_tree::cost::Cost {
                         costs: [c1.clone(), c2.clone()].into_iter().collect(),
@@ -73,7 +73,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<imperative cost>, <imperative cost>, <imperative cost>" makes up a cost */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -82,7 +82,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -91,7 +91,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -102,11 +102,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeAsCost { cost: c1 },
+                    ParserNode::AtomicCost { cost: c1 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c2 },
+                    ParserNode::AtomicCost { cost: c2 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c3 },
+                    ParserNode::AtomicCost { cost: c3 },
                 ] => Ok(ParserNode::Cost {
                     cost: boseiju_tree::ability_tree::cost::Cost {
                         costs: [c1.clone(), c2.clone(), c3.clone()].into_iter().collect(),
@@ -121,7 +121,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<imperative cost>, <imperative cost>, <imperative cost>,  <imperative cost>" makes up a cost */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -130,7 +130,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -139,7 +139,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -148,7 +148,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -159,13 +159,13 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeAsCost { cost: c1 },
+                    ParserNode::AtomicCost { cost: c1 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c2 },
+                    ParserNode::AtomicCost { cost: c2 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c3 },
+                    ParserNode::AtomicCost { cost: c3 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c4 },
+                    ParserNode::AtomicCost { cost: c4 },
                 ] => Ok(ParserNode::Cost {
                     cost: boseiju_tree::ability_tree::cost::Cost {
                         costs: [c1.clone(), c2.clone(), c3.clone(), c4.clone()].into_iter().collect(),
@@ -180,7 +180,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<imperative cost>, <imperative cost>, <imperative cost>, <imperative cost>, <imperative cost>" makes up a cost */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -189,7 +189,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -198,7 +198,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -207,7 +207,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -216,7 +216,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     span: Default::default(),
                 }))
                 .id(),
-                ParserNode::ImperativeAsCost {
+                ParserNode::AtomicCost {
                     cost: Default::default(),
                 }
                 .id(),
@@ -227,15 +227,15 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::ImperativeAsCost { cost: c1 },
+                    ParserNode::AtomicCost { cost: c1 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c2 },
+                    ParserNode::AtomicCost { cost: c2 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c3 },
+                    ParserNode::AtomicCost { cost: c3 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c4 },
+                    ParserNode::AtomicCost { cost: c4 },
                     ParserNode::LexerToken(Token::ControlFlow(ControlFlow::Comma { .. })),
-                    ParserNode::ImperativeAsCost { cost: c5 },
+                    ParserNode::AtomicCost { cost: c5 },
                 ] => Ok(ParserNode::Cost {
                     cost: boseiju_tree::ability_tree::cost::Cost {
                         costs: [c1.clone(), c2.clone(), c3.clone(), c4.clone(), c5.clone()]

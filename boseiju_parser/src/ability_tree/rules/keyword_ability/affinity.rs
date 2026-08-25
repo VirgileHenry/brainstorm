@@ -19,12 +19,12 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::For {
+            ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::For {
                 #[cfg(feature = "spanned_tree")]
                 span: Default::default(),
             }))
             .id(),
-            ParserNode::Permanent {
+            ParserNode::PermanentPassive {
                 permanent: Default::default(),
             }
             .id(),
@@ -40,8 +40,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     #[cfg(feature = "spanned_tree")]
                         span: affinity_span,
                 })),
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::For { .. })),
-                ParserNode::Permanent { permanent },
+                ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::For { .. })),
+                ParserNode::PermanentPassive { permanent },
             ] => Ok(ParserNode::KeywordAbility {
                 keyword_ability: boseiju_tree::ability_tree::ability::KeywordAbility {
                     keyword: boseiju_tree::ability_tree::ability::keyword_ability::ExpandedKeywordAbility::Affinity(

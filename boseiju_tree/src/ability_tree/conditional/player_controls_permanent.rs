@@ -8,7 +8,7 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionPlayerControlsPermanent {
     pub player: crate::ability_tree::player::PassivePlayerReference,
-    pub permanent: crate::ability_tree::object::Permanent,
+    pub permanent: crate::ability_tree::object::ActivePermanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

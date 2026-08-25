@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PermanentEtbAction {
-    pub permanent: crate::ability_tree::object::Permanent,
+    pub permanent: crate::ability_tree::object::PassivePermanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

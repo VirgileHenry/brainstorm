@@ -22,11 +22,10 @@ use crate::Node;
 /// All events here are the ones encountered in triggered abilities / replacement effects.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Event {
-    CreaturePerformsAction(CreaturePerformsActionEvent),
-    ObjectGainsState(ObjectGainsStateEvent),
-    PermanentPerformsAction(PermanentPerformsActionEvent),
-    PlayerPerformsAction(PlayerPerformsActionEvent),
+pub struct Event {
+    pub deed: crate::ability_tree::deed::PassiveFormDeed,
+    #[cfg(feature = "spanned_tree")]
+    pub span: boseiju_span::Span,
 }
 
 impl crate::Node for Event {
@@ -36,12 +35,7 @@ impl crate::Node for Event {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        match self {
-            Self::CreaturePerformsAction(child) => children.push(child as &dyn Node),
-            Self::ObjectGainsState(child) => children.push(child as &dyn Node),
-            Self::PermanentPerformsAction(child) => children.push(child as &dyn Node),
-            Self::PlayerPerformsAction(child) => children.push(child as &dyn Node),
-        }
+        children.push(&self.deed as &dyn Node);
         children
     }
 
@@ -49,12 +43,10 @@ impl crate::Node for Event {
         use std::io::Write;
         write!(out, "event:")?;
         out.push_final_branch()?;
-        match self {
-            Self::CreaturePerformsAction(event) => event.display(out)?,
-            Self::ObjectGainsState(event) => event.display(out)?,
-            Self::PermanentPerformsAction(event) => event.display(out)?,
-            Self::PlayerPerformsAction(event) => event.display(out)?,
-        }
+        write!(out, "deed:")?;
+        out.push_final_branch()?;
+        self.deed.display(out)?;
+        out.pop_branch();
         out.pop_branch();
         Ok(())
     }
@@ -67,17 +59,16 @@ impl crate::Node for Event {
 #[cfg(feature = "spanned_tree")]
 impl boseiju_span::Spanned for Event {
     fn span(&self) -> boseiju_span::Span {
-        match self {
-            Self::CreaturePerformsAction(child) => child.span(),
-            Self::ObjectGainsState(child) => child.span(),
-            Self::PermanentPerformsAction(child) => child.span(),
-            Self::PlayerPerformsAction(child) => child.span(),
-        }
+        self.span
     }
 }
 
 impl Default for Event {
     fn default() -> Self {
-        Self::CreaturePerformsAction(Default::default())
+        Self {
+            deed: Default::default(),
+            #[cfg(feature = "spanned_tree")]
+            span: Default::default(),
+        }
     }
 }

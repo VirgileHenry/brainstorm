@@ -7,7 +7,8 @@ use boseiju_lexer::intermediate;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
-    std::iter::once(/* "pay <number> life" */ ParserRule {
+    /* "pay <number> life" */
+    std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
             ParserNode::LexerToken(Token::PlayerAction(intermediate::TensedPlayerAction {
                 token: intermediate::PlayerAction::Pay {
@@ -27,8 +28,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             }))
             .id(),
         ]),
-        merged: ParserNode::ImperativeAsCost {
-            cost: Default::default(),
+        merged: ParserNode::PayLife {
+            deed: Default::default(),
         }
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
@@ -46,21 +47,9 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     #[cfg(feature = "spanned_tree")]
                         span: life_span,
                 })),
-            ] => Ok(ParserNode::ImperativeAsCost {
-                cost: boseiju_tree::ability_tree::imperative::Imperative {
-                    kind: boseiju_tree::ability_tree::imperative::ImperativeKind::PayLife(
-                        boseiju_tree::ability_tree::imperative::PayLifeImperative {
-                            amount: number.clone(),
-                            #[cfg(feature = "spanned_tree")]
-                            span: pay_span.merge(life_span),
-                        },
-                    ),
-                    executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
-                        boseiju_tree::ability_tree::player::You {
-                            #[cfg(feature = "spanned_tree")]
-                            span: pay_span.empty_at_start(),
-                        },
-                    ),
+            ] => Ok(ParserNode::PayLife {
+                deed: boseiju_tree::ability_tree::deed::pay_life::PayLife {
+                    amount: number.clone(),
                     #[cfg(feature = "spanned_tree")]
                     span: pay_span.merge(life_span),
                 },

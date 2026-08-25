@@ -65,7 +65,7 @@ impl Default for Statement {
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MayAbility {
-    pub player: crate::ability_tree::player::PassivePlayerReference,
+    pub player: crate::ability_tree::player::ActivePlayerReference,
     pub action: crate::ability_tree::imperative_list::ImperativeList,
     pub if_it_is_done: Option<Box<Statement>>,
     pub if_not_done: Option<Box<Statement>>,

@@ -15,10 +15,10 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     let default_card_rules = vec![
-        /* "<count> <specified card>" is a card */
+        /* "<quantifier active> <specified card>" is an active card */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -27,14 +27,43 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Card {
+            merged: ParserNode::CardActive {
                 card: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedCard { card }] => Ok(ParserNode::Card {
+                &[ParserNode::QuantifierActive { count }, ParserNode::SpecifiedCard { card }] => Ok(ParserNode::CardActive {
                     card: object::Card::Reference(object::reference::CardReference {
-                        count: count.clone(),
+                        quantifier: count.clone(),
+                        card: card.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(&card.span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<quantifier passive> <specified card>" is a passive card */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedCard {
+                    card: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::CardPassive {
+                card: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::QuantifierPassive { count }, ParserNode::SpecifiedCard { card }] => Ok(ParserNode::CardPassive {
+                    card: object::Card::Reference(object::reference::CardReference {
+                        quantifier: count.clone(),
                         card: card.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.span().merge(&card.span()),
@@ -57,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Card {
+            merged: ParserNode::CardPassive {
                 card: Default::default(),
             }
             .id(),
@@ -68,11 +97,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: another_span,
                     })),
                     ParserNode::SpecifiedCard { card },
-                ] => Ok(ParserNode::Card {
+                ] => Ok(ParserNode::CardPassive {
                     card: object::Card::Reference(object::reference::CardReference {
-                        count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                        quantifier: quantifier::PassiveQuantifier::Count(quantifier::CountQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *another_span,
@@ -108,7 +137,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Card {
+            merged: ParserNode::CardPassive {
                 card: Default::default(),
             }
             .id(),
@@ -123,7 +152,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         card,
                         ..
                     },
-                ] => Ok(ParserNode::Card {
+                ] => Ok(ParserNode::CardPassive {
                     card: object::Card::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: card.span().merge(start_span),
@@ -140,7 +169,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 span: Default::default(),
             }))
             .id()]),
-            merged: ParserNode::Card {
+            merged: ParserNode::CardActive {
                 card: Default::default(),
             }
             .id(),
@@ -150,7 +179,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
-                ] => Ok(ParserNode::Card {
+                ] => Ok(ParserNode::CardActive {
                     card: object::Card::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: *start_span,
@@ -169,7 +198,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Card {
+            merged: ParserNode::CardActive {
                 card: Default::default(),
             }
             .id(),
@@ -179,7 +208,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Card {
+                ] => Ok(ParserNode::CardActive {
                     card: object::Card::PreviouslyMentionned(object::PreviouslyMentionned {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,

@@ -14,7 +14,7 @@ pub struct CountQuantifier {
 
 impl crate::Node for CountQuantifier {
     fn node_id(&self) -> crate::NodeKind {
-        crate::NodeKind::CountQuantifier
+        crate::NodeKind::QuantifierCount
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

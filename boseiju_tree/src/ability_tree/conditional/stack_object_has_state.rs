@@ -7,7 +7,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConditionStackObjectHasState {
-    pub stack_obj: crate::ability_tree::object::Spell, /* Fixme: stack object */
+    pub stack_obj: crate::ability_tree::object::PassiveSpell, /* Fixme: stack object */
     pub state: crate::ability_tree::state::StackObjectState,
     pub has_state: bool,
     #[cfg(feature = "spanned_tree")]

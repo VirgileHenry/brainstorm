@@ -1,10 +1,12 @@
 use crate::MAX_CHILDREN_PER_NODE;
 use crate::Node;
 
+type Object = crate::ability_tree::object::Permanent<crate::ability_tree::quantifier::ActiveQuantifier>;
+
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ObjectController {
-    pub object: Box<crate::ability_tree::object::Permanent>,
+    pub object: Box<Object>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

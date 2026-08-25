@@ -13,16 +13,22 @@ use crate::ability_tree::object::reference::CreatureReference;
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Creature {
+pub enum Creature<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     Attached(AttachedObject),
     OneAmong(OneAmong<Self>),
     PreviouslyMentionned(PreviouslyMentionned),
     SelfReferencing(SelfReferencing),
-    Reference(CreatureReference),
+    Reference(CreatureReference<Q>),
 }
 
-impl Creature {
-    pub fn to_permanent(&self) -> crate::ability_tree::object::Permanent {
+impl<Q> Creature<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    pub fn to_permanent(&self) -> crate::ability_tree::object::Permanent<Q> {
         use crate::ability_tree::object::Permanent;
         use crate::ability_tree::object::kind::PermanentKind;
         use crate::ability_tree::object::reference::PermanentReference;
@@ -44,7 +50,7 @@ impl Creature {
                 span: one_among.span,
             }),
             Self::Reference(reference) => Permanent::Reference(PermanentReference {
-                count: reference.count.clone(),
+                quantifier: reference.quantifier.clone(),
                 permanent: SpecifiedPermanent {
                     kind: PermanentKind::Creature(reference.creature.clone()),
                     specifiers: None,
@@ -58,7 +64,10 @@ impl Creature {
     }
 }
 
-impl crate::Node for Creature {
+impl<Q> crate::Node for Creature<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::Creature
     }
@@ -96,7 +105,10 @@ impl crate::Node for Creature {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for Creature {
+impl<Q> boseiju_span::Spanned for Creature<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Attached(child) => child.span(),
@@ -108,7 +120,11 @@ impl boseiju_span::Spanned for Creature {
     }
 }
 
-impl Default for Creature {
+impl<Q> Default for Creature<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self::Reference(Default::default())
     }

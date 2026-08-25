@@ -1,6 +1,6 @@
 #[derive(idris_derive::Idris)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum EnglishPreprosition {
+pub enum EnglishPreposition {
     Among {
         #[cfg(feature = "spanned_tree")]
         span: boseiju_span::Span,
@@ -72,7 +72,7 @@ pub enum EnglishPreprosition {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for EnglishPreprosition {
+impl boseiju_span::Spanned for EnglishPreposition {
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Among { span } => *span,
@@ -96,7 +96,7 @@ impl boseiju_span::Spanned for EnglishPreprosition {
     }
 }
 
-impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishPreprosition {
+impl<'src> TryFrom<&crate::LexerSpan<'src>> for EnglishPreposition {
     type Error = ();
     fn try_from(span: &crate::LexerSpan) -> Result<Self, ()> {
         match span.text {

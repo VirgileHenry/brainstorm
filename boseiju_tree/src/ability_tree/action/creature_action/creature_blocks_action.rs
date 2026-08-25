@@ -5,8 +5,8 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureBlocksAction {
-    pub creature: crate::ability_tree::object::Creature,
-    pub blocked_creature: Option<crate::ability_tree::object::Creature>,
+    pub creature: crate::ability_tree::object::PassiveCreature,
+    pub blocked_creature: Option<crate::ability_tree::object::PassiveCreature>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

@@ -49,7 +49,7 @@ pub enum Token {
     EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary),
     EnglishNegation(intermediate::EnglishNegation),
     EnglishPossessive(intermediate::EnglishPossessive),
-    EnglishPreprosition(intermediate::EnglishPreprosition),
+    EnglishPreposition(intermediate::EnglishPreposition),
     EnglishPronoun(intermediate::EnglishPronoun),
     EnglishTemporal(intermediate::EnglishTemporal),
     EnglishVerb(intermediate::TensedEnglishVerb),
@@ -186,8 +186,8 @@ impl Token {
             Some(Self::EnglishNegation(token))
         } else if let Ok(token) = intermediate::EnglishPossessive::try_from(&span) {
             Some(Self::EnglishPossessive(token))
-        } else if let Ok(token) = intermediate::EnglishPreprosition::try_from(&span) {
-            Some(Self::EnglishPreprosition(token))
+        } else if let Ok(token) = intermediate::EnglishPreposition::try_from(&span) {
+            Some(Self::EnglishPreposition(token))
         } else if let Ok(token) = intermediate::EnglishPronoun::try_from(&span) {
             Some(Self::EnglishPronoun(token))
         } else if let Ok(token) = intermediate::EnglishTemporal::try_from(&span) {
@@ -333,7 +333,7 @@ impl boseiju_span::Spanned for Token {
             Self::EnglishModalAuxiliary(child) => child.span(),
             Self::EnglishNegation(child) => child.span(),
             Self::EnglishPossessive(child) => child.span(),
-            Self::EnglishPreprosition(child) => child.span(),
+            Self::EnglishPreposition(child) => child.span(),
             Self::EnglishPronoun(child) => child.span(),
             Self::EnglishTemporal(child) => child.span(),
             Self::EnglishVerb(child) => child.span(),

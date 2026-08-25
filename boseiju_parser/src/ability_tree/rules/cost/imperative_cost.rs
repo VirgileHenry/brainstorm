@@ -5,22 +5,23 @@ use crate::ability_tree::rules::RuleLhs;
 use idris::Idris;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
-    /* An imperative can make a cost */
-    std::iter::once(ParserRule {
-        expanded: RuleLhs::new(&[ParserNode::Imperative {
-            imperative: Default::default(),
+    /* Some deeds in the passive form can be costs */
+    [/* "<passive tap deed>" is an atomic cost */ ParserRule {
+        expanded: RuleLhs::new(&[ParserNode::TapPassive {
+            deed: Default::default(),
         }
         .id()]),
-        merged: ParserNode::ImperativeAsCost {
+        merged: ParserNode::AtomicCost {
             cost: Default::default(),
         }
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
-            &[ParserNode::Imperative { imperative }] => Ok(ParserNode::ImperativeAsCost {
-                cost: imperative.clone(),
+            &[ParserNode::TapPassive { deed }] => Ok(ParserNode::AtomicCost {
+                cost: boseiju_tree::ability_tree::cost::AtomicCost::Tap(deed.clone()),
             }),
             _ => Err("Provided tokens do not match rule definition"),
         },
         creation_loc: ParserRuleDeclarationLocation::here(),
-    })
+    }]
+    .into_iter()
 }

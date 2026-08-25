@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<permanent reference> gain <ability> <forward duration>" is a generate continuous effect imperative */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent {
+                ParserNode::PermanentActive {
                     permanent: Default::default(),
                 }
                 .id(),
@@ -40,7 +40,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Permanent { permanent },
+                    ParserNode::PermanentActive { permanent },
                     ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Gain {
                         #[cfg(feature = "spanned_tree")]
                         span,

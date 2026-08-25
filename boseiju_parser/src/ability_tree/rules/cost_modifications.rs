@@ -182,7 +182,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<card reference> cost <cost modification>" */
         super::ParserRule {
             expanded: super::RuleLhs::new(&[
-                ParserNode::Spell {
+                ParserNode::SpellPassive {
                     spell: Default::default(),
                 }
                 .id(),
@@ -202,7 +202,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Spell { spell },
+                    ParserNode::SpellPassive { spell },
                     ParserNode::LexerToken(Token::CardProperty(intermediate::CardProperty::Cost { .. })),
                     ParserNode::CostModification { cost_modification },
                 ] => Ok(ParserNode::CostModificationEffect {

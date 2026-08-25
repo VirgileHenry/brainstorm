@@ -13,16 +13,22 @@ use crate::ability_tree::object::reference::PermanentReference;
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Permanent {
+pub enum Permanent<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     Attached(AttachedObject),
     OneAmong(OneAmong<Self>),
     PreviouslyMentionned(PreviouslyMentionned),
     SelfReferencing(SelfReferencing),
-    Reference(PermanentReference),
+    Reference(PermanentReference<Q>),
 }
 
-impl Permanent {
-    pub fn to_card(&self) -> crate::ability_tree::object::Card {
+impl<Q> Permanent<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    pub fn to_card(&self) -> crate::ability_tree::object::Card<Q> {
         use crate::ability_tree::object::Card;
         use crate::ability_tree::object::kind::CardKind;
         use crate::ability_tree::object::reference::CardReference;
@@ -40,7 +46,7 @@ impl Permanent {
                 span: one_among.span,
             }),
             Self::Reference(reference) => Card::Reference(CardReference {
-                count: reference.count.clone(),
+                quantifier: reference.quantifier.clone(),
                 card: SpecifiedCard {
                     kind: CardKind::Permanent(reference.permanent.clone()),
                     specifiers: None,
@@ -54,7 +60,10 @@ impl Permanent {
     }
 }
 
-impl crate::Node for Permanent {
+impl<Q> crate::Node for Permanent<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::Permanent
     }
@@ -92,7 +101,10 @@ impl crate::Node for Permanent {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for Permanent {
+impl<Q> boseiju_span::Spanned for Permanent<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Attached(child) => child.span(),
@@ -104,7 +116,11 @@ impl boseiju_span::Spanned for Permanent {
     }
 }
 
-impl Default for Permanent {
+impl<Q> Default for Permanent<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self::Reference(Default::default())
     }

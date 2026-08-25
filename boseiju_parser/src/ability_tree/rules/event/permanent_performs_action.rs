@@ -16,7 +16,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<permanent reference> enters the battlefield" is a permanent etb event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent {
+                ParserNode::PermanentPassive {
                     permanent: Default::default(),
                 }
                 .id(),
@@ -37,7 +37,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Permanent { permanent },
+                    ParserNode::PermanentPassive { permanent },
                     ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters { .. })),
                     ParserNode::LexerToken(Token::GlobalZone(intermediate::GlobalZone::TheBattlefield {
                         #[cfg(feature = "spanned_tree")]
@@ -61,7 +61,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<permanent reference> enters" is enough for a permanent etb event */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Permanent {
+                ParserNode::PermanentPassive {
                     permanent: Default::default(),
                 }
                 .id(),
@@ -77,7 +77,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Permanent { permanent },
+                    ParserNode::PermanentPassive { permanent },
                     ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Enters {
                         #[cfg(feature = "spanned_tree")]
                             span: enters_span,

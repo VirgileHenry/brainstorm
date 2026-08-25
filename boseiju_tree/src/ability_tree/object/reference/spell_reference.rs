@@ -6,21 +6,27 @@ use crate::Node;
 /// This can only reference artifacts on the battlefield.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SpellReference {
-    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
+pub struct SpellReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    pub quantifier: Q,
     pub spell: crate::ability_tree::object::specified_object::SpecifiedSpell,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl Node for SpellReference {
+impl<Q> Node for SpellReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::SpellReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.count as &dyn Node);
+        children.push(&self.quantifier as &dyn Node);
         children.push(&self.spell as &dyn Node);
         children
     }
@@ -31,7 +37,7 @@ impl Node for SpellReference {
         out.push_inter_branch()?;
         write!(out, "count:")?;
         out.push_final_branch()?;
-        self.count.display(out)?;
+        self.quantifier.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "spell:")?;
@@ -48,16 +54,23 @@ impl Node for SpellReference {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for SpellReference {
+impl<Q> boseiju_span::Spanned for SpellReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         self.span
     }
 }
 
-impl Default for SpellReference {
+impl<Q> Default for SpellReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self {
-            count: Default::default(),
+            quantifier: Default::default(),
             spell: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

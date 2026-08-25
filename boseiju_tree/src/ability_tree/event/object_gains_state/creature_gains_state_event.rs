@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatureGainsStateEvent {
-    pub creature: crate::ability_tree::object::Creature,
+    pub creature: crate::ability_tree::object::PassiveCreature,
     pub state: crate::ability_tree::state::CreatureState,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

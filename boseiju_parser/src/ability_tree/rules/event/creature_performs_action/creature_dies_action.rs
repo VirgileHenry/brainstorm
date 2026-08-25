@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "<creature reference> dies" */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Creature {
+            ParserNode::CreaturePassive {
                 creature: Default::default(),
             }
             .id(),
@@ -31,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::Creature { creature },
+                ParserNode::CreaturePassive { creature },
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Die {
                     #[cfg(feature = "spanned_tree")]
                         span: block_span,

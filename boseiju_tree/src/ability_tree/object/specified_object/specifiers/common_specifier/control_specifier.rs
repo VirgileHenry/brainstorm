@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ControlSpecifier {
-    pub controller: crate::ability_tree::player::PassivePlayerReference,
+    pub controller: crate::ability_tree::player::ActivePlayerReference,
     pub controlled: bool,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

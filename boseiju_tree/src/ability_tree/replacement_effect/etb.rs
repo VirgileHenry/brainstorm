@@ -17,7 +17,7 @@ const MAX_ETB_MODIFIERS: usize = MAX_CHILDREN_PER_NODE - 1;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EtbReplacementEffect {
-    pub etb_event: crate::ability_tree::action::PermanentEtbAction,
+    pub etb_event: crate::ability_tree::deed::etb::EntersTheBattlefield,
     pub etb_modifiers: crate::HeapArrayVec<EtbModifier, MAX_ETB_MODIFIERS>,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,

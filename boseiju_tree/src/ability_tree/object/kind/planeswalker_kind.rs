@@ -21,8 +21,6 @@ impl crate::Node for PlaneswalkerKind {
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
-
-
         let mut children = arrayvec::ArrayVec::new_const();
         match self {
             Self::Planeswalker { .. } => {

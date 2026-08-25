@@ -4,9 +4,8 @@ use crate::ability_tree::rules::ParserRuleDeclarationLocation;
 use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
-use boseiju_tree::ability_tree::ability::statik::continuous_effect::ContinuousEffect;
-use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
 use boseiju_tree::ability_tree::action;
+use boseiju_tree::ability_tree::continuous_effect;
 use boseiju_tree::ability_tree::object;
 use boseiju_tree::ability_tree::quantifier;
 use idris::Idris;
@@ -19,7 +18,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<creature> can't block" is a rule modification effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Creature {
+                ParserNode::CreaturePassive {
                     creature: Default::default(),
                 }
                 .id(),
@@ -40,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Creature { creature },
+                    ParserNode::CreaturePassive { creature },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant { .. })),
                     ParserNode::LexerToken(Token::CardActions(intermediate::CardActions::Blocks {
                         #[cfg(feature = "spanned_tree")]
@@ -48,19 +47,17 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
-                        effect: continuous_effect_kind::ContinuousEffectKind::ModifyRule(
-                            continuous_effect_kind::ModifyRuleEffect::CreatureCantDoAction(
-                                continuous_effect_kind::CreatureCantDoAction {
-                                    action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
-                                        creature: creature.clone(),
-                                        blocked_creature: None,
-                                        #[cfg(feature = "spanned_tree")]
-                                        span: creature.span().merge(block_span),
-                                    }),
+                        effect: continuous_effect::ContinuousEffectKind::ModifyRule(
+                            continuous_effect::ModifyRuleEffect::CreatureCantDoAction(continuous_effect::CreatureCantDoAction {
+                                action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
+                                    creature: creature.clone(),
+                                    blocked_creature: None,
                                     #[cfg(feature = "spanned_tree")]
                                     span: creature.span().merge(block_span),
-                                },
-                            ),
+                                }),
+                                #[cfg(feature = "spanned_tree")]
+                                span: creature.span().merge(block_span),
+                            }),
                         ),
                         #[cfg(feature = "spanned_tree")]
                         span: creature.span().merge(block_span),
@@ -73,7 +70,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<creature> can't be blocked" is a rule modification effect */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Creature {
+                ParserNode::CreaturePassive {
                     creature: Default::default(),
                 }
                 .id(),
@@ -102,7 +99,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Creature { creature },
+                    ParserNode::CreaturePassive { creature },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::Cant { .. })),
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token: intermediate::EnglishVerb::Be { .. },
@@ -114,35 +111,33 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     })),
                 ] => Ok(ParserNode::ContinuousEffect {
                     effect: ContinuousEffect {
-                        effect: continuous_effect_kind::ContinuousEffectKind::ModifyRule(
-                            continuous_effect_kind::ModifyRuleEffect::CreatureCantDoAction(
-                                continuous_effect_kind::CreatureCantDoAction {
-                                    action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
-                                        creature: object::Creature::Reference(object::reference::CreatureReference {
-                                            count: quantifier::ActiveQuantifier::All(quantifier::All {
-                                                #[cfg(feature = "spanned_tree")]
-                                                span: block_span.empty_at_end(),
-                                            }),
-                                            creature: object::specified_object::SpecifiedCreature {
-                                                kind: object::kind::CreatureKind::Creature {
-                                                    #[cfg(feature = "spanned_tree")]
-                                                    span: block_span.empty_at_end(),
-                                                },
-                                                specifiers: None,
-                                                #[cfg(feature = "spanned_tree")]
-                                                span: block_span.empty_at_end(),
-                                            },
+                        effect: continuous_effect::ContinuousEffectKind::ModifyRule(
+                            continuous_effect::ModifyRuleEffect::CreatureCantDoAction(continuous_effect::CreatureCantDoAction {
+                                action: action::CreatureAction::Blocks(action::CreatureBlocksAction {
+                                    creature: object::Creature::Reference(object::reference::CreatureReference {
+                                        quantifier: quantifier::PassiveQuantifier::All(quantifier::All {
                                             #[cfg(feature = "spanned_tree")]
                                             span: block_span.empty_at_end(),
                                         }),
-                                        blocked_creature: Some(creature.clone()),
+                                        creature: object::specified_object::SpecifiedCreature {
+                                            kind: object::kind::CreatureKind::Creature {
+                                                #[cfg(feature = "spanned_tree")]
+                                                span: block_span.empty_at_end(),
+                                            },
+                                            specifiers: None,
+                                            #[cfg(feature = "spanned_tree")]
+                                            span: block_span.empty_at_end(),
+                                        },
                                         #[cfg(feature = "spanned_tree")]
-                                        span: creature.span().merge(block_span),
+                                        span: block_span.empty_at_end(),
                                     }),
+                                    blocked_creature: Some(creature.clone()),
                                     #[cfg(feature = "spanned_tree")]
                                     span: creature.span().merge(block_span),
-                                },
-                            ),
+                                }),
+                                #[cfg(feature = "spanned_tree")]
+                                span: creature.span().merge(block_span),
+                            }),
                         ),
                         #[cfg(feature = "spanned_tree")]
                         span: creature.span().merge(block_span),

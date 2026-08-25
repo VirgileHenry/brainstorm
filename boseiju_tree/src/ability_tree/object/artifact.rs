@@ -13,15 +13,21 @@ use crate::ability_tree::object::reference::ArtifactReference;
 /// Whenever an ability will refer to objects, they will almost always use object references.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Artifact {
+pub enum Artifact<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     Attached(AttachedObject),
     OneAmong(OneAmong<Self>),
     PreviouslyMentionned(PreviouslyMentionned),
     SelfReferencing(SelfReferencing),
-    Reference(ArtifactReference),
+    Reference(ArtifactReference<Q>),
 }
 
-impl crate::Node for Artifact {
+impl<Q> crate::Node for Artifact<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::Artifact
     }
@@ -59,7 +65,10 @@ impl crate::Node for Artifact {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for Artifact {
+impl<Q> boseiju_span::Spanned for Artifact<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         match self {
             Self::Attached(child) => child.span(),
@@ -71,7 +80,11 @@ impl boseiju_span::Spanned for Artifact {
     }
 }
 
-impl Default for Artifact {
+impl<Q> Default for Artifact<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self::Reference(Default::default())
     }

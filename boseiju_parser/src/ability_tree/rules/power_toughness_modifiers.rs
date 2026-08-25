@@ -4,7 +4,7 @@ use crate::ability_tree::rules::ParserRuleDeclarationLocation;
 use crate::ability_tree::rules::RuleLhs;
 use boseiju_lexer::Token;
 use boseiju_lexer::intermediate::NumberOperation;
-use boseiju_tree::ability_tree::ability::statik::continuous_effect::continuous_effect_kind;
+use boseiju_tree::ability_tree::power_toughness;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -54,8 +54,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: continuous_effect_kind::PowerToughnessModifiers::PlusPlus(
-                        continuous_effect_kind::PowerToughnessModifiersPlusPlus {
+                    modifiers: power_toughness::PowerToughnessModifiers::PlusPlus(
+                        power_toughness::PowerToughnessModifiersPlusPlus {
                             power_mod: power.clone(),
                             toughness_mod: toughness.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -109,8 +109,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: continuous_effect_kind::PowerToughnessModifiers::PlusMinus(
-                        continuous_effect_kind::PowerToughnessModifiersPlusMinus {
+                    modifiers: power_toughness::PowerToughnessModifiers::PlusMinus(
+                        power_toughness::PowerToughnessModifiersPlusMinus {
                             power_mod: power.clone(),
                             toughness_mod: toughness.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -164,8 +164,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::PlusSymbol { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: continuous_effect_kind::PowerToughnessModifiers::MinusPlus(
-                        continuous_effect_kind::PowerToughnessModifiersMinusPlus {
+                    modifiers: power_toughness::PowerToughnessModifiers::MinusPlus(
+                        power_toughness::PowerToughnessModifiersMinusPlus {
                             power_mod: power.clone(),
                             toughness_mod: toughness.clone(),
                             #[cfg(feature = "spanned_tree")]
@@ -219,8 +219,8 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     ParserNode::LexerToken(Token::NumberOperation(NumberOperation::Minus { .. })),
                     ParserNode::Number { number: toughness },
                 ] => Ok(ParserNode::PowerToughnessModifiers {
-                    modifiers: continuous_effect_kind::PowerToughnessModifiers::MinusMinus(
-                        continuous_effect_kind::PowerToughnessModifiersMinusMinus {
+                    modifiers: power_toughness::PowerToughnessModifiers::MinusMinus(
+                        power_toughness::PowerToughnessModifiersMinusMinus {
                             power_mod: power.clone(),
                             toughness_mod: toughness.clone(),
                             #[cfg(feature = "spanned_tree")]

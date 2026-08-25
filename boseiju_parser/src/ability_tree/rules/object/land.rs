@@ -13,10 +13,10 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "<count> <specified land>" is a land */
+        /* "<quantifier active> <specified land>" is an active land */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -25,14 +25,43 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Land {
+            merged: ParserNode::LandActive {
                 land: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
+                &[ParserNode::QuantifierActive { count }, ParserNode::SpecifiedLand { land }] => Ok(ParserNode::LandActive {
                     land: object::Land::Reference(object::reference::LandReference {
-                        count: count.clone(),
+                        quantifier: count.clone(),
+                        land: land.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(&land.span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<quantifier passive> <specified land>" is a passive land */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedLand {
+                    land: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::LandPassive {
+                land: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::QuantifierPassive { count }, ParserNode::SpecifiedLand { land }] => Ok(ParserNode::LandPassive {
+                    land: object::Land::Reference(object::reference::LandReference {
+                        quantifier: count.clone(),
                         land: land.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.span().merge(&land.span()),
@@ -48,14 +77,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 land: Default::default(),
             }
             .id()]),
-            merged: ParserNode::Land {
+            merged: ParserNode::LandActive {
                 land: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpecifiedLand { land }] => Ok(ParserNode::Land {
+                &[ParserNode::SpecifiedLand { land }] => Ok(ParserNode::LandActive {
                     land: object::Land::Reference(object::reference::LandReference {
-                        count: quantifier::ActiveQuantifier::All(quantifier::All {
+                        quantifier: quantifier::ActiveQuantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: land.span().empty_at_start(),
                         }),
@@ -81,7 +110,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Land {
+            merged: ParserNode::LandPassive {
                 land: Default::default(),
             }
             .id(),
@@ -92,11 +121,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: another_span,
                     })),
                     ParserNode::SpecifiedLand { land },
-                ] => Ok(ParserNode::Land {
+                ] => Ok(ParserNode::LandPassive {
                     land: object::Land::Reference(object::reference::LandReference {
-                        count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                        quantifier: quantifier::PassiveQuantifier::Count(quantifier::CountQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *another_span,
@@ -132,7 +161,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Land {
+            merged: ParserNode::LandPassive {
                 land: Default::default(),
             }
             .id(),
@@ -147,7 +176,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         land,
                         ..
                     },
-                ] => Ok(ParserNode::Land {
+                ] => Ok(ParserNode::LandPassive {
                     land: object::Land::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: land.span().merge(start_span),
@@ -166,7 +195,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 },
             ))
             .id()]),
-            merged: ParserNode::Land {
+            merged: ParserNode::LandActive {
                 land: Default::default(),
             }
             .id(),
@@ -176,7 +205,36 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Land {
+                ] => Ok(ParserNode::LandActive {
+                    land: object::Land::Attached(object::AttachedObject {
+                        #[cfg(feature = "spanned_tree")]
+                        span: *span,
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "fortified land" is an attached object land reference */
+        ParserRule {
+            expanded: RuleLhs::new(&[ParserNode::LexerToken(Token::AttachedObject(
+                intermediate::AttachedObject::FortifiedLand {
+                    #[cfg(feature = "spanned_tree")]
+                    span: Default::default(),
+                },
+            ))
+            .id()]),
+            merged: ParserNode::LandPassive {
+                land: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::LexerToken(Token::AttachedObject(intermediate::AttachedObject::FortifiedLand {
+                        #[cfg(feature = "spanned_tree")]
+                        span,
+                    })),
+                ] => Ok(ParserNode::LandPassive {
                     land: object::Land::Attached(object::AttachedObject {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,
@@ -195,7 +253,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Land {
+            merged: ParserNode::LandActive {
                 land: Default::default(),
             }
             .id(),
@@ -205,7 +263,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Land {
+                ] => Ok(ParserNode::LandActive {
                     land: object::Land::PreviouslyMentionned(object::PreviouslyMentionned {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,

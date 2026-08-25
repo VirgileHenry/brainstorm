@@ -15,7 +15,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     /* "<player> cast <spell>" */
     std::iter::once(ParserRule {
         expanded: RuleLhs::new(&[
-            ParserNode::Player {
+            ParserNode::PlayerPassive {
                 player: Default::default(),
             }
             .id(),
@@ -31,7 +31,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         .id(),
         reduction: |nodes: &[ParserNode]| match &nodes {
             &[
-                ParserNode::Player { player },
+                ParserNode::PlayerPassive { player },
                 ParserNode::LexerToken(Token::AmbiguousToken(intermediate::AmbiguousToken::Attack {
                     #[cfg(feature = "spanned_tree")]
                         span: end_span,

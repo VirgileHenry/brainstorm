@@ -11,10 +11,10 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "<count> <specified creature>" is a creature */
+        /* "<active quantifier> <specified creature>" is an active creature */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -23,14 +23,49 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Creature {
+            merged: ParserNode::CreatureActive {
                 creature: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::Creature {
+                &[
+                    ParserNode::QuantifierActive { count },
+                    ParserNode::SpecifiedCreature { creature },
+                ] => Ok(ParserNode::CreatureActive {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
-                        count: count.clone(),
+                        quantifier: count.clone(),
+                        creature: creature.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(&creature.span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<passive quantifier> <specified creature>" is a passive creature */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedCreature {
+                    creature: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::CreaturePassive {
+                creature: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::QuantifierPassive { count },
+                    ParserNode::SpecifiedCreature { creature },
+                ] => Ok(ParserNode::CreaturePassive {
+                    creature: object::Creature::Reference(object::reference::CreatureReference {
+                        quantifier: count.clone(),
                         creature: creature.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.span().merge(&creature.span()),
@@ -46,14 +81,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 creature: Default::default(),
             }
             .id()]),
-            merged: ParserNode::Creature {
+            merged: ParserNode::CreatureActive {
                 creature: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::Creature {
+                &[ParserNode::SpecifiedCreature { creature }] => Ok(ParserNode::CreatureActive {
                     creature: object::Creature::Reference(object::reference::CreatureReference {
-                        count: quantifier::ActiveQuantifier::All(quantifier::All {
+                        quantifier: quantifier::ActiveQuantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: creature.span().empty_at_start(),
                         }),

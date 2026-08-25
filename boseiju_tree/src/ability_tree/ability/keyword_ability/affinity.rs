@@ -4,7 +4,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AffinityKeywordAbility {
-    pub for_object: crate::ability_tree::object::Permanent,
+    pub for_object: crate::ability_tree::object::PassivePermanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

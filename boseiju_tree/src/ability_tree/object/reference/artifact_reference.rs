@@ -4,21 +4,27 @@ use crate::Node;
 /// A Artifact reference.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ArtifactReference {
-    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
+pub struct ArtifactReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    pub quantifier: Q,
     pub artifact: crate::ability_tree::object::specified_object::SpecifiedArtifact,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl Node for ArtifactReference {
+impl<Q> Node for ArtifactReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::ArtifactReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.count as &dyn Node);
+        children.push(&self.quantifier as &dyn Node);
         children.push(&self.artifact as &dyn Node);
         children
     }
@@ -29,7 +35,7 @@ impl Node for ArtifactReference {
         out.push_inter_branch()?;
         write!(out, "count:")?;
         out.push_final_branch()?;
-        self.count.display(out)?;
+        self.quantifier.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "artifact:")?;
@@ -46,16 +52,23 @@ impl Node for ArtifactReference {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for ArtifactReference {
+impl<Q> boseiju_span::Spanned for ArtifactReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         self.span
     }
 }
 
-impl Default for ArtifactReference {
+impl<Q> Default for ArtifactReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self {
-            count: Default::default(),
+            quantifier: Default::default(),
             artifact: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

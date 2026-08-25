@@ -6,7 +6,7 @@ use crate::Node;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerCastsSpellAction {
     pub player: crate::ability_tree::player::PassivePlayerReference,
-    pub spell: crate::ability_tree::object::Spell,
+    pub spell: crate::ability_tree::object::PassiveSpell,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

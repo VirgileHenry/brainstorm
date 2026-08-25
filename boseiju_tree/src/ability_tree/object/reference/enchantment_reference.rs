@@ -4,21 +4,27 @@ use crate::Node;
 /// A Enchantment reference.
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct EnchantmentReference {
-    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
+pub struct EnchantmentReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
+    pub quantifier: Q,
     pub enchantment: crate::ability_tree::object::specified_object::SpecifiedEnchantment,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }
 
-impl Node for EnchantmentReference {
+impl<Q> Node for EnchantmentReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn node_id(&self) -> crate::NodeKind {
         crate::NodeKind::EnchantmentReference
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.count as &dyn Node);
+        children.push(&self.quantifier as &dyn Node);
         children.push(&self.enchantment as &dyn Node);
         children
     }
@@ -29,7 +35,7 @@ impl Node for EnchantmentReference {
         out.push_inter_branch()?;
         write!(out, "count:")?;
         out.push_final_branch()?;
-        self.count.display(out)?;
+        self.quantifier.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "enchantment:")?;
@@ -46,16 +52,23 @@ impl Node for EnchantmentReference {
 }
 
 #[cfg(feature = "spanned_tree")]
-impl boseiju_span::Spanned for EnchantmentReference {
+impl<Q> boseiju_span::Spanned for EnchantmentReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+{
     fn span(&self) -> boseiju_span::Span {
         self.span
     }
 }
 
-impl Default for EnchantmentReference {
+impl<Q> Default for EnchantmentReference<Q>
+where
+    Q: crate::ability_tree::quantifier::Quantifier,
+    Q: Default,
+{
     fn default() -> Self {
         Self {
-            count: Default::default(),
+            quantifier: Default::default(),
             enchantment: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

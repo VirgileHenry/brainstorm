@@ -25,7 +25,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 tense: boseiju_lexer::Tense::BaseForm,
             }))
             .id(),
-            ParserNode::Permanent {
+            ParserNode::PermanentActive {
                 permanent: Default::default(),
             }
             .id(),
@@ -41,7 +41,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                     token: intermediate::EnglishVerb::Control { .. },
                     tense: boseiju_lexer::Tense::BaseForm,
                 })),
-                ParserNode::Permanent { permanent },
+                ParserNode::PermanentActive { permanent },
             ] => Ok(ParserNode::Condition {
                 condition: conditional::Condition::PlayerControlsObject(conditional::ConditionPlayerControlsPermanent {
                     player: player.clone(),

@@ -5,7 +5,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DamageReceiverReference {
-    pub count: crate::ability_tree::quantifier::ActiveQuantifier,
+    pub quantifier: crate::ability_tree::quantifier::ActiveQuantifier,
     pub kind: crate::ability_tree::object::kind::DamageReceiverKind, /* Fixme: specified */
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
@@ -18,7 +18,7 @@ impl Node for DamageReceiverReference {
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {
         let mut children = arrayvec::ArrayVec::new_const();
-        children.push(&self.count as &dyn Node);
+        children.push(&self.quantifier as &dyn Node);
         children.push(&self.kind as &dyn Node);
         children
     }
@@ -29,7 +29,7 @@ impl Node for DamageReceiverReference {
         out.push_inter_branch()?;
         write!(out, "count:")?;
         out.push_final_branch()?;
-        self.count.display(out)?;
+        self.quantifier.display(out)?;
         out.pop_branch();
         out.next_final_branch()?;
         write!(out, "kind:")?;
@@ -55,7 +55,7 @@ impl boseiju_span::Spanned for DamageReceiverReference {
 impl Default for DamageReceiverReference {
     fn default() -> Self {
         Self {
-            count: Default::default(),
+            quantifier: Default::default(),
             kind: Default::default(),
             #[cfg(feature = "spanned_tree")]
             span: Default::default(),

@@ -18,7 +18,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> may <imperative list>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -38,7 +38,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
                     ParserNode::ImperativeList { imperatives },
                 ] => Ok(ParserNode::Statement {
@@ -152,7 +152,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> may <imperative list>. If they do, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -204,7 +204,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
                     ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
@@ -327,7 +327,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> may <imperative list>. If they don't, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -379,7 +379,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
                     ParserNode::ImperativeList { imperatives },
                     ParserNode::LexerToken(Token::ControlFlow(intermediate::ControlFlow::Dot { .. })),
@@ -410,7 +410,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> may have <imperative list>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -438,7 +438,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token: intermediate::EnglishVerb::Have { .. },
@@ -568,7 +568,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> may have <imperative list>. If they do, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -628,7 +628,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token: intermediate::EnglishVerb::Have { .. },
@@ -767,7 +767,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         /* "<player> may have <imperative list>. If they don't, <statement>" */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Player {
+                ParserNode::PlayerActive {
                     player: Default::default(),
                 }
                 .id(),
@@ -827,7 +827,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::Player { player },
+                    ParserNode::PlayerActive { player },
                     ParserNode::LexerToken(Token::EnglishModalAuxiliary(intermediate::EnglishModalAuxiliary::May { .. })),
                     ParserNode::LexerToken(Token::EnglishVerb(intermediate::TensedEnglishVerb {
                         token: intermediate::EnglishVerb::Have { .. },

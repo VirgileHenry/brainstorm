@@ -13,10 +13,10 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "<count> <specified spell>" is a spell */
+        /* "<quantifier active> <specified spell>" is an active spell */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -25,19 +25,50 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Spell {
+            merged: ParserNode::SpellActive {
                 spell: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
+                &[ParserNode::QuantifierActive { count }, ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::SpellActive {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: count.clone(),
+                        quantifier: count.clone(),
                         spell: spell.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.span().merge(&spell.span()),
                     }),
                 }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<quantifier passive> <specified spell>" is an passive spell */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedSpell {
+                    spell: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::SpellPassive {
+                spell: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[ParserNode::QuantifierPassive { count }, ParserNode::SpecifiedSpell { spell }] => {
+                    Ok(ParserNode::SpellPassive {
+                        spell: object::Spell::Reference(object::reference::SpellReference {
+                            quantifier: count.clone(),
+                            spell: spell.clone(),
+                            #[cfg(feature = "spanned_tree")]
+                            span: count.span().merge(&spell.span()),
+                        }),
+                    })
+                }
                 _ => Err("Provided tokens do not match rule definition"),
             },
             creation_loc: ParserRuleDeclarationLocation::here(),
@@ -55,7 +86,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Spell {
+            merged: ParserNode::SpellPassive {
                 spell: Default::default(),
             }
             .id(),
@@ -66,11 +97,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: another_span,
                     })),
                     ParserNode::SpecifiedSpell { spell },
-                ] => Ok(ParserNode::Spell {
+                ] => Ok(ParserNode::SpellPassive {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                        quantifier: quantifier::PassiveQuantifier::Count(quantifier::CountQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *another_span,
@@ -99,14 +130,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 spell: Default::default(),
             }
             .id()]),
-            merged: ParserNode::Spell {
+            merged: ParserNode::SpellActive {
                 spell: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::Spell {
+                &[ParserNode::SpecifiedSpell { spell }] => Ok(ParserNode::SpellActive {
                     spell: object::Spell::Reference(object::reference::SpellReference {
-                        count: quantifier::ActiveQuantifier::All(quantifier::All {
+                        quantifier: quantifier::ActiveQuantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: spell.span().empty_at_start(),
                         }),
@@ -132,7 +163,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Spell {
+            merged: ParserNode::SpellPassive {
                 spell: Default::default(),
             }
             .id(),
@@ -147,7 +178,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         spell,
                         ..
                     },
-                ] => Ok(ParserNode::Spell {
+                ] => Ok(ParserNode::SpellPassive {
                     spell: object::Spell::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: spell.span().merge(start_span),

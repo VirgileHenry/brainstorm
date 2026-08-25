@@ -6,7 +6,7 @@ use boseiju_lexer::Token;
 use boseiju_lexer::intermediate;
 use boseiju_tree::ability_tree::ability;
 use boseiju_tree::ability_tree::cost;
-use boseiju_tree::ability_tree::imperative;
+use boseiju_tree::ability_tree::deed;
 use idris::Idris;
 
 #[cfg(feature = "spanned_tree")]
@@ -45,21 +45,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         keyword: ability::keyword_ability::ExpandedKeywordAbility::Ward(
                             ability::keyword_ability::WardKeywordAbility {
                                 cost: cost::Cost {
-                                    costs: [imperative::Imperative {
-                                        kind: imperative::ImperativeKind::PayMana(imperative::PayManaImperative {
-                                            amount: mana_cost.clone(),
-                                            #[cfg(feature = "spanned_tree")]
-                                            span: mana_cost.span(),
-                                        }),
-                                        executing_player: boseiju_tree::ability_tree::player::PlayerReference::You(
-                                            boseiju_tree::ability_tree::player::You {
-                                                #[cfg(feature = "spanned_tree")]
-                                                span: mana_cost.span().empty_at_start(),
-                                            },
-                                        ),
+                                    costs: [cost::AtomicCost::Mana(deed::pay_mana::PayMana {
+                                        amount: mana_cost.clone(),
                                         #[cfg(feature = "spanned_tree")]
                                         span: mana_cost.span(),
-                                    }]
+                                    })]
                                     .into_iter()
                                     .collect(),
                                     #[cfg(feature = "spanned_tree")]

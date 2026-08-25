@@ -4,7 +4,7 @@ use crate::Node;
 #[derive(serde::Serialize, serde::Deserialize)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EnchantKeywordAbility {
-    pub enchantable_object: crate::ability_tree::object::Permanent,
+    pub enchantable_object: crate::ability_tree::object::ActivePermanent,
     #[cfg(feature = "spanned_tree")]
     pub span: boseiju_span::Span,
 }

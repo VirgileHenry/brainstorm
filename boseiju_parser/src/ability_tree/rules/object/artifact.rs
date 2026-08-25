@@ -13,10 +13,10 @@ use boseiju_span::Spanned;
 
 pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
     [
-        /* "<count> <specified artifact>" is an artifact */
+        /* "<quantifier active> <specified artifact>" is an active artifact */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::Quantifier {
+                ParserNode::QuantifierActive {
                     count: Default::default(),
                 }
                 .id(),
@@ -25,14 +25,49 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Artifact {
+            merged: ParserNode::ArtifactActive {
                 artifact: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::Quantifier { count }, ParserNode::SpecifiedArtifact { artifact }] => Ok(ParserNode::Artifact {
+                &[
+                    ParserNode::QuantifierActive { count },
+                    ParserNode::SpecifiedArtifact { artifact },
+                ] => Ok(ParserNode::ArtifactActive {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
-                        count: count.clone(),
+                        quantifier: count.clone(),
+                        artifact: artifact.clone(),
+                        #[cfg(feature = "spanned_tree")]
+                        span: count.span().merge(&artifact.span()),
+                    }),
+                }),
+                _ => Err("Provided tokens do not match rule definition"),
+            },
+            creation_loc: ParserRuleDeclarationLocation::here(),
+        },
+        /* "<quantifier passive> <specified artifact>" is a passive artifact */
+        ParserRule {
+            expanded: RuleLhs::new(&[
+                ParserNode::QuantifierPassive {
+                    count: Default::default(),
+                }
+                .id(),
+                ParserNode::SpecifiedArtifact {
+                    artifact: Default::default(),
+                }
+                .id(),
+            ]),
+            merged: ParserNode::ArtifactPassive {
+                artifact: Default::default(),
+            }
+            .id(),
+            reduction: |nodes: &[ParserNode]| match &nodes {
+                &[
+                    ParserNode::QuantifierPassive { count },
+                    ParserNode::SpecifiedArtifact { artifact },
+                ] => Ok(ParserNode::ArtifactPassive {
+                    artifact: object::Artifact::Reference(object::reference::ArtifactReference {
+                        quantifier: count.clone(),
                         artifact: artifact.clone(),
                         #[cfg(feature = "spanned_tree")]
                         span: count.span().merge(&artifact.span()),
@@ -55,7 +90,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Artifact {
+            merged: ParserNode::ArtifactPassive {
                 artifact: Default::default(),
             }
             .id(),
@@ -66,11 +101,11 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: another_span,
                     })),
                     ParserNode::SpecifiedArtifact { artifact },
-                ] => Ok(ParserNode::Artifact {
+                ] => Ok(ParserNode::ArtifactPassive {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
-                        count: quantifier::ActiveQuantifier::Count(quantifier::CountQuantifier {
+                        quantifier: quantifier::PassiveQuantifier::Count(quantifier::CountQuantifier {
                             number: boseiju_tree::ability_tree::number::Number::Flat(
-                                boseiju_tree::ability_tree::number::FixedNumber {
+                                boseiju_tree::ability_tree::number::FlatNumber {
                                     number: 1,
                                     #[cfg(feature = "spanned_tree")]
                                     span: *another_span,
@@ -99,14 +134,14 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 artifact: Default::default(),
             }
             .id()]),
-            merged: ParserNode::Artifact {
+            merged: ParserNode::ArtifactActive {
                 artifact: Default::default(),
             }
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
-                &[ParserNode::SpecifiedArtifact { artifact }] => Ok(ParserNode::Artifact {
+                &[ParserNode::SpecifiedArtifact { artifact }] => Ok(ParserNode::ArtifactActive {
                     artifact: object::Artifact::Reference(object::reference::ArtifactReference {
-                        count: quantifier::ActiveQuantifier::All(quantifier::All {
+                        quantifier: quantifier::ActiveQuantifier::All(quantifier::All {
                             #[cfg(feature = "spanned_tree")]
                             span: artifact.span().empty_at_start(),
                         }),
@@ -132,7 +167,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }
                 .id(),
             ]),
-            merged: ParserNode::Artifact {
+            merged: ParserNode::ArtifactPassive {
                 artifact: Default::default(),
             }
             .id(),
@@ -147,7 +182,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         artifact,
                         ..
                     },
-                ] => Ok(ParserNode::Artifact {
+                ] => Ok(ParserNode::ArtifactPassive {
                     artifact: object::Artifact::SelfReferencing(object::SelfReferencing {
                         #[cfg(feature = "spanned_tree")]
                         span: artifact.span().merge(start_span),
@@ -166,7 +201,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                 }))
                 .id(),
             ]),
-            merged: ParserNode::Artifact {
+            merged: ParserNode::ArtifactActive {
                 artifact: Default::default(),
             }
             .id(),
@@ -176,7 +211,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                         #[cfg(feature = "spanned_tree")]
                         span,
                     })),
-                ] => Ok(ParserNode::Artifact {
+                ] => Ok(ParserNode::ArtifactActive {
                     artifact: object::Artifact::PreviouslyMentionned(object::PreviouslyMentionned {
                         #[cfg(feature = "spanned_tree")]
                         span: *span,

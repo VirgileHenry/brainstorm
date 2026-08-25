@@ -34,7 +34,7 @@ mod standalone;
 mod surge;
 mod suspend;
 mod vanishing;
-// mod ward;
+mod ward;
 mod warp;
 
 use super::ParserNode;
@@ -105,7 +105,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
         surge::rules().collect::<Vec<_>>(),
         suspend::rules().collect::<Vec<_>>(),
         vanishing::rules().collect::<Vec<_>>(),
-        // ward::rules().collect::<Vec<_>>(),
+        ward::rules().collect::<Vec<_>>(),
         warp::rules().collect::<Vec<_>>(),
     ]
     .into_iter()

@@ -14,7 +14,7 @@ pub struct TargetQuantifier {
 
 impl crate::Node for TargetQuantifier {
     fn node_id(&self) -> crate::NodeKind {
-        crate::NodeKind::TargetQuantifier
+        crate::NodeKind::QuantifierTarget
     }
 
     fn children(&self) -> arrayvec::ArrayVec<&dyn Node, MAX_CHILDREN_PER_NODE> {

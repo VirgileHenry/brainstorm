@@ -29,7 +29,7 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: number_span,
                     })),
                 ] => Ok(ParserNode::Number {
-                    number: number::Number::Flat(number::FixedNumber {
+                    number: number::Number::Flat(number::FlatNumber {
                         number: *fixed_number,
                         #[cfg(feature = "spanned_tree")]
                         span: *number_span,
@@ -86,10 +86,10 @@ pub fn rules() -> impl Iterator<Item = crate::ability_tree::rules::ParserRule> {
                             span: number_span,
                     })),
                 ] => Ok(ParserNode::Number {
-                    number: number::Number::AnyNumber {
+                    number: number::Number::AnyNumber(number::AnyNumber {
                         #[cfg(feature = "spanned_tree")]
                         span: *number_span,
-                    },
+                    }),
                 }),
                 _ => Err("Provided tokens do not match rule definition"),
             },

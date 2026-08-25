@@ -39,7 +39,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "with power <number>" makes a power specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
+                ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -60,7 +60,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
+                    ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::With {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
@@ -84,7 +84,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
         /* "with <keyword ability>" makes a keyword ability specifier */
         ParserRule {
             expanded: RuleLhs::new(&[
-                ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
+                ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::With {
                     #[cfg(feature = "spanned_tree")]
                     span: Default::default(),
                 }))
@@ -100,7 +100,7 @@ pub fn rules() -> impl Iterator<Item = ParserRule> {
             .id(),
             reduction: |nodes: &[ParserNode]| match &nodes {
                 &[
-                    ParserNode::LexerToken(Token::EnglishPreprosition(intermediate::EnglishPreprosition::With {
+                    ParserNode::LexerToken(Token::EnglishPreposition(intermediate::EnglishPreposition::With {
                         #[cfg(feature = "spanned_tree")]
                             span: start_span,
                     })),
